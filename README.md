@@ -20,5 +20,8 @@ Los textos, cartas y datos se cambian en la carpeta `datos/`, con el Bloc de not
 | `landing/` | Portada con el carrusel de cartas |
 | `slides/` | Una carpeta por diapositiva |
 | `compartido/` | Colores, tipografías, transiciones y scroll comunes |
+| `herramientas/` | Scripts de desarrollo (servidor local, extracción del mapa); no forman parte del sitio |
+
+`CLAUDE.md` contiene el contexto técnico del proyecto para trabajar con Claude.
 
 Los contornos del mapa provienen de [Natural Earth](https://www.naturalearthdata.com/) (dominio público).
