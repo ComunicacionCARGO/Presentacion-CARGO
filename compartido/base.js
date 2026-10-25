@@ -28,8 +28,29 @@
     }));
   }
 
-  addEventListener('load', revelar);
-  setTimeout(revelar, 2500); // por si alguna imagen o fuente tarda demasiado
+  // Antes de abrir la cortina se descargan y "descomprimen" todas las imágenes y fuentes.
+  // Así las animaciones de entrada y la primera aparición de cada sección no dan tirones
+  // (sobre todo en la versión publicada, donde todo llega por internet).
+  function prepararImagenes() {
+    const tareas = [];
+    document.querySelectorAll('img').forEach((img) => {
+      if (img.decode) tareas.push(img.decode().catch(() => {}));
+    });
+    document.querySelectorAll('.fondo').forEach((el) => {
+      const m = getComputedStyle(el).backgroundImage.match(/url\(["']?(.+?)["']?\)/);
+      if (!m) return;
+      const img = new Image();
+      img.src = m[1];
+      tareas.push(img.decode().catch(() => {}));
+    });
+    if (document.fonts) tareas.push(document.fonts.ready);
+    return Promise.all(tareas);
+  }
+
+  addEventListener('load', () => {
+    Promise.race([prepararImagenes(), new Promise((r) => setTimeout(r, 4000))]).then(revelar);
+  });
+  setTimeout(revelar, 7000); // por si algo falla del todo, la página se muestra igual
 
   // Al volver con el botón "atrás" del navegador la página puede quedar tapada
   addEventListener('pageshow', (e) => {

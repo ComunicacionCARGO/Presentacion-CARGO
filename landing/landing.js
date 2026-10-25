@@ -116,6 +116,7 @@
       const img = crear('img', 'portada', modelo);
       img.src = datos.portada;
       img.alt = '';
+      img.decoding = 'async';
       img.draggable = false;
     } else {
       crear('span', 'marca-agua', modelo).textContent = dosDigitos(i + 1);

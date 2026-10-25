@@ -155,6 +155,7 @@
     if (a.foto) {
       const img = crear('img', 'foto-grabada', hitoFoto);
       img.alt = a.anio;
+      img.decoding = 'async';
       img.src = '../../' + a.foto;
       img.onerror = () => { img.remove(); dibujo(); };
     } else {
