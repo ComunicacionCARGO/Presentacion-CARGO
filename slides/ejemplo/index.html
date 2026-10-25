@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Diapositiva de ejemplo — Grupo CARGO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../compartido/base.css">
+  <style>
+    /* Estilos propios de esta diapositiva */
+    .franjas { position: absolute; left: 0; bottom: 0; width: 1600px; height: 260px; pointer-events: none; }
+    .franjas i {
+      position: absolute;
+      right: 0;
+      border-style: solid;
+      border-width: 26px 0 0 26px;
+      border-color: var(--rojo);
+      border-top-left-radius: 120px;
+    }
+    .franjas i:nth-child(1) { left: 0;    top: 0;    bottom: 0; }
+    .franjas i:nth-child(2) { left: 40px; top: 40px; bottom: 0; }
+    .franjas i:nth-child(3) { left: 80px; top: 80px; bottom: 0; border-color: var(--gris); }
+
+    .contenido { position: absolute; left: 160px; top: 200px; width: 900px; }
+    .contenido h1 {
+      font-family: var(--fuente-titulo);
+      font-weight: 700;
+      font-size: 110px;
+      line-height: 1.12;
+      color: var(--gris);
+    }
+    .contenido h1 em { font-style: normal; color: var(--rojo); }
+    .contenido p { margin-top: 30px; font-size: 26px; font-weight: 300; line-height: 1.5; }
+    .contenido p strong { font-weight: 600; }
+
+    .sello { position: absolute; top: 46px; right: 80px; }
+
+    .volver {
+      position: absolute;
+      left: 160px;
+      top: 80px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gris);
+      text-decoration: none;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .volver:hover { color: var(--rojo); }
+  </style>
+</head>
+<body data-volver="../../index.html">
+
+  <main class="escenario">
+    <p class="sello"><b>00</b> | Diapositiva de ejemplo</p>
+    <a class="volver" href="../../index.html" data-transicion>← Volver a la portada (Esc)</a>
+
+    <div class="contenido">
+      <h1>Logística que <em>ACOMPAÑA</em></h1>
+      <p>Esta es una <strong>diapositiva de prueba</strong>. Cada carta de la portada va a abrir
+        su propia diapositiva con un diseño distinto, que armaremos a partir de tus diseños en Illustrator.</p>
+    </div>
+
+    <div class="franjas"><i></i><i></i><i></i></div>
+  </main>
+
+  <div class="grano"></div>
+  <div class="cortina cubre"><div class="banda"></div><div class="banda"></div><div class="banda"></div></div>
+
+  <script src="../../compartido/base.js"></script>
+</body>
+</html>

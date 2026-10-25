@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Grupo CARGO — Tu solución en marcha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
+  <link rel="stylesheet" href="compartido/base.css">
+  <link rel="stylesheet" href="landing/landing.css">
+</head>
+<body>
+
+  <div class="fondo"></div>
+
+  <main class="escenario">
+    <span class="registro" style="left:40px;top:40px"></span>
+    <span class="registro" style="right:40px;top:40px"></span>
+    <span class="registro" style="left:40px;bottom:40px"></span>
+    <span class="registro" style="right:40px;bottom:40px"></span>
+
+    <p class="sello hud-sello"><b>00</b> | <span></span></p>
+
+    <!-- Palabras con caminos hacia las cartas (se agregan desde landing.js) -->
+    <div class="caminos"><svg viewBox="0 0 1600 900" aria-hidden="true"></svg></div>
+
+    <header class="textos">
+      <p class="antetitulo"></p>
+      <h1 class="titulo"></h1>
+    </header>
+
+    <!-- Escena 3D: operario + carrusel de cartas (las cartas se agregan desde landing.js) -->
+    <div class="mundo">
+      <img class="operario" src="img/landing/operario.webp" alt="">
+    </div>
+
+    <p class="hud-ayuda"><kbd>←</kbd><kbd>→</kbd> o rueda: girar <i>·</i> <kbd>Enter</kbd> abrir <i>·</i> <kbd>1</kbd>–<kbd>9</kbd> ir directo</p>
+    <img class="isologo" src="img/marca/isologo.png" alt="Grupo CARGO">
+    <p class="hud-carta"><b class="hud-num">01</b><span class="hud-total">/ 06</span><span class="hud-nom"></span></p>
+  </main>
+
+  <div class="grano"></div>
+  <div class="cortina cubre"><div class="banda"></div><div class="banda"></div><div class="banda"></div></div>
+
+  <script src="datos/cartas.js"></script>
+  <script src="compartido/base.js"></script>
+  <script src="landing/landing.js"></script>
+</body>
+</html>

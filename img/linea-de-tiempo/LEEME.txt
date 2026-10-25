@@ -1,0 +1,2 @@
+﻿Guardá acá las fotos de la línea de tiempo (1200 x 800 px, JPG o WEBP).
+En datos\quienes-somos.js escribí la ruta, por ejemplo:  foto: "img/linea-de-tiempo/1980.jpg"

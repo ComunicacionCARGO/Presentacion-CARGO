@@ -1,0 +1,5 @@
+# Archivos del sistema y de herramientas que no forman parte de la presentación
+Thumbs.db
+desktop.ini
+.DS_Store
+.claude/

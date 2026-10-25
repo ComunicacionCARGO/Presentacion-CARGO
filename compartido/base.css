@@ -1,0 +1,94 @@
+/* =========================================================
+   ESTILOS COMPARTIDOS — colores, tipografías y elementos
+   que usan TODAS las páginas de la presentación.
+   ========================================================= */
+
+/* Paleta del manual de identidad de Grupo CARGO */
+:root {
+  --rojo: #EF4529;          /* Rojo principal */
+  --rojo-claro: #F26A35;    /* variación para degradados */
+  --gris: #3A3A3A;          /* Gris oscuro */
+  --blanco: #FFFBF3;        /* Blanco base */
+  --ambar: #F4A127;         /* acentos: usar con moderación */
+  --verde: #4C956C;
+  --azul: #759AAB;
+
+  --fuente-titulo: 'Oswald', 'Arial Narrow', sans-serif;
+  --fuente-texto: 'Inter', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--blanco);
+  color: var(--gris);
+  font-family: var(--fuente-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* El escenario mide 1600×900 (igual que la mesa de trabajo de Illustrator)
+   y se escala para entrar en cualquier pantalla sin deformarse. */
+.escenario {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1600px;
+  height: 900px;
+  transform: translate(-50%, -50%) scale(var(--escala, 1));
+}
+
+/* Textura de desgaste sutil (pedida por el manual) */
+.grano {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: .14;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .2 0 0 0 0 .18 0 0 0 1.4 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Etiqueta tipo manual: "04 | Paleta de colores" */
+.sello {
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: .02em;
+  color: rgba(58, 58, 58, .55);
+}
+.sello b { font-weight: 400; }
+
+/* Marcas de registro en las esquinas (detalle industrial) */
+.registro { position: absolute; width: 18px; height: 18px; pointer-events: none; }
+.registro::before, .registro::after {
+  content: ""; position: absolute; background: rgba(58, 58, 58, .3);
+}
+.registro::before { left: 8px; top: 0; width: 1px; height: 18px; }
+.registro::after { top: 8px; left: 0; height: 1px; width: 18px; }
+
+/* ---------- Cortina de transición: las tres franjas de la marca ---------- */
+.cortina {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.cortina .banda {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .7s cubic-bezier(.75, 0, .2, 1);
+  border-bottom: 10px solid var(--blanco);
+}
+.cortina .banda:nth-child(1) { flex: 4; background: var(--rojo); }
+.cortina .banda:nth-child(2) { flex: 4; background: var(--rojo); transition-delay: .07s; }
+.cortina .banda:nth-child(3) { flex: 2; background: var(--gris); transition-delay: .14s; border-bottom: 0; }
+.cortina.cubre .banda { transform: scaleX(1); }
+.cortina.saliendo .banda { transform-origin: right; }
+.cortina.cubre { pointer-events: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cortina .banda { transition-duration: .01s; }
+}

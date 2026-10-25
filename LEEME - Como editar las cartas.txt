@@ -1,0 +1,125 @@
+====================================================================
+  PRESENTACIÓN GRUPO CARGO — CÓMO EDITAR LA PORTADA Y LAS CARTAS
+====================================================================
+
+VER LA PRESENTACIÓN
+-------------------
+Doble clic en "index.html" (se abre en Chrome o Edge).
+Se recomienda pantalla completa: tecla F11.
+
+Controles:
+  • Mover el mouse ............ efecto de profundidad
+  • Pasar sobre una carta ..... la carta viaja al centro, se levanta y se ilumina
+  • Clic en una carta ......... abre su diapositiva
+  • Rueda del mouse ........... girar el carrusel hacia un lado o el otro
+  • Flechas ← → ............... girar el carrusel carta por carta
+  • Enter ..................... abrir la carta del frente
+  • Números 1 a 9 ............. abrir esa carta directamente
+  • Esc (en una diapositiva) .. volver a la portada
+
+
+CAMBIAR TEXTOS O CARTAS
+-----------------------
+Todo se cambia en UN solo archivo:  datos\cartas.js
+
+1. Clic derecho sobre "cartas.js" → Abrir con → Bloc de notas.
+2. Cambiá SOLO lo que está entre comillas "..." o los números.
+3. Guardá (Ctrl + G o Ctrl + S).
+4. Volvé a la presentación y apretá F5 para recargar.
+
+
+CAMBIAR LAS PALABRAS QUE FLOTAN ALREDEDOR
+-----------------------------------------
+En datos\cartas.js, dentro de "palabras: [ ... ]", hay una lista así:
+
+    "Trazabilidad",
+    "Cross docking",
+    "Última milla"
+
+• Cada palabra o frase va entre comillas y separada por coma
+  (la última no lleva coma).
+• Conviene que sean cortas (1 a 4 palabras).
+• "palabrasSimultaneas" define cuántas se ven a la vez (recomendado: 3 a 5).
+
+
+AGREGAR UNA CARTA NUEVA
+-----------------------
+En datos\cartas.js cada carta es un bloque así:
+
+  {
+    titulo: "Almacenamiento",
+    portada: "img/cartas/almacenamiento.jpg",
+    destino: "slides/almacenamiento/index.html"
+  },
+
+Para agregar una:
+1. Copiá un bloque completo, desde la llave { hasta la llave },
+   INCLUIDA la coma final.
+2. Pegalo debajo del último bloque.
+3. Cambiá título, portada y destino.
+
+Para quitar una carta: borrá el bloque completo con su coma.
+Para cambiar el orden: mové los bloques de lugar.
+
+
+PONER LA IMAGEN DE PORTADA DE UNA CARTA
+---------------------------------------
+1. Exportá la imagen desde Illustrator a 1200 × 800 px (horizontal),
+   en JPG o WEBP.
+2. Guardala en la carpeta  img\cartas
+   Usá nombres sin espacios, sin tildes y en minúscula,
+   por ejemplo: almacenamiento.jpg
+3. En cartas.js escribí la ruta:  portada: "img/cartas/almacenamiento.jpg"
+   (con barras /  hacia adelante).
+
+Si la imagen no se encuentra, la carta se muestra como vidrio sin
+imagen, así que no se rompe nada: revisá el nombre del archivo.
+
+
+TEXTOS DE LAS DIAPOSITIVAS
+--------------------------
+Cada diapositiva tiene su archivo de textos en la carpeta datos\
+  • datos\quienes-somos.js → "¿Quiénes somos?": frase del camión, historia,
+    línea de tiempo (años, fotos y textos) y números.
+Para poner una parte en negrita, encerrala entre dos asteriscos:
+  "**Grupo CARGO** es una empresa..."
+
+Línea de tiempo:
+  • Cada año es un bloque { anio, foto, hitos }. Se pueden agregar o quitar
+    años: la línea se reacomoda sola.
+  • Las fotos van en la carpeta img\linea-de-tiempo y se escriben así:
+      foto: "img/linea-de-tiempo/1980.jpg"
+    Se muestran automáticamente como grabado en blanco y negro.
+    Quedan mejor las fotos recortadas (PNG con fondo transparente).
+  • Sin foto, se muestra una ilustración. Se elige con "dibujo":
+    camion-clasico, fabrica, alimentos, autoelevador, contenedor, camion-moderno
+
+Sedes del mapa:
+  • En "sedes" cada ubicación tiene país (AR o BR), ciudad, detalle y
+    coordenadas lon / lat (se copian de Google Maps: clic derecho sobre
+    el lugar; el primer número es lat y el segundo lon).
+  • principal: true marca la sede de la que sale la línea de la tarjeta.
+
+Números:
+  • "valor" se escribe SIN puntos (372000, no 372.000): la presentación
+    pone los puntos sola y lo anima contando.
+  • Íconos disponibles: ubicacion, deposito, racks, personas, camion, ruta,
+    contenedor.
+
+
+SI ALGO DEJA DE FUNCIONAR
+-------------------------
+Casi siempre es una coma o unas comillas que se borraron.
+  • Cada línea dentro de un bloque termina en coma, menos la última.
+  • Los textos siempre van entre comillas "así".
+  • Si un texto necesita comillas adentro, usá simples: "La 'mejor' opción".
+Si no lo encontrás, pedí ayuda antes de seguir editando.
+
+
+QUÉ HAY EN CADA CARPETA (no hace falta tocarlas)
+------------------------------------------------
+  datos\        → textos y cartas editables (esto sí se toca)
+  img\          → imágenes (landing = portada, cartas = miniaturas)
+  slides\       → una carpeta por diapositiva
+  landing\      → diseño y animación de la portada
+  compartido\   → colores, tipografías y transiciones comunes

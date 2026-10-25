@@ -1,0 +1,608 @@
+/* =========================================================
+   ¿QUIÉNES SOMOS? — medidas en px sobre el escenario 1600×900
+   ========================================================= */
+
+/* Rojo exacto del fondo de 45 años, para que no se note la unión */
+:root { --rojo-seccion: #EF4529; }
+
+.fondo {
+  position: fixed;
+  inset: 0;
+  background: var(--blanco) url(../../img/landing/fondo.jpg) center / cover no-repeat;
+}
+
+/* ---------- Capa fija ---------- */
+.fijo { position: absolute; inset: 0; }
+
+.logo {
+  position: absolute;
+  left: 541px;
+  top: 165px;
+  width: 518px;
+  opacity: 0;
+  translate: 0 20px;
+  transition: opacity 1s ease .2s, translate 1.2s cubic-bezier(.2, .8, .2, 1) .2s;
+}
+
+.pregunta {
+  position: absolute;
+  top: 482px;
+  width: 100%;
+  text-align: center;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 52px;
+  letter-spacing: -.01em;
+  color: var(--gris);
+  opacity: 0;
+  translate: 0 16px;
+  transition: opacity 1s ease .45s, translate 1.2s cubic-bezier(.2, .8, .2, 1) .45s;
+}
+
+body.lista .logo, body.lista .pregunta { opacity: 1; translate: 0 0; }
+
+/* ---------- Pista que se desliza ---------- */
+.pista {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  will-change: transform;
+}
+.pista section { position: relative; width: 1600px; }
+
+/* Las secciones rojas se extienden a los costados en pantallas más anchas que 16:9 */
+.seccion-45::before, .seccion-linea::before, .seccion-mapa::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100vw;
+  right: -100vw;
+  background: var(--rojo-seccion);
+  z-index: -1;
+}
+.seccion-45, .seccion-linea, .seccion-mapa { z-index: 0; }
+
+/* 1. Franjas en V */
+.seccion-franjas { height: 900px; }
+.franjas {
+  position: absolute;
+  left: -800px;
+  top: 0;
+  width: 3200px;
+  height: 900px;
+  overflow: visible;
+  /* entra desde abajo al cargar */
+  translate: 0 140px;
+  transition: translate 1.3s cubic-bezier(.2, .8, .2, 1) .3s;
+}
+body.lista .franjas { translate: 0 0; }
+
+.indicador-scroll {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 852px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 251, 243, .85);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+body.lista .indicador-scroll { opacity: 1; transition-delay: 1.4s; }
+body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
+.indicador-scroll i {
+  display: block;
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(rgba(255, 251, 243, .9), rgba(255, 251, 243, 0));
+  animation: gota 1.8s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes gota {
+  0% { transform: scaleY(0); opacity: 1; }
+  60% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* 2. 45 años */
+.seccion-45 {
+  height: 900px;
+  margin-top: -1px;   /* evita cualquier línea entre secciones */
+}
+.fondo-45 {
+  position: absolute;
+  left: -1px;          /* recorta el píxel de borde que trae la imagen */
+  top: 0;
+  width: 1602px;
+  height: 900px;
+  object-fit: cover;
+}
+.camion {
+  position: absolute;
+  left: 209px;
+  top: 270px;
+  width: 1140px;
+  filter: drop-shadow(0 30px 30px rgba(120, 25, 10, .25));
+  will-change: transform;
+}
+.lema {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 733px;
+  text-align: center;
+  font-size: 44px;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -.005em;
+  color: var(--blanco);
+}
+
+/* 3. Línea de tiempo
+   Fondo (también hacia los costados): rojo, línea blanca, rojo, línea clara,
+   franja gris y blanco base. */
+.seccion-linea {
+  height: 900px;
+  margin-top: -1px;
+}
+.seccion-linea::before {
+  left: -100vw;
+  right: -100vw;
+  background: linear-gradient(to bottom,
+    var(--rojo-seccion) 0 534.5px,
+    #FFF9F4 534.5px 544.5px,
+    var(--rojo-seccion) 544.5px 579px,
+    #FFF9F4 579px 590px,
+    var(--gris) 590px 625px,
+    var(--blanco) 625px);
+}
+.linea-sombra {
+  position: absolute;
+  left: -200px;
+  right: -200px;
+  top: 321px;
+  height: 190px;
+  background: radial-gradient(ellipse 42% 100% at 50% 0%, rgba(222, 24, 0, .66), rgba(222, 24, 0, .2) 45%, transparent 75%);
+}
+.linea-titulo {
+  position: absolute;
+  left: 66px;
+  top: 71px;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--blanco);
+}
+.historia {
+  position: absolute;
+  left: 67px;
+  top: 173px;
+  width: 1400px;
+  font-size: 35.5px;
+  font-weight: 400;
+  line-height: 42.5px;
+  color: var(--blanco);
+}
+.historia strong { font-weight: 700; }
+
+/* Años: el seleccionado grande y opaco, el resto chico al 33 % */
+.anio {
+  position: absolute;
+  top: 352px;            /* centro vertical de los números grandes: 414 px */
+  width: 300px;
+  height: 114px;
+  margin-left: -150px;   /* centrado sobre su punto */
+  text-align: center;
+  scale: .6;
+  translate: 0 -4px;
+  opacity: .33;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 114px;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--blanco);
+  cursor: pointer;
+  transition: scale .7s cubic-bezier(.2, .8, .2, 1), opacity .7s ease, translate .7s cubic-bezier(.2, .8, .2, 1);
+}
+.anio:hover { opacity: .6; }
+.anio.activo { scale: 1; opacity: 1; translate: 0 0; cursor: default; }
+
+.punto {
+  position: absolute;
+  top: 539.5px;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  background: #FFF9F4;
+  cursor: pointer;
+  transition: scale .3s ease;
+}
+.punto:hover { scale: 1.15; }
+
+/* Marcador del año: un círculo blanco que cambia de tamaño (56 px seleccionado,
+   34 px como el resto de los puntos) y un punto rojo que aparece y desaparece.
+   La secuencia la anima diapositiva.js. */
+.selector {
+  position: absolute;
+  left: 0;
+  top: 539.5px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.sel-blanco {
+  position: absolute;
+  left: -28px;
+  top: -28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #FFF9F4;
+}
+.sel-rojo {
+  position: absolute;
+  left: -16.5px;
+  top: -16.5px;
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  background: var(--rojo-seccion);
+}
+.sel-tallo {
+  position: absolute;
+  left: -5px;
+  top: 26px;
+  width: 10px;
+  height: 41.5px;
+  border-radius: 0 0 5px 5px;
+  background: #FFF9F4;
+  transform-origin: top;
+}
+
+/* Contenido del año: ilustración estilo grabado y textos */
+.hito { position: absolute; left: 0; top: 625px; width: 1180px; height: 275px; }
+.hito-foto {
+  position: absolute;
+  left: 40px;
+  top: 12px;
+  width: 380px;
+  height: 250px;
+}
+.grabado-fondo {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 30%;
+  height: 100%;
+  background: var(--rojo);
+}
+.grabado { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+/* Las fotos reales se convierten en grabado con el filtro #gr-foto */
+.foto-grabada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: url(#gr-foto);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%);
+}
+
+.hito-texto {
+  position: absolute;
+  left: 460px;
+  top: 30px;
+  width: 660px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.hito-texto li {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  column-gap: 18px;
+  align-items: baseline;
+  padding-left: 22px;
+  border-left: 2px solid rgba(239, 69, 41, .35);
+}
+.hito-texto li b {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--rojo);
+}
+.hito-texto li span {
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.3;
+  color: var(--gris);
+}
+.hito-texto li span strong { font-weight: 600; }
+.hito-texto li.sin-anio { grid-template-columns: 1fr; }
+.hito-texto li.sin-anio span { font-size: 34px; line-height: 1.25; }
+
+/* Navegación de la línea de tiempo */
+.linea-nav {
+  position: absolute;
+  right: 68px;
+  top: 652px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.linea-contador {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--fuente-titulo);
+  line-height: 1;
+}
+.linea-contador b { font-weight: 700; font-size: 72px; color: var(--rojo); }
+.linea-contador span { font-weight: 500; font-size: 24px; color: rgba(58, 58, 58, .45); }
+.linea-botones { display: flex; gap: 12px; margin-top: 22px; }
+.linea-botones button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(58, 58, 58, .25);
+  background: transparent;
+  color: var(--gris);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .25s ease, border-color .25s ease, color .25s ease, opacity .25s ease;
+}
+.linea-botones button:hover:not(:disabled) { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
+.linea-botones button:disabled { opacity: .3; cursor: default; }
+.linea-botones svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 4. Mapa y números */
+.seccion-mapa {
+  height: 900px;
+  margin-top: -1px;
+}
+.seccion-mapa::before { background: var(--blanco); }
+
+/* Mapa extruido: cada capa es un SVG dibujado al doble de resolución y reducido
+   a la mitad, así se ve nítido aunque esté inclinado en 3D. */
+.mapa {
+  position: absolute;
+  left: 800px;
+  top: 0;
+  width: 800px;
+  height: 900px;
+  perspective: 1500px;
+  perspective-origin: 50% 40%;
+  pointer-events: none;   /* solo responden los países (.toque) */
+}
+.mapa-giro { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+.mapa-plano {
+  position: absolute;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  transform: rotateX(80deg) rotateZ(-16deg) translateZ(-260px) scale(.8);
+  opacity: 0;
+  transition: transform 1.8s cubic-bezier(.2, .8, .2, 1), opacity 1s ease;
+}
+.mapa.visible .mapa-plano { transform: rotateX(42deg) rotateZ(-8deg); opacity: 1; }
+.capa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: scale(.5);
+  transform-origin: 0 0;
+  overflow: visible;
+  pointer-events: none;
+}
+/* La altura del país levantado y el largo de sus lados los anima diapositiva.js */
+.pais {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.pais .toque { pointer-events: visiblePainted; cursor: pointer; }
+
+/* Sedes: alfiler que se para sobre el país levantado */
+.sede { position: absolute; width: 0; height: 0; transform-style: preserve-3d; }
+.sede-onda {
+  position: absolute;
+  left: -9px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--blanco);
+  opacity: 0;
+}
+.sede-alfiler {
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: 2px;
+  height: 30px;
+  background: linear-gradient(var(--blanco), rgba(255, 251, 243, .45));
+  transform-origin: 50% 100%;
+  transform: rotateZ(8deg) rotateX(-42deg) scaleY(0);
+  transition: transform .35s ease;
+}
+.sede-alfiler::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: -12px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--rojo) 0 3.5px, var(--blanco) 4px);
+  box-shadow: 0 3px 8px rgba(120, 30, 10, .35);
+}
+.pais.levantado .sede-alfiler {
+  transform: rotateZ(8deg) rotateX(-42deg) scaleY(1);
+  transition: transform .55s cubic-bezier(.3, 1.5, .5, 1);
+  transition-delay: calc(.35s + var(--i) * .09s);
+}
+.pais.levantado .sede-onda { animation: onda 2.2s ease-out infinite; animation-delay: calc(.6s + var(--i) * .09s); }
+@keyframes onda {
+  0% { transform: scale(.3); opacity: .9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Tarjetas de vidrio de cada país */
+.mapa-info { position: absolute; inset: 0; pointer-events: none; }
+.mapa-lineas { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; }
+.mapa-lineas path {
+  fill: none;
+  stroke: var(--gris);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 6;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.mapa-lineas path.visible { opacity: 1; transition-delay: .5s; }
+.mapa-lineas circle { fill: var(--gris); opacity: 0; transition: opacity .4s ease; }
+.mapa-lineas circle.visible { opacity: 1; transition-delay: .5s; }
+.tarjeta-pais {
+  position: absolute;
+  width: 270px;
+  padding: 18px 20px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .55);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, .95);
+  box-shadow: 0 24px 50px -24px rgba(120, 40, 20, .45), inset 0 1px 0 #fff;
+  opacity: 0;
+  translate: 0 14px;
+  transition: opacity .4s ease, translate .6s cubic-bezier(.2, .8, .2, 1);
+}
+.tarjeta-pais.visible { opacity: 1; translate: 0 0; transition-delay: .4s; }
+.tp-cabeza { display: flex; align-items: center; gap: 12px; }
+.tp-cabeza svg { width: 30px; height: 30px; fill: var(--rojo); flex: none; }
+.tp-titulo { font-family: var(--fuente-titulo); font-weight: 700; font-size: 26px; line-height: 1; color: var(--gris); }
+.tp-sub { margin-top: 4px; font-size: 10.5px; letter-spacing: .12em; white-space: nowrap; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+.tp-lista {
+  list-style: none;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(58, 58, 58, .12);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.tp-lista li { display: grid; grid-template-columns: 10px 1fr; column-gap: 10px; }
+.tp-lista li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(239, 69, 41, .18);
+}
+.tp-lista b { display: block; font-size: 15px; font-weight: 600; color: var(--gris); }
+.tp-lista span { display: block; font-size: 12.5px; font-weight: 300; line-height: 1.35; color: rgba(58, 58, 58, .78); }
+
+.numeros { position: absolute; left: 80px; top: 112px; width: 680px; }
+.numeros-titulo {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--gris);
+}
+.numeros-lista { list-style: none; margin-top: 26px; border-top: 1px solid rgba(58, 58, 58, .15); }
+.numero {
+  display: grid;
+  grid-template-columns: 44px 250px 1fr;
+  column-gap: 24px;
+  align-items: center;
+  height: 88px;
+  border-bottom: 1px solid rgba(58, 58, 58, .15);
+  opacity: 0;
+  translate: -40px 0;
+  transition: opacity .8s ease, translate 1s cubic-bezier(.2, .8, .2, 1);
+  transition-delay: calc(var(--i) * .12s);
+}
+.numero.visible { opacity: 1; translate: 0 0; }
+/* Íconos sólidos rojos, sin fondo */
+.numero-icono {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  scale: .4;
+  transition: scale .8s cubic-bezier(.3, 1.6, .5, 1);
+  transition-delay: calc(var(--i) * .12s + .2s);
+}
+.numero.visible .numero-icono { scale: 1; }
+.numero-icono svg { width: 40px; height: 40px; fill: var(--rojo); }
+.numero-icono svg .trazo { fill: none; stroke: var(--rojo); stroke-width: 2.4; stroke-linecap: round; }
+.numero-valor {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 1;
+  color: var(--gris);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.numero-valor .pre { color: var(--rojo); }
+.numero-valor .suf { font-weight: 500; font-size: 30px; margin-left: 4px; }
+.numero-texto { font-size: 21px; font-weight: 300; line-height: 1.3; color: var(--gris); }
+
+/* Aparición suave */
+.aparece {
+  opacity: 0;
+  translate: 0 30px;
+  transition: opacity 1s ease, translate 1.2s cubic-bezier(.2, .8, .2, 1);
+}
+.aparece.visible { opacity: 1; translate: 0 0; }
+
+/* ---------- Interfaz fija ---------- */
+.volver, .sello {
+  position: absolute;
+  top: 40px;
+  z-index: 10;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 251, 243, .82);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.volver {
+  left: 80px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--gris);
+  text-decoration: none;
+}
+.volver span {
+  margin-left: 6px;
+  padding: 0 5px;
+  border: 1px solid rgba(58, 58, 58, .3);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 400;
+}
+.volver:hover { color: var(--rojo); }
+.sello { right: 80px; color: rgba(58, 58, 58, .7); }

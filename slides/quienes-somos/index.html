@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>¿Quiénes somos? — Grupo CARGO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../../compartido/base.css">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body data-volver="../../index.html">
+
+  <div class="fondo"></div>
+
+  <main class="escenario">
+
+    <!-- Capa fija: logo y pregunta (no se mueven con el scroll) -->
+    <div class="fijo">
+      <img class="logo" src="../../img/marca/logo-cargo.png" alt="Grupo CARGO">
+      <p class="pregunta"></p>
+    </div>
+
+    <!-- Pista: todo lo que se desliza hacia arriba con el scroll -->
+    <div class="pista">
+
+      <!-- 1. Franjas en V que tapan el logo al subir -->
+      <section class="seccion-franjas">
+        <svg class="franjas" viewBox="-800 0 3200 900" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="indicador-scroll"><span>Deslizá</span><i></i></div>
+      </section>
+
+      <!-- 2. 45 años -->
+      <section class="seccion-45">
+        <img class="fondo-45" src="../../img/slides/quienes-somos/fondo-45.png" alt="45 años">
+        <img class="camion" src="../../img/slides/quienes-somos/camion.webp" alt=""
+             data-paralaje="-0.12">
+        <p class="lema aparece"></p>
+      </section>
+
+      <!-- 3. Línea de tiempo (años, fotos y textos desde datos/quienes-somos.js) -->
+      <section class="seccion-linea">
+        <div class="linea-sombra"></div>
+        <h2 class="linea-titulo"></h2>
+        <p class="historia"></p>
+        <div class="anios"></div>
+        <div class="puntos"></div>
+        <div class="selector"><span class="sel-blanco"></span><span class="sel-rojo"></span><i class="sel-tallo"></i></div>
+        <div class="hito">
+          <div class="hito-foto"></div>
+          <ul class="hito-texto"></ul>
+        </div>
+        <div class="linea-nav">
+          <p class="linea-contador"><b>01</b><span>/ 06</span></p>
+          <div class="linea-botones">
+            <button class="anterior" aria-label="Año anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <button class="siguiente" aria-label="Año siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Números y mapa de sedes -->
+      <section class="seccion-mapa">
+        <div class="numeros">
+          <h2 class="numeros-titulo aparece"></h2>
+          <ul class="numeros-lista"></ul>
+        </div>
+        <div class="mapa">
+          <div class="mapa-giro"><div class="mapa-plano"></div></div>
+        </div>
+        <!-- Tarjetas de cada país y líneas hacia la sede principal -->
+        <div class="mapa-info"><svg class="mapa-lineas" viewBox="0 0 1600 900" aria-hidden="true"></svg></div>
+      </section>
+
+    </div>
+
+    <!-- Interfaz fija por encima de todo -->
+    <a class="volver" href="../../index.html" data-transicion>← Volver <span>Esc</span></a>
+    <p class="sello"><b>01</b> | Quiénes somos</p>
+  </main>
+
+  <div class="grano"></div>
+  <div class="cortina cubre"><div class="banda"></div><div class="banda"></div><div class="banda"></div></div>
+
+  <script src="../../datos/quienes-somos.js"></script>
+  <script src="../../compartido/base.js"></script>
+  <script src="mapa-sudamerica.js"></script>
+  <script src="grabados.js"></script>
+  <script src="diapositiva.js"></script>
+  <script src="../../compartido/desplazamiento.js"></script>
+</body>
+</html>

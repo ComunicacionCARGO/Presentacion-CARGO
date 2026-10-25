@@ -1,0 +1,304 @@
+/* =========================================================
+   PORTADA — operario, título y carrusel de cartas de vidrio
+   Medidas en px sobre el escenario de 1600×900.
+   ========================================================= */
+
+.fondo {
+  position: fixed;
+  inset: -40px;
+  background: var(--blanco) url(../img/landing/fondo.jpg) center / cover no-repeat;
+  will-change: transform;
+}
+
+.hud-sello { position: absolute; top: 46px; right: 80px; }
+
+/* ---------- Títulos ---------- */
+.textos { position: absolute; inset: 0; text-align: center; will-change: transform; }
+
+.antetitulo {
+  position: absolute;
+  top: 75px;
+  width: 100%;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 74px;
+  letter-spacing: -.03em;
+  color: var(--gris);
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1s ease .25s, transform 1.2s cubic-bezier(.2, .8, .2, 1) .25s;
+}
+
+.titulo {
+  position: absolute;
+  top: 132px;
+  width: 100%;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 266px;
+  line-height: 1.1;
+  letter-spacing: .005em;
+  overflow: hidden;
+}
+.titulo span {
+  display: inline-block;
+  background: linear-gradient(180deg, #EE4029 18%, #F2662F 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transform: translateY(105%);
+  transition: transform 1.1s cubic-bezier(.2, .9, .15, 1);
+  transition-delay: calc(.35s + var(--i) * .06s);
+}
+
+body.lista .antetitulo { opacity: 1; transform: none; }
+body.lista .titulo span { transform: none; }
+
+/* ---------- Caminos: palabras que convergen hacia las cartas ---------- */
+.caminos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity .6s ease;
+  will-change: transform;
+}
+body.abriendo .caminos { opacity: 0; }
+.caminos svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 900px;
+  overflow: visible;
+}
+
+.palabra {
+  position: absolute;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-weight: 200;
+  font-style: italic;
+  letter-spacing: .01em;
+  color: rgba(58, 58, 58, .45);
+  opacity: 0;
+  filter: blur(6px);
+  translate: 0 8px;
+  transition: opacity 2s ease, filter 2s ease, translate 2.6s cubic-bezier(.2, .8, .2, 1);
+}
+.palabra.visible { opacity: 1; filter: blur(0); translate: 0 0; }
+
+.camino { opacity: 0; transition: opacity 2.2s ease; }
+.camino.visible { opacity: 1; }
+.camino path {
+  fill: none;
+  stroke-width: .7;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 3.4s cubic-bezier(.45, 0, .2, 1) .5s;
+}
+.camino.visible path, .camino.saliendo path { stroke-dashoffset: 0; }
+
+/* ---------- Escena 3D ----------
+   Cada carta es un objeto 3D independiente (no comparten un mismo espacio 3D):
+   así el navegador no las recorta entre sí y el vidrio se ve limpio.
+   El orden adelante/atrás del operario lo calcula landing.js con z-index. */
+.mundo {
+  position: absolute;
+  inset: 0;
+  perspective: 1600px;
+  perspective-origin: 800px 450px;
+  pointer-events: none;
+}
+
+.operario {
+  position: absolute;
+  z-index: 1000;
+  left: 504px;
+  top: 259px;
+  width: 581px;
+  transform-origin: 296px 409px;   /* centro del carrusel */
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  translate: 0 70px;
+  transition: opacity 1s ease .15s, translate 1.4s cubic-bezier(.2, .8, .2, 1) .15s;
+}
+body.lista .operario { opacity: 1; translate: 0 0; }
+
+/* ---------- Cartas de vidrio curvas ----------
+   Cada carta tiene 4 capas, de atrás hacia adelante:
+   1. .carta-base    (SVG)  sombra y halo naranja
+   2. .carta-vidrio         vidrio esmerilado: copia desenfocada del operario + tinte
+   3. .tira (×10)           franjas planas que siguen el cilindro: imagen y texto
+   4. .carta-reflejo (SVG)  borde, reflejo y luz del cursor
+   landing.js calcula en cada cuadro la silueta curva de la carta
+   y la usa para recortar el vidrio y dibujar las capas en vector. */
+.carta {
+  position: absolute;
+  inset: 0;
+  perspective: 1600px;
+  perspective-origin: 800px 450px;
+  pointer-events: none;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.carta-base, .carta-reflejo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 900px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.carta-vidrio {
+  position: absolute;
+  inset: 0;
+  perspective: 1600px;
+  perspective-origin: 800px 450px;
+  pointer-events: none;
+}
+.vidrio-operario {
+  position: absolute;
+  left: 504px;
+  top: 259px;
+  width: 581px;
+  transform-origin: 296px 409px;
+}
+.vidrio-tinte {
+  position: absolute;
+  background: linear-gradient(160deg, rgba(255, 255, 255, .55), rgba(255, 232, 220, .3) 55%, rgba(239, 69, 41, .16));
+}
+
+.tira {
+  position: absolute;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.carta.atras .tira { pointer-events: none; }
+
+/* Contenido de la carta: se dibuja a resolución --f (2× o más) y se reduce,
+   así la imagen y el texto se ven nítidos aunque la carta se agrande. */
+.contenido {
+  position: absolute;
+  top: 0;
+  width: calc(260px * var(--f));
+  height: calc(174px * var(--f));
+  border-radius: calc(18px * var(--f));
+  overflow: hidden;
+}
+
+.portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.marca-agua {
+  position: absolute;
+  right: calc(14px * var(--f));
+  top: calc(2px * var(--f));
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: calc(96px * var(--f));
+  line-height: 1;
+  color: rgba(239, 69, 41, .16);
+}
+
+.etiqueta {
+  position: absolute;
+  left: calc(12px * var(--f));
+  bottom: calc(12px * var(--f));
+  display: flex;
+  align-items: baseline;
+  gap: calc(8px * var(--f));
+  padding: calc(6px * var(--f)) calc(12px * var(--f)) calc(6px * var(--f)) calc(10px * var(--f));
+  border-radius: calc(10px * var(--f));
+  background: #FFFBF3;
+}
+.etiqueta b {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: calc(15px * var(--f));
+  color: var(--rojo);
+}
+.etiqueta span {
+  font-weight: 600;
+  font-size: calc(15px * var(--f));
+  color: var(--gris);
+  white-space: nowrap;
+}
+
+/* ---------- Indicadores (HUD) ---------- */
+.hud-ayuda {
+  position: absolute;
+  left: 80px;
+  top: 48px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(58, 58, 58, .5);
+}
+.hud-ayuda i { font-style: normal; margin: 0 5px; }
+.hud-ayuda kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin-right: 2px;
+  padding: 0 4px;
+  border: 1px solid rgba(58, 58, 58, .3);
+  border-radius: 3px;
+  font-family: var(--fuente-texto);
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+}
+
+.isologo {
+  position: absolute;
+  left: 80px;
+  bottom: 44px;
+  height: 62px;
+}
+
+.hud-carta {
+  position: absolute;
+  right: 80px;
+  bottom: 42px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--gris);
+}
+.hud-num {
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--rojo);
+}
+.hud-total {
+  font-family: var(--fuente-titulo);
+  font-weight: 500;
+  font-size: 18px;
+  color: rgba(58, 58, 58, .5);
+}
+.hud-nom {
+  margin-left: 6px;
+  padding-left: 14px;
+  border-left: 2px solid var(--rojo);
+  font-weight: 600;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.hud-ayuda, .hud-carta, .hud-sello, .isologo { opacity: 0; transition: opacity 1s ease 1.2s; }
+body.lista .hud-ayuda, body.lista .hud-carta, body.lista .hud-sello, body.lista .isologo { opacity: 1; }
