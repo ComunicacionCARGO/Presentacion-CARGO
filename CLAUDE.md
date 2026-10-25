@@ -69,10 +69,17 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
    - Imagen del año: ilustraciones estilo grabado (`grabados.js`, SVG con tramas). Las fotos reales se convierten en grabado con el filtro `#gr-foto`.
 4. **Números y mapa**:
    - Los números cuentan animados.
-   - El mapa usa contornos reales (`mapa-sudamerica.js`, Natural Earth 50m, generado con `herramientas/extraer-sudamerica.ps1`).
+   - El mapa usa contornos reales **estilizados** (`mapa-sudamerica.js`, Natural Earth 50m, generado con `herramientas/extraer-sudamerica.ps1 -Tolerancia 0.3 -AreaMinima 1.5`).
+     - Se simplifica **cada tramo de frontera** una vez, así los vecinos siguen encajando.
+     - Se descartan las islas chicas.
+     - En JS los bordes se dibujan con curvas cuadráticas por los puntos medios, para que no se vea "low poly".
    - Todo el continente es una pieza de vidrio color fondo, sin fronteras visibles. Laterales en sombra, brillo rojo suave alrededor. Argentina y Brasil van en rojo suave y se levantan en rojo intenso, con los lados estirados hasta la base.
    - Las sedes aparecen como alfileres con tarjetas de vidrio y una línea punteada.
-   - **Rendimiento:** las capas fijas del mapa se pintan **una sola vez** en canvas (SVG → imagen → canvas). Solo los lados del país levantado se repintan, y solo mientras sube o baja. No volver a SVG en vivo con filtros: trababa la aparición del mapa.
+   - **Rendimiento:**
+     - Las capas fijas del mapa se pintan **una sola vez** en canvas (SVG → imagen → canvas).
+     - Las capas de cada país ocupan solo el recuadro del país.
+     - Solo los lados del país levantado se repintan, y solo mientras sube o baja.
+     - No volver a SVG en vivo con filtros ni a contornos de alto detalle: trababan la aparición del mapa.
 
 ### Pendientes conocidos
 

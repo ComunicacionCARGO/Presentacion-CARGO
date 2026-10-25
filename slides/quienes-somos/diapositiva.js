@@ -286,8 +286,30 @@
   const W = 540;                                     // ancho del mapa en pantalla
   const ESC = W / (mxx - mnx), H = Math.round((mxy - mny) * ESC);
   const aPlano = (p) => { const [x, y] = merc(p); return [(x - mnx) * ESC, (y - mny) * ESC]; };
-  const trazo = (anillos) => anillos.map((r) =>
-    'M' + r.map((p) => aPlano(p).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z').join('');
+  // Bordes con curvas suaves: cada vértice es punto de control de una curva que pasa
+  // por los puntos medios. Así el contorno simplificado se ve estilizado y no "low poly".
+  // (Los países vecinos comparten los mismos vértices de frontera, así que siguen encajando.)
+  const fmt = (p) => p[0].toFixed(1) + ',' + p[1].toFixed(1);
+  const medio = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const trazo = (anillos) => anillos.map((r) => {
+    const p = r.map(aPlano);
+    const u = p[p.length - 1];
+    if (p.length > 1 && u[0] === p[0][0] && u[1] === p[0][1]) p.pop();   // anillo cerrado: sin el punto repetido
+    const n = p.length;
+    let d = 'M' + fmt(medio(p[n - 1], p[0]));
+    for (let i = 0; i < n; i++) d += 'Q' + fmt(p[i]) + ' ' + fmt(medio(p[i], p[(i + 1) % n]));
+    return d + 'Z';
+  }).join('');
+  // Recuadro de un país en el plano (para que sus capas ocupen solo ese espacio)
+  const cajaDe = (k) => {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    GEO[k].forEach((r) => r.forEach((pt) => {
+      const [x, y] = aPlano(pt);
+      if (x < x0) x0 = x; if (x > x1) x1 = x;
+      if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }));
+    return { x: Math.floor(x0), y: Math.floor(y0), w: Math.ceil(x1 - x0) + 1, h: Math.ceil(y1 - y0) + 1 };
+  };
   const DIBUJO = {};
   Object.keys(GEO).forEach((k) => { DIBUJO[k] = trazo(GEO[k]); });
 
@@ -321,22 +343,25 @@
   // Rendimiento: las capas que no cambian (base, caras) se dibujan UNA sola vez al cargar,
   // en un lienzo al doble de resolución. Al aparecer el mapa, el navegador solo las mueve.
   const MARGEN = 50;   // espacio alrededor del lienzo para el brillo, la sombra y los lados
-  function lienzo(clase, padre) {
+  const CAJA_MAPA = { x: 0, y: 0, w: W, h: H };
+  // Cada lienzo cubre solo su recuadro (todo el mapa, o un país) más el margen
+  function lienzo(clase, padre, caja = CAJA_MAPA) {
     const c = document.createElement('canvas');
     c.className = 'capa ' + clase;
-    c.width = (W + MARGEN * 2) * 2;
-    c.height = (H + MARGEN * 2) * 2;
-    c.style.left = c.style.top = -MARGEN + 'px';
+    c.width = (caja.w + MARGEN * 2) * 2;
+    c.height = (caja.h + MARGEN * 2) * 2;
+    c.style.left = caja.x - MARGEN + 'px';
+    c.style.top = caja.y - MARGEN + 'px';
     (padre || plano).appendChild(c);
     return c;
   }
-  function lienzoDesdeSvg(clase, contenido, padre) {
-    const c = lienzo(clase, padre);
+  function lienzoDesdeSvg(clase, contenido, padre, caja = CAJA_MAPA) {
+    const c = lienzo(clase, padre, caja);
     const img = new Image();
     img.onload = () => { c.getContext('2d').drawImage(img, 0, 0); URL.revokeObjectURL(img.src); };
     img.src = URL.createObjectURL(new Blob([
       `<svg xmlns="http://www.w3.org/2000/svg" width="${c.width}" height="${c.height}" ` +
-      `viewBox="${-MARGEN} ${-MARGEN} ${W + MARGEN * 2} ${H + MARGEN * 2}">${contenido}</svg>`
+      `viewBox="${caja.x - MARGEN} ${caja.y - MARGEN} ${caja.w + MARGEN * 2} ${caja.h + MARGEN * 2}">${contenido}</svg>`
     ], { type: 'image/svg+xml' }));
     return c;
   }
@@ -386,19 +411,20 @@
   const paises = {};
   PAISES.forEach((k) => {
     const el = crear('div', 'pais', plano);
+    const caja = cajaDe(k);
     // Los lados se pintan en un lienzo solo mientras el país sube o baja
-    const capaLados = lienzo('lados', el);
+    const capaLados = lienzo('lados', el, caja);
     // Cara en rojo suave (indica que se puede seleccionar) con el mismo reflejo de vidrio
     // que la base; encima, la roja intensa que aparece al levantarse
     lienzoDesdeSvg('cara',
       `<defs><linearGradient id="pcc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FAD0C1"/><stop offset="1" stop-color="#F3A38B"/></linearGradient>` +
       BRILLO('pcb') + `<clipPath id="pcr"><path d="${DIBUJO[k]}"/></clipPath></defs>` +
       `<path d="${DIBUJO[k]}" fill="url(#pcc)" stroke="url(#pcc)" ${SIN_COSTURA}/>` +
-      `<rect width="${W}" height="${H}" fill="url(#pcb)" clip-path="url(#pcr)" opacity=".55"/>`, el);
+      `<rect width="${W}" height="${H}" fill="url(#pcb)" clip-path="url(#pcr)" opacity=".55"/>`, el, caja);
     const caraRoja = lienzoDesdeSvg('cara-roja',
       '<defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1">' +
       '<stop offset="0" stop-color="#F7916B"/><stop offset=".55" stop-color="#EF4529"/><stop offset="1" stop-color="#E23A1F"/></linearGradient></defs>' +
-      `<path d="${DIBUJO[k]}" fill="url(#pc)"/>`, el);
+      `<path d="${DIBUJO[k]}" fill="url(#pc)"/>`, el, caja);
     siluetas('toque-pais', [k], el);
 
     // Sedes de este país
@@ -415,7 +441,7 @@
     capaLados.style.opacity = 0;
     caraRoja.style.opacity = 0;
     paises[k] = {
-      el, capaLados, caraRoja, sedes, principal, sobre: 0, espera: 0,
+      el, capaLados, caraRoja, caja, sedes, principal, sobre: 0, espera: 0,
       ctxLados: capaLados.getContext('2d'), ruta: new Path2D(DIBUJO[k]), altura: 0, meta: 0
     };
   });
@@ -429,7 +455,7 @@
     ctx.clearRect(0, 0, p.capaLados.width, p.capaLados.height);
     if (t > .002) {
       for (let i = PASOS_PAIS; i >= 1; i--) {
-        ctx.setTransform(2, 0, 0, 2, 2 * MARGEN, 2 * (MARGEN + i * largo / PASOS_PAIS));
+        ctx.setTransform(2, 0, 0, 2, 2 * (MARGEN - p.caja.x), 2 * (MARGEN - p.caja.y + i * largo / PASOS_PAIS));
         ctx.fillStyle = COLORES_PAIS[i];
         ctx.fill(p.ruta);
       }
