@@ -16,7 +16,7 @@
 window.PORTADA = {
   antetitulo: "Tu solución en",
   titulo: "MARCHA",
-  sello: "Propuesta de servicio logístico — Ford",
+  sello: "Propuesta de servicio logístico",
 
   segundosPorVuelta: 40,   // velocidad del carrusel: más alto = más lento
   sentido: 1,              // 1 = gira hacia la derecha, -1 = hacia la izquierda
