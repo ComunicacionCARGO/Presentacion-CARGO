@@ -44,8 +44,9 @@ window.QUIENES_SOMOS = {
       foto: "",
       dibujo: "fabrica",
       hitos: [
-        { anio: "1994", texto: "Se crea CARGO Servicios Industriales Servicios Logísticos." },
-        { anio: "1998", texto: "Desembarco en Brasil." }
+        { anio: "1994", texto: "Se crea CARGO Servicios Industriales Servicios Logísticos, afianzándonos en el rubro automotriz." },
+        { anio: "1998", texto: "Desembarco en Brasil." },
+        { anio: "", texto: "*En esta década comenzamos a trabajar con grandes marcas del rubro incluyendo Ford Argentina." }
       ]
     },
     {
@@ -53,7 +54,9 @@ window.QUIENES_SOMOS = {
       foto: "",
       dibujo: "alimentos",
       hitos: [
-        { anio: "2002", texto: "Comienza el servicio de distribución de alimentos y bebidas." }
+        { anio: "2000", texto: "Llevamos a cabo tareas de **distribución de P&A** y transporte **Milk Run.**" },
+        { anio: "2002", texto: "Comienza el servicio de distribución de alimentos y bebidas." },
+        { anio: "", texto: "*A su vez en esta década realizamos alianzas con grandes marcas del rubro automotriz, agrícola y alimenticia llevando a cabo la distribución y actuando como operadores logísticos integrales." }
       ]
     },
     {
@@ -68,14 +71,6 @@ window.QUIENES_SOMOS = {
       anio: "2020",
       foto: "",
       dibujo: "contenedor",
-      hitos: [
-        { anio: "", texto: "Completar con los hitos de esta década." }
-      ]
-    },
-    {
-      anio: "2025",
-      foto: "",
-      dibujo: "camion-moderno",
       hitos: [
         { anio: "2025", texto: "En diciembre, Grupo CARGO cumple **45 años** de trayectoria." }
       ]

@@ -172,7 +172,20 @@
       if (h.anio) crear('b', '', li).textContent = h.anio;
       crear('span', '', li, conNegritas(h.texto));
     });
+    ajustarTexto();
   }
+
+  // Si los hitos de un año no entran debajo de la línea, achica la letra de a poco
+  const ALTO_TEXTO = 225;
+  function ajustarTexto() {
+    let t = 1;
+    hitoTexto.style.setProperty('--t', t);
+    while (hitoTexto.offsetHeight > ALTO_TEXTO && t > .5) {
+      t -= .03;
+      hitoTexto.style.setProperty('--t', t.toFixed(2));
+    }
+  }
+  document.fonts.ready.then(ajustarTexto);
 
   let actual = -1;
   let turno = 0;   // evita que se mezclen animaciones si se cambia de año muy rápido
