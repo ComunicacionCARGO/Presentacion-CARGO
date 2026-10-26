@@ -85,15 +85,20 @@ window.QUIENES_SOMOS = {
   // ---------- Mapa y números ----------
   numerosTitulo: "Grupo CARGO en números",
 
+  // Subtítulo que separa los datos destacados del resto ("" para no mostrarlo)
+  numerosOperativosTitulo: "Datos operativos",
+
   /* Cada dato tiene:
-     prefijo: lo que va antes del número (por ejemplo "+"), o "" si no lleva.
-     valor:   el número SIN puntos ni comas (se cuenta animado hasta llegar a él).
-     sufijo:  lo que va después del número (por ejemplo " m²"), o "".
-     texto:   la descripción.
-     icono:   uno de estos: ubicacion, deposito, racks, personas, camion, ruta, contenedor */
+     prefijo:   lo que va antes del número (por ejemplo "+"), o "" si no lleva.
+     valor:     el número SIN puntos ni comas (se cuenta animado hasta llegar a él).
+     sufijo:    lo que va después del número (por ejemplo " m²"), o "".
+     texto:     la descripción.
+     icono:     uno de estos: ubicacion, deposito, racks, personas, camion, ruta, contenedor
+     destacado: true para mostrarlo grande, arriba de todo (conviene que sean dos).
+                Los que no lo tienen van más chicos, debajo de "Datos operativos". */
   numeros: [
-    { prefijo: "",  valor: 23,     sufijo: "",      texto: "bases operativas en Argentina y Brasil", icono: "ubicacion" },
-    { prefijo: "+", valor: 372000, sufijo: " m²",   texto: "de superficie de depósitos",             icono: "deposito" },
+    { prefijo: "",  valor: 23,     sufijo: "",      texto: "bases operativas en Argentina y Brasil", icono: "ubicacion", destacado: true },
+    { prefijo: "+", valor: 372000, sufijo: " m²",   texto: "de superficie de depósitos",             icono: "deposito",  destacado: true },
     { prefijo: "+", valor: 145000, sufijo: " m²",   texto: "de almacenaje en racks",                 icono: "racks" },
     { prefijo: "+", valor: 2450,   sufijo: "",      texto: "colaboradores",                          icono: "personas" },
     { prefijo: "+", valor: 250,    sufijo: "",      texto: "vehículos de flota a disposición",       icono: "camion" },

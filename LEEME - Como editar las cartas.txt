@@ -105,6 +105,11 @@ Números:
     pone los puntos sola y lo anima contando.
   • Íconos disponibles: ubicacion, deposito, racks, personas, camion, ruta,
     contenedor.
+  • destacado: true muestra el dato grande, arriba de todo. Conviene que
+    sean dos. Para destacar otro dato, pasale el destacado: true (con su
+    coma antes) y sacáselo a uno de los que ya lo tienen.
+  • Los demás aparecen más chicos debajo de "numerosOperativosTitulo"
+    ("Datos operativos"). Dejalo en "" para no mostrar ese subtítulo.
 
 
 SI ALGO DEJA DE FUNCIONAR

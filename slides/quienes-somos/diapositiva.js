@@ -5,7 +5,7 @@
 (function () {
   const D = Object.assign({
     pregunta: '¿Quiénes somos?', lema: '', titulo: '', historia: '',
-    lineaDeTiempo: [], numerosTitulo: '', numeros: [], sedes: []
+    lineaDeTiempo: [], numerosTitulo: '', numerosOperativosTitulo: '', numeros: [], sedes: []
   }, window.QUIENES_SOMOS || {});
 
   const $ = (s) => document.querySelector(s);
@@ -237,11 +237,17 @@
     ruta: '<path class="trazo" d="M5.5 18.5H14a3.2 3.2 0 0 0 0-6.4h-4a3.2 3.2 0 0 1 0-6.4h8.5"/><circle cx="5" cy="18.5" r="3.2"/><circle cx="19" cy="5.5" r="3.2"/>',
     contenedor: '<path fill-rule="evenodd" d="M1 5.5h22v13H1zM4.5 8v8h1.8V8zM8.8 8v8h1.8V8zM13.2 8v8H15V8zM17.6 8v8h1.8V8z"/>'
   };
-  const lista = $('.numeros-lista');
+  // Los destacados van grandes arriba; el resto, más chico debajo del subtítulo
   const formato = (v) => Math.round(v).toLocaleString('es-AR');
+  const destacados = D.numeros.filter((d) => d.destacado);
+  const operativos = D.numeros.filter((d) => !d.destacado);
+  $('.numeros-subtitulo').textContent = D.numerosOperativosTitulo;
+  $('.numeros-subtitulo').hidden = !D.numerosOperativosTitulo || !destacados.length || !operativos.length;
+  $('.numeros-lista.destacados').hidden = !destacados.length;
+  $('.numeros-lista.operativos').hidden = !operativos.length;
 
-  D.numeros.forEach((d, i) => {
-    const li = crear('li', 'numero', lista);
+  destacados.concat(operativos).forEach((d, i) => {
+    const li = crear('li', 'numero', $(d.destacado ? '.numeros-lista.destacados' : '.numeros-lista.operativos'));
     li.style.setProperty('--i', i);
     crear('span', 'numero-icono', li, `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS[d.icono] || ICONOS.ubicacion}</svg>`);
     const valor = crear('span', 'numero-valor', li);
