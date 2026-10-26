@@ -12,7 +12,9 @@ Apenas el archivo está en esta carpeta, la tarjeta lo muestra (recargá con F5)
 Si falta alguno, esa tarjeta usa el ícono incluido.
 
 Consejos:
-  • Se muestran con 56 px de alto; el ancho se adapta al dibujo.
+  • Pensados como los actuales: mesa de trabajo cuadrada con el dibujo
+    centrado y un margen de 1/5 alrededor. Así el dibujo queda de unos
+    53 px y alineado con el título de la tarjeta.
   • Exportá desde Illustrator: Archivo → Exportar → Exportar como → SVG,
     con "Mesa de trabajo" recortada al dibujo, sin márgenes de más.
   • Los colores son los del archivo: para que combinen, usá el rojo
