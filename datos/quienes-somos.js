@@ -10,7 +10,7 @@
 window.QUIENES_SOMOS = {
 
   // ---------- Portada de la diapositiva ----------
-  pregunta: "¿Quiénes somos?",
+  pregunta: "Una forma inteligente de hacer logística.",
 
   // Frase debajo del camión
   lema: "Manejando la logística de la región.",
