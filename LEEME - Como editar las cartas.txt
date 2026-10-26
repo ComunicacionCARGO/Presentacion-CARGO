@@ -91,6 +91,9 @@ Línea de tiempo:
       foto: "img/linea-de-tiempo/1980.jpg"
     Se muestran automáticamente como grabado en blanco y negro.
     Quedan mejor las fotos recortadas (PNG con fondo transparente).
+  • Un hito con anio: "*" es un comentario sobre la década: se muestra
+    con un asterisco rojo y el texto en cursiva. Por ejemplo:
+      { anio: "*", texto: "En esta década comenzamos a trabajar con..." }
   • Sin foto, se muestra una ilustración. Se elige con "dibujo":
     camion-clasico, fabrica, alimentos, autoelevador, contenedor, camion-moderno
 

@@ -168,7 +168,8 @@
     mostrarImagen(a, i);
     hitoTexto.innerHTML = '';
     (a.hitos || []).forEach((h) => {
-      const li = crear('li', h.anio ? '' : 'sin-anio', hitoTexto);
+      // Año "*": comentario sobre la década, en cursiva
+      const li = crear('li', h.anio === '*' ? 'comentario' : h.anio ? '' : 'sin-anio', hitoTexto);
       if (h.anio) crear('b', '', li).textContent = h.anio;
       crear('span', '', li, conNegritas(h.texto));
     });

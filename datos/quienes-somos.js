@@ -28,6 +28,8 @@ window.QUIENES_SOMOS = {
              camion-clasico, fabrica, alimentos, autoelevador, contenedor, camion-moderno
      hitos:  lo que pasó en ese período. Cada hito tiene su año (opcional)
              y su texto. Se pueden poner varios, separados por coma.
+             Con anio: "*" el hito es un comentario sobre la década:
+             aparece con un asterisco y el texto en cursiva.
      Para agregar un año: copiá un bloque completo con su coma y pegalo
      en el lugar que corresponda. La línea se reacomoda sola. */
   lineaDeTiempo: [
@@ -46,7 +48,7 @@ window.QUIENES_SOMOS = {
       hitos: [
         { anio: "1994", texto: "Se crea CARGO Servicios Industriales Servicios Logísticos, afianzándonos en el rubro automotriz." },
         { anio: "1998", texto: "Desembarco en Brasil." },
-        { anio: "", texto: "*En esta década comenzamos a trabajar con grandes marcas del rubro incluyendo Ford Argentina." }
+        { anio: "*", texto: "En esta década comenzamos a trabajar con grandes marcas del rubro incluyendo Ford Argentina." }
       ]
     },
     {
@@ -56,7 +58,7 @@ window.QUIENES_SOMOS = {
       hitos: [
         { anio: "2000", texto: "Llevamos a cabo tareas de **distribución de P&A** y transporte **Milk Run.**" },
         { anio: "2002", texto: "Comienza el servicio de distribución de alimentos y bebidas." },
-        { anio: "", texto: "*A su vez en esta década realizamos alianzas con grandes marcas del rubro automotriz, agrícola y alimenticia llevando a cabo la distribución y actuando como operadores logísticos integrales." }
+        { anio: "*", texto: "A su vez en esta década realizamos alianzas con grandes marcas del rubro automotriz, agrícola y alimenticia llevando a cabo la distribución y actuando como operadores logísticos integrales." }
       ]
     },
     {

@@ -337,6 +337,9 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
 .hito-texto li.sin-anio { grid-template-columns: 1fr; }
 /* Un texto sin año, solo, va más grande; junto a otros hitos, del mismo tamaño */
 .hito-texto li.sin-anio:only-child span { font-size: calc(34px * var(--t, 1)); line-height: 1.25; }
+/* Comentario sobre la década (año "*"): asterisco rojo y texto en cursiva */
+.hito-texto li.comentario { border-left-style: dashed; }
+.hito-texto li.comentario span { font-style: italic; color: rgba(58, 58, 58, .85); }
 
 /* Navegación de la línea de tiempo */
 .linea-nav {
