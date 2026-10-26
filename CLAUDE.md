@@ -26,6 +26,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 - Títulos: **Oswald Bold**. Texto: **Inter** (Light, Regular, SemiBold; Light Italic y ExtraLight Italic en frases). El logo usa una tipografía stencil.
 - Recursos gráficos: tres franjas paralelas (rojo, rojo, gris) con curvas o en V y una textura de desgaste sutil (`.grano`).
 - Íconos: sólidos y rojos, sin círculo de fondo.
+- Ícono de la pestaña: `img/marca/favicon.png` (32×32, "C" stencil sobre círculo crema). Cada página nueva lleva su `<link rel="icon">` (ya está en `slides/ejemplo`).
 
 ## Estructura
 
