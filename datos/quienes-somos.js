@@ -109,7 +109,10 @@ window.QUIENES_SOMOS = {
   logrosNota: "*Distribution Process Optimization (DPO) y World Class Manufacturing (WCM) son dos sistemas de gestión que garantizan la calidad de nuestros servicios.",
 
   /* Cada tarjeta de vidrio tiene:
-     icono:   uno de estos: insignia, engranaje, trofeo, medalla
+     imagen:  tu propio ícono en SVG, guardado en la carpeta img/logros
+              (por ejemplo "img/logros/dpo.svg"). Si el archivo no está,
+              se usa el "icono" de abajo.
+     icono:   ícono incluido, de respaldo: insignia, engranaje, trofeo, medalla
      sigla:   etiqueta chica junto al ícono (por ejemplo "DPO"), o "" si no lleva.
      titulo:  la operación.
      premios: lista de reconocimientos. Cada uno tiene su texto y, si querés,
@@ -118,6 +121,7 @@ window.QUIENES_SOMOS = {
      Si una tarjeta tiene mucho texto, la letra se achica sola para que entre. */
   logros: [
     {
+      imagen: "img/logros/dpo.svg",
       icono: "insignia",
       sigla: "DPO",
       titulo: "Operación de Consumo Masivo",
@@ -130,6 +134,7 @@ window.QUIENES_SOMOS = {
       texto: ""
     },
     {
+      imagen: "img/logros/wcm.svg",
       icono: "engranaje",
       sigla: "WCM",
       titulo: "Operación FCA Cba",
@@ -140,6 +145,7 @@ window.QUIENES_SOMOS = {
       texto: "En nuestra planta del cliente FCA-Chrysler en Córdoba, logramos el reconocimiento de **Planta Plata.** También llegamos a instancias finales en el programa **KAIZEN.**"
     },
     {
+      imagen: "img/logros/trofeo.svg",
       icono: "trofeo",
       sigla: "",
       titulo: "Operación P&A",
@@ -149,6 +155,7 @@ window.QUIENES_SOMOS = {
       texto: "En el caso de Renault, nos reconocieron por la **calidad del servicio postventa** de todas las automotrices en Brasil."
     },
     {
+      imagen: "img/logros/medalla.svg",
       icono: "medalla",
       sigla: "",
       titulo: "Operación CMQ CBA",

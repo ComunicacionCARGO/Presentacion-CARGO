@@ -626,7 +626,20 @@
       crear('span', 'logro-num', v).textContent = String(i + 1).padStart(2, '0');
       const c = crear('div', 'logro-contenido', v);
       const cab = crear('div', 'logro-cabeza', c);
-      crear('span', 'logro-icono', cab, `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_LOGRO[d.icono] || ICONOS_LOGRO.trofeo}</svg>`);
+      const icono = crear('span', 'logro-icono', cab);
+      const dibujarIcono = () => {
+        icono.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_LOGRO[d.icono] || ICONOS_LOGRO.trofeo}</svg>`;
+      };
+      // Ícono propio (archivo SVG); si no está, se usa el ícono incluido
+      if (d.imagen) {
+        const img = crear('img', '', icono);
+        img.alt = '';
+        img.decoding = 'async';
+        img.onerror = dibujarIcono;
+        img.src = '../../' + d.imagen;
+      } else {
+        dibujarIcono();
+      }
       if (d.sigla) crear('span', 'logro-sigla', cab).textContent = d.sigla;
       crear('h3', 'logro-titulo', c).innerHTML = conNegritas(d.titulo);
       const ul = crear('ul', 'logro-premios', c);
@@ -678,36 +691,11 @@
       seccion.classList.add('visible');
     }, { threshold: .35 }).observe(seccion);
 
-    // Video en loop sin corte: cerca del final, la otra copia arranca desde
-    // el principio y se funde por encima
-    const videos = [...seccion.querySelectorAll('.logros-video video')];
-    const FUNDIDO = 1.2;   // segundos
-    let actual = 0, fundiendo = false, enPantalla = false;
-    videos.forEach((v, k) => {
-      v.addEventListener('timeupdate', () => {
-        if (k !== actual || fundiendo || !v.duration || v.currentTime < v.duration - FUNDIDO - .25) return;
-        fundiendo = true;
-        const otro = videos[1 - k];
-        otro.currentTime = 0;
-        otro.play().catch(() => {});
-        otro.style.zIndex = 2;
-        v.style.zIndex = 1;
-        otro.classList.add('activo');
-        actual = 1 - k;
-        setTimeout(() => {
-          v.classList.remove('activo');
-          v.pause();
-          fundiendo = false;
-        }, FUNDIDO * 1000 + 100);
-      });
-    });
-    // Solo se reproduce cuando la sección está cerca de la pantalla
+    // El video (ya preparado para repetirse) solo se reproduce cerca de la pantalla
+    const video = seccion.querySelector('.logros-video video');
     new IntersectionObserver((en) => {
-      enPantalla = en[0].isIntersecting;
-      videos.forEach((v, k) => {
-        if (enPantalla && (k === actual || fundiendo)) v.play().catch(() => {});
-        else if (!enPantalla) v.pause();
-      });
+      if (en[0].isIntersecting) video.play().catch(() => {});
+      else video.pause();
     }, { rootMargin: '50% 0px' }).observe(seccion);
   })();
 })();

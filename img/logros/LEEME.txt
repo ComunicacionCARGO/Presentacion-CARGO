@@ -1,0 +1,20 @@
+ÍCONOS DE LAS TARJETAS DE LOGROS ("¿Quiénes somos?")
+=====================================================
+
+Guardá acá tus íconos en SVG con estos nombres:
+
+  dpo.svg      → Operación de Consumo Masivo
+  wcm.svg      → Operación FCA Cba
+  trofeo.svg   → Operación P&A
+  medalla.svg  → Operación CMQ CBA
+
+Apenas el archivo está en esta carpeta, la tarjeta lo muestra (recargá con F5).
+Si falta alguno, esa tarjeta usa el ícono incluido.
+
+Consejos:
+  • Se muestran con 56 px de alto; el ancho se adapta al dibujo.
+  • Exportá desde Illustrator: Archivo → Exportar → Exportar como → SVG,
+    con "Mesa de trabajo" recortada al dibujo, sin márgenes de más.
+  • Los colores son los del archivo: para que combinen, usá el rojo
+    de la marca (#EF4529).
+  • Para usar otro nombre, cambialo en datos\quienes-somos.js, en "imagen".

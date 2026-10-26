@@ -115,15 +115,20 @@ Números:
     ("Datos operativos"). Dejalo en "" para no mostrar ese subtítulo.
 
 Logros (cierre de la diapositiva):
-  • En "logros" cada tarjeta tiene icono (insignia, engranaje, trofeo o
-    medalla), sigla (etiqueta como "DPO", o ""), titulo, premios y texto.
+  • En "logros" cada tarjeta tiene imagen, icono, sigla (etiqueta como
+    "DPO", o ""), titulo, premios y texto.
+  • Íconos propios: guardá tus SVG en img\logros con los nombres dpo.svg,
+    wcm.svg, trofeo.svg y medalla.svg (están en "imagen"). Mientras falte
+    un archivo, esa tarjeta usa el ícono incluido (insignia, engranaje,
+    trofeo o medalla, en "icono"). Más detalles en img\logros\LEEME.txt.
   • Cada premio tiene su texto y, si querés, la fuente o programa
     ("DPO", "WCM"...), que aparece en rojo y cursiva. Si no lleva: fuente: "".
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
   • El video de fondo es img\slides\quienes-somos\logros.mp4. Para cambiarlo,
     reemplazá ese archivo por otro con el mismo nombre (MP4, horizontal,
-    idealmente de menos de 20 MB). Conviene que la parte de arriba sea clara
-    para que se una sin corte con la sección anterior.
+    idealmente de menos de 20 MB, ya preparado para repetirse sin corte).
+    Conviene que la parte de arriba sea clara para que se una sin corte
+    con la sección anterior.
 
 
 SI ALGO DEJA DE FUNCIONAR
