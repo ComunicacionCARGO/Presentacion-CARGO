@@ -97,7 +97,11 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
 - Las cartas todavía no tienen portadas (`img/cartas/`, 1200×800).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
-- Mejoras ofrecidas: fuentes locales para funcionar sin internet, logo en SVG, fondo de la portada en alta resolución.
+- Mejoras ofrecidas: fuentes locales para funcionar sin internet, logo en SVG.
+
+### Fondos que manda la persona
+
+- Llegan como PNG de Illustrator de 1921×1081 con bordes de 1 px semitransparentes. Se recortan esos bordes y se guardan en JPG (calidad 88) sobre el color de fondo: `img/landing/fondo.jpg` a 1920×1080 sobre `#FFFBF3`, `fondo-45.jpg` a 1921×1081 sobre `#EF4529` (bordes en el rojo exacto, para que no haya costura).
 
 ## Verificar cambios
 
