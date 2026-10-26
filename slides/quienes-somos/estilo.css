@@ -602,6 +602,217 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
 .operativos .numero-valor .suf { font-size: 22px; margin-left: 4px; }
 .operativos .numero-texto { font-size: 18px; font-weight: 300; color: rgba(58, 58, 58, .8); }
 
+/* 5. Logros: video de fondo y tarjetas de vidrio */
+.seccion-logros { height: 900px; margin-top: -1px; z-index: 0; }
+/* El video cubre todo el ancho de la ventana (aunque sea más ancha que 16:9)
+   y llega hasta el borde de abajo; su parte de arriba ya es del color de fondo */
+.logros-video {
+  position: absolute;
+  top: 0;
+  left: calc(800px - 50vw / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  height: calc(450px + 50vh / var(--escala, 1));
+  overflow: hidden;
+  background: var(--blanco);
+  z-index: -1;
+}
+.logros-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  transition: opacity 1.2s linear;
+}
+.logros-video video.activo { opacity: 1; }
+/* Velo suave para que el video quede de fondo y las tarjetas se lean */
+.logros-video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(70% 55% at 22% 18%, rgba(255, 251, 243, .55), rgba(255, 251, 243, 0) 70%),
+    linear-gradient(rgba(255, 251, 243, .12), rgba(255, 251, 243, .22));
+}
+
+.logros-titulo {
+  position: absolute;
+  left: 80px;
+  top: 92px;
+  color: var(--gris);
+  line-height: 1;
+}
+.logros-titulo span { display: block; font-weight: 300; font-size: 42px; letter-spacing: -.01em; }
+.logros-titulo b {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 118px;
+  line-height: .92;
+  letter-spacing: -.005em;
+}
+.logros-nota {
+  position: absolute;
+  right: 80px;
+  top: 178px;
+  width: 560px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--gris);
+}
+.logros-nota strong { font-weight: 600; }
+.logros-titulo, .logros-nota {
+  opacity: 0;
+  translate: 0 30px;
+  transition: opacity 1s ease, translate 1.2s cubic-bezier(.2, .8, .2, 1);
+}
+.seccion-logros.visible .logros-titulo, .seccion-logros.visible .logros-nota { opacity: 1; translate: 0 0; }
+.seccion-logros.visible .logros-nota { transition-delay: .15s; }
+
+.logros-tarjetas {
+  position: absolute;
+  left: 80px;
+  top: 300px;
+  width: 1440px;
+  height: 510px;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 4), 1fr);
+  gap: 28px;
+}
+/* Cada tarjeta flota a su ritmo */
+.logro {
+  height: 100%;
+  animation: flotar calc(5.5s + var(--i) * .6s) ease-in-out calc(var(--i) * -1.9s) infinite alternate;
+}
+@keyframes flotar {
+  from { translate: 0 -7px; }
+  to { translate: 0 7px; }
+}
+.logro-vidrio {
+  position: relative;
+  height: 100%;
+  padding: 30px 28px 28px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .74), rgba(255, 251, 243, .44));
+  backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, .85);
+  box-shadow:
+    0 44px 70px -34px rgba(58, 36, 24, .5),
+    0 12px 26px -14px rgba(58, 36, 24, .3),
+    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 -1px 0 rgba(255, 255, 255, .4);
+  transform: perspective(1100px) translateY(var(--lev, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  opacity: 0;
+  translate: 0 70px;
+  transition:
+    opacity .9s ease calc(var(--i) * .12s + .25s),
+    translate 1.2s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * .12s + .25s),
+    transform .35s cubic-bezier(.2, .8, .2, 1),
+    box-shadow .5s ease;
+}
+.seccion-logros.visible .logro-vidrio { opacity: 1; translate: 0 0; }
+.logro.activa .logro-vidrio {
+  --lev: -12px;
+  box-shadow:
+    0 60px 80px -36px rgba(58, 36, 24, .55),
+    0 16px 30px -14px rgba(58, 36, 24, .3),
+    0 0 0 1px rgba(239, 69, 41, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 -1px 0 rgba(255, 255, 255, .4);
+}
+/* Las tres franjas de la marca, arriba a la izquierda */
+.logro-vidrio::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 0;
+  width: 40px;
+  height: 5px;
+  background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px);
+}
+.logro-num {
+  position: absolute;
+  right: 24px;
+  top: 20px;
+  font-family: var(--fuente-titulo);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: .12em;
+  color: rgba(58, 58, 58, .4);
+}
+/* Reflejo que sigue al cursor */
+.logro-brillo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx, 30%) var(--my, 0%), rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 60%);
+  opacity: .45;
+  transition: opacity .4s ease;
+}
+.logro.activa .logro-brillo { opacity: .9; }
+
+/* --t achica el texto si la tarjeta no alcanza (lo calcula diapositiva.js) */
+.logro-contenido { position: relative; z-index: 1; }
+.logro-cabeza { display: flex; align-items: center; gap: 14px; height: calc(60px * var(--t, 1)); }
+.logro-icono svg { display: block; width: calc(56px * var(--t, 1)); height: calc(56px * var(--t, 1)); fill: var(--rojo); }
+.logro-sigla {
+  padding: 3px 11px 2px;
+  border: 1.5px solid var(--rojo);
+  border-radius: 999px;
+  font-family: var(--fuente-titulo);
+  font-weight: 500;
+  font-size: calc(16px * var(--t, 1));
+  letter-spacing: .1em;
+  color: var(--rojo);
+}
+.logro-titulo {
+  margin-top: calc(20px * var(--t, 1));
+  min-height: calc(2.16em);
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: calc(27px * var(--t, 1));
+  line-height: 1.08;
+  color: var(--gris);
+}
+.logro-premios {
+  list-style: none;
+  margin-top: calc(16px * var(--t, 1));
+  padding-top: calc(18px * var(--t, 1));
+  border-top: 1px solid rgba(58, 58, 58, .16);
+  display: flex;
+  flex-direction: column;
+  gap: calc(13px * var(--t, 1));
+}
+.logro-premios li { position: relative; padding-left: 18px; line-height: 1.3; }
+.logro-premios li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .5em;
+  width: 7px;
+  height: 7px;
+  background: var(--rojo);
+  transform: rotate(45deg);
+}
+.logro-premios b { display: block; font-weight: 600; font-size: calc(17px * var(--t, 1)); color: var(--gris); }
+.logro-premios em { display: block; margin-top: 2px; font-weight: 300; font-size: calc(14.5px * var(--t, 1)); color: var(--rojo); }
+.logro-texto {
+  margin-top: calc(18px * var(--t, 1));
+  font-weight: 300;
+  font-size: calc(15.5px * var(--t, 1));
+  line-height: 1.45;
+  color: rgba(58, 58, 58, .92);
+}
+.logro-texto strong { font-weight: 600; }
+
 /* Aparición suave */
 .aparece {
   opacity: 0;

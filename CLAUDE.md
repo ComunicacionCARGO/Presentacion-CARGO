@@ -81,6 +81,13 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
      - Solo los lados del país levantado se repintan, y solo mientras sube o baja.
      - No volver a SVG en vivo con filtros ni a contornos de alto detalle: trababan la aparición del mapa.
 
+5. **Logros** (cierre):
+   - Video de fondo `img/slides/quienes-somos/logros.mp4` (1920×1080, 10,5 s). Su borde de arriba es exactamente `#FFFBF3`, por eso empalma sin costura con el mapa.
+   - Cubre todo el ancho de la ventana aunque sea más ancha que 16:9 (`.logros-video` usa `100vw / var(--escala)`) y llega hasta el borde de abajo.
+   - Loop sin corte: dos `<video>` iguales; a 1,2 s del final arranca el otro desde 0 y se funde encima. Solo se reproduce cerca de la pantalla.
+   - Tarjetas de vidrio planas con `backdrop-filter` (acá sí, no son curvas). Flotan con `translate` en `.logro`; la inclinación 3D va en `transform` de `.logro-vidrio`. No poner `opacity` ni filtros en ancestros de las tarjetas: cortan el desenfoque.
+   - El texto de cada tarjeta se achica solo (`--t`) si no entra; lo mismo los hitos de la línea de tiempo.
+
 ### Pendientes conocidos
 
 - Quedan diapositivas por diseñar: Cobertura, Almacenamiento, Transporte, Tecnología, Indicadores (hoy apuntan a `slides/ejemplo`).

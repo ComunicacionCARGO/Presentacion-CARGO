@@ -80,7 +80,7 @@ TEXTOS DE LAS DIAPOSITIVAS
 --------------------------
 Cada diapositiva tiene su archivo de textos en la carpeta datos\
   • datos\quienes-somos.js → "¿Quiénes somos?": frase del camión, historia,
-    línea de tiempo (años, fotos y textos) y números.
+    línea de tiempo (años, fotos y textos), números y logros.
 Para poner una parte en negrita, encerrala entre dos asteriscos:
   "**Grupo CARGO** es una empresa..."
 
@@ -113,6 +113,17 @@ Números:
     coma antes) y sacáselo a uno de los que ya lo tienen.
   • Los demás aparecen más chicos debajo de "numerosOperativosTitulo"
     ("Datos operativos"). Dejalo en "" para no mostrar ese subtítulo.
+
+Logros (cierre de la diapositiva):
+  • En "logros" cada tarjeta tiene icono (insignia, engranaje, trofeo o
+    medalla), sigla (etiqueta como "DPO", o ""), titulo, premios y texto.
+  • Cada premio tiene su texto y, si querés, la fuente o programa
+    ("DPO", "WCM"...), que aparece en rojo y cursiva. Si no lleva: fuente: "".
+  • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
+  • El video de fondo es img\slides\quienes-somos\logros.mp4. Para cambiarlo,
+    reemplazá ese archivo por otro con el mismo nombre (MP4, horizontal,
+    idealmente de menos de 20 MB). Conviene que la parte de arriba sea clara
+    para que se una sin corte con la sección anterior.
 
 
 SI ALGO DEJA DE FUNCIONAR

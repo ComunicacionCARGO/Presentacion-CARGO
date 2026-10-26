@@ -66,7 +66,7 @@ window.QUIENES_SOMOS = {
       foto: "",
       dibujo: "autoelevador",
       hitos: [
-        { anio: "2010", texto: "Se consolidó el servicio de warehousing y distribución de repuestos." }
+        { anio: "2010", texto: "Se consolidó el servicio de warehousing y distribución de repuestos como uno de nuestros servicios principales." }
       ]
     },
     {
@@ -103,6 +103,63 @@ window.QUIENES_SOMOS = {
     { prefijo: "+", valor: 4500,   sufijo: "",      texto: "contenedores movilizados por año",       icono: "contenedor" }
   ],
 
+  // ---------- Logros (cierre de la diapositiva) ----------
+  logrosAntetitulo: "Nuestros",
+  logrosTitulo: "LOGROS",
+  logrosNota: "*Distribution Process Optimization (DPO) y World Class Manufacturing (WCM) son dos sistemas de gestión que garantizan la calidad de nuestros servicios.",
+
+  /* Cada tarjeta de vidrio tiene:
+     icono:   uno de estos: insignia, engranaje, trofeo, medalla
+     sigla:   etiqueta chica junto al ícono (por ejemplo "DPO"), o "" si no lleva.
+     titulo:  la operación.
+     premios: lista de reconocimientos. Cada uno tiene su texto y, si querés,
+              la fuente o programa ("DPO", "WCM"...), que se ve en rojo y cursiva.
+     texto:   explicación debajo de los premios, o "" si no lleva.
+     Si una tarjeta tiene mucho texto, la letra se achica sola para que entre. */
+  logros: [
+    {
+      icono: "insignia",
+      sigla: "DPO",
+      titulo: "Operación de Consumo Masivo",
+      premios: [
+        { texto: "1° Puesto CD Tucumán en Sudamérica", fuente: "DPO" },
+        { texto: "4° Puesto CD Tucumán Mundial", fuente: "DPO" },
+        { texto: "CD Córdoba Top Performance en SAZ", fuente: "DPO" },
+        { texto: "CD Córdoba Mejor Pilar People en SAZ", fuente: "Convención Supply Chain Ambev" }
+      ],
+      texto: ""
+    },
+    {
+      icono: "engranaje",
+      sigla: "WCM",
+      titulo: "Operación FCA Cba",
+      premios: [
+        { texto: "Planta Plata", fuente: "WCM" },
+        { texto: "KAIZEN", fuente: "Final" }
+      ],
+      texto: "En nuestra planta del cliente FCA-Chrysler en Córdoba, logramos el reconocimiento de **Planta Plata.** También llegamos a instancias finales en el programa **KAIZEN.**"
+    },
+    {
+      icono: "trofeo",
+      sigla: "",
+      titulo: "Operación P&A",
+      premios: [
+        { texto: "1° Puesto MPR Renault", fuente: "" }
+      ],
+      texto: "En el caso de Renault, nos reconocieron por la **calidad del servicio postventa** de todas las automotrices en Brasil."
+    },
+    {
+      icono: "medalla",
+      sigla: "",
+      titulo: "Operación CMQ CBA",
+      premios: [
+        { texto: "Operador Logístico #1", fuente: "GETrans" },
+        { texto: "Premio a las mejores prácticas", fuente: "" }
+      ],
+      texto: "Reconocimientos a nuestro Centro de Distribución en Córdoba del programa **GETrans** de nuestro cliente Quilmes."
+    }
+  ],
+
   /* Sedes que aparecen al pasar el cursor por Argentina o Brasil.
      pais:      "AR" o "BR".
      ciudad:    nombre que se muestra.
@@ -112,10 +169,10 @@ window.QUIENES_SOMOS = {
      principal: true en la sede principal de cada país (de ahí sale la línea de la tarjeta).
      Ubicaciones estimadas a partir de información pública: conviene verificarlas. */
   sedes: [
-    { pais: "AR", ciudad: "Córdoba", detalle: "Administración central y centro logístico", lon: -64.18, lat: -31.40, principal: true },
-    { pais: "AR", ciudad: "Gran Buenos Aires", detalle: "Centros logísticos Pacheco y Benavidez · sucursal CABA", lon: -58.62, lat: -34.45 },
-    { pais: "AR", ciudad: "Rosario", detalle: "Centro logístico", lon: -60.69, lat: -32.95 },
-    { pais: "AR", ciudad: "San Miguel de Tucumán", detalle: "Centro de distribución", lon: -65.21, lat: -26.82 },
+    { pais: "AR", ciudad: "Córdoba", detalle: "Administración central, Centro Logístico Córdoba, CD Quilmes CBA, Depósito Georgalos y STELLANTIS", lon: -64.18, lat: -31.40, principal: true },
+    { pais: "AR", ciudad: "Buenos Aires", detalle: "C.L. Benavidez, C.L. Pacheco y Plaza Logística (TIGRE) • Centro logístico Pepirí (CABA)", lon: -58.62, lat: -34.45 },
+    { pais: "AR", ciudad: "Rosario", detalle: "Centro logístico Rosario", lon: -60.69, lat: -32.95 },
+    { pais: "AR", ciudad: "San Miguel de Tucumán", detalle: "CD Quilmes Tucumán", lon: -65.21, lat: -26.82 },
     { pais: "BR", ciudad: "São José dos Pinhais (PR)", detalle: "Matriz CSI CARGO · centros logísticos CL-I y CL-II", lon: -49.17, lat: -25.53, principal: true },
     { pais: "BR", ciudad: "Jundiaí (SP)", detalle: "Unidad operativa", lon: -46.88, lat: -23.19 },
     { pais: "BR", ciudad: "Uruguaiana (RS)", detalle: "Centro de distribución", lon: -57.09, lat: -29.75 }   // dato de 2009: verificar

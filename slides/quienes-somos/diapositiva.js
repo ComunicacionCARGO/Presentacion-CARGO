@@ -588,4 +588,126 @@
       p.punto.setAttribute('cy', ay);
     });
   })();
+
+  // =========================================================
+  // LOGROS: video de fondo en loop y tarjetas de vidrio flotantes
+  // =========================================================
+  (function () {
+    const seccion = $('.seccion-logros');
+    if (!seccion) return;
+    $('.logros-titulo span').textContent = D.logrosAntetitulo || '';
+    $('.logros-titulo b').textContent = D.logrosTitulo || '';
+    $('.logros-nota').innerHTML = conNegritas(D.logrosNota);
+
+    // Engranaje: 9 dientes y agujero central (se arma con trigonometría)
+    const engranaje = (() => {
+      const pts = [], dientes = 9, ext = 11.4, int = 8.6;
+      for (let k = 0; k < dientes * 4; k++) {
+        const a = (k / (dientes * 4)) * Math.PI * 2 - Math.PI / 2 + Math.PI / (dientes * 4);
+        const r = (k % 4 < 2) ? ext : int;
+        pts.push(`${(12 + r * Math.cos(a)).toFixed(2)},${(12 + r * Math.sin(a)).toFixed(2)}`);
+      }
+      return `<path fill-rule="evenodd" d="M${pts.join('L')}Z M12 8.3a3.7 3.7 0 1 0 0 7.4a3.7 3.7 0 1 0 0-7.4Z"/>`;
+    })();
+    const ICONOS_LOGRO = {
+      insignia: '<path fill-rule="evenodd" d="M12 .8l2.7 2.1 3.4-.4 1.2 3.2 3 1.7-.9 3.3 1.3 3.2-2.8 2-.8 3.3-3.4.1L12 21.6l-2.7-2.1-3.4.1-.8-3.3-2.8-2 1.3-3.2-.9-3.3 3-1.7 1.2-3.2 3.4.4zM10.7 15.3l6-6-1.6-1.6-4.4 4.4-2.2-2.2-1.6 1.6z"/><path d="M7.3 19.6 5.6 23.4l2.9-.6 1.6 1.2 1.2-3.3zM16.7 19.6l1.7 3.8-2.9-.6-1.6 1.2-1.2-3.3z"/>',
+      engranaje,
+      trofeo: '<path d="M6 1.5h12V8a6 6 0 0 1-12 0z"/><path d="M6 3H2.6v2.6a4.6 4.6 0 0 0 4.1 4.6l-.3-2.1a2.5 2.5 0 0 1-1.7-2.4V5.1H6zM18 3h3.4v2.6a4.6 4.6 0 0 1-4.1 4.6l.3-2.1a2.5 2.5 0 0 0 1.7-2.4V5.1H18z"/><path d="M10.7 13.6h2.6v4h-2.6zM7.5 17.4h9v2.6h-9zM5.5 21h13v2h-13z"/>',
+      medalla: '<path d="M4.4 .8h4.5l4 7.2a8.7 8.7 0 0 0-3.6 1.1zM19.6 .8h-4.5l-2.3 4.2 2.1 3.7a8.6 8.6 0 0 1 2.9 1.5z"/><path fill-rule="evenodd" d="M12 8.8a7.4 7.4 0 1 0 0 14.8a7.4 7.4 0 1 0 0-14.8zm0 2a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.2a4.2 4.2 0 1 0 0 8.4a4.2 4.2 0 1 0 0-8.4z"/>'
+    };
+
+    const cont = $('.logros-tarjetas');
+    const lista = D.logros || [];
+    cont.style.setProperty('--n', lista.length || 1);
+    const tarjetas = lista.map((d, i) => {
+      const art = crear('article', 'logro', cont);
+      art.style.setProperty('--i', i);
+      const v = crear('div', 'logro-vidrio', art);
+      crear('span', 'logro-num', v).textContent = String(i + 1).padStart(2, '0');
+      const c = crear('div', 'logro-contenido', v);
+      const cab = crear('div', 'logro-cabeza', c);
+      crear('span', 'logro-icono', cab, `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_LOGRO[d.icono] || ICONOS_LOGRO.trofeo}</svg>`);
+      if (d.sigla) crear('span', 'logro-sigla', cab).textContent = d.sigla;
+      crear('h3', 'logro-titulo', c).innerHTML = conNegritas(d.titulo);
+      const ul = crear('ul', 'logro-premios', c);
+      (d.premios || []).forEach((p) => {
+        const li = crear('li', '', ul);
+        crear('b', '', li).innerHTML = conNegritas(p.texto);
+        if (p.fuente) crear('em', '', li).textContent = p.fuente;
+      });
+      if (d.texto) crear('p', 'logro-texto', c).innerHTML = conNegritas(d.texto);
+      crear('i', 'logro-brillo', v);
+
+      // Inclinación 3D y reflejo que siguen al cursor
+      art.addEventListener('pointermove', (e) => {
+        const r = v.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        v.style.setProperty('--ry', `${(x - .5) * 10}deg`);
+        v.style.setProperty('--rx', `${(.5 - y) * 8}deg`);
+        v.style.setProperty('--mx', `${x * 100}%`);
+        v.style.setProperty('--my', `${y * 100}%`);
+      });
+      art.addEventListener('pointerenter', () => art.classList.add('activa'));
+      art.addEventListener('pointerleave', () => {
+        art.classList.remove('activa');
+        v.style.setProperty('--rx', '0deg');
+        v.style.setProperty('--ry', '0deg');
+      });
+      return c;
+    });
+
+    // Si una tarjeta tiene mucho texto, achica la letra hasta que entre
+    function ajustarTarjetas() {
+      tarjetas.forEach((c) => {
+        const alto = c.parentElement.clientHeight - 58;
+        let t = 1;
+        c.style.setProperty('--t', t);
+        while (c.offsetHeight > alto && t > .6) {
+          t -= .03;
+          c.style.setProperty('--t', t.toFixed(2));
+        }
+      });
+    }
+    ajustarTarjetas();
+    document.fonts.ready.then(ajustarTarjetas);
+
+    // Aparición al llegar a la sección
+    new IntersectionObserver((en, obs) => {
+      if (!en[0].isIntersecting) return;
+      obs.disconnect();
+      seccion.classList.add('visible');
+    }, { threshold: .35 }).observe(seccion);
+
+    // Video en loop sin corte: cerca del final, la otra copia arranca desde
+    // el principio y se funde por encima
+    const videos = [...seccion.querySelectorAll('.logros-video video')];
+    const FUNDIDO = 1.2;   // segundos
+    let actual = 0, fundiendo = false, enPantalla = false;
+    videos.forEach((v, k) => {
+      v.addEventListener('timeupdate', () => {
+        if (k !== actual || fundiendo || !v.duration || v.currentTime < v.duration - FUNDIDO - .25) return;
+        fundiendo = true;
+        const otro = videos[1 - k];
+        otro.currentTime = 0;
+        otro.play().catch(() => {});
+        otro.style.zIndex = 2;
+        v.style.zIndex = 1;
+        otro.classList.add('activo');
+        actual = 1 - k;
+        setTimeout(() => {
+          v.classList.remove('activo');
+          v.pause();
+          fundiendo = false;
+        }, FUNDIDO * 1000 + 100);
+      });
+    });
+    // Solo se reproduce cuando la sección está cerca de la pantalla
+    new IntersectionObserver((en) => {
+      enPantalla = en[0].isIntersecting;
+      videos.forEach((v, k) => {
+        if (enPantalla && (k === actual || fundiendo)) v.play().catch(() => {});
+        else if (!enPantalla) v.pause();
+      });
+    }, { rootMargin: '50% 0px' }).observe(seccion);
+  })();
 })();
