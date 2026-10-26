@@ -59,17 +59,17 @@ window.CARTAS = [
     destino: "slides/quienes-somos/index.html"
   },
   {
-    titulo: "Cobertura",
+    titulo: "Servicio a Medida",
     portada: "",
     destino: "slides/ejemplo/index.html"
   },
   {
-    titulo: "Almacenamiento",
+    titulo: "Nuestro TMS",
     portada: "",
     destino: "slides/ejemplo/index.html"
   },
   {
-    titulo: "Transporte",
+    titulo: "Estructura",
     portada: "",
     destino: "slides/ejemplo/index.html"
   },
@@ -79,7 +79,7 @@ window.CARTAS = [
     destino: "slides/ejemplo/index.html"
   },
   {
-    titulo: "Indicadores",
+    titulo: "Ubicación Estrategica",
     portada: "",
     destino: "slides/ejemplo/index.html"
   }

@@ -92,7 +92,7 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
 
 ### Pendientes conocidos
 
-- Quedan diapositivas por diseñar: Cobertura, Almacenamiento, Transporte, Tecnología, Indicadores (hoy apuntan a `slides/ejemplo`).
+- Quedan diapositivas por diseñar: Servicio a Medida, Nuestro TMS, Estructura, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`).
 - Las cartas todavía no tienen portadas (`img/cartas/`, 1200×800).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
