@@ -79,7 +79,7 @@ window.CARTAS = [
     destino: "slides/ejemplo/index.html"
   },
   {
-    titulo: "Ubicación Estrategica",
+    titulo: "Ubicación Estratégica",
     portada: "",
     destino: "slides/ejemplo/index.html"
   }
