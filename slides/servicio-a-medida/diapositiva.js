@@ -301,7 +301,7 @@
     const vecina = bases.filter((o) => o !== b && Math.hypot(o.x - b.x, o.y - b.y) < 70)
       .sort((p, q) => Math.hypot(p.x - b.x, p.y - b.y) - Math.hypot(q.x - b.x, q.y - b.y))[0];
     const lado = !vecina ? '' : (vecina.x > b.x ? ' nombre-izq' : ' nombre-der');
-    const el = crear('div', 'base' + lado, capaBases, `<div class="base-pie">${ICONO_BASE}<span>${esc(b.nombre)}</span></div>`);
+    const el = crear('div', 'base' + lado, capaBases, `<i class="base-onda"></i><div class="base-pie">${ICONO_BASE}<span>${esc(b.nombre)}</span></div>`);
     el.style.left = b.x.toFixed(1) + 'px';
     el.style.top = b.y.toFixed(1) + 'px';
     el.style.setProperty('--i', i);
@@ -472,7 +472,10 @@
   });
 
   // Elegir una provincia: sube en rojo y quedan solo sus rutas
-  function seleccionar(k) {
+  // (auto = la eligió el recorrido automático, no la persona)
+  function seleccionar(k, auto) {
+    if (!auto) { detenerRecorrido(); ocultarInvitacion(); }
+    estado.auto = !!(k && auto);
     const antes = estado.sel;
     estado.sel = k;
     if (antes && provs[antes]) provs[antes].meta = 0;
@@ -504,6 +507,76 @@
     if (e.key === 'Escape' && estado.sel) { e.stopImmediatePropagation(); e.preventDefault(); seleccionar(null); }
   }, true);
 
+  // =========================================================
+  // INVITAR A INTERACTUAR
+  // 1) las bases laten (ondas en el mapa);
+  // 2) al aparecer, una mano "toca" la provincia con más rutas, hasta que la persona interactúa;
+  // 3) si nadie toca nada por un rato, el mapa recorre solo las provincias con bases.
+  // =========================================================
+  const SEGUNDOS_SIN_USO = 15, SEGUNDOS_POR_PROVINCIA = 5;
+  const invitacion = crear('div', 'mapa-invitacion', seccion,
+    '<i class="mi-onda"></i>' +
+    '<svg class="mi-mano" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V4.6a1.6 1.6 0 0 1 3.2 0v5.6h.4V8.7a1.6 1.6 0 0 1 3.2 0v1.6h.4V9.5a1.6 1.6 0 0 1 3.2 0v5.4c0 3.8-2.6 6.8-6.4 6.8h-1.1c-1.9 0-3.6-.9-4.6-2.5l-3-4.6a1.5 1.5 0 0 1 2.4-1.8L9 14.4z"/></svg>' +
+    '<p class="mi-texto"><b>Tocá una provincia</b><span>para ver qué sale y qué llega</span></p>');
+  let invitacionUsada = false;
+  function mostrarInvitacion() {
+    if (invitacionUsada || estado.sel) return;
+    // Sobre la base con más rutas (o el centro del mapa si no hay bases)
+    const cuenta = (b) => rutas.filter((r) => r.origen === b).length;
+    const b = bases.slice().sort((p, q) => cuenta(q) - cuenta(p))[0];
+    const s = seccion.getBoundingClientRect(), k = s.width / 1600 || 1;
+    let x = 460, y = 450;
+    if (b) {
+      const r = b.el.querySelector('svg').getBoundingClientRect();
+      // un poco al sudoeste del ícono, dentro de la provincia y lejos de los nombres vecinos
+      x = (r.left + r.width / 2 - s.left) / k - 42;
+      y = (r.bottom - s.top) / k + 34;
+    }
+    invitacion.style.transform = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px)`;
+    invitacion.classList.add('visible');
+  }
+  function ocultarInvitacion() {
+    invitacionUsada = true;
+    invitacion.classList.remove('visible');
+  }
+  toques.addEventListener('pointerover', ocultarInvitacion);
+  contCapas.addEventListener('click', ocultarInvitacion);
+
+  // Recorrido automático por las provincias con bases (y una pausa mostrando todo el país)
+  const ayuda = $('.panel-ayuda');
+  const textoAyuda = ayuda.textContent;
+  const paradas = [...new Set(bases.map((b) => b.cod))];
+  let relojSinUso = null, relojParada = null, parada = -1, recorriendo = false;
+  function avanzarRecorrido() {
+    parada = (parada + 1) % (paradas.length + 1);
+    const k = paradas[parada] || null;          // la última parada es "todo el país"
+    seleccionar(k, true);
+    relojParada = setTimeout(avanzarRecorrido, SEGUNDOS_POR_PROVINCIA * 1000);
+  }
+  function iniciarRecorrido() {
+    if (recorriendo || estado.sel || !paradas.length || !enPantalla) return;
+    recorriendo = true;
+    ocultarInvitacion();
+    ayuda.classList.add('recorriendo');
+    ayuda.innerHTML = '<i></i>Recorrido automático · mové el mouse para explorar';
+    parada = -1;
+    avanzarRecorrido();
+  }
+  function detenerRecorrido() {
+    clearTimeout(relojParada);
+    if (!recorriendo) return;
+    recorriendo = false;
+    ayuda.classList.remove('recorriendo');
+    ayuda.textContent = textoAyuda;
+  }
+  // Cualquier uso real detiene el recorrido (y deja el mapa completo si lo había elegido él)
+  function hayUso() {
+    if (recorriendo) { detenerRecorrido(); if (estado.auto) seleccionar(null); }
+    clearTimeout(relojSinUso);
+    relojSinUso = setTimeout(iniciarRecorrido, SEGUNDOS_SIN_USO * 1000);
+  }
+  ['pointermove', 'pointerdown', 'wheel', 'keydown'].forEach((t) => addEventListener(t, hayUso, { passive: true }));
+
   aplicarCapas();
   $('.mapa-pie').innerHTML = `<b>ARG</b> ${PROVS.length} provincias · ${D.regiones.length} regiones · ${bases.length + destinos.length} puntos`;
 
@@ -514,6 +587,8 @@
     if (!en[0].isIntersecting) return;
     obs.disconnect();
     seccion.classList.add('visible');
+    setTimeout(mostrarInvitacion, 2800);          // cuando el mapa ya se acomodó
+    relojSinUso = setTimeout(iniciarRecorrido, SEGUNDOS_SIN_USO * 1000);
   }, { threshold: .3 }).observe(seccion);
 
   let enPantalla = false;

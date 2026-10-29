@@ -95,16 +95,17 @@
 }
 .ruta.interna .r-flujo { stroke-width: 1.2; animation-duration: 1.3s; }
 @keyframes fluir { to { stroke-dashoffset: -12.4; } }
-.seccion-distribucion.visible .ruta { opacity: 1; transition-delay: calc(.9s + var(--i) * .04s); }
-.seccion-distribucion.visible .ruta .r-linea { stroke-dashoffset: 0; transition-delay: calc(.9s + var(--i) * .04s), 0s; }
-.seccion-distribucion.visible .ruta .r-flujo { opacity: .85; transition-delay: calc(2.2s + var(--i) * .04s); }
+/* Todas las rutas se dibujan a la vez, apenas el mapa termina de acomodarse */
+.seccion-distribucion.visible .ruta { opacity: 1; transition-delay: .8s; }
+.seccion-distribucion.visible .ruta .r-linea { stroke-dashoffset: 0; transition-delay: .8s, 0s; }
+.seccion-distribucion.visible .ruta .r-flujo { opacity: .85; transition-delay: 2s; }
 
 .punto { --c: var(--rojo); opacity: 0; transition: opacity .5s ease; }
 .punto.redespacho { --c: var(--ambar); }
 .punto .p-halo { fill: var(--c); fill-opacity: .2; }
 .punto .p-centro { fill: var(--c); stroke: #fff; stroke-width: 1.4; }
 .punto .p-toque { fill: transparent; pointer-events: all; cursor: pointer; }
-.seccion-distribucion.visible .punto { opacity: 1; transition-delay: 1.9s; }
+.seccion-distribucion.visible .punto { opacity: 1; transition-delay: 1.6s; }
 
 /* Filtros de capas */
 .mapa-ar .ruta, .mapa-ar .punto { transition-property: opacity; }
@@ -167,6 +168,86 @@
 .base.nombre-izq .base-pie span, .base.nombre-der .base-pie span { margin-bottom: 6px; }
 .seccion-distribucion.visible .base-pie { transform: rotateZ(4deg) rotateX(-30deg) scale(1); transition-delay: calc(1.3s + var(--i) * .12s); }
 .base.apagada { opacity: .3; }
+/* Onda que late en el piso del mapa (invita a tocar) */
+.base-onda {
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--rojo);
+  opacity: 0;
+}
+.seccion-distribucion.visible .base-onda { animation: latido 2.6s ease-out infinite; animation-delay: calc(2.2s + var(--i) * .5s); }
+.base.apagada .base-onda { animation: none; }
+@keyframes latido {
+  0% { transform: scale(.4); opacity: .9; }
+  70%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* Invitación: una mano que toca el mapa hasta que la persona interactúa */
+.mapa-invitacion {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+.mapa-invitacion.visible { opacity: 1; }
+.mi-mano {
+  position: absolute;
+  left: -6px;
+  top: -4px;
+  width: 36px;
+  height: 36px;
+  fill: var(--gris);
+  stroke: #fff;
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 8px rgba(60, 30, 20, .3));
+  animation: tocar 2.2s ease-in-out infinite;
+}
+.mi-onda {
+  position: absolute;
+  left: -16px;
+  top: -16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--rojo);
+  background: rgba(239, 69, 41, .15);
+  opacity: 0;
+  animation: onda-toque 2.2s ease-out infinite;
+}
+@keyframes tocar {
+  0%, 100% { transform: translate(12px, 14px) rotate(-8deg); }
+  35%, 45% { transform: translate(0, 0) rotate(-8deg) scale(1); }
+  40% { transform: translate(0, 0) rotate(-8deg) scale(.9); }
+}
+@keyframes onda-toque {
+  0%, 38% { transform: scale(.3); opacity: 0; }
+  42% { transform: scale(.4); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.mi-texto {
+  position: absolute;
+  right: 30px;
+  top: 18px;
+  padding: 10px 16px 11px;
+  border: 1px solid rgba(255, 255, 255, .95);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 30px -18px rgba(120, 40, 20, .5);
+  white-space: nowrap;
+  text-align: right;
+}
+.mi-texto b { display: block; font-family: var(--fuente-titulo); font-weight: 500; font-size: 16px; letter-spacing: .04em; text-transform: uppercase; color: var(--rojo); }
+.mi-texto span { display: block; margin-top: 2px; font-size: 12px; font-weight: 300; color: rgba(58, 58, 58, .75); }
 
 /* Etiqueta que sigue al cursor */
 .mapa-etiqueta {
@@ -485,6 +566,9 @@
 .vp-vacio { margin-top: 18px; font-size: 14px; font-weight: 300; font-style: italic; line-height: 1.5; color: rgba(58, 58, 58, .7); }
 
 .panel-ayuda { margin-top: 14px; font-size: 12.5px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .55); }
+.panel-ayuda.recorriendo { display: flex; align-items: center; gap: 8px; font-style: normal; color: var(--rojo); }
+.panel-ayuda.recorriendo i { width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); animation: titilar 1.4s ease-in-out infinite; }
+@keyframes titilar { 50% { opacity: .2; } }
 
 /* ---------- Interfaz fija ---------- */
 .volver, .sello {

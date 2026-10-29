@@ -105,6 +105,8 @@ Mapa interactivo de distribución de Argentina (carta 2). Por ahora una sola sec
   - Red: SVG con `translateZ(1px)`; rutas curvas con degradé, flecha (`marker`) y flujo animado (`stroke-dashoffset`). Los extremos suben con la provincia.
   - Bases: íconos HTML parados (contra-rotación `rotateZ(4deg) rotateX(-30deg)`); si dos bases están a menos de 70 px, el nombre va al costado.
 - **Panel derecho**: capas (Red propia, Redespachantes, Zonas), barras de lead time sobre escala 0–144 h y detalle de provincia. Esc deselecciona antes de volver a la portada (listener en captura).
+- Todas las rutas se dibujan a la vez (sin escalonar), a los 0,8 s.
+- **Invitación a interactuar**: ondas que laten en el piso bajo cada base; una mano que "toca" al sudoeste de la base con más rutas (desaparece al pasar por una provincia o usar un filtro); y un recorrido automático tras 15 s sin uso (`SEGUNDOS_SIN_USO`), que elige cada provincia con bases durante 5 s (`SEGUNDOS_POR_PROVINCIA`) y una pausa con todo el país. Cualquier movimiento del mouse, clic, rueda o tecla lo detiene. `seleccionar(k, auto)` distingue lo que elige el recorrido.
 
 ### Pendientes conocidos
 
