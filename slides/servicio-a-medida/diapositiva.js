@@ -297,19 +297,17 @@
   const ICONO_BASE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2 1.5 8v14h21V8L12 2zM6 12h12v10H6z"/><path d="M6 14h12v2H6zM6 18h12v2H6z"/></svg>';
   const capaBases = crear('div', 'bases', plano);
   bases.forEach((b, i) => {
-    // Si hay otra base muy cerca, el nombre va al costado (del lado opuesto) para no pisarse
-    const vecina = bases.filter((o) => o !== b && Math.hypot(o.x - b.x, o.y - b.y) < 70)
-      .sort((p, q) => Math.hypot(p.x - b.x, p.y - b.y) - Math.hypot(q.x - b.x, q.y - b.y))[0];
-    const lado = !vecina ? '' : (vecina.x > b.x ? ' nombre-izq' : ' nombre-der');
-    const el = crear('div', 'base' + lado, capaBases, `<i class="base-onda"></i><div class="base-pie">${ICONO_BASE}<span>${esc(b.nombre)}</span></div>`);
+    // Solo el ícono: el nombre aparece en la etiqueta al pasar el cursor
+    const el = crear('div', 'base', capaBases, `<i class="base-onda"></i><div class="base-pie">${ICONO_BASE}</div>`);
     el.style.left = b.x.toFixed(1) + 'px';
     el.style.top = b.y.toFixed(1) + 'px';
     el.style.setProperty('--i', i);
     b.el = el;
-    el.addEventListener('pointerenter', () => mostrarEtiqueta(
+    const icono = el.querySelector('svg');
+    icono.addEventListener('pointerenter', () => mostrarEtiqueta(
       `<b>${esc(b.nombre)}</b><span>${esc(nombreDe(b.cod))}</span><em class="propio">${esc(b.detalle || 'Base propia')}</em>`));
-    el.addEventListener('pointerleave', ocultarEtiqueta);
-    el.addEventListener('click', () => seleccionar(b.cod));
+    icono.addEventListener('pointerleave', ocultarEtiqueta);
+    icono.addEventListener('click', () => seleccionar(b.cod));
   });
 
   // Posiciones (se recalculan mientras una provincia sube o baja)

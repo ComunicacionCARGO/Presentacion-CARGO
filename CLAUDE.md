@@ -103,7 +103,7 @@ Mapa interactivo de distribución de Argentina (carta 2). Por ahora una sola sec
   - Zonas: SVG sin filtros con el color de cada región (opacidad .6); al pasar por una región del panel, las demás se apagan.
   - Provincia elegida: sube en rojo (lados y cara creados la primera vez) y quedan solo las rutas que salen o llegan.
   - Red: SVG con `translateZ(1px)`; rutas curvas con degradé, flecha (`marker`) y flujo animado (`stroke-dashoffset`). Los extremos suben con la provincia.
-  - Bases: íconos HTML parados (contra-rotación `rotateZ(4deg) rotateX(-30deg)`); si dos bases están a menos de 70 px, el nombre va al costado.
+  - Bases: solo el ícono, HTML parado (contra-rotación `rotateZ(4deg) rotateX(-30deg)`); el nombre aparece en la etiqueta al pasar el cursor. Solo el `svg` recibe el cursor (el contenedor tiene `pointer-events: none`), así el área sensible es la del dibujo.
 - **Panel derecho**: capas (Red propia, Redespachantes, Zonas), barras de lead time sobre escala 0–144 h y detalle de provincia. Esc deselecciona antes de volver a la portada (listener en captura).
 - Todas las rutas se dibujan a la vez (sin escalonar), a los 0,8 s.
 - **Invitación a interactuar**: ondas que laten en el piso bajo cada base; una mano que "toca" al sudoeste de la base con más rutas (desaparece al pasar por una provincia o usar un filtro); y un recorrido automático tras 15 s sin uso (`SEGUNDOS_SIN_USO`), que elige cada provincia con bases durante 5 s (`SEGUNDOS_POR_PROVINCIA`) y una pausa con todo el país. Cualquier movimiento del mouse, clic, rueda o tecla lo detiene. `seleccionar(k, auto)` distingue lo que elige el recorrido.
