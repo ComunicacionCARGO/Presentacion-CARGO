@@ -66,7 +66,8 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
    - Línea blanca a 534,5–544,5; línea clara a 579–590; franja gris a 590–625.
    - Puntos de 34 px; marcador de 56 px con borde de 11,5 y tallo hasta 607.
    - Años en Oswald 114 px (activo) o al 60% y opacidad 33% (resto), con `letter-spacing -.04em`. Posiciones: 121 + i·1358/(n−1).
-   - Marcador: el punto rojo se apaga y el blanco se achica a 34 px → se desliza → crece y vuelve el rojo (WAAPI, se puede interrumpir).
+   - Marcador: el punto rojo se apaga y el blanco se achica a 34 px → se desliza → crece y vuelve el rojo (WAAPI, se puede interrumpir). El tallo nace en el centro del círculo y va detrás (primero en el DOM), así nunca se ve cortado.
+   - Avance automático cada `segundosPorAnio` (12 s) si nadie la toca mientras está en pantalla; mover el mouse, clic o flechas reinicia la cuenta.
    - Imagen del año: ilustraciones estilo grabado (`grabados.js`, SVG con tramas). Las fotos reales se convierten en grabado con el filtro `#gr-foto`.
 4. **Números y mapa**:
    - Los números cuentan animados.

@@ -260,12 +260,14 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
   border-radius: 50%;
   background: var(--rojo-seccion);
 }
+/* El tallo nace en el centro del círculo (queda detrás), así se ve conectado
+   aunque el círculo se achique durante la animación */
 .sel-tallo {
   position: absolute;
   left: -5px;
-  top: 26px;
+  top: 0;
   width: 10px;
-  height: 41.5px;
+  height: 67.5px;
   border-radius: 0 0 5px 5px;
   background: #FFF9F4;
   transform-origin: top;

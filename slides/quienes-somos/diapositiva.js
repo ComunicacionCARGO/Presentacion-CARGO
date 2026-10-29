@@ -5,7 +5,7 @@
 (function () {
   const D = Object.assign({
     pregunta: '¿Quiénes somos?', lema: '', titulo: '', historia: '',
-    lineaDeTiempo: [], numerosTitulo: '', numerosOperativosTitulo: '', numeros: [], sedes: []
+    lineaDeTiempo: [], segundosPorAnio: 12, numerosTitulo: '', numerosOperativosTitulo: '', numeros: [], sedes: []
   }, window.QUIENES_SOMOS || {});
 
   const $ = (s) => document.querySelector(s);
@@ -193,6 +193,7 @@
 
   function seleccionar(i, inmediato) {
     if (i < 0 || i >= n || i === actual) return;
+    programarAuto();
     const sentido = i > actual ? 1 : -1;
     if (actual >= 0) anios[actual].classList.remove('activo');
     anios[i].classList.add('activo');
@@ -236,6 +237,24 @@
     if (r.top > innerHeight * .75 || r.bottom < innerHeight * .25) return;
     seleccionar(actual + (e.key === 'ArrowRight' ? 1 : -1));
   });
+
+  // ---------- Avance automático ----------
+  // Si nadie toca la línea de tiempo mientras está en pantalla, pasa sola al
+  // año siguiente (y del último vuelve al primero). Mover el mouse sobre ella,
+  // hacer clic o usar las flechas reinicia la cuenta.
+  const SEGUNDOS_AUTO = Number(D.segundosPorAnio) || 0;
+  let reloj = null, lineaEnPantalla = false;
+  function programarAuto() {
+    clearTimeout(reloj);
+    if (!SEGUNDOS_AUTO || !lineaEnPantalla || n < 2) return;
+    reloj = setTimeout(() => seleccionar((actual + 1) % n), SEGUNDOS_AUTO * 1000);
+  }
+  seccionLinea.addEventListener('pointermove', programarAuto);
+  seccionLinea.addEventListener('pointerdown', programarAuto);
+  new IntersectionObserver((en) => {
+    lineaEnPantalla = en[0].isIntersecting;
+    programarAuto();
+  }, { threshold: .6 }).observe(seccionLinea);
 
   if (n) seleccionar(0, true);
 

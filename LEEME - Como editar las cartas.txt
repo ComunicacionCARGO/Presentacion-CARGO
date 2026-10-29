@@ -87,6 +87,9 @@ Para poner una parte en negrita, encerrala entre dos asteriscos:
 Línea de tiempo:
   • Cada año es un bloque { anio, foto, hitos }. Se pueden agregar o quitar
     años: la línea se reacomoda sola.
+  • segundosPorAnio: si nadie toca la línea, pasa sola al año siguiente
+    cada esa cantidad de segundos (del último vuelve al primero). Mover el
+    mouse sobre ella o hacer clic reinicia la cuenta. 0 = no pasa sola.
   • Las fotos van en la carpeta img\linea-de-tiempo y se escriben así:
       foto: "img/linea-de-tiempo/1980.jpg"
     Se muestran automáticamente como grabado en blanco y negro.

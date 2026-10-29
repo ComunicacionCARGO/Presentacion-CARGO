@@ -32,6 +32,11 @@ window.QUIENES_SOMOS = {
              aparece con un asterisco y el texto en cursiva.
      Para agregar un año: copiá un bloque completo con su coma y pegalo
      en el lugar que corresponda. La línea se reacomoda sola. */
+
+  // Si nadie la toca, la línea pasa sola al año siguiente cada tantos segundos
+  // (0 = no pasa sola)
+  segundosPorAnio: 12,
+
   lineaDeTiempo: [
     {
       anio: "1980",
