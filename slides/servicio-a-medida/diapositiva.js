@@ -350,7 +350,7 @@
   const CAPAS = [
     { k: 'propio', t: 'Red propia', s: `${bases.length} bases · ${nPropios + conexiones.length} rutas` },
     { k: 'redespacho', t: 'Redespachantes', s: `${nRedes} destinos` },
-    { k: 'zonas', t: 'Zonas', s: `${D.regiones.length} regiones · lead time` }
+    { k: 'zonas', t: 'Zonas', s: `${D.regiones.length} regiones y lead time` }
   ];
   const contCapas = $('.capas');
   CAPAS.forEach((c, i) => {
