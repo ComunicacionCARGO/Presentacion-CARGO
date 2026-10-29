@@ -61,7 +61,7 @@ window.CARTAS = [
   {
     titulo: "Servicio a Medida",
     portada: "",
-    destino: "slides/ejemplo/index.html"
+    destino: "slides/servicio-a-medida/index.html"
   },
   {
     titulo: "Nuestro TMS",

@@ -40,6 +40,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 | `compartido/desplazamiento.js` | Scroll suave virtual para diapositivas largas (`.pista`) |
 | `datos/cartas.js` | Textos de la portada, ajustes del carrusel, palabras flotantes, lista de cartas |
 | `datos/quienes-somos.js` | Textos, línea de tiempo, números y sedes |
+| `datos/distribucion.xlsx` → `distribucion.js` | Mapa de distribución (se edita en Excel y se convierte con el .bat) |
 | `img/` | Imágenes (`landing/`, `marca/`, `slides/`, `cartas/`, `linea-de-tiempo/`) |
 | `herramientas/` | Scripts para desarrollo (no forman parte del sitio) |
 
@@ -92,9 +93,23 @@ Es una diapositiva larga con scroll. Tiene una capa fija (logo y pregunta) y una
    - Tarjetas de vidrio planas con `backdrop-filter` (acá sí, no son curvas). Flotan con `translate` en `.logro`; la inclinación 3D va en `transform` de `.logro-vidrio`. No poner `opacity` ni filtros en ancestros de las tarjetas: cortan el desenfoque.
    - El texto de cada tarjeta se achica solo (`--t`) si no entra; lo mismo los hitos de la línea de tiempo.
 
+### "Servicio a medida" (`slides/servicio-a-medida/`)
+
+Mapa interactivo de distribución de Argentina (carta 2). Por ahora una sola sección dentro de una `.pista`; lo que venga antes (carátula, servicio de distribución) se agrega como secciones arriba.
+
+- **Datos editables en Excel**: `datos/distribucion.xlsx` → doble clic en `datos/Actualizar mapa de distribucion.bat` → `herramientas/excel-a-datos.ps1` reescribe `datos/distribucion.js` (`window.DISTRIBUCION`). No usa Excel instalado: lee el .xlsx como zip (soporta inlineStr y sharedStrings, coma o punto decimal, avisa errores). `herramientas/datos-a-excel.ps1` hace lo inverso (crea el Excel desde el JS, con listas desplegables). Funciones comunes en `comun-excel.ps1` (los textos con acentos van con códigos `#a`, `#o`… por ser scripts ASCII).
+- **Contornos**: `mapa-argentina.js`, generado con `herramientas/extraer-argentina.ps1` desde Natural Earth 10m admin-1 (`ne_10m_admin_1_states_provinces.geojson`, -Tolerancia 0.06 -AreaMinima 0.08). Arma una topología propia: corta cada anillo en tramos entre puntos de unión y simplifica cada tramo una sola vez. CABA queda cubierta por Buenos Aires. Sin Malvinas (como las referencias).
+- **Mapa**: misma técnica que el de "¿Quiénes somos?" (lienzos pintados una vez al doble de resolución, cara de vidrio con blancos apenas distintos por provincia, halo rojo). W = 405, `rotateX(30deg) rotateZ(-4deg)`, perspectiva 2000 con origen 50% 70% (así entra entera, con Tierra del Fuego).
+  - Zonas: SVG sin filtros con el color de cada región (opacidad .6); al pasar por una región del panel, las demás se apagan.
+  - Provincia elegida: sube en rojo (lados y cara creados la primera vez) y quedan solo las rutas que salen o llegan.
+  - Red: SVG con `translateZ(1px)`; rutas curvas con degradé, flecha (`marker`) y flujo animado (`stroke-dashoffset`). Los extremos suben con la provincia.
+  - Bases: íconos HTML parados (contra-rotación `rotateZ(4deg) rotateX(-30deg)`); si dos bases están a menos de 70 px, el nombre va al costado.
+- **Panel derecho**: capas (Red propia, Redespachantes, Zonas), barras de lead time sobre escala 0–144 h y detalle de provincia. Esc deselecciona antes de volver a la portada (listener en captura).
+
 ### Pendientes conocidos
 
-- Quedan diapositivas por diseñar: Servicio a Medida, Nuestro TMS, Estructura, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`).
+- Quedan diapositivas por diseñar: Nuestro TMS, Estructura, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`). Servicio a medida tiene solo el mapa de distribución.
+- Los puntos del mapa de distribución se interpretaron de capturas: verificarlos con la empresa (sobre todo los destinos propios: Jesús María, Rafaela, Paraná, La Plata).
 - Las cartas todavía no tienen portadas (`img/cartas/`, 1200×800).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
