@@ -47,35 +47,44 @@ AGREGAR UNA CARTA NUEVA
 En datos\cartas.js cada carta es un bloque así:
 
   {
-    titulo: "Almacenamiento",
+    antetitulo: "Nuestro",
+    titulo: "ALMACENAMIENTO",
     portada: "img/cartas/almacenamiento.jpg",
+    foco: 50,
     destino: "slides/almacenamiento/index.html"
   },
+
+  • antetitulo: palabra chica de arriba. titulo: palabra grande.
+    Si el antetítulo empieza con "¿", ese signo queda colgado a la izquierda.
+    El número (01, 02…) se pone solo, según el orden.
 
 Para agregar una:
 1. Copiá un bloque completo, desde la llave { hasta la llave },
    INCLUIDA la coma final.
 2. Pegalo debajo del último bloque.
-3. Cambiá título, portada y destino.
+3. Cambiá antetítulo, título, portada, foco y destino.
 
 Para quitar una carta: borrá el bloque completo con su coma.
 Las cartas siempre completan el círculo: con más cartas, cada una es más corta.
 Para cambiar el orden: mové los bloques de lugar.
 
 
-PONER LA IMAGEN DE PORTADA DE UNA CARTA
----------------------------------------
-1. Exportá la imagen desde Illustrator a 2100 × 600 px (muy apaisada: las tres
-   cartas son largas y entre todas completan el círculo). Guardala en
-   JPG o WEBP. Lo importante va en el centro, que es lo que queda de frente.
+PONER LA FOTO DE UNA CARTA
+--------------------------
+La foto se ve "detrás" de la carta, como un paisaje lejano a través de una
+ventana: no se curva con la carta y se mueve más lento que ella al girar.
+1. Usá una foto común, horizontal (por ejemplo 2000 × 1125 px), en JPG o WEBP.
+   Se muestra oscurecida para que se lea el título.
 2. Guardala en la carpeta  img\cartas
    Usá nombres sin espacios, sin tildes y en minúscula,
    por ejemplo: almacenamiento.jpg
 3. En cartas.js escribí la ruta:  portada: "img/cartas/almacenamiento.jpg"
    (con barras /  hacia adelante).
+4. Con "foco" elegís qué altura de la foto se ve: 0 = la parte de arriba,
+   50 = el medio, 100 = la de abajo.
 
 Si la imagen no se encuentra, la carta se muestra como vidrio sin
-imagen, así que no se rompe nada: revisá el nombre del archivo.
+foto, así que no se rompe nada: revisá el nombre del archivo.
 
 
 TEXTOS DE LAS DIAPOSITIVAS

@@ -51,7 +51,8 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 
 - **3 cartas largas que completan el círculo** (radio 310, `HUECO` de 7° entre cartas; el arco y el ancho salen de la cantidad de cartas, así que con más cartas se acortan). Sin un `preserve-3d` compartido: si se comparte, el navegador recorta las cartas entre sí y aparecen cortes en el vidrio.
 - Profundidad con `z-index` (el operario tiene 1000). Como una carta larga queda en parte delante y en parte detrás del operario, cada carta tiene **dos partes** (adelante y atrás, cortadas en la franja donde la curva empieza a verse de espaldas: coseno = radio/perspectiva) con sus capas (sombra, vidrio, borde) y su z-index; `.carta` no arma grupo (sin perspective, opacity ni z-index). Cada franja va en su `.tira-caja` (perspectiva 1600, origen 800 450) con el z-index de su parte. No poner `perspective()` dentro del transform de la franja: Chrome deja de detectar el cursor sobre las franjas giradas.
-- Las cartas son **curvas**: franjas de unos 17 px (36 por carta con 3 cartas) sobre el cilindro de la órbita. El número y el nombre van centrados.
+- Las cartas son **curvas**: franjas de unos 17 px (36 por carta con 3 cartas) sobre el cilindro de la órbita.
+- **Contenido = ventana a una foto lejana** (diseño de la persona, medido sobre su carta de 668 × 241 y llevado a 174 de alto, en `ROTULO`). La foto **no va en las franjas** (seguiría la curva): es una capa plana (`.vidrio-foto`, 1100 px de ancho, oscurecida .5) dentro del vidrio de la parte de adelante, recortada con la silueta como el desenfoque del operario. `ubicarFoto` la centra en `CENTRO.x + (centro de la carta − 800) × FOTO_ARRASTRE (.35)` y un poco con el mouse, la agranda con `esc` y `adelante` (cursor, apertura) y usa `foco` (0–100) para la altura. En las franjas quedan el número Oswald en rojo translúcido (.66) y el antetítulo Inter Light (el "¿" cuelga a la izquierda) y el título Oswald, ubicados por su línea base (Oswald .95, Inter .865 con line-height 1). El grupo va centrado y ocupa como mucho el 74 % del ancho (en las puntas la curva lo aplasta); todas las cartas usan el mismo tamaño (el del título más largo). Datos: `antetitulo`, `titulo`, `portada` (en `img/cartas/`), `foco`. El brillo del vidrio es suave (.2) para no lavar la foto.
   - El vidrio es una capa 2D (copia desenfocada del operario en un canvas) recortada con `clip-path` usando la silueta proyectada. No usar `backdrop-filter` por franja: vuelven las costuras.
   - Borde, brillo y halo en SVG.
   - El contenido se dibuja a resolución `--f` (2× o más) y se reduce.
@@ -126,7 +127,6 @@ Red de áreas: datos en `datos/estructura.js` (`window.ESTRUCTURA`, 18 áreas to
 
 - La portada tiene 3 cartas (se sacaron Nuestro TMS, Tecnología y Ubicación Estratégica). Servicio a medida tiene solo el mapa de distribución.
 - Los puntos del mapa de distribución se interpretaron de capturas: verificarlos con la empresa (sobre todo los destinos propios: Jesús María, Rafaela, Paraná, La Plata).
-- Las cartas todavía no tienen portadas (`img/cartas/`, 2100×600 con 3 cartas largas).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
 - Mejoras ofrecidas: fuentes locales para funcionar sin internet, logo en SVG.

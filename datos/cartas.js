@@ -47,28 +47,40 @@ window.PORTADA = {
    Las cartas son largas y entre todas completan el círculo: con más
    cartas, cada una se hace más corta.
 
-   titulo:  nombre que aparece sobre la carta.
-   portada: imagen de la carta (guardala en la carpeta img/cartas).
-            Medida recomendada con 3 cartas: 2100 × 600 px (muy apaisada),
-            JPG o WEBP. Lo importante conviene ponerlo en el centro.
-            Si se deja vacía "" se muestra una carta de vidrio sin imagen.
-   destino: la diapositiva que se abre al hacer clic.
+   antetitulo: la palabra chica de arriba (por ejemplo "¿Quiénes").
+               Si empieza con "¿", ese signo queda colgado a la izquierda.
+   titulo:     la palabra grande (por ejemplo "SOMOS?").
+               Si el título es largo, la letra se achica sola para que entre.
+               El número (01, 02…) se pone solo, según el orden.
+   portada:    foto que se ve "detrás" de la carta, como por una ventana
+               (guardala en la carpeta img/cartas). Sirve una foto común,
+               horizontal (por ejemplo 2000 × 1125 px), en JPG o WEBP.
+               Si se deja vacía "" se muestra una carta de vidrio sin foto.
+   foco:       qué parte de la foto se ve, de arriba a abajo:
+               0 = la parte de arriba, 50 = el medio, 100 = la de abajo.
+   destino:    la diapositiva que se abre al hacer clic.
    --------------------------------------------------------------------- */
 
 window.CARTAS = [
   {
-    titulo: "Quiénes somos",
-    portada: "",
+    antetitulo: "¿Quiénes",
+    titulo: "SOMOS?",
+    portada: "img/cartas/quienes-somos.webp",
+    foco: 50,
     destino: "slides/quienes-somos/index.html"
   },
   {
-    titulo: "Servicio a Medida",
-    portada: "",
+    antetitulo: "Servicio",
+    titulo: "DIFERENCIAL",
+    portada: "img/cartas/servicio-diferencial.webp",
+    foco: 30,
     destino: "slides/servicio-a-medida/index.html"
   },
   {
-    titulo: "Nuestra Estructura",
-    portada: "",
+    antetitulo: "Nuestra",
+    titulo: "ESTRUCTURA",
+    portada: "img/cartas/nuestra-estructura.jpg",
+    foco: 50,
     destino: "slides/nuestra-estructura/index.html"
   }
 ];

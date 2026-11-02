@@ -110,6 +110,78 @@
     '<filter id="desenfoque-halo" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>' +
     '</defs>';
 
+  // ---------- Foto y título de cada carta ----------
+  const nombreCarta = (d) => [d.antetitulo, d.titulo].filter(Boolean).join(' ');
+  // La foto de cada carta es un fondo plano y lejano: no sigue la curva. Va en el vidrio
+  // de la parte de adelante (una capa 2D recortada con la silueta de la carta) y se mueve
+  // más lento que la carta, así la carta parece una ventana que la deja ver.
+  const FOTO_ANCHO = 1100;                        // ancho de la foto en pantalla (px del escenario)
+  const FOTO_ARRASTRE = .35;                      // cuánto acompaña la foto al movimiento de la carta (0 = quieta)
+  const precarga = crear('div', '', document.body);   // base.js espera estas imágenes antes de abrir la cortina
+  precarga.hidden = true;
+
+  // Ubica la foto en pantalla: sigue de lejos al centro de la carta (FOTO_ARRASTRE),
+  // un poco al mouse, y crece cuando la carta se acerca (al pasar el cursor o al abrirla).
+  // "foco" elige qué altura de la foto queda en el medio de la ventana.
+  function ubicarFoto(ca, grados, rot, kp) {
+    const th = grados * RAD, Rc = radio + ca.adelante;
+    const x = Rc * Math.sin(th), z = Rc * Math.cos(th), y = ca.sube;
+    const y2 = y * rot.cX - z * rot.sX, z2 = y * rot.sX + z * rot.cX;
+    const x3 = x * rot.cY + z2 * rot.sY, z3 = -x * rot.sY + z2 * rot.cY;
+    const f = PERSPECTIVA / (PERSPECTIVA - z3);
+    const cx = ORIGEN.x + (CENTRO.x + x3 - ORIGEN.x) * f;   // centro de la carta en pantalla
+    const s = ca.esc * (1 + ca.adelante / radio * .9);
+    const w = FOTO_ANCHO * s, h = ca.fotoAlto * s;
+    const fx = CENTRO.x + (cx - CENTRO.x) * FOTO_ARRASTRE - px * 14 * kp;
+    const fy = CENTRO.y + ca.sube * FOTO_ARRASTRE - py * 8 * kp;
+    const margen = ALTO * .7 * s;                           // la ventana siempre queda cubierta
+    const arriba = Math.max(fy + margen - h, Math.min(fy - margen, fy - h * ca.foco / 100));
+    ca.foto.style.transform = `translate(${(fx - w / 2).toFixed(1)}px, ${arriba.toFixed(1)}px) scale(${s.toFixed(4)})`;
+  }
+
+  // Título como en el diseño de la persona (medido sobre su carta de 668 × 241 y llevado
+  // a 174 px de alto): número Oswald rojo, antetítulo Inter Light y título Oswald, cada uno
+  // ubicado por su línea base. El grupo va centrado y ocupa como mucho la parte central
+  // de la carta (en las puntas la curva lo aplasta); si alguno no entra, se achican todos
+  // por igual, así las tres cartas tienen títulos del mismo tamaño.
+  const ROTULO_MAX = ANCHO * .74;
+  const ROTULO = {
+    num:  { tam: 136.5, base: 143.7, x: 0 },
+    ante: { tam: 38.3,  base: 68.6,  x: 128.9 },
+    tit:  { tam: 75.1,  base: 137.2, x: 147.6 }
+  };
+  const BASE_OSWALD = .95, BASE_INTER = .865;     // línea base desde arriba, con line-height 1
+  const medidor = document.createElement('canvas').getContext('2d');
+  const anchoTexto = (fuente, t) => { medidor.font = fuente; return medidor.measureText(t).width; };
+  function medirRotulo(d, i) {
+    const R = ROTULO, ante = d.antetitulo || '';
+    const fAnte = `300 ${R.ante.tam}px Inter`;
+    const colgado = /^[¿¡]/.test(ante) ? anchoTexto(fAnte, ante[0]) : 0;   // el "¿" queda colgado a la izquierda
+    const ancho = Math.max(
+      anchoTexto(`700 ${R.num.tam}px Oswald`, dosDigitos(i + 1)),
+      ante ? R.ante.x + anchoTexto(fAnte, ante) - colgado : 0,
+      R.tit.x + anchoTexto(`700 ${R.tit.tam}px Oswald`, d.titulo || ''));
+    return { ancho, colgado };
+  }
+  function ubicarRotulos() {
+    const medidas = CARTAS.map(medirRotulo);
+    const t = Math.min(1, ...medidas.map((m) => ROTULO_MAX / m.ancho));
+    cartas.forEach((ca, i) => ubicarRotulo(ca.a, medidas[i], t));
+  }
+  function ubicarRotulo(a, m, t) {
+    const R = ROTULO, { ancho, colgado } = m;
+    const gx = (ANCHO - ancho * t) / 2, cy = ALTO / 2;
+    const fija = (k, v) => a.style.setProperty(k, v.toFixed(2));
+    const lugar = (pre, r, base, menos) => {
+      fija(`--${pre}s`, r.tam * t);
+      fija(`--${pre}x`, gx + r.x * t - (menos || 0) * t);
+      fija(`--${pre}y`, cy + (r.base - cy) * t - base * r.tam * t);
+    };
+    lugar('n', R.num, BASE_OSWALD);
+    lugar('a', R.ante, BASE_INTER, colgado);
+    lugar('t', R.tit, BASE_OSWALD);
+  }
+
   // ---------- Construcción de las cartas ----------
   // Una carta larga puede quedar en parte delante del operario y en parte detrás.
   // Por eso cada carta tiene dos "partes" (la de adelante y la de atrás), cada una con
@@ -128,7 +200,7 @@
     const defs = svgEl('defs', {}, refl);
     const recorte = svgEl('path', {}, svgEl('clipPath', { id: id + '-recorte' }, defs));
     const gradBrillo = svgEl('linearGradient', { id: id + '-brillo', gradientUnits: 'userSpaceOnUse' }, defs);
-    [[0, 0], [.5, .45], [1, 0]].forEach(([o, op]) => {
+    [[0, 0], [.5, .2], [1, 0]].forEach(([o, op]) => {   // suave: no tiene que lavar la foto
       svgEl('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': op }, gradBrillo);
     });
     const gradLuz = svgEl('radialGradient', { id: id + '-luz', gradientUnits: 'userSpaceOnUse', r: 150 }, defs);
@@ -147,26 +219,19 @@
   const cartas = CARTAS.map((datos, i) => {
     const a = crear('a', 'carta', mundo);
     a.href = datos.destino || '#';
-    a.setAttribute('aria-label', datos.titulo);
+    a.setAttribute('aria-label', nombreCarta(datos));
     const id = 'carta' + i;
     const partes = [crearParte(a, id + 'a', true), crearParte(a, id + 'b', false)];
 
-    // 3. Franjas con el contenido (imagen, número y nombre)
+    // 3. Franjas con el contenido: el número de vidrio rojo y el título en dos partes
+    //    ("¿Quiénes" / "SOMOS?"). La foto no va acá (seguiría la curva) sino en el vidrio.
     const modelo = document.createElement('div');
     modelo.className = 'contenido';
-    if (datos.portada) {
-      const img = crear('img', 'portada', modelo);
-      img.src = datos.portada;
-      img.alt = '';
-      img.decoding = 'async';
-      img.draggable = false;
-    } else {
-      crear('span', 'marca-agua', modelo).textContent = dosDigitos(i + 1);
-    }
+    if (!datos.portada) a.classList.add('sin-foto');
     if (AJ.mostrarNombres) {
-      const et = crear('div', 'etiqueta', modelo);
-      crear('b', '', et).textContent = dosDigitos(i + 1);
-      crear('span', '', et).textContent = datos.titulo;
+      crear('span', 'r-num', modelo).textContent = dosDigitos(i + 1);
+      if (datos.antetitulo) crear('span', 'r-ante', modelo).textContent = datos.antetitulo;
+      crear('span', 'r-tit', modelo).textContent = datos.titulo || '';
     }
     const anchoTira = (ANCHO_TIRA + SOLAPE) * F;
     const tiras = [];
@@ -185,26 +250,35 @@
       t.appendChild(c);
       tiras.push(t);
     }
-    // Si la imagen no existe, la carta queda de vidrio con su número
+    // Foto de fondo (plana) dentro del vidrio de la parte de adelante.
+    // Si la imagen no existe, la carta queda de vidrio con su número y su título.
+    const ca = { a, foco: Math.max(0, Math.min(100, datos.foco === undefined ? 50 : +datos.foco || 0)), foto: null, fotoAlto: FOTO_ANCHO * 9 / 16 };
     if (datos.portada) {
-      const prueba = new Image();
-      prueba.onerror = () => a.querySelectorAll('.portada').forEach((im) => {
-        const s = document.createElement('span');
-        s.className = 'marca-agua';
-        s.textContent = dosDigitos(i + 1);
-        im.replaceWith(s);
-      });
+      ca.foto = crear('div', 'vidrio-foto', partes[0].vidrio);
+      ca.foto.style.backgroundImage = `url("${datos.portada}")`;
+      ca.foto.style.width = FOTO_ANCHO + 'px';
+      ca.foto.style.height = ca.fotoAlto + 'px';
+      const prueba = crear('img', '', precarga);
+      prueba.alt = '';
+      prueba.onload = () => {
+        ca.fotoAlto = FOTO_ANCHO * prueba.naturalHeight / prueba.naturalWidth;
+        ca.foto.style.height = ca.fotoAlto + 'px';
+      };
+      prueba.onerror = () => { a.classList.add('sin-foto'); ca.foto.remove(); ca.foto = null; };
       prueba.src = datos.portada;
     }
 
-    return {
-      a, partes, tiras,
+    return Object.assign(ca, {
+      partes, tiras,
       ang: new Float64Array(TIRAS),                       // ángulo de cada franja en el cuadro actual
       tiraZ: new Array(TIRAS).fill(''), tiraAdelante: new Array(TIRAS).fill(null),
       opTxt: null,
       esc: .3, sube: 0, adelante: 0, op: 0, act: 0   // valores animados
-    };
+    });
   });
+  // Títulos: se miden ahora y otra vez con las fuentes ya cargadas
+  ubicarRotulos();
+  if (document.fonts) document.fonts.ready.then(ubicarRotulos);
 
   // Copia desenfocada del operario para el vidrio (se calcula una sola vez)
   function prepararVidrio() {
@@ -390,7 +464,7 @@
     if (i === hudActual || i < 0) return;
     hudActual = i;
     hudNum.textContent = dosDigitos(i + 1);
-    hudNom.textContent = CARTAS[i].titulo;
+    hudNom.textContent = nombreCarta(CARTAS[i]);
   }
 
   // ---------- Caminos: palabras que aparecen y convergen hacia las cartas ----------
@@ -681,6 +755,7 @@
       // La carta elegida o bajo el cursor queda por encima de las demás
       const destacada = i === activa || i === elegida ? 2400 : 0;
       dibujarCarta(ca, grados, inclinacion, rot, destacada);
+      if (ca.foto) ubicarFoto(ca, grados, rot, kp);
     });
     actualizarHud(activa >= 0 ? activa : frente);
 
