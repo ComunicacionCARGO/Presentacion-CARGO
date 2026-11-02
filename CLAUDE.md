@@ -116,7 +116,7 @@ Red de áreas: datos en `datos/estructura.js` (`window.ESTRUCTURA`, 18 áreas to
 - **Ubicación**: anillos elípticos por `nivel` (0 centro, 1–3 hacia afuera; tamaños 164/122/98/80 px), en el orden de la lista; después 500 pasadas de separación (círculo + nombre) que además las alejan de la zona del título. Funciona aunque se agreguen áreas.
 - **Caminos**: cada área se une con la dirección, sus vecinas de anillo y las más cercanas del anillo interior. Misma curva que los caminos de la portada (`C x0+dx*.15,y0+dy*.6 x3-dx*.45,y3-dy*.05`), gris .26 y 0,8 px; se recalculan en cada cuadro con la posición flotante de cada burbuja, así siempre quedan unidos. Mensajes rojos (hasta 16) viajan por los caminos (posición calculada con la Bézier, sin medir el DOM); al pasar el cursor por un área se encienden sus caminos y salen mensajes desde ella.
 - **Burbujas**: botones con disco de vidrio (sin `backdrop-filter`, para no cargar el cuadro), ícono incluido rojo (o `imagen` SVG en `img/estructura/`), flotación en JS y paralaje por nivel; el fondo también se mueve. Al pasar el cursor crecen 1,22. Cada 2,6 s late una burbuja al azar; la del centro late siempre.
-- **Tarjeta**: vidrio centrado, alto según el contenido (máx. 700), nace desde la burbuja (`transform-origin` calculado), flechas para recorrer las áreas, Esc la cierra antes de volver a la portada. Textos con `--t` que se achica si no entra.
+- **Tarjeta**: vidrio centrado de alto fijo (1040 × 600, así los botones no se mueven al recorrer las áreas), nace desde la burbuja (`transform-origin` calculado), flechas para recorrer las áreas, Esc la cierra antes de volver a la portada. Textos con `--t` que se achica si no entra.
 
 ### Pendientes conocidos
 

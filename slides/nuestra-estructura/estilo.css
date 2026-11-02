@@ -174,7 +174,7 @@
 .burbuja:hover .b-nombre, .burbuja.elegida .b-nombre { color: var(--rojo); translate: 0 calc(var(--d) * .11); transition-delay: 0s; }
 
 /* ---------- Tarjeta de un área ---------- */
-/* La tarjeta toma el alto de su contenido (hasta 700 px) y queda centrada */
+/* Todas las tarjetas miden lo mismo y quedan centradas: los botones no se mueven al pasar de un área a otra */
 .tarjeta-capa {
   position: absolute;
   inset: 0;
@@ -191,7 +191,7 @@
   --t: 1;
   position: relative;
   width: 1040px;
-  max-height: 700px;
+  height: 600px;
   display: flex;
   flex-direction: column;
   padding: 34px 40px 32px;
