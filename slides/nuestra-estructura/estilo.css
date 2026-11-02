@@ -103,9 +103,10 @@
   gap: 51.3px;
 }
 .seccion-mejora.arriba .el-tarjetas { pointer-events: auto; }
+/* Las cuatro flotan juntas (mismo ritmo): así íconos, títulos y textos quedan siempre alineados */
 .el-tarjeta {
   height: 100%;
-  animation: flotar calc(5.6s + var(--i) * .7s) ease-in-out calc(var(--i) * -1.8s) infinite alternate;
+  animation: flotar 6s ease-in-out infinite alternate;
 }
 @keyframes flotar {
   from { translate: 0 -7px; }
