@@ -37,27 +37,143 @@
   pointer-events: none;
 }
 
-/* ---------- Mejora continua ---------- */
+/* ---------- ¿Por qué elegirnos? ---------- */
 .seccion-mejora {
   position: absolute;
   inset: 0;
   z-index: 7;
-  display: grid;
-  place-items: center;
   pointer-events: none;
 }
-.mc-titulo { text-align: center; line-height: 1; }
-.mc-ante, .mc-grande { display: block; will-change: opacity, transform; }
-.mc-ante { font-size: 46px; font-weight: 300; letter-spacing: .01em; color: var(--blanco); }
+/* Fondo de camiones: cubre la ventana; sus bordes se funden con el gris institucional */
+.el-fondo {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: calc(450px - 50vh / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  height: calc(100vh / var(--escala, 1));
+  background: var(--gris);
+  opacity: 0;
+}
+.el-imagen {
+  position: absolute;
+  left: calc(50vw / var(--escala, 1) - 800px - 60px);
+  top: calc(50vh / var(--escala, 1) - 450px - 34px);
+  width: 1720px;
+  height: 968px;
+  background: url(../../img/slides/nuestra-estructura/fondo-elegirnos.jpg) center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
+  transform: scale(1.04);
+  transition: transform 2.4s cubic-bezier(.2, .8, .2, 1);
+}
+.seccion-mejora.arriba .el-imagen { transform: scale(1); }
+
+/* Título: aparece en el centro y, al terminar los anillos, sube a su lugar.
+   Posición final medida del diseño: "¿Por qué" de x 441, y 106 a 178;
+   "ELEGIRNOS?" de x 478 a 1163, y 181 a 297 (cada texto se ubica por su línea base). */
+.mc-titulo {
+  position: absolute;
+  inset: 0;
+  transform: translateY(248px);
+  transition: transform 1.1s cubic-bezier(.65, 0, .25, 1);
+}
+.seccion-mejora.arriba .mc-titulo { transform: none; }
+.mc-ante, .mc-grande { position: absolute; display: block; line-height: 1; white-space: nowrap; will-change: opacity, transform; }
+.mc-ante { left: 438px; top: 98px; font-size: 74px; font-weight: 300; color: var(--blanco); }
 .mc-grande {
-  margin-top: 6px;
+  left: 470px;
+  top: 163px;
   font-family: var(--fuente-titulo);
   font-weight: 700;
-  font-size: 150px;
-  line-height: .92;
-  letter-spacing: -.005em;
-  color: var(--rojo);
+  font-size: 142px;
+  letter-spacing: -.007em;
+  color: var(--blanco);
 }
+
+/* Tarjetas de vidrio flotantes */
+.el-tarjetas {
+  position: absolute;
+  left: 55px;
+  top: 391px;
+  width: 1462px;
+  height: 391px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  gap: 51.3px;
+}
+.seccion-mejora.arriba .el-tarjetas { pointer-events: auto; }
+.el-tarjeta {
+  height: 100%;
+  animation: flotar calc(5.6s + var(--i) * .7s) ease-in-out calc(var(--i) * -1.8s) infinite alternate;
+}
+@keyframes flotar {
+  from { translate: 0 -7px; }
+  to { translate: 0 7px; }
+}
+.el-vidrio {
+  position: relative;
+  height: 100%;
+  padding: 30px 28px 26px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .97), rgba(255, 251, 243, .88));
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow: 0 44px 70px -30px rgba(0, 0, 0, .65), 0 12px 26px -14px rgba(0, 0, 0, .45), inset 0 1px 0 #fff;
+  transform: perspective(1100px) translateY(var(--lev, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  opacity: 0;
+  translate: 0 90px;
+  transition:
+    opacity .8s ease calc(var(--i) * .1s + .55s),
+    translate 1.1s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * .1s + .55s),
+    transform .35s cubic-bezier(.2, .8, .2, 1),
+    box-shadow .5s ease;
+}
+.seccion-mejora.arriba .el-vidrio { opacity: 1; translate: 0 0; }
+/* al volver, desaparecen enseguida */
+.seccion-mejora:not(.arriba) .el-vidrio { transition-delay: 0s, 0s, 0s, 0s; transition-duration: .35s, .45s, .35s, .5s; }
+.el-tarjeta.activa .el-vidrio { --lev: -12px; box-shadow: 0 60px 80px -30px rgba(0, 0, 0, .7), 0 16px 30px -14px rgba(0, 0, 0, .45), 0 0 0 1px rgba(239, 69, 41, .25), inset 0 1px 0 #fff; }
+.el-vidrio::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 0;
+  width: 40px;
+  height: 5px;
+  background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px);
+}
+.el-brillo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(360px circle at var(--mx, 30%) var(--my, 0%), rgba(255, 255, 255, .7), rgba(255, 255, 255, 0) 60%);
+  opacity: .4;
+  transition: opacity .4s ease;
+}
+.el-tarjeta.activa .el-brillo { opacity: .9; }
+.el-contenido { position: relative; z-index: 1; }
+.el-icono { display: block; width: 74px; height: 74px; color: var(--rojo); }
+.el-icono svg { display: block; width: 100%; height: 100%; fill: var(--rojo); }
+.el-icono svg .trazo { fill: none; stroke: var(--rojo); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.el-icono svg .trazo.flecha { stroke-width: 1.9; stroke-linecap: butt; }
+.el-icono svg .hueco { fill: none; stroke: #FFFBF3; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+.el-titulo {
+  margin-top: 18px;
+  min-height: 2.12em;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1.06;
+  color: var(--gris);
+}
+.el-texto { margin-top: 12px; font-size: 15px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .9); }
+.el-texto strong { font-weight: 600; color: var(--gris); }
+.el-datos { display: flex; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(58, 58, 58, .14); }
+.el-datos div { flex: 1; min-width: 0; }
+.el-datos b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 28px; line-height: 1; color: var(--rojo); white-space: nowrap; }
+.el-datos span { display: block; margin-top: 4px; font-size: 11.5px; font-weight: 300; line-height: 1.35; color: rgba(58, 58, 58, .8); }
 
 /* ---------- Título ---------- */
 .titulo-estructura { position: absolute; left: 80px; top: 86px; width: 420px; z-index: 3; }

@@ -14,9 +14,44 @@ window.ESTRUCTURA = {
   bajada: "Un equipo interconectado: cada área sostiene y potencia a las demás.",
   ayuda: "Tocá cada área para conocerla",
 
-  // Título que aparece al bajar con el scroll (después de la transición de anillos)
-  mejoraAntetitulo: "Mejora",
-  mejoraTitulo: "CONTINUA",
+  // ---------- "¿Por qué elegirnos?" (aparece al bajar, después de la transición de anillos) ----------
+  elegirnosAntetitulo: "¿Por qué",
+  elegirnosTitulo: "ELEGIRNOS?",
+
+  /* Tarjetas de vidrio. Cada una tiene:
+     icono:  excelencia, innovacion, flexibilidad o crecimiento
+     titulo: el título de la tarjeta.
+     texto:  el párrafo (**negrita**).
+     datos:  (opcional) cifras destacadas, cada una con valor y texto. */
+  elegirnos: [
+    {
+      icono: "excelencia",
+      titulo: "Excelencia en el servicio",
+      texto: "Nuestra cultura de **mejora continua** sostiene un servicio de alto nivel, alineado a los estándares del cliente.",
+      datos: [
+        { valor: "98%", texto: "de cumplimiento en tiempos de entrega en rutas propias" },
+        { valor: "+500.000 kg", texto: "movilizados por mes" }
+      ]
+    },
+    {
+      icono: "innovacion",
+      titulo: "Innovación y tecnología",
+      texto: "Herramientas que optimizan cada eslabón de la cadena: de la **trazabilidad en tiempo real** a la **analítica de datos**. Un servicio más eficiente, transparente e inteligente, que mejora las decisiones y reduce errores.",
+      datos: []
+    },
+    {
+      icono: "flexibilidad",
+      titulo: "Flexibilidad y adaptabilidad",
+      texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
+      datos: []
+    },
+    {
+      icono: "crecimiento",
+      titulo: "Compromiso con el crecimiento",
+      texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
+      datos: []
+    }
+  ],
 
   /* Cada área es una burbuja de la red. Tiene:
      id:      nombre corto sin espacios ni acentos (no se ve; no lo repitas).

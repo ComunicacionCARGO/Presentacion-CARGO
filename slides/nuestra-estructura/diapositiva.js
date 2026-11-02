@@ -393,8 +393,74 @@
   // el centro; detrás queda todo gris y aparece el título. Sigue al scroll
   // (se puede volver) y, al soltar la rueda, se completa solo.
   // =========================================================
-  $('.mc-ante').textContent = E.mejoraAntetitulo || 'Mejora';
-  $('.mc-grande').textContent = E.mejoraTitulo || 'CONTINUA';
+  $('.mc-ante').textContent = E.elegirnosAntetitulo || '¿Por qué';
+  $('.mc-grande').textContent = E.elegirnosTitulo || 'ELEGIRNOS?';
+
+  // ---------- Tarjetas de "¿Por qué elegirnos?" (íconos redibujados de las diapositivas originales) ----------
+  const sello = (() => {
+    // sello dentado con un aro y un tilde calados
+    const pts = [], n = 16;
+    for (let k = 0; k < n * 2; k++) {
+      const a = k / (n * 2) * Math.PI * 2 - Math.PI / 2, r = k % 2 ? 10.3 : 11.6;
+      pts.push(`${(12 + r * Math.cos(a)).toFixed(2)},${(12 + r * Math.sin(a)).toFixed(2)}`);
+    }
+    return `<path fill-rule="evenodd" d="M${pts.join('L')}Z M12 4.6a7.4 7.4 0 1 0 0 14.8 7.4 7.4 0 0 0 0-14.8zM12 6.1a5.9 5.9 0 1 1 0 11.8 5.9 5.9 0 0 1 0-11.8z"/>` +
+      '<path class="hueco" d="M8.9 12.2l2.2 2.2 4.1-4.6"/>';
+  })();
+  const ICONOS_EL = {
+    excelencia: sello,
+    // nube grande en el centro con caminos de circuito en ángulo recto y un punto al final de cada uno
+    innovacion:
+      '<path transform="translate(5.2 4.2) scale(.567)" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>' +
+      '<path class="trazo" d="M10.4 7.2V3.5M13.6 6.9V5.3h2.4M5.4 12.6H3M6.4 15.5H4.6v1.9M18.8 12.3h2.1M17.6 15.6v1.4h1.8M9.2 15.6v2.6l-1.3 1.3M12 15.6v4.5M14.8 15.6v2.6l1.3 1.3"/>' +
+      '<circle cx="10.4" cy="2.4" r="1.25"/><circle cx="17.2" cy="5.3" r="1.25"/><circle cx="1.9" cy="12.6" r="1.25"/><circle cx="4.6" cy="18.6" r="1.25"/>' +
+      '<circle cx="22" cy="12.3" r="1.25"/><circle cx="20.6" cy="17" r="1.25"/><circle cx="7.2" cy="20.3" r="1.25"/><circle cx="12" cy="21.3" r="1.25"/><circle cx="16.8" cy="20.3" r="1.25"/>',
+    flexibilidad:
+      '<path fill-rule="evenodd" d="M6.6 3h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM17.2 5a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>' +
+      '<path fill-rule="evenodd" d="M6.6 13.2h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM6.8 15.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>',
+    // tres personas de la mano (la de la izquierda con vestido) y una flecha en zigzag que sube
+    crecimiento: (() => {
+      const persona = (cx, vestido) => {
+        const cabeza = `<circle cx="${cx}" cy="3.3" r="1.75"/>`;
+        const cuerpo = vestido
+          ? `<path d="M${cx - 1.5} 5.6h3l1.4 4.6.9 3.4h-2.2v4.8h-1.3v-4.8h-.6v4.8h-1.3v-4.8h-2.2l.9-3.4z"/>`
+          : `<path d="M${cx - 1.6} 5.6h3.2c.8 0 1.4.6 1.4 1.4v4.9h-1.2v6.2h-1.4v-5.4h-.8v5.4H${cx - 1.6}v-6.2h-1.2V7c0-.8.6-1.4 1.4-1.4z"/>`;
+        return cabeza + cuerpo;
+      };
+      return persona(5.2, true) + persona(12, false) + persona(18.8, false) +
+        '<path d="M7.4 9.6h2.6v1.1H7.4zM14 9.6h2.6v1.1H14z"/>' +
+        '<path class="hueco" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/><path class="trazo flecha" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/>' +
+        '<path d="M22.8 8.4l-.6 6.4-2.4-2.4-1.6-1.6-2.4-2.4z"/>';
+    })()
+  };
+  const contEl = $('.el-tarjetas');
+  (E.elegirnos || []).slice(0, 4).forEach((t, i) => {
+    const art = crear('article', 'el-tarjeta', contEl);
+    art.style.setProperty('--i', i);
+    const v = crear('div', 'el-vidrio', art);
+    v.style.setProperty('--i', i);
+    const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
+    crear('div', 'el-contenido', v,
+      `<span class="el-icono"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg></span>` +
+      `<h3 class="el-titulo">${formato(t.titulo)}</h3><p class="el-texto">${formato(t.texto)}</p>` +
+      (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : ''));
+    crear('i', 'el-brillo', v);
+    // inclinación 3D y reflejo que siguen al cursor
+    art.addEventListener('pointermove', (e) => {
+      const r = v.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      v.style.setProperty('--ry', `${(x - .5) * 10}deg`);
+      v.style.setProperty('--rx', `${(.5 - y) * 8}deg`);
+      v.style.setProperty('--mx', `${x * 100}%`);
+      v.style.setProperty('--my', `${y * 100}%`);
+    });
+    art.addEventListener('pointerenter', () => art.classList.add('activa'));
+    art.addEventListener('pointerleave', () => {
+      art.classList.remove('activa');
+      v.style.setProperty('--rx', '0deg');
+      v.style.setProperty('--ry', '0deg');
+    });
+  });
   const lienzo = $('.anillos'), ctx = lienzo.getContext('2d');
   const tituloAnte = $('.mc-ante'), tituloGrande = $('.mc-grande');
   const RECORRIDO = 900;                          // scroll (px del escenario) que dura la transición
@@ -454,7 +520,15 @@
     tituloGrande.style.opacity = a2.toFixed(3);
     tituloGrande.style.transform = `translateY(${((1 - a2) * 40).toFixed(1)}px) scale(${(.94 + a2 * .06).toFixed(3)})`;
     $('.seccion-mejora').setAttribute('aria-hidden', avance < .9 ? 'true' : 'false');
+    // el fondo de camiones aparece sobre el gris al final de los anillos
+    fondoEl.style.opacity = suave(.8, 1, avance).toFixed(3);
+    // con la transición terminada, el título sube y aparecen las tarjetas; al volver, bajan enseguida
+    clearTimeout(relojArriba);
+    if (avance >= 1) relojArriba = setTimeout(() => seccionEl.classList.add('arriba'), 450);
+    else seccionEl.classList.remove('arriba');
   }
+  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo');
+  let relojArriba = null;
   document.addEventListener('desplazamiento', (e) => {
     const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
     if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
@@ -470,9 +544,11 @@
   const ALTO_PASO = RECORRIDO / PASOS;
   let paso = 0, animacion = null, ultimaRueda = 0;
   const curva = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // paso actual: el de destino si hay una animación en curso; si no, el de la posición real
+  const pasoActual = () => (animacion || !window.desplazamiento ? paso : Math.round(window.desplazamiento.y / ALTO_PASO));
   function irAPaso(n) {
     n = Math.max(0, Math.min(PASOS, n));
-    if (n === paso && !animacion) return;
+    if (n === paso && !animacion && Math.abs(window.desplazamiento.y - n * ALTO_PASO) < .5) return;
     paso = n;
     if (!window.desplazamiento) return;
     const desde = window.desplazamiento.y, hasta = n * ALTO_PASO, inicio = performance.now();
@@ -492,7 +568,7 @@
     const ahora = performance.now();
     const nuevoGesto = ahora - ultimaRueda > 280;   // un gesto = un paso (la inercia del touchpad no suma)
     ultimaRueda = ahora;
-    if (nuevoGesto) irAPaso(paso + Math.sign(e.deltaY));
+    if (nuevoGesto) irAPaso(pasoActual() + Math.sign(e.deltaY));
   }, { capture: true, passive: false });
   addEventListener('keydown', (e) => {
     const abajo = ['ArrowDown', 'PageDown', ' '], arriba = ['ArrowUp', 'PageUp'];
@@ -502,6 +578,6 @@
     e.preventDefault();
     if (e.key === 'Home') irAPaso(0);
     else if (e.key === 'End') irAPaso(PASOS);
-    else irAPaso(paso + (abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1));
+    else irAPaso(pasoActual() + (abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1));
   }, true);
 })();
