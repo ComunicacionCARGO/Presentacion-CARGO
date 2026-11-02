@@ -433,6 +433,15 @@
         '<path d="M22.8 8.4l-.6 6.4-2.4-2.4-1.6-1.6-2.4-2.4z"/>';
     })()
   };
+  // Título al lado del ícono en dos líneas: la última palabra baja, junto con su artículo
+  // ("Excelencia en / el servicio", "Innovación y / tecnología")
+  const tituloEnDosLineas = (titulo) => {
+    const p = String(titulo || '').trim().split(/\s+/);
+    if (p.length < 2) return formato(titulo);
+    let corte = p.length - 1;
+    if (corte > 1 && /^(el|la|los|las|un|una|lo)$/i.test(p[corte - 1])) corte--;
+    return formato(p.slice(0, corte).join(' ')) + '<br>' + formato(p.slice(corte).join(' '));
+  };
   const contEl = $('.el-tarjetas');
   (E.elegirnos || []).slice(0, 4).forEach((t, i) => {
     const art = crear('article', 'el-tarjeta', contEl);
@@ -441,8 +450,7 @@
     v.style.setProperty('--i', i);
     const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
     const cont = crear('div', 'el-contenido', v,
-      '<span class="el-icono"></span>' +
-      `<h3 class="el-titulo">${formato(t.titulo)}</h3><p class="el-texto">${formato(t.texto)}</p>` +
+      `<div class="el-cabeza"><span class="el-icono"></span><h3 class="el-titulo">${tituloEnDosLineas(t.titulo)}</h3></div><p class="el-texto">${formato(t.texto)}</p>` +
       (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : ''));
     // Ícono propio en SVG (si está); si no, el incluido
     const ic = $('.el-icono', cont);

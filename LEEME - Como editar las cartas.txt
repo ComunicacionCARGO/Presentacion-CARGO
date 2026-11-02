@@ -154,6 +154,8 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     datos: cifras destacadas con valor y texto (por ejemplo 98%).
     Para cambiar un ícono, reemplazá el SVG con el mismo nombre (conviene
     claro, porque las tarjetas son de vidrio sobre el fondo oscuro).
+  • El título de cada tarjeta va al lado del ícono, en dos líneas: la última
+    palabra (con su "el" o "la") pasa sola a la segunda línea.
   • El fondo de esa parte es img\slides\nuestra-estructura\fondo-elegirnos.jpg.
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
 
