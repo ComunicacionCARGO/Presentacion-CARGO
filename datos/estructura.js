@@ -19,13 +19,15 @@ window.ESTRUCTURA = {
   elegirnosTitulo: "ELEGIRNOS?",
 
   /* Tarjetas de vidrio. Cada una tiene:
-     icono:  excelencia, innovacion, flexibilidad o crecimiento
+     icono:  excelencia, innovacion, flexibilidad o crecimiento (ícono incluido, de respaldo)
+     imagen: ícono propio en SVG (carpeta img/estructura/elegirnos); si no está, se usa "icono"
      titulo: el título de la tarjeta.
      texto:  el párrafo (**negrita**).
      datos:  (opcional) cifras destacadas, cada una con valor y texto. */
   elegirnos: [
     {
       icono: "excelencia",
+      imagen: "img/estructura/elegirnos/excelencia.svg",
       titulo: "Excelencia en el servicio",
       texto: "Nuestra cultura de **mejora continua** sostiene un servicio de alto nivel, alineado a los estándares del cliente.",
       datos: [
@@ -35,18 +37,21 @@ window.ESTRUCTURA = {
     },
     {
       icono: "innovacion",
+      imagen: "img/estructura/elegirnos/innovacion.svg",
       titulo: "Innovación y tecnología",
       texto: "Herramientas que optimizan cada eslabón de la cadena: de la **trazabilidad en tiempo real** a la **analítica de datos**. Un servicio más eficiente, transparente e inteligente, que mejora las decisiones y reduce errores.",
       datos: []
     },
     {
       icono: "flexibilidad",
+      imagen: "img/estructura/elegirnos/flexibilidad.svg",
       titulo: "Flexibilidad y adaptabilidad",
       texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
       datos: []
     },
     {
       icono: "crecimiento",
+      imagen: "img/estructura/elegirnos/crecimiento.svg",
       titulo: "Compromiso con el crecimiento",
       texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
       datos: []

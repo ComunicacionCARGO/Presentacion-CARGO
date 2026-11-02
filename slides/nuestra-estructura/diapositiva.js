@@ -440,10 +440,20 @@
     const v = crear('div', 'el-vidrio', art);
     v.style.setProperty('--i', i);
     const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
-    crear('div', 'el-contenido', v,
-      `<span class="el-icono"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg></span>` +
+    const cont = crear('div', 'el-contenido', v,
+      '<span class="el-icono"></span>' +
       `<h3 class="el-titulo">${formato(t.titulo)}</h3><p class="el-texto">${formato(t.texto)}</p>` +
       (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : ''));
+    // Ícono propio en SVG (si está); si no, el incluido
+    const ic = $('.el-icono', cont);
+    const incluido = () => { ic.classList.remove('propio'); ic.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg>`; };
+    if (t.imagen) {
+      ic.classList.add('propio');
+      const img = crear('img', '', ic);
+      img.alt = '';
+      img.onerror = incluido;
+      img.src = '../../' + t.imagen;
+    } else incluido();
     crear('i', 'el-brillo', v);
     // inclinación 3D y reflejo que siguen al cursor
     art.addEventListener('pointermove', (e) => {

@@ -148,9 +148,12 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
   • Íconos propios: ver img\estructura\LEEME.txt.
   • Al bajar con el scroll, después de la transición de anillos, aparece
     "¿Por qué ELEGIRNOS?" (elegirnosAntetitulo / elegirnosTitulo) con cuatro
-    tarjetas de vidrio. Cada tarjeta, en "elegirnos", tiene icono
-    (excelencia, innovacion, flexibilidad o crecimiento), titulo, texto y,
-    si querés, datos: cifras destacadas con valor y texto (por ejemplo 98%).
+    tarjetas de vidrio. Cada tarjeta, en "elegirnos", tiene imagen (su ícono
+    en SVG, en img\estructura\elegirnos), icono de respaldo (excelencia,
+    innovacion, flexibilidad o crecimiento), titulo, texto y, si querés,
+    datos: cifras destacadas con valor y texto (por ejemplo 98%).
+    Para cambiar un ícono, reemplazá el SVG con el mismo nombre (conviene
+    claro, porque las tarjetas son de vidrio sobre el fondo oscuro).
   • El fondo de esa parte es img\slides\nuestra-estructura\fondo-elegirnos.jpg.
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
 
