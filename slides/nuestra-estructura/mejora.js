@@ -54,7 +54,6 @@
     '<div class="mcp-franjas"><i></i><i></i></div>' +
     `<p class="mcp-ante">${esc(P.antetitulo)}</p><h2 class="mcp-titulo">${esc(P.titulo)}</h2>` +
     '<i class="mcp-linea"></i>';
-  const fotoPortada = $('.mcp-foto', portada);
 
   // =========================================================
   // 2. PANTALLA PARTIDA
@@ -159,9 +158,6 @@
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
     bajada = Math.max(0, e.detail.y - 900);
-    // paralaje suave de la foto de la portada
-    const enPortada = Math.max(-1, Math.min(1, (bajada - 900) / 900));
-    fotoPortada.style.transform = `translateY(${(enPortada * -60).toFixed(1)}px)`;
     portada.classList.toggle('visible', bajada > 420);
     elegir.classList.toggle('visible', bajada > 1350);
     tramo.setAttribute('aria-hidden', bajada > 300 ? 'false' : 'true');

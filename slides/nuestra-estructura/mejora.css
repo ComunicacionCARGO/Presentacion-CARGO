@@ -23,16 +23,19 @@
    glifo x 37,5–232, y 163,8–223,5; "CONTINUA" Oswald glifo x 52,9–545,9, y 226,9–324,1 */
 .mcp-fondo { top: 0; height: calc(900px + 50vh / var(--escala, 1)); background: var(--blanco); }
 .mcp-gris { top: 0; height: 34.5px; background: var(--gris); }
+/* Foto original (2000 × 1125) al 76,9 % desde x 101, y 34,5 (ajustada contra el diseño:
+   correlación .98). Lavada como en el diseño: al 45,7 % sobre el crema. Se funde hacia la
+   izquierda con la misma curva medida (invisible en x 200, entera desde x 760). */
 .mcp-foto {
-  left: 556px;
+  left: 101px;
   top: 34.5px;
-  width: calc(800px + 50vw / var(--escala, 1) - 556px);
-  height: 866.5px;
-  background: left top / cover no-repeat;
-  /* la foto se funde con el crema hacia la izquierda, como en el diseño */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 300px);
-  mask-image: linear-gradient(90deg, transparent 0, #000 300px);
-  will-change: transform;
+  width: calc(800px + 50vw / var(--escala, 1) - 101px);
+  height: 865.1px;
+  background: left top / max(1538px, 100%) auto no-repeat;
+  opacity: .457;
+  --fundido: linear-gradient(90deg, transparent 99px, rgba(0, 0, 0, .05) 179px, rgba(0, 0, 0, .11) 259px, rgba(0, 0, 0, .2) 339px, rgba(0, 0, 0, .33) 419px, rgba(0, 0, 0, .5) 499px, rgba(0, 0, 0, .75) 579px, rgba(0, 0, 0, .95) 659px, #000 719px);
+  -webkit-mask-image: var(--fundido);
+  mask-image: var(--fundido);
 }
 .mcp-franjas i { height: 35.8px; background: var(--rojo); }
 .mcp-franjas i:first-child { top: 44.4px; }

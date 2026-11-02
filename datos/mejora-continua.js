@@ -15,7 +15,7 @@ window.MEJORA = {
   portada: {
     antetitulo: "Mejora",
     titulo: "CONTINUA",
-    imagen: "img/slides/nuestra-estructura/mejora-autoelevador.jpg"
+    imagen: "img/slides/nuestra-estructura/mejora-autoelevador.webp"
   },
 
   // ---------- Pantalla partida: las dos opciones ----------
