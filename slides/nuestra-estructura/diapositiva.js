@@ -540,13 +540,12 @@
     $('.seccion-mejora').setAttribute('aria-hidden', avance < .9 ? 'true' : 'false');
     // el fondo de camiones aparece sobre el gris al final de los anillos
     fondoEl.style.opacity = suave(.8, 1, avance).toFixed(3);
-    // con la transición terminada, el título sube y aparecen las tarjetas; al volver, bajan enseguida
-    clearTimeout(relojArriba);
-    if (avance >= 1) relojArriba = setTimeout(() => seccionEl.classList.add('arriba'), 450);
-    else seccionEl.classList.remove('arriba');
+    // cuando los anillos están por cerrar, el título sube y entran las tarjetas sin pausa
+    // (se encadena con el final del movimiento, así nunca parece que el scroll se frenó);
+    // al volver, bajan enseguida
+    seccionEl.classList.toggle('arriba', avance >= .97);
   }
   const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo');
-  let relojArriba = null;
   document.addEventListener('desplazamiento', (e) => {
     const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
     if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
