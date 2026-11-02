@@ -417,8 +417,8 @@
     const cx = w / 2, cy = h / 2;
     const lejos = Math.hypot(cx, cy) + 4;
     // R = borde interior del anillo rojo de adelante: arranca fuera de la pantalla y termina pasado el centro
-    const p = avance < .5 ? 4 * avance * avance * avance : 1 - Math.pow(-2 * avance + 2, 3) / 2;
-    const R = lejos + (-ancho - 2 - lejos) * p;
+    // (lineal: cada uno de los 3 pasos cierra lo mismo; la suavidad la da la animación de cada paso)
+    const R = lejos + (-ancho - 2 - lejos) * avance;
     const aro = (r0, r1, color) => {
       r0 = Math.max(0, r0);
       if (r1 <= r0) return;
@@ -442,8 +442,8 @@
   function aplicarAvance() {
     dibujarAnillos();
     seccion.classList.toggle('tapada', avance > .15);
-    // el título aparece cuando los anillos ya cerraron casi todo
-    const a1 = suave(.55, .9, avance), a2 = suave(.66, 1, avance);
+    // el título aparece en el último paso, cuando los anillos ya cerraron casi todo
+    const a1 = suave(.7, .95, avance), a2 = suave(.76, 1, avance);
     tituloAnte.style.opacity = a1.toFixed(3);
     tituloAnte.style.transform = `translateY(${((1 - a1) * 26).toFixed(1)}px)`;
     tituloGrande.style.opacity = a2.toFixed(3);
@@ -459,30 +459,44 @@
   addEventListener('resize', aplicarAvance);
   aplicarAvance();
 
-  // Al soltar la rueda (o después de una tecla), termina la transición hacia el lado que se iba
-  let sentido = 1, reloj = null;
-  function alSoltar() {
-    clearTimeout(reloj);
-    reloj = setTimeout(() => {
-      if (!window.desplazamiento || abierta >= 0) return;
-      const y = window.desplazamiento.y;
-      if (y <= .5 || y >= RECORRIDO - .5) return;
-      const p = y / RECORRIDO;
-      const destino = sentido > 0 ? (p > .06 ? RECORRIDO : 0) : (p < .94 ? 0 : RECORRIDO);
-      window.desplazamiento.ir(destino);
-    }, 140);
+  // La transición avanza en PASOS: cada gesto de la rueda (o tecla) lleva al paso
+  // siguiente o anterior con una animación propia, suave y de duración fija.
+  const PASOS = 3, DURACION_PASO = 1000;          // ms por paso
+  const ALTO_PASO = RECORRIDO / PASOS;
+  let paso = 0, animacion = null, ultimaRueda = 0;
+  const curva = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function irAPaso(n) {
+    n = Math.max(0, Math.min(PASOS, n));
+    if (n === paso && !animacion) return;
+    paso = n;
+    if (!window.desplazamiento) return;
+    const desde = window.desplazamiento.y, hasta = n * ALTO_PASO, inicio = performance.now();
+    const dur = DURACION_PASO * Math.min(1.6, Math.max(.5, Math.abs(hasta - desde) / ALTO_PASO));
+    if (animacion) cancelAnimationFrame(animacion);
+    (function mover(ahora) {
+      const t = Math.min(1, (ahora - inicio) / dur);
+      window.desplazamiento.ir(desde + (hasta - desde) * curva(t), true);
+      animacion = t < 1 ? requestAnimationFrame(mover) : null;
+    })(inicio);
   }
   addEventListener('wheel', (e) => {
-    // con una tarjeta abierta, la rueda no mueve la diapositiva
-    if (abierta >= 0) { e.stopImmediatePropagation(); e.preventDefault(); return; }
-    if (e.deltaY) sentido = Math.sign(e.deltaY);
-    alSoltar();
+    // la rueda la maneja esta diapositiva (no el scroll libre)
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    if (abierta >= 0 || !e.deltaY) return;          // con una tarjeta abierta, la rueda no hace nada
+    const ahora = performance.now();
+    const nuevoGesto = ahora - ultimaRueda > 280;   // un gesto = un paso (la inercia del touchpad no suma)
+    ultimaRueda = ahora;
+    if (nuevoGesto) irAPaso(paso + Math.sign(e.deltaY));
   }, { capture: true, passive: false });
   addEventListener('keydown', (e) => {
-    const abajo = ['ArrowDown', 'PageDown', ' ', 'End'], arriba = ['ArrowUp', 'PageUp', 'Home'];
-    if (!abajo.includes(e.key) && !arriba.includes(e.key)) return;
-    if (abierta >= 0) { e.stopImmediatePropagation(); return; }
-    sentido = abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1;
-    alSoltar();
+    const abajo = ['ArrowDown', 'PageDown', ' '], arriba = ['ArrowUp', 'PageUp'];
+    if (![...abajo, ...arriba, 'Home', 'End'].includes(e.key)) return;
+    e.stopImmediatePropagation();
+    if (abierta >= 0) return;
+    e.preventDefault();
+    if (e.key === 'Home') irAPaso(0);
+    else if (e.key === 'End') irAPaso(PASOS);
+    else irAPaso(paso + (abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1));
   }, true);
 })();
