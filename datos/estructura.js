@@ -14,6 +14,10 @@ window.ESTRUCTURA = {
   bajada: "Un equipo interconectado: cada área sostiene y potencia a las demás.",
   ayuda: "Tocá cada área para conocerla",
 
+  // Título que aparece al bajar con el scroll (después de la transición de anillos)
+  mejoraAntetitulo: "Mejora",
+  mejoraTitulo: "CONTINUA",
+
   /* Cada área es una burbuja de la red. Tiene:
      id:      nombre corto sin espacios ni acentos (no se ve; no lo repitas).
      nombre:  lo que aparece debajo de la burbuja.

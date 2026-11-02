@@ -17,8 +17,47 @@
   background: radial-gradient(60% 65% at 52% 54%, rgba(255, 251, 243, .78), rgba(255, 251, 243, .42) 75%, rgba(255, 251, 243, .3));
 }
 
-.pista { position: absolute; left: 0; top: 0; width: 1600px; will-change: transform; }
-.pista section { position: relative; width: 1600px; height: 900px; }
+/* Las escenas quedan fijas; la pista vacía solo da el largo del scroll (2 pantallas) */
+.escenas { position: absolute; inset: 0; }
+.escenas section { position: absolute; inset: 0; }
+.pista { position: absolute; left: 0; top: 0; width: 1600px; pointer-events: none; visibility: hidden; }
+.pista-espacio { height: 1800px; }
+.seccion-red { transition: opacity .3s ease; }
+.seccion-red.tapada { pointer-events: none; }
+
+/* ---------- Transición de anillos ----------
+   Cubre toda la ventana (aunque sea más ancha o más alta que 16:9) */
+.anillos {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: calc(450px - 50vh / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  height: calc(100vh / var(--escala, 1));
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* ---------- Mejora continua ---------- */
+.seccion-mejora {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.mc-titulo { text-align: center; line-height: 1; }
+.mc-ante, .mc-grande { display: block; will-change: opacity, transform; }
+.mc-ante { font-size: 46px; font-weight: 300; letter-spacing: .01em; color: var(--blanco); }
+.mc-grande {
+  margin-top: 6px;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 150px;
+  line-height: .92;
+  letter-spacing: -.005em;
+  color: var(--rojo);
+}
 
 /* ---------- Título ---------- */
 .titulo-estructura { position: absolute; left: 80px; top: 86px; width: 420px; z-index: 3; }

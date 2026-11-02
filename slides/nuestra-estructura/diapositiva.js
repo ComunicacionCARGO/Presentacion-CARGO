@@ -337,11 +337,15 @@
     my = (e.clientY / innerHeight) * 2 - 1;
   });
 
+  // Avance de la transición a "Mejora continua" (0 = red a la vista, 1 = todo gris)
+  let avance = 0;
+
   // Cada tanto una burbuja late para invitar a tocarla
   let ultimoLatido = 0;
   let ultimoMensaje = 0;
   (function cuadro(ahora) {
     requestAnimationFrame(cuadro);
+    if (avance >= 1) return;                     // la red está tapada por completo: no se calcula nada
     const t = ahora / 1000;
     gx += (mx - gx) * .05;
     gy += (my - gy) * .05;
@@ -379,4 +383,106 @@
       n.el.classList.add('late');
     }
   })(performance.now());
+
+  // =========================================================
+  // TRANSICIÓN A "MEJORA CONTINUA"
+  // Al bajar, tres anillos (rojo, rojo y gris, con huecos entre ellos y el
+  // grosor fijo de la referencia) llegan desde los bordes y se cierran hacia
+  // el centro; detrás queda todo gris y aparece el título. Sigue al scroll
+  // (se puede volver) y, al soltar la rueda, se completa solo.
+  // =========================================================
+  $('.mc-ante').textContent = E.mejoraAntetitulo || 'Mejora';
+  $('.mc-grande').textContent = E.mejoraTitulo || 'CONTINUA';
+  const lienzo = $('.anillos'), ctx = lienzo.getContext('2d');
+  const tituloAnte = $('.mc-ante'), tituloGrande = $('.mc-grande');
+  const RECORRIDO = 900;                          // scroll (px del escenario) que dura la transición
+  const BANDA = 66, HUECO = 20;                   // grosor de cada anillo y de cada hueco (como la referencia: 54 / 16,5)
+  const ROJO = '#EF4529', GRIS = '#3A3A3A';
+  const suave = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+  function dibujarAnillos() {
+    const k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--escala')) || 1;
+    const dpr = window.devicePixelRatio || 1;
+    const w = innerWidth, h = innerHeight;
+    if (lienzo.width !== Math.round(w * dpr) || lienzo.height !== Math.round(h * dpr)) {
+      lienzo.width = Math.round(w * dpr);
+      lienzo.height = Math.round(h * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    lienzo.style.visibility = avance > 0 ? 'visible' : 'hidden';
+    if (avance <= 0) return;
+    const b = BANDA * k, g = HUECO * k;
+    const ancho = 2 * b + 2 * g;                  // rojo, hueco, rojo, hueco (después, gris hasta el borde)
+    const cx = w / 2, cy = h / 2;
+    const lejos = Math.hypot(cx, cy) + 4;
+    // R = borde interior del anillo rojo de adelante: arranca fuera de la pantalla y termina pasado el centro
+    const p = avance < .5 ? 4 * avance * avance * avance : 1 - Math.pow(-2 * avance + 2, 3) / 2;
+    const R = lejos + (-ancho - 2 - lejos) * p;
+    const aro = (r0, r1, color) => {
+      r0 = Math.max(0, r0);
+      if (r1 <= r0) return;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r1, 0, Math.PI * 2);
+      if (r0 > 0) ctx.arc(cx, cy, r0, 0, Math.PI * 2, true);
+      ctx.fillStyle = color;
+      ctx.fill();
+    };
+    // gris: todo lo que queda afuera del último hueco
+    const rGris = R + ancho;
+    ctx.fillStyle = GRIS;
+    ctx.beginPath();
+    ctx.rect(0, 0, w, h);
+    if (rGris > 0) ctx.arc(cx, cy, rGris, 0, Math.PI * 2, true);
+    ctx.fill('evenodd');
+    aro(R + b + g, R + 2 * b + g, ROJO);          // anillo rojo de afuera
+    aro(R, R + b, ROJO);                          // anillo rojo de adelante
+  }
+
+  function aplicarAvance() {
+    dibujarAnillos();
+    seccion.classList.toggle('tapada', avance > .15);
+    // el título aparece cuando los anillos ya cerraron casi todo
+    const a1 = suave(.55, .9, avance), a2 = suave(.66, 1, avance);
+    tituloAnte.style.opacity = a1.toFixed(3);
+    tituloAnte.style.transform = `translateY(${((1 - a1) * 26).toFixed(1)}px)`;
+    tituloGrande.style.opacity = a2.toFixed(3);
+    tituloGrande.style.transform = `translateY(${((1 - a2) * 40).toFixed(1)}px) scale(${(.94 + a2 * .06).toFixed(3)})`;
+    $('.seccion-mejora').setAttribute('aria-hidden', avance < .9 ? 'true' : 'false');
+  }
+  document.addEventListener('desplazamiento', (e) => {
+    const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
+    if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
+    avance = nuevo;
+    aplicarAvance();
+  });
+  addEventListener('resize', aplicarAvance);
+  aplicarAvance();
+
+  // Al soltar la rueda (o después de una tecla), termina la transición hacia el lado que se iba
+  let sentido = 1, reloj = null;
+  function alSoltar() {
+    clearTimeout(reloj);
+    reloj = setTimeout(() => {
+      if (!window.desplazamiento || abierta >= 0) return;
+      const y = window.desplazamiento.y;
+      if (y <= .5 || y >= RECORRIDO - .5) return;
+      const p = y / RECORRIDO;
+      const destino = sentido > 0 ? (p > .06 ? RECORRIDO : 0) : (p < .94 ? 0 : RECORRIDO);
+      window.desplazamiento.ir(destino);
+    }, 140);
+  }
+  addEventListener('wheel', (e) => {
+    // con una tarjeta abierta, la rueda no mueve la diapositiva
+    if (abierta >= 0) { e.stopImmediatePropagation(); e.preventDefault(); return; }
+    if (e.deltaY) sentido = Math.sign(e.deltaY);
+    alSoltar();
+  }, { capture: true, passive: false });
+  addEventListener('keydown', (e) => {
+    const abajo = ['ArrowDown', 'PageDown', ' ', 'End'], arriba = ['ArrowUp', 'PageUp', 'Home'];
+    if (!abajo.includes(e.key) && !arriba.includes(e.key)) return;
+    if (abierta >= 0) { e.stopImmediatePropagation(); return; }
+    sentido = abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1;
+    alSoltar();
+  }, true);
 })();

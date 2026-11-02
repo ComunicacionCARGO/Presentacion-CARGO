@@ -19,8 +19,8 @@
 
   <main class="escenario">
 
-    <!-- Pista: por ahora una sola sección; las que vengan después se agregan abajo -->
-    <div class="pista">
+    <!-- Escenas fijas: el scroll no las desplaza, maneja la transición de anillos -->
+    <div class="escenas">
       <section class="seccion-red">
         <div class="titulo-estructura">
           <p class="te-ante"></p>
@@ -42,6 +42,17 @@
         <i class="registro" style="left: 1542px; top: 840px"></i>
       </section>
     </div>
+
+    <!-- Transición: anillos (rojo, rojo y gris) que se cierran desde los bordes hasta cubrir todo de gris -->
+    <canvas class="anillos" aria-hidden="true"></canvas>
+
+    <!-- 2. Mejora continua (por ahora solo el título; el contenido viene después) -->
+    <section class="seccion-mejora" aria-hidden="true">
+      <h2 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h2>
+    </section>
+
+    <!-- Pista: solo da el recorrido del scroll (lo usa compartido/desplazamiento.js) -->
+    <div class="pista"><div class="pista-espacio"></div></div>
 
     <!-- Tarjeta de cada área -->
     <div class="tarjeta-capa" aria-hidden="true">

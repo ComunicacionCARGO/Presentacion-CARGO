@@ -146,6 +146,8 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     reacomoda sola y los caminos se vuelven a trazar.
   • **texto** = negrita;  *texto* = rojo en cursiva.
   • Íconos propios: ver img\estructura\LEEME.txt.
+  • mejoraAntetitulo / mejoraTitulo: el título que aparece al bajar con el
+    scroll, después de la transición de anillos ("Mejora" / "CONTINUA").
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
 
 
