@@ -556,37 +556,66 @@
   addEventListener('resize', aplicarAvance);
   aplicarAvance();
 
-  // La transición avanza en PASOS: cada gesto de la rueda (o tecla) lleva al paso
-  // siguiente o anterior con una animación propia, suave y de duración fija.
-  const PASOS = 2, DURACION_PASO = 1000;          // cantidad de pasos y ms por paso
+  // La transición avanza en PASOS. Nunca hay que esperar a que termine una animación:
+  // cada muesca de la rueda (o tecla) suma un paso al destino en el momento, y el
+  // movimiento sigue con su impulso hacia el nuevo destino (resorte amortiguado, sin
+  // frenar ni volver a arrancar). Dos muescas seguidas pasan los dos pasos de una vez.
+  const PASOS = 2;                                // cantidad de pasos
+  const RIGIDEZ = 7.5;                            // más alto = más rápido (7,5 ≈ 1 s por paso)
+  const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
   const ALTO_PASO = RECORRIDO / PASOS;
-  let paso = 0, animacion = null, ultimaRueda = 0;
-  const curva = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  let paso = 0, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
+  let acumulado = 0, ultimaRueda = 0;
   // paso actual: el de destino si hay una animación en curso; si no, el de la posición real
   const pasoActual = () => (animacion || !window.desplazamiento ? paso : Math.round(window.desplazamiento.y / ALTO_PASO));
+  function mover(ahora) {
+    let dt = Math.min(.05, Math.max(0, (ahora - ultimoCuadro) / 1000));
+    ultimoCuadro = ahora;
+    const objetivo = paso * ALTO_PASO;
+    // resorte críticamente amortiguado, en subpasos cortos para que sea estable
+    while (dt > 0) {
+      const h = Math.min(dt, 1 / 240);
+      velocidad += (RIGIDEZ * RIGIDEZ * (objetivo - posicion) - 2 * RIGIDEZ * velocidad) * h;
+      posicion += velocidad * h;
+      dt -= h;
+    }
+    posicion = Math.max(0, Math.min(RECORRIDO, posicion));
+    const termino = Math.abs(objetivo - posicion) < 2.5 && Math.abs(velocidad) < 60;  // los últimos píxeles no se notan
+    if (termino) { posicion = objetivo; velocidad = 0; }
+    window.desplazamiento.ir(posicion, true);
+    animacion = termino ? null : requestAnimationFrame(mover);
+  }
   function irAPaso(n) {
     n = Math.max(0, Math.min(PASOS, n));
+    if (!window.desplazamiento) { paso = n; return; }
     if (n === paso && !animacion && Math.abs(window.desplazamiento.y - n * ALTO_PASO) < .5) return;
     paso = n;
-    if (!window.desplazamiento) return;
-    const desde = window.desplazamiento.y, hasta = n * ALTO_PASO, inicio = performance.now();
-    const dur = DURACION_PASO * Math.min(1.6, Math.max(.5, Math.abs(hasta - desde) / ALTO_PASO));
-    if (animacion) cancelAnimationFrame(animacion);
-    (function mover(ahora) {
-      const t = Math.min(1, (ahora - inicio) / dur);
-      window.desplazamiento.ir(desde + (hasta - desde) * curva(t), true);
-      animacion = t < 1 ? requestAnimationFrame(mover) : null;
-    })(inicio);
+    if (!animacion) {                             // arranca desde donde está, quieto
+      posicion = window.desplazamiento.y;
+      velocidad = 0;
+      ultimoCuadro = performance.now();
+      animacion = requestAnimationFrame(mover);
+    }                                             // si ya se está moviendo, solo cambia el destino
   }
   addEventListener('wheel', (e) => {
     // la rueda la maneja esta diapositiva (no el scroll libre)
     e.stopImmediatePropagation();
     e.preventDefault();
     if (abierta >= 0 || !e.deltaY) return;          // con una tarjeta abierta, la rueda no hace nada
+    const d = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? 800 : 1);
     const ahora = performance.now();
-    const nuevoGesto = ahora - ultimaRueda > 280;   // un gesto = un paso (la inercia del touchpad no suma)
+    if (ahora - ultimaRueda > 220 || Math.sign(d) !== Math.sign(acumulado)) acumulado = 0;
     ultimaRueda = ahora;
-    if (nuevoGesto) irAPaso(pasoActual() + Math.sign(e.deltaY));
+    if (Math.abs(d) >= 50) {                        // muesca de rueda de mouse: un paso cada una
+      acumulado = 0;
+      irAPaso(pasoActual() + Math.sign(d));
+      return;
+    }
+    acumulado += d;                                 // touchpad: se suma hasta completar un paso
+    if (Math.abs(acumulado) >= UMBRAL_TOUCHPAD) {
+      acumulado -= Math.sign(acumulado) * UMBRAL_TOUCHPAD;
+      irAPaso(pasoActual() + Math.sign(d));
+    }
   }, { capture: true, passive: false });
   addEventListener('keydown', (e) => {
     const abajo = ['ArrowDown', 'PageDown', ' '], arriba = ['ArrowUp', 'PageUp'];
