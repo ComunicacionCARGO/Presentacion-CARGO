@@ -73,8 +73,8 @@ PONER LA FOTO DE UNA CARTA
 --------------------------
 La foto se ve "detrás" de la carta, como un paisaje lejano a través de una
 ventana: no se curva con la carta y se mueve más lento que ella al girar.
-En reposo se ve como vidrio esmerilado (desenfocada y algo transparente) y,
-al pasar el cursor por la carta, aparece nítida.
+En reposo es algo transparente y deja ver detrás el operario desenfocado,
+como un vidrio esmerilado; al pasar el cursor por la carta, se ve entera.
 1. Usá una foto común, horizontal (por ejemplo 2000 × 1125 px), en JPG o WEBP.
    Se muestra oscurecida para que se lea el título.
 2. Guardala en la carpeta  img\cartas
@@ -84,9 +84,6 @@ al pasar el cursor por la carta, aparece nítida.
    (con barras /  hacia adelante).
 4. Con "foco" elegís qué altura de la foto se ve: 0 = la parte de arriba,
    50 = el medio, 100 = la de abajo.
-5. Para la versión esmerilada, pedile a Claude que corra
-   herramientas\esmerilar-fotos.ps1 (crea "nombre-borrosa.jpg" al lado de cada
-   foto). Si falta, la carta igual funciona, pero carga un poco más la compu.
 
 Si la imagen no se encuentra, la carta se muestra como vidrio sin
 foto, así que no se rompe nada: revisá el nombre del archivo.

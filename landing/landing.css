@@ -173,30 +173,22 @@ body.lista .operario { opacity: 1; translate: 0 0; }
 }
 /* Foto de fondo de la carta: plana y lejana (no sigue la curva). landing.js la mueve
    con transform; el vidrio la recorta con la silueta de la carta, como una ventana. */
+/* La foto siempre nítida. En reposo es semitransparente y deja ver detrás el operario
+   desenfocado (el vidrio esmerilado); con el cursor encima queda opaca (landing.js). */
 .vidrio-foto {
   position: absolute;
   left: 0;
   top: 0;
-  transform-origin: 0 0;
-  will-change: transform;
-}
-.vf-borrosa, .vf-nitida {
-  position: absolute;
-  inset: 0;
   background-size: 100% 100%;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
 }
-.vf-borrosa::after, .vf-nitida::after {
+.vidrio-foto::after {
   content: "";
   position: absolute;
   inset: 0;
+  background: rgba(18, 18, 24, .5);              /* oscurecida, para que se lea el título */
 }
-/* en reposo: vidrio esmerilado (foto desenfocada, algo transparente y con un velo claro) */
-.vf-borrosa { opacity: .78; }
-.vf-borrosa::after { background: linear-gradient(160deg, rgba(255, 251, 243, .14), rgba(18, 18, 24, .34)); }
-.vf-borrosa.desenfocar { filter: blur(14px); }
-/* con el cursor encima: la foto nítida y opaca (landing.js le da la opacidad) */
-.vf-nitida { opacity: 0; }
-.vf-nitida::after { background: rgba(18, 18, 24, .5); }   /* oscurecida, para que se lea el título */
 .vidrio-tinte {
   position: absolute;
   background: linear-gradient(160deg, rgba(255, 255, 255, .55), rgba(255, 232, 220, .3) 55%, rgba(239, 69, 41, .16));

@@ -117,6 +117,7 @@
   // más lento que la carta, así la carta parece una ventana que la deja ver.
   const FOTO_ANCHO = 1100;                        // ancho de la foto en pantalla (px del escenario)
   const FOTO_ARRASTRE = .35;                      // cuánto acompaña la foto al movimiento de la carta (0 = quieta)
+  const FOTO_OPACIDAD = .62;                      // en reposo deja ver el operario desenfocado; con el cursor, 1
   const precarga = crear('div', '', document.body);   // base.js espera estas imágenes antes de abrir la cortina
   precarga.hidden = true;
 
@@ -137,9 +138,9 @@
     const margen = ALTO * .7 * s;                           // la ventana siempre queda cubierta
     const arriba = Math.max(fy + margen - h, Math.min(fy - margen, fy - h * ca.foco / 100));
     ca.foto.style.transform = `translate(${(fx - w / 2).toFixed(1)}px, ${arriba.toFixed(1)}px) scale(${s.toFixed(4)})`;
-    // foto nítida según cuánto está levantada la carta (cursor encima o abriéndose)
-    const nitida = ca.act < .005 ? '0' : ca.act > .995 ? '1' : ca.act.toFixed(3);
-    if (nitida !== ca.nitidaTxt) { ca.nitidaTxt = nitida; ca.fotoNitida.style.opacity = nitida; }
+    // opacidad según cuánto está levantada la carta (cursor encima o abriéndose)
+    const op = ca.act > .995 ? '1' : (FOTO_OPACIDAD + (1 - FOTO_OPACIDAD) * ca.act).toFixed(3);
+    if (op !== ca.fotoOpTxt) { ca.fotoOpTxt = op; ca.foto.style.opacity = op; }
   }
 
   // Título como en el diseño de la persona (medido sobre su carta de 668 × 241 y llevado
@@ -256,15 +257,11 @@
     // Foto de fondo (plana) dentro del vidrio de la parte de adelante.
     // Si la imagen no existe, la carta queda de vidrio con su número y su título.
     const ca = { a, foco: Math.max(0, Math.min(100, datos.foco === undefined ? 50 : +datos.foco || 0)), foto: null, fotoAlto: FOTO_ANCHO * 9 / 16 };
-    // En reposo se ve esmerilada (versión desenfocada "-borrosa.jpg", algo transparente);
-    // con el cursor encima aparece la foto nítida, opaca.
+    // En reposo la foto es semitransparente y deja ver el operario desenfocado del vidrio;
+    // con el cursor encima queda opaca.
     if (datos.portada) {
-      const borrosa = datos.portada.replace(/\.[a-z0-9]+$/i, '') + '-borrosa.jpg';
       ca.foto = crear('div', 'vidrio-foto', partes[0].vidrio);
-      const capaBorrosa = crear('div', 'vf-borrosa', ca.foto);
-      ca.fotoNitida = crear('div', 'vf-nitida', ca.foto);
-      capaBorrosa.style.backgroundImage = `url("${borrosa}")`;
-      ca.fotoNitida.style.backgroundImage = `url("${datos.portada}")`;
+      ca.foto.style.backgroundImage = `url("${datos.portada}")`;
       ca.foto.style.width = FOTO_ANCHO + 'px';
       ca.foto.style.height = ca.fotoAlto + 'px';
       const prueba = crear('img', '', precarga);
@@ -275,14 +272,6 @@
       };
       prueba.onerror = () => { a.classList.add('sin-foto'); ca.foto.remove(); ca.foto = null; };
       prueba.src = datos.portada;
-      // si falta la versión esmerilada, se desenfoca la nítida (más pesado, pero no se rompe)
-      const pruebaBorrosa = crear('img', '', precarga);
-      pruebaBorrosa.alt = '';
-      pruebaBorrosa.onerror = () => {
-        capaBorrosa.style.backgroundImage = `url("${datos.portada}")`;
-        capaBorrosa.classList.add('desenfocar');
-      };
-      pruebaBorrosa.src = borrosa;
     }
 
     return Object.assign(ca, {
