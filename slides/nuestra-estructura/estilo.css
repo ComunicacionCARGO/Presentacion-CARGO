@@ -106,6 +106,7 @@
   font: inherit;
   color: inherit;
   cursor: pointer;
+  user-select: none;
   will-change: transform;
 }
 .burbuja:hover, .burbuja:focus-visible { z-index: 5; }
@@ -168,6 +169,10 @@
   line-height: 1.2;
   color: var(--gris);
   text-shadow: 0 0 6px var(--blanco), 0 0 2px var(--blanco);
+  /* El nombre no responde al cursor ni se selecciona: solo la burbuja es tocable
+     (si no, al bajar el nombre con el hover el cursor lo perdía y temblaba) */
+  pointer-events: none;
+  user-select: none;
   opacity: 0;
   transition: opacity .6s ease, color .3s ease, translate .4s cubic-bezier(.3, 1.5, .5, 1);
 }
