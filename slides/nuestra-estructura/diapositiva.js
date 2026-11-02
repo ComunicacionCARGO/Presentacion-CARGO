@@ -466,7 +466,7 @@
 
   // La transición avanza en PASOS: cada gesto de la rueda (o tecla) lleva al paso
   // siguiente o anterior con una animación propia, suave y de duración fija.
-  const PASOS = 3, DURACION_PASO = 1000;          // ms por paso
+  const PASOS = 2, DURACION_PASO = 1000;          // cantidad de pasos y ms por paso
   const ALTO_PASO = RECORRIDO / PASOS;
   let paso = 0, animacion = null, ultimaRueda = 0;
   const curva = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
