@@ -49,40 +49,58 @@
   });
 
   // ---------- Medidas del carrusel (px del escenario 1600×900) ----------
+  // Las cartas son largas y entre todas completan el círculo, con un hueco chico entre una y otra.
   const N = CARTAS.length;
-  const ANCHO = 260, ALTO = 174, ESQUINA = 18;   // tamaño de cada carta
-  const TIRAS = 10;                              // franjas por carta: más = curva más suave
+  const radio = 310;                             // radio del círculo de cartas
+  const paso = N ? 360 / N : 0;
+  const HUECO = 7;                               // grados libres entre una carta y la siguiente
+  const ARCO = N ? Math.min(150, paso - HUECO) : 0;   // grados que ocupa cada carta
+  const ANCHO = Math.round(radio * ARCO * RAD), ALTO = 174, ESQUINA = 18;   // tamaño de cada carta
+  const TIRAS = Math.max(10, Math.round(ANCHO / 17));  // franjas por carta: más = curva más suave
   const ANCHO_TIRA = ANCHO / TIRAS;
   const SOLAPE = .6;                             // las franjas se pisan apenas para no dejar rendijas
   const CENTRO = { x: 800, y: 668 };             // centro del carrusel
   const PERSPECTIVA = 1600, ORIGEN = { x: 800, y: 450 };
-  const paso = N ? 360 / N : 0;
-  const radio = N > 2 ? Math.max(310, (ANCHO / 2) / Math.tan(Math.PI / N) + 30) : 310;
   const dosDigitos = (n) => String(n).padStart(2, '0');
 
   // Resolución interna del contenido de las cartas (2× como mínimo, más en pantallas grandes)
   const escalaPantalla = Math.min(innerWidth / 1600, innerHeight / 900) * (devicePixelRatio || 1);
   const F = Math.min(4, Math.max(2, Math.ceil(escalaPantalla * 1.5)));
   mundo.style.setProperty('--f', F);
+  mundo.style.setProperty('--ancho', ANCHO + 'px');
 
-  // Silueta de la carta (rectángulo con esquinas redondeadas), con centro en 0,0
-  const SILUETA = (() => {
-    const p = [], w = ANCHO / 2, h = ALTO / 2, r = ESQUINA;
-    const lado = (u0, v0, u1, v1, n) => {
-      for (let k = 0; k < n; k++) p.push([u0 + (u1 - u0) * k / n, v0 + (v1 - v0) * k / n]);
-    };
+  // Contorno de un tramo de la carta (franjas j0 a j1), con centro de la carta en 0,0.
+  // Las puntas reales llevan esquinas redondeadas; donde el tramo se corta, un borde recto.
+  // Cada franja es plana, así que en los bordes largos alcanza un punto por unión de franjas.
+  function contorno(j0, j1) {
+    const w = ANCHO / 2, h = ALTO / 2, r = ESQUINA;
+    const izq = j0 === 0, der = j1 === TIRAS - 1;
+    const uA = j0 * ANCHO_TIRA - w, uB = (j1 + 1) * ANCHO_TIRA - w;
+    const p = [];
     const curva = (cu, cv, desde) => {
       for (let k = 0; k < 6; k++) {
         const a = (desde + k * 15) * RAD;
         p.push([cu + r * Math.cos(a), cv + r * Math.sin(a)]);
       }
     };
-    lado(-w + r, -h, w - r, -h, 24); curva(w - r, -h + r, -90);
-    lado(w, -h + r, w, h - r, 4);    curva(w - r, h - r, 0);
-    lado(w - r, h, -w + r, h, 24);   curva(-w + r, h - r, 90);
-    lado(-w, h - r, -w, -h + r, 4);  curva(-w + r, -h + r, 180);
-    return p;
-  })();
+    const recta = (u0, u1, v, corte) => {
+      p.push([u0, v, corte]);
+      const lim = [];
+      for (let j = j0 + 1; j <= j1; j++) {
+        const b = j * ANCHO_TIRA - w;
+        if ((b - u0) * (b - u1) < 0) lim.push(b);
+      }
+      if (u1 < u0) lim.reverse();
+      lim.forEach((b) => p.push([b, v]));
+    };
+    recta(izq ? -w + r : uA, der ? w - r : uB, -h);
+    if (der) { curva(w - r, -h + r, -90); p.push([w, -h + r]); curva(w - r, h - r, 0); }
+    else p.push([uB, -h]);
+    recta(der ? w - r : uB, izq ? -w + r : uA, h, !der);   // si la derecha es un corte, se llega sin trazo
+    if (izq) { curva(-w + r, h - r, 90); p.push([-w, h - r]); curva(-w + r, -h + r, 180); }
+    else p.push([uA, h]);
+    return { p, cierreCorte: !izq };
+  }
 
   // Desenfoques compartidos por todas las cartas
   const filtros = svgEl('svg', { width: 0, height: 0, style: 'position:absolute' }, document.body);
@@ -93,21 +111,45 @@
     '</defs>';
 
   // ---------- Construcción de las cartas ----------
+  // Una carta larga puede quedar en parte delante del operario y en parte detrás.
+  // Por eso cada carta tiene dos "partes" (la de adelante y la de atrás), cada una con
+  // sus capas y su propio z-index, y cada franja también lleva el z-index de su parte.
+  function crearParte(a, id, conOperario) {
+    // 1. Sombra y halo
+    const base = svgEl('svg', { class: 'carta-base', viewBox: '0 0 1600 900' }, a);
+    const sombra = svgEl('path', { fill: 'rgba(150,40,20,.3)', filter: 'url(#desenfoque-sombra)', transform: 'translate(0 22)' }, base);
+    const halo = svgEl('path', { fill: 'none', stroke: '#EF4529', 'stroke-width': 10, filter: 'url(#desenfoque-halo)' }, base);
+    // 2. Vidrio esmerilado (la copia del operario solo hace falta adelante)
+    const vidrio = crear('div', 'carta-vidrio', a);
+    const vidrioOperario = conOperario ? crear('canvas', 'vidrio-operario', vidrio) : null;
+    const tinte = crear('div', 'vidrio-tinte', vidrio);
+    // 4. Borde, reflejo y luz del cursor
+    const refl = svgEl('svg', { class: 'carta-reflejo', viewBox: '0 0 1600 900' }, a);
+    const defs = svgEl('defs', {}, refl);
+    const recorte = svgEl('path', {}, svgEl('clipPath', { id: id + '-recorte' }, defs));
+    const gradBrillo = svgEl('linearGradient', { id: id + '-brillo', gradientUnits: 'userSpaceOnUse' }, defs);
+    [[0, 0], [.5, .45], [1, 0]].forEach(([o, op]) => {
+      svgEl('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': op }, gradBrillo);
+    });
+    const gradLuz = svgEl('radialGradient', { id: id + '-luz', gradientUnits: 'userSpaceOnUse', r: 150 }, defs);
+    svgEl('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': .7 }, gradLuz);
+    svgEl('stop', { offset: 1, 'stop-color': '#fff', 'stop-opacity': 0 }, gradLuz);
+    const g = svgEl('g', { 'clip-path': `url(#${id}-recorte)` }, refl);
+    svgEl('rect', { width: 1600, height: 900, fill: `url(#${id}-brillo)` }, g);
+    const luz = svgEl('rect', { width: 1600, height: 900, fill: `url(#${id}-luz)` }, g);
+    const borde = svgEl('path', { fill: 'none', 'stroke-linejoin': 'round' }, refl);
+    return {
+      base, sombra, halo, vidrio, vidrioOperario, tinte, refl, recorte, gradBrillo, gradLuz, luz, borde,
+      capas: [base, vidrio, refl], visible: true, z: null
+    };
+  }
+
   const cartas = CARTAS.map((datos, i) => {
     const a = crear('a', 'carta', mundo);
     a.href = datos.destino || '#';
     a.setAttribute('aria-label', datos.titulo);
     const id = 'carta' + i;
-
-    // 1. Sombra y halo
-    const base = svgEl('svg', { class: 'carta-base', viewBox: '0 0 1600 900' }, a);
-    const sombra = svgEl('path', { fill: 'rgba(150,40,20,.3)', filter: 'url(#desenfoque-sombra)', transform: 'translate(0 22)' }, base);
-    const halo = svgEl('path', { fill: 'none', stroke: '#EF4529', 'stroke-width': 10, filter: 'url(#desenfoque-halo)' }, base);
-
-    // 2. Vidrio esmerilado
-    const vidrio = crear('div', 'carta-vidrio', a);
-    const vidrioOperario = crear('canvas', 'vidrio-operario', vidrio);
-    const tinte = crear('div', 'vidrio-tinte', vidrio);
+    const partes = [crearParte(a, id + 'a', true), crearParte(a, id + 'b', false)];
 
     // 3. Franjas con el contenido (imagen, número y nombre)
     const modelo = document.createElement('div');
@@ -129,7 +171,11 @@
     const anchoTira = (ANCHO_TIRA + SOLAPE) * F;
     const tiras = [];
     for (let j = 0; j < TIRAS; j++) {
-      const t = crear('div', 'tira', a);
+      // cada franja va en su propia caja con perspectiva: así lleva su z-index respecto del operario
+      // (la perspectiva en la caja, no dentro del transform: si no, Chrome no detecta el cursor)
+      const caja = crear('div', 'tira-caja', a);
+      const t = crear('div', 'tira', caja);
+      t.caja = caja;
       t.style.width = anchoTira + 'px';
       t.style.height = ALTO * F + 'px';
       t.style.left = (CENTRO.x - anchoTira / 2) + 'px';
@@ -151,24 +197,11 @@
       prueba.src = datos.portada;
     }
 
-    // 4. Borde, reflejo y luz del cursor
-    const refl = svgEl('svg', { class: 'carta-reflejo', viewBox: '0 0 1600 900' }, a);
-    const defs = svgEl('defs', {}, refl);
-    const recorte = svgEl('path', {}, svgEl('clipPath', { id: id + '-recorte' }, defs));
-    const gradBrillo = svgEl('linearGradient', { id: id + '-brillo', gradientUnits: 'userSpaceOnUse' }, defs);
-    [[0, 0], [.5, .45], [1, 0]].forEach(([o, op]) => {
-      svgEl('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': op }, gradBrillo);
-    });
-    const gradLuz = svgEl('radialGradient', { id: id + '-luz', gradientUnits: 'userSpaceOnUse', r: 150 }, defs);
-    svgEl('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': .7 }, gradLuz);
-    svgEl('stop', { offset: 1, 'stop-color': '#fff', 'stop-opacity': 0 }, gradLuz);
-    const g = svgEl('g', { 'clip-path': `url(#${id}-recorte)` }, refl);
-    svgEl('rect', { width: 1600, height: 900, fill: `url(#${id}-brillo)` }, g);
-    const luz = svgEl('rect', { width: 1600, height: 900, fill: `url(#${id}-luz)` }, g);
-    const borde = svgEl('path', { fill: 'none', 'stroke-linejoin': 'round' }, refl);
-
     return {
-      a, sombra, halo, vidrio, vidrioOperario, tinte, tiras, recorte, gradBrillo, gradLuz, luz, borde,
+      a, partes, tiras,
+      ang: new Float64Array(TIRAS),                       // ángulo de cada franja en el cuadro actual
+      tiraZ: new Array(TIRAS).fill(''), tiraAdelante: new Array(TIRAS).fill(null),
+      opTxt: null,
       esc: .3, sube: 0, adelante: 0, op: 0, act: 0   // valores animados
     };
   });
@@ -183,9 +216,10 @@
     ctx.filter = `blur(${15 * (operario.naturalWidth / 581) * escala}px) saturate(1.4)`;
     ctx.drawImage(operario, 0, 0, lienzo.width, lienzo.height);
     cartas.forEach((ca) => {
-      ca.vidrioOperario.width = lienzo.width;
-      ca.vidrioOperario.height = lienzo.height;
-      ca.vidrioOperario.getContext('2d').drawImage(lienzo, 0, 0);
+      const cv = ca.partes[0].vidrioOperario;
+      cv.width = lienzo.width;
+      cv.height = lienzo.height;
+      cv.getContext('2d').drawImage(lienzo, 0, 0);
     });
   }
   if (operario.complete && operario.naturalWidth) prepararVidrio();
@@ -275,22 +309,35 @@
   });
 
   // ---------- Rueda del mouse: gira el carrusel ----------
-  let finRueda = 0;
+  // Cada muesca de la rueda pasa a la carta siguiente (o anterior) en el momento,
+  // y las muescas seguidas se suman. Con el touchpad gira mientras se desliza y,
+  // al soltar, sigue hasta la carta siguiente en ese sentido (nunca vuelve atrás).
+  let finRueda = 0, inicioGesto = null;
   addEventListener('wheel', (e) => {
     e.preventDefault();
     if (abriendo || !N) return;
-    const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 33 : 1);
+    const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1);
+    if (!d) return;
     activar(-1);
     centrando = false;
     ignorar = bajoCursor;
-    objetivo = (objetivo === null ? giro : objetivo) - d * .18;
     pausaHasta = performance.now() + 5000;
     clearTimeout(finRueda);
-    // Al terminar de girar, se acomoda en la carta más cercana
+    const actual = objetivo === null ? giro : objetivo;
+    if (Math.abs(d) >= 50) {                       // muesca de la rueda del mouse: una carta por muesca
+      inicioGesto = null;
+      objetivo = Math.round(actual / paso) * paso - Math.sign(d) * paso;
+      return;
+    }
+    if (inicioGesto === null) inicioGesto = actual;
+    objetivo = actual - d * .25;
     finRueda = setTimeout(() => {
-      const actual = objetivo === null ? giro : objetivo;
-      objetivo = Math.round(actual / paso) * paso;
-    }, 160);
+      const fin = objetivo === null ? giro : objetivo;
+      const movido = fin - inicioGesto;
+      inicioGesto = null;
+      objetivo = Math.abs(movido) < 3 ? Math.round(fin / paso) * paso
+        : (movido < 0 ? Math.floor(fin / paso) : Math.ceil(fin / paso)) * paso;
+    }, 140);
   }, { passive: false });
 
   cartas.forEach((ca, i) => {
@@ -446,25 +493,28 @@
   // ---------- Dibujo de una carta curva ----------
   // Replica en JavaScript las mismas transformaciones 3D que aplica el navegador a las
   // franjas, para obtener la silueta exacta de la carta en pantalla.
-  function dibujarCarta(ca, grados, inclinacion, rot) {
+  function dibujarCarta(ca, grados, inclinacion, rot, destacada) {
     const th = grados * RAD;
     const Rc = radio + ca.adelante;
     const e = ca.esc;
     const dPhi = 2 * Math.atan((ANCHO_TIRA * e / 2) / Rc);   // ángulo que ocupa cada franja
+    const umbral = Rc / PERSPECTIVA;   // con el coseno por debajo, la franja ya se ve de espaldas
 
+    // Franjas: posición, y qué tramo queda adelante (de frente) y cuál atrás
+    let f0 = -1, f1 = -1, b0 = -1, b1 = -1;
     for (let j = 0; j < TIRAS; j++) {
-      const a = grados + (j - (TIRAS - 1) / 2) * dPhi / RAD;
+      const a = th + (j - (TIRAS - 1) / 2) * dPhi;
+      ca.ang[j] = a;
       ca.tiras[j].style.transform =
-        `${inclinacion} translateY(${ca.sube}px) rotateY(${a}deg) translateZ(${Rc}px) scale(${e / F})`;
+        `${inclinacion} translateY(${ca.sube}px) rotateY(${a / RAD}deg) translateZ(${Rc}px) scale(${e / F})`;
+      if (Math.cos(a) > umbral) { if (f0 < 0) f0 = j; f1 = j; }
+      else { if (b0 < 0) b0 = j; b1 = j; }
     }
 
-    let d = '', poli = '';
-    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-    for (let n = 0; n < SILUETA.length; n++) {
-      const u = SILUETA[n][0], v = SILUETA[n][1];
+    const proyectar = (u, v, j0, j1) => {
       let j = Math.floor((u + ANCHO / 2) / ANCHO_TIRA);
-      j = j < 0 ? 0 : j >= TIRAS ? TIRAS - 1 : j;
-      const a = th + (j - (TIRAS - 1) / 2) * dPhi;
+      j = j < j0 ? j0 : j > j1 ? j1 : j;
+      const a = ca.ang[j];
       const lx = (u - ((j + .5) * ANCHO_TIRA - ANCHO / 2)) * e;
       const sa = Math.sin(a), cA = Math.cos(a);
       const x = lx * cA + Rc * sa;
@@ -475,45 +525,102 @@
       const x3 = x * rot.cY + z2 * rot.sY;
       const z3 = -x * rot.sY + z2 * rot.cY;
       const f = PERSPECTIVA / (PERSPECTIVA - z3);
-      const X = ORIGEN.x + (CENTRO.x + x3 - ORIGEN.x) * f;
-      const Y = ORIGEN.y + (CENTRO.y + y2 - ORIGEN.y) * f;
-      d += (n ? 'L' : 'M') + X.toFixed(1) + ',' + Y.toFixed(1);
-      poli += (n ? ',' : '') + X.toFixed(1) + 'px ' + Y.toFixed(1) + 'px';
-      if (X < x0) x0 = X; if (X > x1) x1 = X;
-      if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;
-    }
-    d += 'Z';
+      return [ORIGEN.x + (CENTRO.x + x3 - ORIGEN.x) * f, ORIGEN.y + (CENTRO.y + y2 - ORIGEN.y) * f];
+    };
 
-    ca.sombra.setAttribute('d', d);
-    ca.recorte.setAttribute('d', d);
-    ca.borde.setAttribute('d', d);
-    ca.vidrio.style.clipPath = `polygon(${poli})`;
-    ca.tinte.style.left = x0 + 'px';
-    ca.tinte.style.top = y0 + 'px';
-    ca.tinte.style.width = (x1 - x0) + 'px';
-    ca.tinte.style.height = (y1 - y0) + 'px';
-
-    // El vidrio solo deja ver al operario si la carta está delante de él
-    ca.vidrioOperario.style.transform = inclinacion;
-    ca.vidrioOperario.style.visibility = Math.cos(th) > 0 ? 'visible' : 'hidden';
-
-    // Reflejo que recorre el vidrio según el ángulo
-    const w = x1 - x0, pos = x0 + w * (.5 - Math.sin(th) * .6), yc = (y0 + y1) / 2;
-    ca.gradBrillo.setAttribute('x1', pos - w * .3);
-    ca.gradBrillo.setAttribute('x2', pos + w * .3);
-    ca.gradBrillo.setAttribute('y1', yc - w * .08);
-    ca.gradBrillo.setAttribute('y2', yc + w * .08);
-
-    // Selección: borde naranja, halo y luz que sigue al cursor
     const s = ca.act;
-    ca.borde.setAttribute('stroke', `rgba(${255 - 13 * s | 0},${255 - 149 * s | 0},${255 - 202 * s | 0},${(.75 + .2 * s).toFixed(2)})`);
-    ca.borde.setAttribute('stroke-width', (1.5 + .5 * s).toFixed(2));
-    ca.halo.style.display = s > .01 ? '' : 'none';
-    if (s > .01) ca.halo.setAttribute('d', d);
-    ca.halo.setAttribute('opacity', (s * .8).toFixed(2));
-    ca.luz.setAttribute('opacity', s.toFixed(2));
-    ca.gradLuz.setAttribute('cx', ex);
-    ca.gradLuz.setAttribute('cy', ey);
+    const trazo = `rgba(${255 - 13 * s | 0},${255 - 149 * s | 0},${255 - 202 * s | 0},${(.75 + .2 * s).toFixed(2)})`;
+    const grosor = (1.5 + .5 * s).toFixed(2);
+    let gx0 = 1e9, gx1 = -1e9, gy0 = 1e9, gy1 = -1e9;
+    const tramos = [[f0, f1, true], [b0, b1, false]];
+
+    tramos.forEach(([j0, j1, adelante], k) => {
+      const P = ca.partes[k];
+      if (j0 < 0) {
+        if (P.visible) { P.visible = false; P.capas.forEach((el) => { el.style.display = 'none'; }); }
+        return;
+      }
+      if (!P.visible) { P.visible = true; P.capas.forEach((el) => { el.style.display = ''; }); }
+
+      // Silueta del tramo: relleno cerrado y borde (sin trazo donde se corta, salvo adelante,
+      // donde el corte coincide con el contorno visible de la curva)
+      const { p, cierreCorte } = contorno(j0, j1);
+      let d = '', db = '', poli = '';
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, X0 = 0, Y0 = 0;
+      for (let n = 0; n < p.length; n++) {
+        const [X, Y] = proyectar(p[n][0], p[n][1], j0, j1);
+        const xy = X.toFixed(1) + ',' + Y.toFixed(1);
+        if (!n) { X0 = X; Y0 = Y; }
+        d += (n ? 'L' : 'M') + xy;
+        db += (n && !(p[n][2] && !adelante) ? 'L' : 'M') + xy;
+        poli += (n ? ',' : '') + X.toFixed(1) + 'px ' + Y.toFixed(1) + 'px';
+        if (X < x0) x0 = X; if (X > x1) x1 = X;
+        if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;
+      }
+      d += 'Z';
+      if (!(cierreCorte && !adelante)) db += 'L' + X0.toFixed(1) + ',' + Y0.toFixed(1);
+      if (x0 < gx0) gx0 = x0; if (x1 > gx1) gx1 = x1;
+      if (y0 < gy0) gy0 = y0; if (y1 > gy1) gy1 = y1;
+
+      P.sombra.setAttribute('d', d);
+      P.recorte.setAttribute('d', d);
+      P.borde.setAttribute('d', db);
+      P.vidrio.style.clipPath = `polygon(${poli})`;
+      P.tinte.style.left = x0 + 'px';
+      P.tinte.style.top = y0 + 'px';
+      P.tinte.style.width = (x1 - x0) + 'px';
+      P.tinte.style.height = (y1 - y0) + 'px';
+      // El vidrio deja ver al operario desenfocado solo en la parte de adelante
+      if (P.vidrioOperario) P.vidrioOperario.style.transform = inclinacion;
+
+      // Profundidad: el operario está en z-index 1000. Cada parte usa 4 niveles seguidos
+      // (sombra, vidrio, franjas, borde) y las de adelante quedan por encima del operario.
+      const c = Math.cos(ca.ang[(j0 + j1) >> 1]);
+      const z = (adelante ? 1004 + destacada : 996) + Math.round(c * 100) * 4;
+      if (z !== P.z) {
+        P.z = z;
+        P.base.style.zIndex = z;
+        P.vidrio.style.zIndex = z + 1;
+        P.refl.style.zIndex = z + 3;
+      }
+      for (let j = j0; j <= j1; j++) {
+        const zt = String(z + 2);
+        if (ca.tiraZ[j] !== zt) { ca.tiraZ[j] = zt; ca.tiras[j].caja.style.zIndex = zt; }
+        if (ca.tiraAdelante[j] !== adelante) {
+          ca.tiraAdelante[j] = adelante;
+          ca.tiras[j].style.pointerEvents = adelante ? '' : 'none';
+        }
+      }
+
+      // Selección: borde naranja, halo y luz que sigue al cursor
+      P.borde.setAttribute('stroke', trazo);
+      P.borde.setAttribute('stroke-width', grosor);
+      P.halo.style.display = s > .01 ? '' : 'none';
+      if (s > .01) P.halo.setAttribute('d', db);
+      P.halo.setAttribute('opacity', (s * .8).toFixed(2));
+      P.luz.setAttribute('opacity', s.toFixed(2));
+      P.gradLuz.setAttribute('cx', ex);
+      P.gradLuz.setAttribute('cy', ey);
+    });
+
+    // Reflejo que recorre el vidrio según el ángulo (el mismo en las dos partes)
+    const w = gx1 - gx0, pos = gx0 + w * (.5 - Math.sin(th) * .6), yc = (gy0 + gy1) / 2;
+    ca.partes.forEach((P) => {
+      if (!P.visible) return;
+      P.gradBrillo.setAttribute('x1', pos - w * .3);
+      P.gradBrillo.setAttribute('x2', pos + w * .3);
+      P.gradBrillo.setAttribute('y1', yc - w * .08);
+      P.gradBrillo.setAttribute('y2', yc + w * .08);
+    });
+
+    // Opacidad de entrada y salida, en cada capa (la carta no arma un grupo propio,
+    // así sus partes pueden ir delante y detrás del operario)
+    const o = ca.op === 1 ? '' : ca.op.toFixed(3);
+    if (o !== ca.opTxt) {
+      ca.opTxt = o;
+      ca.partes.forEach((P) => P.capas.forEach((el) => { el.style.opacity = o; }));
+      ca.tiras.forEach((t) => { t.caja.style.opacity = o; });
+    }
   }
 
   // ---------- Animación ----------
@@ -571,14 +678,9 @@
       const c = Math.cos(grados * RAD);
       if (c > mejor) { mejor = c; frente = i; }
 
-      // Orden de profundidad: el operario está en z-index 1000,
-      // las cartas de adelante quedan por encima y las de atrás por debajo.
-      const destacada = (i === activa || i === elegida) && c > 0 ? 600 : 0;
-      ca.a.style.zIndex = 1000 + Math.round(c * 500) + (c >= 0 ? 1 : -1) + destacada;
-      ca.a.style.opacity = ca.op === 1 ? '' : ca.op.toFixed(3);
-      ca.a.classList.toggle('atras', c < -.15);
-
-      dibujarCarta(ca, grados, inclinacion, rot);
+      // La carta elegida o bajo el cursor queda por encima de las demás
+      const destacada = i === activa || i === elegida ? 2400 : 0;
+      dibujarCarta(ca, grados, inclinacion, rot, destacada);
     });
     actualizarHud(activa >= 0 ? activa : frente);
 

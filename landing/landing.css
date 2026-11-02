@@ -127,18 +127,20 @@ body.abriendo .caminos { opacity: 0; }
 body.lista .operario { opacity: 1; translate: 0 0; }
 
 /* ---------- Cartas de vidrio curvas ----------
-   Cada carta tiene 4 capas, de atrás hacia adelante:
+   Las cartas son largas y entre todas completan el círculo. Cada carta tiene
+   dos partes (la que queda delante del operario y la de atrás) con 3 capas cada una,
+   más las franjas:
    1. .carta-base    (SVG)  sombra y halo naranja
    2. .carta-vidrio         vidrio esmerilado: copia desenfocada del operario + tinte
-   3. .tira (×10)           franjas planas que siguen el cilindro: imagen y texto
+   3. .tira (muchas)        franjas planas que siguen el cilindro: imagen y texto
    4. .carta-reflejo (SVG)  borde, reflejo y luz del cursor
-   landing.js calcula en cada cuadro la silueta curva de la carta
-   y la usa para recortar el vidrio y dibujar las capas en vector. */
+   landing.js calcula en cada cuadro la silueta curva de cada parte, la usa para
+   recortar el vidrio y dibujar las capas en vector, y les da su z-index.
+   La carta (.carta) no arma un grupo propio (sin perspective, opacity ni z-index),
+   así cada capa se ordena sola respecto del operario. */
 .carta {
   position: absolute;
   inset: 0;
-  perspective: 1600px;
-  perspective-origin: 800px 450px;
   pointer-events: none;
   text-decoration: none;
   color: inherit;
@@ -174,6 +176,13 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   background: linear-gradient(160deg, rgba(255, 255, 255, .55), rgba(255, 232, 220, .3) 55%, rgba(239, 69, 41, .16));
 }
 
+.tira-caja {
+  position: absolute;
+  inset: 0;
+  perspective: 1600px;
+  perspective-origin: 800px 450px;
+  pointer-events: none;
+}
 .tira {
   position: absolute;
   overflow: hidden;
@@ -182,14 +191,13 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   pointer-events: auto;
   cursor: pointer;
 }
-.carta.atras .tira { pointer-events: none; }
 
 /* Contenido de la carta: se dibuja a resolución --f (2× o más) y se reduce,
    así la imagen y el texto se ven nítidos aunque la carta se agrande. */
 .contenido {
   position: absolute;
   top: 0;
-  width: calc(260px * var(--f));
+  width: calc(var(--ancho, 260px) * var(--f));
   height: calc(174px * var(--f));
   border-radius: calc(18px * var(--f));
   overflow: hidden;
@@ -203,9 +211,11 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   object-fit: cover;
 }
 
+/* número y nombre centrados: es lo que queda de frente cuando la carta está adelante */
 .marca-agua {
   position: absolute;
-  right: calc(14px * var(--f));
+  left: 50%;
+  transform: translateX(-50%);
   top: calc(2px * var(--f));
   font-family: var(--fuente-titulo);
   font-weight: 700;
@@ -216,7 +226,8 @@ body.lista .operario { opacity: 1; translate: 0 0; }
 
 .etiqueta {
   position: absolute;
-  left: calc(12px * var(--f));
+  left: 50%;
+  transform: translateX(-50%);
   bottom: calc(12px * var(--f));
   display: flex;
   align-items: baseline;

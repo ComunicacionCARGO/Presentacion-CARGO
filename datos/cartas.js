@@ -42,12 +42,15 @@ window.PORTADA = {
 };
 
 /* ---------------------------------------------------------------------
-   CARTAS — una por diapositiva. Se pueden agregar todas las que hagan
-   falta: copiá un bloque { ... }, pegalo debajo y cambiá los datos.
+   CARTAS — una por diapositiva. Se pueden agregar las que hagan falta:
+   copiá un bloque { ... }, pegalo debajo y cambiá los datos.
+   Las cartas son largas y entre todas completan el círculo: con más
+   cartas, cada una se hace más corta.
 
    titulo:  nombre que aparece sobre la carta.
    portada: imagen de la carta (guardala en la carpeta img/cartas).
-            Medida recomendada: 1200 × 800 px (horizontal 3:2), JPG o WEBP.
+            Medida recomendada con 3 cartas: 2100 × 600 px (muy apaisada),
+            JPG o WEBP. Lo importante conviene ponerlo en el centro.
             Si se deja vacía "" se muestra una carta de vidrio sin imagen.
    destino: la diapositiva que se abre al hacer clic.
    --------------------------------------------------------------------- */
@@ -67,20 +70,5 @@ window.CARTAS = [
     titulo: "Nuestra Estructura",
     portada: "",
     destino: "slides/nuestra-estructura/index.html"
-  },
-  {
-    titulo: "Nuestro TMS",
-    portada: "",
-    destino: "slides/ejemplo/index.html"
-  },
-  {
-    titulo: "Tecnología",
-    portada: "",
-    destino: "slides/ejemplo/index.html"
-  },
-  {
-    titulo: "Ubicación Estratégica",
-    portada: "",
-    destino: "slides/ejemplo/index.html"
   }
 ];

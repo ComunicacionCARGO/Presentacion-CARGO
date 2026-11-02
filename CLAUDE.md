@@ -49,13 +49,14 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 
 ### Portada (`landing/landing.js`)
 
-- Cada carta es un **objeto 3D independiente**, sin un `preserve-3d` compartido. Si se comparte, el navegador recorta las cartas entre sí y aparecen cortes en el vidrio. La profundidad respecto del operario se resuelve con `z-index` (el operario tiene 1000).
-- Las cartas son **curvas**: 10 franjas sobre el cilindro de la órbita.
+- **3 cartas largas que completan el círculo** (radio 310, `HUECO` de 7° entre cartas; el arco y el ancho salen de la cantidad de cartas, así que con más cartas se acortan). Sin un `preserve-3d` compartido: si se comparte, el navegador recorta las cartas entre sí y aparecen cortes en el vidrio.
+- Profundidad con `z-index` (el operario tiene 1000). Como una carta larga queda en parte delante y en parte detrás del operario, cada carta tiene **dos partes** (adelante y atrás, cortadas en la franja donde la curva empieza a verse de espaldas: coseno = radio/perspectiva) con sus capas (sombra, vidrio, borde) y su z-index; `.carta` no arma grupo (sin perspective, opacity ni z-index). Cada franja va en su `.tira-caja` (perspectiva 1600, origen 800 450) con el z-index de su parte. No poner `perspective()` dentro del transform de la franja: Chrome deja de detectar el cursor sobre las franjas giradas.
+- Las cartas son **curvas**: franjas de unos 17 px (36 por carta con 3 cartas) sobre el cilindro de la órbita. El número y el nombre van centrados.
   - El vidrio es una capa 2D (copia desenfocada del operario en un canvas) recortada con `clip-path` usando la silueta proyectada. No usar `backdrop-filter` por franja: vuelven las costuras.
   - Borde, brillo y halo en SVG.
   - El contenido se dibuja a resolución `--f` (2× o más) y se reduce.
   - JS replica la proyección 3D: perspectiva 1600, origen (800, 450), centro de órbita (800, 668).
-- Cursor sobre una carta: viaja al centro y se levanta. Las cartas que pasan solas bajo el cursor se ignoran hasta que el mouse se mueva. Rueda: gira y se acomoda en la carta más cercana. Teclas: flechas, Enter, 1–9.
+- Cursor sobre una carta: viaja al centro y se levanta. Las cartas que pasan solas bajo el cursor se ignoran hasta que el mouse se mueva. Rueda: cada muesca pasa una carta en el momento (se suman); el touchpad gira mientras desliza y al soltar sigue a la carta siguiente en ese sentido (nunca vuelve atrás). Teclas: flechas, Enter, 1–9.
 - Palabras con caminos: Inter ExtraLight Italic, gris con baja opacidad, líneas de 0,7 px que convergen hacia una elipse alrededor del carrusel, sin tocar las cartas.
 
 ### "¿Quiénes somos?" (`slides/quienes-somos/`)
@@ -123,9 +124,9 @@ Red de áreas: datos en `datos/estructura.js` (`window.ESTRUCTURA`, 18 áreas to
 
 ### Pendientes conocidos
 
-- Quedan diapositivas por diseñar: Nuestro TMS, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`). Servicio a medida tiene solo el mapa de distribución.
+- La portada tiene 3 cartas (se sacaron Nuestro TMS, Tecnología y Ubicación Estratégica). Servicio a medida tiene solo el mapa de distribución.
 - Los puntos del mapa de distribución se interpretaron de capturas: verificarlos con la empresa (sobre todo los destinos propios: Jesús María, Rafaela, Paraná, La Plata).
-- Las cartas todavía no tienen portadas (`img/cartas/`, 1200×800).
+- Las cartas todavía no tienen portadas (`img/cartas/`, 2100×600 con 3 cartas largas).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
 - Mejoras ofrecidas: fuentes locales para funcionar sin internet, logo en SVG.

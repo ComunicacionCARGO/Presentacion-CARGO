@@ -11,7 +11,7 @@ Controles:
   • Mover el mouse ............ efecto de profundidad
   • Pasar sobre una carta ..... la carta viaja al centro, se levanta y se ilumina
   • Clic en una carta ......... abre su diapositiva
-  • Rueda del mouse ........... girar el carrusel hacia un lado o el otro
+  • Rueda del mouse ........... cada movimiento de la rueda pasa a la carta siguiente
   • Flechas ← → ............... girar el carrusel carta por carta
   • Enter ..................... abrir la carta del frente
   • Números 1 a 9 ............. abrir esa carta directamente
@@ -59,13 +59,15 @@ Para agregar una:
 3. Cambiá título, portada y destino.
 
 Para quitar una carta: borrá el bloque completo con su coma.
+Las cartas siempre completan el círculo: con más cartas, cada una es más corta.
 Para cambiar el orden: mové los bloques de lugar.
 
 
 PONER LA IMAGEN DE PORTADA DE UNA CARTA
 ---------------------------------------
-1. Exportá la imagen desde Illustrator a 1200 × 800 px (horizontal),
-   en JPG o WEBP.
+1. Exportá la imagen desde Illustrator a 2100 × 600 px (muy apaisada: las tres
+   cartas son largas y entre todas completan el círculo). Guardala en
+   JPG o WEBP. Lo importante va en el centro, que es lo que queda de frente.
 2. Guardala en la carpeta  img\cartas
    Usá nombres sin espacios, sin tildes y en minúscula,
    por ejemplo: almacenamiento.jpg
