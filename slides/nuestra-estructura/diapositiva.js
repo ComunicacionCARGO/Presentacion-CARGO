@@ -356,6 +356,8 @@
       n.py = n.y + Math.cos(t * .7 + n.fase * 1.3) * n.amp - gy * 12 * n.prof;
       n.el.style.transform = `translate3d(${n.px.toFixed(2)}px, ${n.py.toFixed(2)}px, 0)`;
     });
+    // durante la transición, los anillos siguen a la Dirección mientras flota
+    if (avance > 0) dibujarAnillos();
     aristas.forEach((e) => {
       const c = controles(e);
       e.c = c;
@@ -414,8 +416,11 @@
     if (avance <= 0) return;
     const b = BANDA * k, g = HUECO * k;
     const ancho = 2 * b + 2 * g;                  // rojo, hueco, rojo, hueco (después, gris hasta el borde)
-    const cx = w / 2, cy = h / 2;
-    const lejos = Math.hypot(cx, cy) + 4;
+    // Centro: la burbuja de la Dirección, donde esté en este momento (flota y se mueve con el paralaje)
+    const dir = nodos.find((n) => n.nivel === 0);
+    const sx = dir && dir.px != null ? dir.px : 800, sy = dir && dir.py != null ? dir.py : 450;
+    const cx = w / 2 + (sx - 800) * k, cy = h / 2 + (sy - 450) * k;
+    const lejos = Math.hypot(Math.max(cx, w - cx), Math.max(cy, h - cy)) + 4;   // hasta la esquina más lejana
     // R = borde interior del anillo rojo de adelante: arranca fuera de la pantalla y termina pasado el centro
     // (lineal: cada uno de los 3 pasos cierra lo mismo; la suavidad la da la animación de cada paso)
     const R = lejos + (-ancho - 2 - lejos) * avance;
