@@ -184,7 +184,7 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   transform-origin: 0 0;
   will-change: transform;
 }
-.vf-superponer { mix-blend-mode: overlay; }
+.vf-superponer { mix-blend-mode: overlay; opacity: .7; }   /* algo transparente: se ve más vidrio */
 .vf-normal { opacity: 0; }
 .vf-normal::after {
   content: "";

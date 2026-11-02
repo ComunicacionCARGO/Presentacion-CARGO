@@ -74,7 +74,7 @@ PONER LA FOTO DE UNA CARTA
 La foto se ve "detrás" de la carta, como un paisaje lejano a través de una
 ventana: no se curva con la carta y se mueve más lento que ella al girar.
 En reposo se mezcla con el vidrio (modo de fusión "superponer", como en
-Illustrator) y, al pasar el cursor por la carta, se ve normal y entera.
+Illustrator, y algo transparente) y, al pasar el cursor por la carta, se ve normal y entera.
 1. Usá una foto común, horizontal (por ejemplo 2000 × 1125 px), en JPG o WEBP.
    Se muestra oscurecida para que se lea el título.
 2. Guardala en la carpeta  img\cartas
