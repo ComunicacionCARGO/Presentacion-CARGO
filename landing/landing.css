@@ -173,17 +173,20 @@ body.lista .operario { opacity: 1; translate: 0 0; }
 }
 /* Foto de fondo de la carta: plana y lejana (no sigue la curva). landing.js la mueve
    con transform; el vidrio la recorta con la silueta de la carta, como una ventana. */
-/* La foto siempre nítida. En reposo es semitransparente y deja ver detrás el operario
-   desenfocado (el vidrio esmerilado); con el cursor encima queda opaca (landing.js). */
+/* La foto, siempre nítida y opaca, en dos copias que landing.js mueve juntas:
+   en reposo se ve la de modo "superponer", mezclada con el vidrio (el operario desenfocado);
+   con el cursor encima aparece la normal (opacidad de 0 a 1). */
 .vidrio-foto {
   position: absolute;
   left: 0;
   top: 0;
   background-size: 100% 100%;
   transform-origin: 0 0;
-  will-change: transform, opacity;
+  will-change: transform;
 }
-.vidrio-foto::after {
+.vf-superponer { mix-blend-mode: overlay; }
+.vf-normal { opacity: 0; }
+.vf-normal::after {
   content: "";
   position: absolute;
   inset: 0;
