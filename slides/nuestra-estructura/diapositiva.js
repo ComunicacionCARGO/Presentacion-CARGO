@@ -159,12 +159,35 @@
     b.addEventListener('pointerleave', () => resaltar(n, false));
     b.addEventListener('click', () => abrir(k));
   });
+  // Cada camino con su degradé: transparente en las puntas y con su opacidad en el medio
+  const defs = document.createElementNS(NS, 'defs');
+  gCaminos.parentNode.insertBefore(defs, gCaminos);
   aristas.forEach((e, k) => {
+    e.grad = document.createElementNS(NS, 'linearGradient');
+    e.grad.setAttribute('id', 'camino-' + k);
+    e.grad.setAttribute('class', 'degrade');
+    e.grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    e.grad.innerHTML = '<stop/><stop class="lleno"/><stop class="lleno"/><stop/>';
+    e.paradas = e.grad.querySelectorAll('stop');
+    defs.appendChild(e.grad);
     e.el = document.createElementNS(NS, 'path');
     e.el.setAttribute('pathLength', '1');
+    e.el.setAttribute('stroke', `url(#camino-${k})`);
     e.el.style.setProperty('--i', k);
     gCaminos.appendChild(e.el);
   });
+  // El degradé va de una burbuja a la otra: arranca en su borde y en 34 px llega a la opacidad normal
+  const FUNDIDO = 34;
+  function ubicarDegrade(e) {
+    const A = e.a, B = e.b, L = Math.hypot(B.px - A.px, B.py - A.py) || 1;
+    const g = e.grad;
+    g.setAttribute('x1', A.px.toFixed(1)); g.setAttribute('y1', A.py.toFixed(1));
+    g.setAttribute('x2', B.px.toFixed(1)); g.setAttribute('y2', B.py.toFixed(1));
+    const ra = A.d / 2 * 1.05, rb = B.d / 2 * 1.05;
+    const o = [ra / L, (ra + FUNDIDO) / L, 1 - (rb + FUNDIDO) / L, 1 - rb / L].map((v) => Math.max(0, Math.min(1, v)));
+    if (o[2] < o[1]) o[1] = o[2] = (o[1] + o[2]) / 2;         // caminos cortos: sin tramo pleno
+    e.paradas.forEach((s, j) => s.setAttribute('offset', o[j].toFixed(4)));
+  }
 
   // Curva del mismo estilo que los caminos de la portada
   function controles(e) {
@@ -198,7 +221,11 @@
   let foco = null;
   function resaltar(n, si) {
     foco = si ? n : (foco === n ? null : foco);
-    aristas.forEach((e) => e.el.classList.toggle('activo', !!foco && (e.a === foco || e.b === foco)));
+    aristas.forEach((e) => {
+      const si = !!foco && (e.a === foco || e.b === foco);
+      e.el.classList.toggle('activo', si);
+      e.grad.classList.toggle('activo', si);
+    });
     if (si) for (let k = 0; k < 3; k++) setTimeout(() => nuevoMensaje(n), k * 140);
   }
 
@@ -329,6 +356,7 @@
       const c = controles(e);
       e.c = c;
       e.el.setAttribute('d', `M${c[0].toFixed(1)},${c[1].toFixed(1)}C${c[2].toFixed(1)},${c[3].toFixed(1)} ${c[4].toFixed(1)},${c[5].toFixed(1)} ${c[6].toFixed(1)},${c[7].toFixed(1)}`);
+      ubicarDegrade(e);
     });
 
     if (!visible) return;

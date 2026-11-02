@@ -28,7 +28,7 @@
 .seccion-red.visible .titulo-estructura > :nth-child(3) { transition-delay: .16s; }
 .seccion-red.visible .titulo-estructura > :nth-child(4) { transition-delay: 1.6s; }
 .te-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); }
-.te-titulo { margin-top: 2px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 74px; line-height: .95; color: var(--gris); }
+.te-titulo { margin-top: 2px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 74px; line-height: .95; color: var(--rojo); }
 .te-bajada { margin-top: 14px; width: 380px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .85); }
 .te-bajada strong { font-weight: 600; }
 .te-bajada em { font-style: italic; color: var(--rojo); }
@@ -70,19 +70,23 @@
 .seccion-red.con-tarjeta .red { filter: blur(3px) saturate(.8); opacity: .55; }
 .red-caminos { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
 
-/* Caminos: mismo estilo que los de la portada (gris, finos, curvos) */
+/* Caminos: mismo estilo que los de la portada (gris, finos, curvos).
+   Cada uno tiene un degradé que se apaga cerca de las burbujas: se ve la
+   conexión pero la línea no llega a tocarlas. */
 .caminos path {
   fill: none;
-  stroke: var(--gris);
-  stroke-opacity: .26;
   stroke-width: .8;
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset 2.6s cubic-bezier(.45, 0, .2, 1), stroke .4s ease, stroke-opacity .4s ease, stroke-width .4s ease;
+  transition: stroke-dashoffset 2.6s cubic-bezier(.45, 0, .2, 1), stroke-width .4s ease;
 }
-.seccion-red.visible .caminos path { stroke-dashoffset: 0; transition-delay: calc(.5s + var(--i) * .015s), 0s, 0s, 0s; }
-.caminos path.activo { stroke: var(--rojo); stroke-opacity: .7; stroke-width: 1.4; }
+.seccion-red.visible .caminos path { stroke-dashoffset: 0; transition-delay: calc(.5s + var(--i) * .015s), 0s; }
+.caminos path.activo { stroke-width: 1.4; }
+.degrade { --c: #3A3A3A; --o: .26; }
+.degrade.activo { --c: #EF4529; --o: .7; }
+.degrade stop { stop-color: var(--c); stop-opacity: 0; transition: stop-color .4s ease, stop-opacity .4s ease; }
+.degrade stop.lleno { stop-opacity: var(--o); }
 
 /* Mensajes que viajan por los caminos */
 .mensajes .m-halo { fill: var(--rojo); fill-opacity: .16; }
