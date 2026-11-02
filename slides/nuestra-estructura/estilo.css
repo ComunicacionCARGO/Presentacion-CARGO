@@ -21,7 +21,7 @@
 .escenas { position: absolute; inset: 0; }
 .escenas section { position: absolute; inset: 0; }
 .pista { position: absolute; left: 0; top: 0; width: 1600px; pointer-events: none; visibility: hidden; }
-.pista-espacio { height: 1800px; }
+.pista-espacio { height: 3600px; }   /* anillos (900) + Mejora continua (900) + pantalla partida (900) */
 .seccion-red { transition: opacity .3s ease; }
 .seccion-red.tapada { pointer-events: none; }
 

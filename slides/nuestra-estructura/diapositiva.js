@@ -545,10 +545,16 @@
     // al volver, bajan enseguida
     seccionEl.classList.toggle('arriba', avance >= .97);
   }
-  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo');
+  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo'), escenarioEl = $('.escenario');
+  // Después de los anillos el scroll sigue como un scroll común: "¿Por qué elegirnos?"
+  // sube y aparecen "Mejora continua" y la pantalla partida (--bajada, en mejora.css)
+  let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
+    const nuevaBajada = Math.max(0, e.detail.y - RECORRIDO);
+    if (nuevaBajada !== bajada) { bajada = nuevaBajada; escenarioEl.style.setProperty('--bajada', bajada.toFixed(1)); }
     const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
     if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
+    if (nuevo === avance && (nuevo === 0 || nuevo === 1)) return;
     avance = nuevo;
     aplicarAvance();
   });
@@ -559,18 +565,25 @@
   // cada muesca de la rueda (o tecla) suma un paso al destino en el momento, y el
   // movimiento sigue con su impulso hacia el nuevo destino (resorte amortiguado, sin
   // frenar ni volver a arrancar). Dos muescas seguidas pasan los dos pasos de una vez.
-  const PASOS = 2;                                // cantidad de pasos
+  // Paradas del scroll: 2 pasos de anillos (0 → 450 → 900: "¿Por qué elegirnos?"),
+  // después "Mejora continua" (1800) y la pantalla partida Calidad / Capacitaciones (2700)
+  const PARADAS = [0, RECORRIDO / 2, RECORRIDO, RECORRIDO + 900, RECORRIDO + 1800];
+  const ULTIMA = PARADAS.length - 1, MAXIMO = PARADAS[ULTIMA];
   const RIGIDEZ = 7.5;                            // más alto = más rápido (7,5 ≈ 1 s por paso)
   const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
-  const ALTO_PASO = RECORRIDO / PASOS;
   let paso = 0, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
   let acumulado = 0, ultimaRueda = 0;
+  const paradaCercana = (y) => PARADAS.reduce((m, p, i) => (Math.abs(p - y) < Math.abs(PARADAS[m] - y) ? i : m), 0);
   // paso actual: el de destino si hay una animación en curso; si no, el de la posición real
-  const pasoActual = () => (animacion || !window.desplazamiento ? paso : Math.round(window.desplazamiento.y / ALTO_PASO));
+  const pasoActual = () => (animacion || !window.desplazamiento ? paso : paradaCercana(window.desplazamiento.y));
+  // Con un tema de Mejora continua abierto, la rueda y las teclas recorren sus secciones (mejora.js)
+  const capituloAbierto = () => document.body.classList.contains('capitulo-abierto');
+  const pasoCapitulo = (dir) => document.dispatchEvent(new CustomEvent('capitulo-paso', { detail: dir }));
+  window.irAParada = (n) => irAPaso(n);           // para mejora.js (por ejemplo, volver a la pantalla partida)
   function mover(ahora) {
     let dt = Math.min(.05, Math.max(0, (ahora - ultimoCuadro) / 1000));
     ultimoCuadro = ahora;
-    const objetivo = paso * ALTO_PASO;
+    const objetivo = PARADAS[paso];
     // resorte críticamente amortiguado, en subpasos cortos para que sea estable
     while (dt > 0) {
       const h = Math.min(dt, 1 / 240);
@@ -578,16 +591,16 @@
       posicion += velocidad * h;
       dt -= h;
     }
-    posicion = Math.max(0, Math.min(RECORRIDO, posicion));
+    posicion = Math.max(0, Math.min(MAXIMO, posicion));
     const termino = Math.abs(objetivo - posicion) < 2.5 && Math.abs(velocidad) < 60;  // los últimos píxeles no se notan
     if (termino) { posicion = objetivo; velocidad = 0; }
     window.desplazamiento.ir(posicion, true);
     animacion = termino ? null : requestAnimationFrame(mover);
   }
   function irAPaso(n) {
-    n = Math.max(0, Math.min(PASOS, n));
+    n = Math.max(0, Math.min(ULTIMA, n));
     if (!window.desplazamiento) { paso = n; return; }
-    if (n === paso && !animacion && Math.abs(window.desplazamiento.y - n * ALTO_PASO) < .5) return;
+    if (n === paso && !animacion && Math.abs(window.desplazamiento.y - PARADAS[n]) < .5) return;
     paso = n;
     if (!animacion) {                             // arranca desde donde está, quieto
       posicion = window.desplazamiento.y;
@@ -605,15 +618,16 @@
     const ahora = performance.now();
     if (ahora - ultimaRueda > 220 || Math.sign(d) !== Math.sign(acumulado)) acumulado = 0;
     ultimaRueda = ahora;
+    const dar = (dir) => (capituloAbierto() ? pasoCapitulo(dir) : irAPaso(pasoActual() + dir));
     if (Math.abs(d) >= 50) {                        // muesca de rueda de mouse: un paso cada una
       acumulado = 0;
-      irAPaso(pasoActual() + Math.sign(d));
+      dar(Math.sign(d));
       return;
     }
     acumulado += d;                                 // touchpad: se suma hasta completar un paso
     if (Math.abs(acumulado) >= UMBRAL_TOUCHPAD) {
       acumulado -= Math.sign(acumulado) * UMBRAL_TOUCHPAD;
-      irAPaso(pasoActual() + Math.sign(d));
+      dar(Math.sign(d));
     }
   }, { capture: true, passive: false });
   addEventListener('keydown', (e) => {
@@ -622,8 +636,10 @@
     e.stopImmediatePropagation();
     if (abierta >= 0) return;
     e.preventDefault();
+    const dir = abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1;
+    if (capituloAbierto()) { if (e.key !== 'Home' && e.key !== 'End') pasoCapitulo(dir); return; }
     if (e.key === 'Home') irAPaso(0);
-    else if (e.key === 'End') irAPaso(PASOS);
-    else irAPaso(pasoActual() + (abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1));
+    else if (e.key === 'End') irAPaso(ULTIMA);
+    else irAPaso(pasoActual() + dir);
   }, true);
 })();

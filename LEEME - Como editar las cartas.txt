@@ -173,6 +173,25 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
 
 
+MEJORA CONTINUA (después de "¿Por qué elegirnos?", en Nuestra estructura)
+-------------------------------------------------------------------------
+Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
+  • portada: el título "Mejora CONTINUA" y su foto.
+  • opciones: las dos mitades de la pantalla partida (Calidad y Capacitaciones):
+    número, título, bajada e ícono (sello, birrete, personas, cono, hoja).
+  • calidad: S.C.O.P.E. (texto y significado letra por letra), objetivos,
+    pilares (con su ícono: carretilla, caja, camion, sello, personas, casco,
+    monedas), políticas (nombre, código, norma, cita y directrices) y
+    certificaciones (norma, número, nombre y política).
+  • capacitaciones: #Exp Aprende (textos e imagen de la plataforma) y
+    Trabajo en equipo (inducción y liderazgo).
+  • Se pueden agregar o quitar objetivos, pilares, directrices, políticas o
+    certificaciones copiando una línea o un bloque con su coma.
+  • **texto** = negrita;  *texto* = rojo en cursiva.
+  • Al ver la presentación: con la rueda se baja hasta la pantalla partida; al
+    pasar el cursor por una mitad, las franjas se corren; clic para abrir el
+    tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
+
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:
