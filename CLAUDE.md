@@ -41,6 +41,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 | `datos/cartas.js` | Textos de la portada, ajustes del carrusel, palabras flotantes, lista de cartas |
 | `datos/quienes-somos.js` | Textos, línea de tiempo, números y sedes |
 | `datos/distribucion.xlsx` → `distribucion.js` | Mapa de distribución (se edita en Excel y se convierte con el .bat) |
+| `datos/estructura.js` | Áreas de "Nuestra estructura" (red de burbujas y tarjetas) |
 | `img/` | Imágenes (`landing/`, `marca/`, `slides/`, `cartas/`, `linea-de-tiempo/`) |
 | `herramientas/` | Scripts para desarrollo (no forman parte del sitio) |
 
@@ -108,9 +109,18 @@ Mapa interactivo de distribución de Argentina (carta 2). Por ahora una sola sec
 - Todas las rutas se dibujan a la vez (sin escalonar), a los 0,8 s.
 - **Invitación a interactuar**: ondas que laten en el piso bajo cada base; una mano que "toca" al sudoeste de la base con más rutas (desaparece al pasar por una provincia o usar un filtro); y un recorrido automático tras 15 s sin uso (`SEGUNDOS_SIN_USO`), que elige cada provincia con bases durante 5 s (`SEGUNDOS_POR_PROVINCIA`) y una pausa con todo el país. Cualquier movimiento del mouse, clic, rueda o tecla lo detiene. `seleccionar(k, auto)` distingue lo que elige el recorrido.
 
+### "Nuestra estructura" (`slides/nuestra-estructura/`, carta 3)
+
+Red de áreas: datos en `datos/estructura.js` (`window.ESTRUCTURA`, 18 áreas tomadas de las capturas de la persona). Una sola sección dentro de una `.pista`.
+
+- **Ubicación**: anillos elípticos por `nivel` (0 centro, 1–3 hacia afuera; tamaños 164/122/98/80 px), en el orden de la lista; después 500 pasadas de separación (círculo + nombre) que además las alejan de la zona del título. Funciona aunque se agreguen áreas.
+- **Caminos**: cada área se une con la dirección, sus vecinas de anillo y las más cercanas del anillo interior. Misma curva que los caminos de la portada (`C x0+dx*.15,y0+dy*.6 x3-dx*.45,y3-dy*.05`), gris .26 y 0,8 px; se recalculan en cada cuadro con la posición flotante de cada burbuja, así siempre quedan unidos. Mensajes rojos (hasta 16) viajan por los caminos (posición calculada con la Bézier, sin medir el DOM); al pasar el cursor por un área se encienden sus caminos y salen mensajes desde ella.
+- **Burbujas**: botones con disco de vidrio (sin `backdrop-filter`, para no cargar el cuadro), ícono incluido rojo (o `imagen` SVG en `img/estructura/`), flotación en JS y paralaje por nivel; el fondo también se mueve. Al pasar el cursor crecen 1,22. Cada 2,6 s late una burbuja al azar; la del centro late siempre.
+- **Tarjeta**: vidrio centrado, alto según el contenido (máx. 700), nace desde la burbuja (`transform-origin` calculado), flechas para recorrer las áreas, Esc la cierra antes de volver a la portada. Textos con `--t` que se achica si no entra.
+
 ### Pendientes conocidos
 
-- Quedan diapositivas por diseñar: Nuestro TMS, Estructura, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`). Servicio a medida tiene solo el mapa de distribución.
+- Quedan diapositivas por diseñar: Nuestro TMS, Tecnología, Ubicación Estratégica (hoy apuntan a `slides/ejemplo`). Servicio a medida tiene solo el mapa de distribución.
 - Los puntos del mapa de distribución se interpretaron de capturas: verificarlos con la empresa (sobre todo los destinos propios: Jesús María, Rafaela, Paraná, La Plata).
 - Las cartas todavía no tienen portadas (`img/cartas/`, 1200×800).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.

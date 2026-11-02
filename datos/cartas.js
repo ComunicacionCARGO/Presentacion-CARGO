@@ -64,12 +64,12 @@ window.CARTAS = [
     destino: "slides/servicio-a-medida/index.html"
   },
   {
-    titulo: "Nuestro TMS",
+    titulo: "Nuestra Estructura",
     portada: "",
-    destino: "slides/ejemplo/index.html"
+    destino: "slides/nuestra-estructura/index.html"
   },
   {
-    titulo: "Estructura",
+    titulo: "Nuestro TMS",
     portada: "",
     destino: "slides/ejemplo/index.html"
   },

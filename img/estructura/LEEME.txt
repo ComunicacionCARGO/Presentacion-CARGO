@@ -1,0 +1,13 @@
+ÍCONOS PROPIOS DE LAS ÁREAS ("Nuestra estructura")
+====================================================
+
+Cada burbuja usa un ícono incluido. Si querés usar tu propio ícono:
+  1. Guardá el SVG en esta carpeta (por ejemplo  logistica.svg ).
+  2. En datos\estructura.js, en esa área, escribí:
+       imagen: "img/estructura/logistica.svg"
+  3. Recargá la presentación (F5).
+Si el archivo no está, se sigue usando el ícono incluido.
+
+Consejos (igual que los íconos de Logros):
+  • Mesa de trabajo cuadrada, con el dibujo centrado.
+  • En el rojo de la marca (#EF4529), sólido y sin círculo de fondo.

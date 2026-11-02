@@ -134,6 +134,21 @@ Logros (cierre de la diapositiva):
     con la sección anterior.
 
 
+NUESTRA ESTRUCTURA (red de áreas)
+---------------------------------
+Se edita en  datos\estructura.js  (con el Bloc de notas).
+  • Cada área es un bloque { ... } con nombre, título de la tarjeta, nivel,
+    ícono y contenido (intro, subtitulo, destacados, lista, parrafos, nota).
+  • nivel: 0 = centro (Dirección), 1 = áreas principales (burbujas grandes),
+    2 = medianas, 3 = áreas de servicio (borde de la red). Las áreas de un
+    mismo nivel se acomodan en un anillo, en el orden de la lista.
+  • Para agregar un área, copiá un bloque completo con su coma; la red se
+    reacomoda sola y los caminos se vuelven a trazar.
+  • **texto** = negrita;  *texto* = rojo en cursiva.
+  • Íconos propios: ver img\estructura\LEEME.txt.
+  • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
+
+
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:
