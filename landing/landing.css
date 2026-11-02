@@ -177,16 +177,26 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   position: absolute;
   left: 0;
   top: 0;
-  background-size: 100% 100%;
   transform-origin: 0 0;
   will-change: transform;
 }
-.vidrio-foto::after {
+.vf-borrosa, .vf-nitida {
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+}
+.vf-borrosa::after, .vf-nitida::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(18, 18, 24, .5);              /* oscurecida, para que se lea el título */
 }
+/* en reposo: vidrio esmerilado (foto desenfocada, algo transparente y con un velo claro) */
+.vf-borrosa { opacity: .78; }
+.vf-borrosa::after { background: linear-gradient(160deg, rgba(255, 251, 243, .14), rgba(18, 18, 24, .34)); }
+.vf-borrosa.desenfocar { filter: blur(14px); }
+/* con el cursor encima: la foto nítida y opaca (landing.js le da la opacidad) */
+.vf-nitida { opacity: 0; }
+.vf-nitida::after { background: rgba(18, 18, 24, .5); }   /* oscurecida, para que se lea el título */
 .vidrio-tinte {
   position: absolute;
   background: linear-gradient(160deg, rgba(255, 255, 255, .55), rgba(255, 232, 220, .3) 55%, rgba(239, 69, 41, .16));
@@ -228,6 +238,7 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   line-height: 1;
   white-space: nowrap;
 }
+.r-ante, .r-tit { text-shadow: 0 calc(2px * var(--f)) calc(12px * var(--f)) rgba(10, 10, 14, .45); }   /* sombra suave */
 .r-num {
   left: calc(var(--nx) * var(--u));
   top: calc(var(--ny) * var(--u));
