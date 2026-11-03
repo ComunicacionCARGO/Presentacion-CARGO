@@ -17,7 +17,8 @@
   width: calc(100vw / var(--escala, 1));
   height: calc(900px + 50vh / var(--escala, 1));
   background:
-    linear-gradient(to bottom, var(--blanco) 0 34px, var(--gris) 34px 50px, var(--blanco) 50px 61px, var(--rojo) 61px 95.6px, var(--blanco) 95.6px 106px, transparent 106px),
+    /* las franjas miden lo mismo (34,6) y los huecos también (10,8), como la banda de la pantalla partida */
+    linear-gradient(to bottom, var(--blanco) 0 14px, var(--gris) 14px 48.6px, var(--blanco) 48.6px 59.4px, var(--rojo) 59.4px 94px, var(--blanco) 94px 104.8px, transparent 104.8px),
     radial-gradient(120% 95% at 18% 10%, #F2582F 0%, #E4421F 48%, #C93419 100%);
 }
 
