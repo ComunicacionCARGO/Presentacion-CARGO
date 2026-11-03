@@ -80,10 +80,13 @@
       `L${n(c2x - rb * NX)},${n(c2y - rb * NY)}` +
       `A${n(rb)},${n(rb)} 0 0 0 ${n(c2x)},${n(G.abajo - o)}H${R}`;
   }
-  const zonaGris = (d) => camino(d, 0) + `V-2H${L}Z`;
+  // la zona gris sube 6 px por encima de la sección y se pisa con el gris de "¿Por qué elegirnos?":
+  // así no queda una rendija de 1 px entre los dos grises
+  const SOLAPE = 6;
+  const zonaGris = (d) => camino(d, 0) + `V${-SOLAPE}H${L}Z`;
 
   elegir.innerHTML =
-    `<svg class="mc-svg" viewBox="${L} 0 ${R - L} 1500" preserveAspectRatio="none" aria-hidden="true">` +
+    `<svg class="mc-svg" viewBox="${L} ${-SOLAPE} ${R - L} ${1500 + SOLAPE}" preserveAspectRatio="none" aria-hidden="true">` +
       '<defs>' +
         '<clipPath id="mc-recorte-gris"><path/></clipPath>' +
         // líneas claras con brillo metálico (entre las rojas y del lado gris)

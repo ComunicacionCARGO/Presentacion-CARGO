@@ -73,7 +73,7 @@ function Hornear($fuente, $salida, $tipo, $fx, $fy, $fw, $fh) {
       $sx = $x / $R + $X0
       $a = 0
       if ($filaDentro -and $fyA -gt 0 -and $sx -ge $fx -and $sx -lt $fx + $fw) {
-        if ($tipo -eq 0) { $a = $fyA * (Suave $fx ($fx + 110) $sx) }
+        if ($tipo -eq 0) { $a = $fyA * (Suave $fx ($fx + 110) $sx) * (1 - (Suave ($fx + $fw - 220) ($fx + $fw) $sx)) }   # bordes izquierdo y derecho suaves
         else { $a = 0.42 * $fyA * (Suave 870 1060 $sx) * (1 - (Suave ($fx + $fw - 100) ($fx + $fw) $sx)) }
       }
       $i = $y * $st + $x * 3

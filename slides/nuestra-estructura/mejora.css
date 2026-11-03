@@ -17,11 +17,15 @@
    0 a 1500 en y: crema con la foto de Calidad, zona gris con la de Capacitaciones
    (recortada con la misma curva) y la banda: línea clara de brillo metálico y dos rojas.
    Las fotos ya vienen difuminadas y mezcladas (fondo-calidad.jpg, fondo-capacitaciones.jpg). */
-.mc-svg { position: absolute; left: -1200px; top: 0; width: 4000px; height: 1500px; overflow: hidden; }
+.mc-svg { position: absolute; left: -1200px; top: -6px; width: 4000px; height: 1506px; overflow: hidden; }   /* 6 px arriba: se pisa con el gris de "¿Por qué elegirnos?" */
 .mc-gris { fill: var(--gris); }
 .mc-banda { fill: none; stroke-linejoin: round; }
 .mc-plata { stroke: url(#mc-brillo); }
 .mc-rojo { stroke: var(--rojo); }
+/* al elegir un tema las fotos se desvanecen mientras la banda barre la pantalla:
+   queda el fondo limpio, sin el borde de la foto */
+.mc-foto-calidad, .mc-foto-capacitaciones { transition: opacity .3s ease; }
+.mc-elegir.eligiendo .mc-foto-calidad, .mc-elegir.eligiendo .mc-foto-capacitaciones { opacity: 0; }
 
 .mc-bloque {
   position: absolute;
