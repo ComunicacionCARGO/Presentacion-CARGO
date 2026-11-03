@@ -57,6 +57,11 @@
       <ul class="po-tabs">${politicas.map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}" style="${colorDe(p)}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
       <div class="po-detalle ent" style="--i:2"></div>
     </div>` +
+    // logos de las certificadoras, en el espacio libre debajo de las pestañas
+    ((C.certificadorasLogos || []).length ? `<div class="ce-entes ent" style="--i:4">
+      <p>${esc(C.certificadorasTexto || 'Certificadas por')}</p>
+      <div>${C.certificadorasLogos.map((l) => `<img src="../../${esc(l.imagen)}" alt="${esc(l.nombre)}" title="${esc(l.nombre)}" decoding="async">`).join('<i></i>')}</div>
+    </div>` : '') +
     `<div class="s-cert">
       ${C.certificacionesTexto ? `<p class="ce-texto ent" style="--i:1">${formato(C.certificacionesTexto)}</p>` : ''}
       <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2};${colorDe(politicaDe(c, i))}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>

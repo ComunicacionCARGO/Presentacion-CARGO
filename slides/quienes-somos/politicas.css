@@ -32,6 +32,14 @@
 .seccion-politicas .po-tabs, .seccion-politicas .po-detalle { top: 0; }
 .seccion-politicas .s-cert { position: absolute; left: 64px; top: 586px; width: 1472px; }   /* justo debajo de las directrices más largas */
 .seccion-politicas .ce-texto { margin-top: 0; }
+/* Logos de IRAM e IQNET (gris de la marca, apagados; se encienden con el cursor) en el hueco
+   entre las pestañas (terminan en y 453) y los sellos (y 586) */
+.ce-entes { position: absolute; left: 64px; top: 482px; width: 430px; display: flex; align-items: center; gap: 22px; }
+.ce-entes p { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; line-height: 1.4; color: var(--fg2); opacity: .7; }
+.ce-entes div { display: flex; align-items: center; gap: 22px; }
+.ce-entes i { width: 1px; height: 40px; background: var(--linea); }
+.ce-entes img { display: block; height: 52px; width: auto; opacity: .5; transition: opacity .3s ease, translate .4s cubic-bezier(.2, .8, .2, 1); }
+.ce-entes img:hover { opacity: .9; translate: 0 -3px; }
 .seccion-politicas .ce-sellos { margin-top: 0; }
 .seccion-politicas .ce-svg { width: 250px; height: 250px; }
 .seccion-politicas .ce-sello figcaption { margin-top: 14px; }

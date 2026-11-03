@@ -151,7 +151,14 @@ window.MEJORA = {
       { norma: "ISO", numero: "45001", nombre: "Seguridad y Salud Ocupacional", politica: "CALD009 02" },
       { norma: "ISO", numero: "14001", nombre: "Gestión Ambiental", politica: "CALD008 02" }
     ],
-    certificadoras: "IRAM · IQNET"
+    certificadoras: "IRAM · IQNET",
+    // logos de las certificadoras (debajo de las pestañas de políticas).
+    // Las imágenes van en img/certificadoras/. Para no mostrarlos: certificadorasLogos: []
+    certificadorasTexto: "Certificadas por",
+    certificadorasLogos: [
+      { nombre: "IRAM", imagen: "img/certificadoras/iram.svg" },
+      { nombre: "IQNET", imagen: "img/certificadoras/iqnet.svg" }
+    ]
   },
 
   // =====================================================================

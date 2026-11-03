@@ -197,6 +197,10 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     el mismo código de política.
   • certificacionesTexto: texto arriba de los sellos. Si queda vacío ("")
     no se muestra nada.
+  • certificadorasTexto y certificadorasLogos: el texto "Certificadas por" y
+    los logos de IRAM e IQNET que aparecen debajo de las pestañas de las
+    políticas. Los logos van en la carpeta img/certificadoras (en SVG, mejor
+    en gris oscuro). Para no mostrarlos: certificadorasLogos: []
   • capacitaciones: #Exp Aprende (textos e imagen de la plataforma) y
     Trabajo en equipo (inducción y liderazgo).
   • Se pueden agregar o quitar objetivos, pilares, directrices, políticas o
