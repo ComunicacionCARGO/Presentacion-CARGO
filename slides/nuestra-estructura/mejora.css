@@ -6,7 +6,9 @@
 /* Después de los anillos el scroll es un scroll común: lo de "¿Por qué elegirnos?"
    sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
    parte gris continúa el gris de arriba */
-.anillos, .seccion-mejora, .mc-tramo { translate: 0 calc(var(--bajada, 0) * -1px); }
+.anillos, .seccion-mejora, .mc-tramo { will-change: translate; }   /* diapositiva.js les pone `translate` con el scroll; cada una es su propia capa */
+.anillos.lejos, .seccion-mejora.lejos { visibility: hidden; }        /* ya quedaron muy arriba */
+body.red-tapada .seccion-red, body.red-tapada .fondo { visibility: hidden; }   /* tapadas por los anillos */
 .mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 4600px; z-index: 7; pointer-events: none; }
 .mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
@@ -369,6 +371,7 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .ce-linea { fill: none; stroke: var(--c, var(--rojo)); stroke-width: 1.5; }
 .ce-anillo { font: 600 15px var(--fuente-texto); letter-spacing: 2px; fill: var(--gris); }
 .ce-giro { transform-origin: 150px 150px; animation: ce-girar 40s linear infinite; }
+.mc-poli:not(.visible) .ce-giro { animation-play-state: paused; }   /* sellos fuera de pantalla: no giran */
 .ce-sello:hover .ce-giro { animation-duration: 12s; }
 @keyframes ce-girar { to { transform: rotate(360deg); } }
 .ce-iso { font: 600 20px var(--fuente-texto); letter-spacing: 6px; fill: var(--gris); text-anchor: middle; }

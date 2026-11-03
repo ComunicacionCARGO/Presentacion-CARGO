@@ -545,13 +545,26 @@
     // al volver, bajan enseguida
     seccionEl.classList.toggle('arriba', avance >= .97);
   }
-  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo'), escenarioEl = $('.escenario');
+  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo');
   // Después de los anillos el scroll sigue como un scroll común: "¿Por qué elegirnos?"
-  // sube y aparece la pantalla partida Calidad / Capacitaciones (--bajada, en mejora.css)
+  // sube y aparece la pantalla partida Calidad / Capacitaciones. Se mueve con `translate`
+  // directo en cada capa (no con una variable en .escenario: eso obligaba a recalcular los
+  // estilos de toda la diapositiva en cada cuadro del scroll).
+  const capasQueSuben = [$('.anillos'), seccionEl, $('.mc-tramo')];
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
     const nuevaBajada = Math.max(0, e.detail.y - RECORRIDO);
-    if (nuevaBajada !== bajada) { bajada = nuevaBajada; escenarioEl.style.setProperty('--bajada', bajada.toFixed(1)); }
+    if (nuevaBajada !== bajada) {
+      bajada = nuevaBajada;
+      const t = `0 ${(-bajada).toFixed(1)}px`;
+      capasQueSuben.forEach((c) => { c.style.translate = t; });
+      // "¿Por qué elegirnos?" y los anillos ya quedaron muy arriba: no se dibujan
+      const lejos = bajada > 1800;
+      seccionEl.classList.toggle('lejos', lejos);
+      capasQueSuben[0].classList.toggle('lejos', lejos);
+    }
+    // con los anillos cerrados la red y el fondo de camiones quedan tapados: no se dibujan
+    document.body.classList.toggle('red-tapada', e.detail.y >= RECORRIDO);
     const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
     if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
     if (nuevo === avance && (nuevo === 0 || nuevo === 1)) return;

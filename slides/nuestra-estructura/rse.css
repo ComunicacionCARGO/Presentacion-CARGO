@@ -5,7 +5,7 @@
    3. "Acompañamos a la COMUNIDAD" (rse-comunidad.js, y 3700)
    Fondo crema como el resto y acento VERDE (excepción al manual pedida por la
    persona para esta parte). Vidrio vivo: tarjetas translúcidas con
-   backdrop-filter sobre manchas verdes suaves que se mueven.
+   backdrop-filter sobre manchas verdes suaves (quietas, para no recalcular el vidrio en cada cuadro).
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
 .mc-rse, .mc-num, .mc-com {
@@ -59,12 +59,12 @@
   background-size: 1600px 1200px;
 }
 .rse-fondo-comun.visible .rse-trama { opacity: 1; }
-/* Manchas verdes suaves detrás del vidrio (degradés, sin filtros: no cargan el cuadro) */
+/* Manchas verdes suaves detrás del vidrio (degradés, sin filtros). Quietas: si se movían, cada
+   tarjeta de vidrio que tienen encima tenía que volver a desenfocar su fondo en cada cuadro. */
 .rse-orbes { position: absolute; inset: 0; pointer-events: none; }
-.rse-orbes i { position: absolute; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, rgba(76, 149, 108, .34), rgba(76, 149, 108, 0) 68%); animation: rse-deriva 22s ease-in-out infinite alternate; }
-.rse-orbes i:nth-child(2) { width: 480px; height: 480px; background: radial-gradient(circle, rgba(244, 161, 39, .2), rgba(244, 161, 39, 0) 68%); animation-duration: 27s; animation-delay: -9s; }
-.rse-orbes i:nth-child(3) { width: 540px; height: 540px; background: radial-gradient(circle, rgba(117, 154, 171, .22), rgba(117, 154, 171, 0) 68%); animation-duration: 31s; animation-delay: -15s; }
-@keyframes rse-deriva { from { translate: 0 0; } 50% { translate: 60px -40px; } to { translate: -50px 50px; } }
+.rse-orbes i { position: absolute; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, rgba(76, 149, 108, .34), rgba(76, 149, 108, 0) 68%); }
+.rse-orbes i:nth-child(2) { width: 480px; height: 480px; background: radial-gradient(circle, rgba(244, 161, 39, .2), rgba(244, 161, 39, 0) 68%); }
+.rse-orbes i:nth-child(3) { width: 540px; height: 540px; background: radial-gradient(circle, rgba(117, 154, 171, .22), rgba(117, 154, 171, 0) 68%); }
 .mc-rse .rse-orbes i:nth-child(1) { left: 380px; top: 420px; }   /* detrás del medidor va su propio resplandor (.rse-halo) */
 .mc-rse .rse-orbes i:nth-child(2) { left: 1180px; top: 430px; }
 .mc-rse .rse-orbes i:nth-child(3) { left: 120px; top: 360px; }
@@ -94,7 +94,7 @@
   border: 1px solid var(--vidrio-borde);
   border-radius: 14px;
   background: var(--vidrio);
-  backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
   box-shadow: 0 14px 30px rgba(58, 58, 58, .09), 0 0 0 1px rgba(58, 58, 58, .05);
   transition: border-color .3s ease, background .3s ease, box-shadow .3s ease;
 }
@@ -155,7 +155,11 @@
 .mc-rse.completo .rse-punta.hoy { opacity: .25; fill: var(--gris); }
 .mc-rse.completo .rse-punta.cero { fill: var(--acento); filter: drop-shadow(0 0 6px rgba(95, 179, 131, .9)) drop-shadow(0 0 16px rgba(95, 179, 131, .6)); }
 .rse-m-titulo { font: 600 12px var(--fuente-texto); letter-spacing: .24em; text-transform: uppercase; fill: var(--tinta3); text-anchor: middle; }
-.rse-aguja path { fill: var(--gris); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
+/* la aguja es su propia capa: un punto en el eje que gira (rse.js pone el transform) */
+.rse-aguja { position: absolute; width: 0; height: 0; transform: rotate(180deg); will-change: transform; pointer-events: none; }
+.rse-medidor .rse-aguja svg { position: absolute; left: -30px; top: -8px; width: 236px; height: 16px; overflow: visible; filter: drop-shadow(0 0 4px rgba(0, 0, 0, .28)); }   /* sombra pareja: gira con la aguja */
+.rse-aguja path { fill: var(--gris); }
+.rse-medidor .rse-eje-capa { position: absolute; left: 0; top: 0; pointer-events: none; }
 .rse-eje { fill: var(--gris); stroke: var(--blanco); stroke-width: 3; }
 .rse-eje2 { fill: var(--acento-luz); }
 .rse-lectura { position: absolute; left: 0; top: 336px; width: 716px; text-align: center; }
@@ -174,8 +178,9 @@
   padding: 24px 32px;
   border: 1px solid var(--vidrio-borde);
   border-radius: 18px;
-  background: var(--vidrio);
-  backdrop-filter: blur(18px) saturate(1.3);
+  /* sin backdrop-filter: detrás parpadea el resplandor del medidor y el vidrio tendría que
+     recalcularse en cada cuadro; un poco más opaca se ve igual de vidrio */
+  background: linear-gradient(150deg, rgba(255, 255, 255, .86), rgba(255, 255, 255, .55));
   box-shadow: var(--vidrio-sombra);
   overflow: hidden;
 }
@@ -219,10 +224,12 @@
   inset: 0;
   border: 1px solid var(--vidrio-borde);
   border-radius: 24px;
-  background: var(--vidrio);
-  backdrop-filter: blur(20px) saturate(1.35);
+  /* sin backdrop-filter: estas tarjetas flotan todo el tiempo y el desenfoque se recalculaba en
+     cada cuadro; un poco más opacas tapan la trama igual y las manchas de color se ven a través */
+  background: linear-gradient(150deg, rgba(255, 255, 255, .84), rgba(255, 255, 255, .56));
   box-shadow: var(--vidrio-sombra);
-  transform: perspective(1600px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform: perspective(1600px) rotateX(0deg) rotateY(0deg);   /* rse-numeros.js la inclina hacia el cursor */
+  transition: transform .5s ease-out;
 }
 /* reflejo diagonal del vidrio */
 .nu-vidrio::before { content: ""; position: absolute; inset: 0; border-radius: 24px; background: linear-gradient(118deg, rgba(255, 255, 255, .6) 0%, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, .25) 100%); pointer-events: none; }
@@ -300,7 +307,11 @@
 .mc-rse .rse-palanca.ent { transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1), border-color .3s ease, background .3s ease, box-shadow .3s ease; }
 .mc-rse.asentado .ent, .mc-num.asentado .ent, .mc-com.asentado .ent { transition-delay: 0s; }   /* ya entraron: el cursor responde sin demora */
 
+/* Las animaciones que no paran se pausan cuando su sección no está en pantalla */
+.mc-rse:not(.visible) .rse-halo .rojo b, .mc-rse:not(.visible) .rse-flecha, .mc-rse:not(.visible) .rse-flecha .cola,
+.mc-num:not(.visible) .nu-flota { animation-play-state: paused; }
+
 @media (prefers-reduced-motion: reduce) {
   .rse-mango, .rse-llenado { transition: none; }
-  .rse-orbes i, .nu-flota, .rse-halo .rojo b, .rse-contenido.lista > .rse-flecha, .rse-flecha .cola { animation: none; }
+  .nu-flota, .rse-halo .rojo b, .rse-contenido.lista > .rse-flecha, .rse-flecha .cola { animation: none; }
 }

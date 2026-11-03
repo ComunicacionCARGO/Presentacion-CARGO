@@ -120,17 +120,24 @@
      </div></div></div>`;
 
   // ---------- Vidrio: cada tarjeta se inclina apenas hacia el cursor ----------
+  // (una vez por cuadro y con el transform directo: una variable CSS obligaba a recalcular los
+  // estilos de todo lo que hay adentro de la tarjeta en cada movimiento del mouse)
   const vidrios = [...raiz.querySelectorAll('.nu-vidrio')];
+  let ultimoPuntero = null;
   raiz.addEventListener('pointermove', (e) => {
-    vidrios.forEach((v) => {
-      const r = v.getBoundingClientRect();
-      const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / r.width));
-      const dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / r.height));
-      v.style.setProperty('--ry', (dx * 4).toFixed(2) + 'deg');
-      v.style.setProperty('--rx', (-dy * 4).toFixed(2) + 'deg');
+    if (!ultimoPuntero) requestAnimationFrame(() => {
+      const ev = ultimoPuntero; ultimoPuntero = null;
+      const cajas = vidrios.map((v) => v.getBoundingClientRect());   // primero se mide, después se escribe
+      vidrios.forEach((v, k) => {
+        const r = cajas[k];
+        const dx = Math.max(-1, Math.min(1, (ev.clientX - (r.left + r.width / 2)) / r.width));
+        const dy = Math.max(-1, Math.min(1, (ev.clientY - (r.top + r.height / 2)) / r.height));
+        v.style.transform = `perspective(1600px) rotateX(${(-dy * 4).toFixed(2)}deg) rotateY(${(dx * 4).toFixed(2)}deg)`;
+      });
     });
+    ultimoPuntero = e;
   });
-  raiz.addEventListener('pointerleave', () => vidrios.forEach((v) => { v.style.setProperty('--rx', '0deg'); v.style.setProperty('--ry', '0deg'); }));
+  raiz.addEventListener('pointerleave', () => vidrios.forEach((v) => { v.style.transform = ''; }));
 
   // ---------- Fardos: el cursor muestra los kg ----------
   const cajaFardos = raiz.querySelector('.nu-fardos');

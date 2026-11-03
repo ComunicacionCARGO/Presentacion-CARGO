@@ -383,7 +383,7 @@
   // las entradas se ven al llegar con el scroll (la sección empieza en y 900 del tramo)
   document.addEventListener('desplazamiento', (e) => {
     const baj = Math.max(0, e.detail.y - 900);
-    poli.classList.toggle('visible', baj > 1000);
+    poli.classList.toggle('visible', baj > 1000 && baj < 2850);   // pasado 2850 ya no se ve (los sellos dejan de girar)
   });
   // ----- Estructura del capítulo -----
   capitulo.innerHTML =

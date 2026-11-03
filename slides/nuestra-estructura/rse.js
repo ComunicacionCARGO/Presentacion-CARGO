@@ -54,9 +54,11 @@
   medidor +=
     `<text class="rse-m-titulo" x="${CX}" y="${CY - RADIO - 30}">${esc(R.medidorTitulo)}</text>` +   // arriba del arco: la aguja no lo tapa
     `<text class="rse-punta cero" x="${CX - RADIO}" y="${CY + 38}">${esc(R.medidorHasta)}</text>` +
-    `<text class="rse-punta hoy" x="${CX + RADIO}" y="${CY + 38}">${esc(R.medidorDesde)}</text>` +
-    `<g class="rse-aguja" transform="translate(${CX} ${CY}) rotate(180)"><path d="M0 -8 L196 -1.6 L206 0 L196 1.6 L0 8 L-30 4 L-30 -4z"/></g>` +
-    `<circle class="rse-eje" cx="${CX}" cy="${CY}" r="17"/><circle class="rse-eje2" cx="${CX}" cy="${CY}" r="5"/>`;
+    `<text class="rse-punta hoy" x="${CX + RADIO}" y="${CY + 38}">${esc(R.medidorDesde)}</text>`;
+  // La aguja va en su propia capa (un div que gira con transform): moverla no obliga a volver
+  // a dibujar todo el medidor en cada cuadro. El eje va encima, quieto.
+  const capaAguja = `<div class="rse-aguja" style="left:${CX}px;top:${CY}px"><svg viewBox="-30 -8 236 16" aria-hidden="true"><path d="M0 -8 L196 -1.6 L206 0 L196 1.6 L0 8 L-30 4 L-30 -4z"/></svg></div>` +
+    `<svg class="rse-eje-capa" viewBox="0 0 716 330" aria-hidden="true"><circle class="rse-eje" cx="${CX}" cy="${CY}" r="17"/><circle class="rse-eje2" cx="${CX}" cy="${CY}" r="5"/></svg>`;
 
   raiz.innerHTML =
     '<div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
@@ -67,7 +69,7 @@
         <span class="rse-riel"><span class="rse-llenado"></span><span class="rse-mango"></span></span>
         ${icono(p.icono)}<span class="rse-nombre">${esc(p.nombre)}</span></button>`).join('')}</div>` +
     '<div class="rse-halo" aria-hidden="true"><i class="rojo"><b></b></i><i class="verde"></i></div>' +
-    `<div class="rse-medidor ent" style="--i:2"><svg viewBox="0 0 716 330" aria-hidden="true">${medidor}</svg>
+    `<div class="rse-medidor ent" style="--i:2"><svg viewBox="0 0 716 330" aria-hidden="true">${medidor}</svg>${capaAguja}
        <div class="rse-lectura"><b></b><span></span></div></div>` +
     `<div class="rse-tarjeta ent" style="--i:4"><div class="rse-contenido"></div></div>`;
 
@@ -152,7 +154,7 @@
     t += vel * dt;
     const temblor = objetivo > 0 ? (Math.sin(ahora / 83) * .6 + Math.sin(ahora / 31) * .4) * .0022 : 0;
     const v = Math.max(-.03, Math.min(1.03, t + temblor));
-    aguja.setAttribute('transform', `translate(${CX} ${CY}) rotate(${(180 + v * 180).toFixed(2)})`);
+    aguja.style.transform = `rotate(${(180 + v * 180).toFixed(2)}deg)`;
     // alarma roja: fuerte con la aguja arriba, se apaga a medida que baja
     const h = Math.round(Math.max(0, Math.min(1, v)) * 100) / 100;
     if (h !== haloPrevio) { haloRojo.style.opacity = h; haloPrevio = h; }
