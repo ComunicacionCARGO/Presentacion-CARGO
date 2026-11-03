@@ -7,7 +7,7 @@
    sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
    parte gris continúa el gris de arriba */
 .anillos, .seccion-mejora, .mc-tramo { translate: 0 calc(var(--bajada, 0) * -1px); }
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 1980px; z-index: 7; pointer-events: none; }
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 1900px; z-index: 7; pointer-events: none; }
 .mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
 .mc-elegir.eligiendo { pointer-events: none; }
@@ -101,7 +101,7 @@
   left: 0;
   top: 900px;
   width: 1600px;
-  height: 1080px;
+  height: 1000px;
   color: var(--fg);
   pointer-events: auto;
 }
@@ -110,7 +110,7 @@
   left: calc(800px - 50vw / var(--escala, 1));
   top: 0;
   width: calc(100vw / var(--escala, 1));
-  height: calc(1080px + 50vh / var(--escala, 1));   /* también cubre lo que sobre abajo en ventanas altas */
+  height: calc(1000px + 50vh / var(--escala, 1));   /* también cubre lo que sobre abajo en ventanas altas */
   background: var(--blanco);
 }
 .mc-poli ol, .mc-poli ul { margin: 0; padding: 0; list-style: none; }
@@ -120,9 +120,9 @@
 .mp-titulo { position: absolute; left: 64px; top: 78px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 64px; line-height: 1; color: var(--rojo); }
 .mc-poli .s-pol { position: absolute; left: 64px; top: 196px; width: 1472px; height: 430px; }
 .mc-poli .po-tabs, .mc-poli .po-detalle { top: 0; }
-.mc-poli .s-cert { position: absolute; left: 64px; top: 650px; width: 1472px; }
+.mc-poli .s-cert { position: absolute; left: 64px; top: 586px; width: 1472px; }   /* justo debajo de las directrices más largas */
 .mc-poli .ce-texto { margin-top: 0; }
-.mc-poli .ce-sellos { margin-top: 40px; }
+.mc-poli .ce-sellos { margin-top: 0; }
 .mc-poli .ce-svg { width: 250px; height: 250px; }
 .mc-poli .ce-sello figcaption { margin-top: 14px; }
 .mc-poli .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
