@@ -191,6 +191,11 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     abajo, al seguir bajando después de la pantalla partida, bajo el título
     rojo "Políticas y Certificaciones" (se cambia en
     politicasCertificacionesTitulo).
+  • Cada política tiene su color (color: "#759AAB" y así). Ese color pinta
+    su pestaña, su cita, sus directrices y el sello de la certificación con
+    el mismo código de política.
+  • certificacionesTexto: texto arriba de los sellos. Si queda vacío ("")
+    no se muestra nada.
   • capacitaciones: #Exp Aprende (textos e imagen de la plataforma) y
     Trabajo en equipo (inducción y liderazgo).
   • Se pueden agregar o quitar objetivos, pilares, directrices, políticas o

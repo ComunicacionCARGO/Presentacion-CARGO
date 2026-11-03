@@ -86,6 +86,7 @@ window.MEJORA = {
     politicasCertificacionesTitulo: "Políticas y Certificaciones",
 
     // Políticas (icono: sello, cono, hoja)
+    // color: el de la política (pestaña, cita, directrices y su sello), en código "#rrggbb"
     politicasTitulo: "Políticas",
     certificadoPor: "Certificado por IRAM · IQNET",
     politicas: [
@@ -94,6 +95,7 @@ window.MEJORA = {
         codigo: "CALD001 06",
         norma: "ISO 9001",
         icono: "sello",
+        color: "#759AAB",
         cita: "Grupo CARGO se compromete a ofrecer productos y servicios que satisfagan las necesidades de nuestros clientes por medio de los procesos logísticos e industriales que desarrolla.",
         directrices: [
           "Cumplir los requisitos del cliente, los legales y otros requisitos aplicables.",
@@ -109,6 +111,7 @@ window.MEJORA = {
         codigo: "CALD009 02",
         norma: "ISO 45001",
         icono: "cono",
+        color: "#F4A127",
         cita: "Las personas constituyen el pilar más importante de una compañía, garantizan el éxito. Es por eso que Grupo CARGO se compromete a generar un ambiente de trabajo seguro y saludable para nuestros colaboradores y la comunidad.",
         directrices: [
           "Cumplir con la legislación en la materia de Seguridad y Salud Ocupacional y otros requisitos.",
@@ -124,6 +127,7 @@ window.MEJORA = {
         codigo: "CALD008 02",
         norma: "ISO 14001",
         icono: "hoja",
+        color: "#4C956C",
         cita: "Grupo CARGO se compromete a cuidar el medio ambiente mediante el desarrollo sustentable de sus operaciones y procesos.",
         directrices: [
           "Cumplir con la legislación ambiental y otros requisitos.",
@@ -138,7 +142,8 @@ window.MEJORA = {
 
     // Certificaciones (sellos)
     certificacionesTitulo: "Certificaciones",
-    certificacionesTexto: "Nuestros sistemas de gestión están certificados por **IRAM** e **IQNET** bajo las normas:",
+    // texto arriba de los sellos (vacío "" = sin texto)
+    certificacionesTexto: "",
     certificaciones: [
       { norma: "ISO", numero: "9001", nombre: "Gestión de la Calidad", politica: "CALD001 06" },
       { norma: "ISO", numero: "45001", nombre: "Seguridad y Salud Ocupacional", politica: "CALD009 02" },

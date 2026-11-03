@@ -347,24 +347,29 @@
   //    (antes eran dos secciones del tema Calidad)
   // =========================================================
   const poli = $('.mc-poli');
+  // cada política tiene su color (--c); el sello toma el de su política (por el código)
+  const politicas = C.politicas || [];
+  const colorDe = (p) => (p && p.color ? `--c:${esc(p.color)};` : '');
+  const politicaDe = (c, i) => politicas.find((p) => p.codigo === c.politica) || politicas[i];
   poli.innerHTML =
     '<div class="mp-fondo"></div>' +
     `<h2 class="mp-titulo ent">${esc(C.politicasCertificacionesTitulo || 'Políticas y Certificaciones')}</h2>` +
     `<div class="s-pol">
-      <ul class="po-tabs">${(C.politicas || []).map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
+      <ul class="po-tabs">${politicas.map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}" style="${colorDe(p)}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
       <div class="po-detalle ent" style="--i:2"></div>
     </div>` +
     `<div class="s-cert">
-      <p class="ce-texto ent" style="--i:1">${formato(C.certificacionesTexto)}</p>
-      <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>
+      ${C.certificacionesTexto ? `<p class="ce-texto ent" style="--i:1">${formato(C.certificacionesTexto)}</p>` : ''}
+      <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2};${colorDe(politicaDe(c, i))}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>
     </div>`;
   (function () {
     // al elegir una política aparecen su cita y sus directrices
     const det = $('.po-detalle', poli), botones = [...poli.querySelectorAll('.po-tabs button')];
     const mostrar = (i) => {
-      const p = (C.politicas || [])[i];
+      const p = politicas[i];
       if (!p) return;
       botones.forEach((b, j) => b.classList.toggle('activo', j === i));
+      if (p.color) det.style.setProperty('--c', p.color); else det.style.removeProperty('--c');
       det.classList.remove('lista');
       det.innerHTML = `<p class="po-norma">${esc(p.norma)} <span>${esc(p.codigo)}</span></p>
         <blockquote>${esc(p.cita)}</blockquote>

@@ -122,7 +122,7 @@
 .mc-poli .po-tabs, .mc-poli .po-detalle { top: 0; }
 .mc-poli .s-cert { position: absolute; left: 64px; top: 650px; width: 1472px; }
 .mc-poli .ce-texto { margin-top: 0; }
-.mc-poli .ce-sellos { margin-top: 26px; }
+.mc-poli .ce-sellos { margin-top: 40px; }
 .mc-poli .ce-svg { width: 250px; height: 250px; }
 .mc-poli .ce-sello figcaption { margin-top: 14px; }
 .mc-poli .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
@@ -339,20 +339,20 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
   transition: background .3s ease, border-color .3s ease;
 }
 .po-tabs button:hover { border-color: var(--fg2); }
-.po-tabs button.activo { background: var(--oscuro); border-color: var(--rojo); }
+.po-tabs button.activo { background: color-mix(in srgb, var(--c, var(--rojo)) 12%, var(--blanco)); border-color: var(--c, var(--rojo)); }
 .po-ico svg { display: block; width: 32px; height: 32px; fill: var(--fg2); transition: fill .3s ease; }
-.po-tabs button.activo .po-ico svg { fill: var(--rojo); }
+.po-tabs button.activo .po-ico svg { fill: var(--c, var(--rojo)); }
 .po-txt b { display: block; font-size: 16px; font-weight: 600; line-height: 1.3; }
 .po-txt small { display: block; margin-top: 4px; font-size: 13px; letter-spacing: .04em; color: var(--fg2); }
 .po-detalle { position: absolute; left: 490px; top: 84px; width: 982px; --i: 3; }
-.po-norma { font-family: var(--fuente-titulo); font-weight: 500; font-size: 18px; letter-spacing: .16em; color: var(--rojo); }
+.po-norma { font-family: var(--fuente-titulo); font-weight: 500; font-size: 18px; letter-spacing: .16em; color: var(--c, var(--rojo)); }
 .po-norma span { margin-left: 10px; font-family: var(--fuente-texto); font-size: 13px; letter-spacing: .06em; color: var(--fg2); }
 .po-detalle blockquote { position: relative; margin-top: 14px; padding-left: 40px; font-size: 23px; font-style: italic; font-weight: 300; line-height: 1.45; color: var(--fg); }
-.po-detalle blockquote::before { content: "\201C"; position: absolute; left: -4px; top: -16px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 78px; font-style: normal; line-height: 1; color: var(--rojo); }
-.po-etq { margin-top: 26px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 24px; color: var(--rojo); }
+.po-detalle blockquote::before { content: "\201C"; position: absolute; left: -4px; top: -16px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 78px; font-style: normal; line-height: 1; color: var(--c, var(--rojo)); transition: color .3s ease; }
+.po-etq { margin-top: 26px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 24px; color: var(--c, var(--rojo)); }
 .po-dir { margin-top: 12px; columns: 2; column-gap: 44px; }
 .po-dir li { position: relative; margin-bottom: 12px; padding-left: 20px; font-size: 16px; font-weight: 300; line-height: 1.45; color: var(--fg2); break-inside: avoid; }
-.po-dir li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); }
+.po-dir li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--rojo)); }
 .po-detalle blockquote, .po-detalle .po-dir li { opacity: 0; translate: 0 10px; transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
 .po-detalle.lista blockquote, .po-detalle.lista .po-dir li { opacity: 1; translate: 0 0; }
 .po-detalle.lista .po-dir li { transition-delay: calc(.12s + var(--i) * .05s); }
@@ -364,15 +364,15 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .ce-sello { width: 320px; margin: 0; text-align: center; cursor: default; }
 .ce-svg { display: block; width: 280px; height: 280px; margin: 0 auto; filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .28)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
 .ce-sello:hover .ce-svg { transform: translateY(-10px) rotate(-6deg); }
-.ce-dientes { fill: var(--rojo); }
+.ce-dientes { fill: var(--c, var(--rojo)); }
 .ce-disco { fill: var(--blanco); }
-.ce-linea { fill: none; stroke: var(--rojo); stroke-width: 1.5; }
+.ce-linea { fill: none; stroke: var(--c, var(--rojo)); stroke-width: 1.5; }
 .ce-anillo { font: 600 15px var(--fuente-texto); letter-spacing: 2px; fill: var(--gris); }
 .ce-giro { transform-origin: 150px 150px; animation: ce-girar 40s linear infinite; }
 .ce-sello:hover .ce-giro { animation-duration: 12s; }
 @keyframes ce-girar { to { transform: rotate(360deg); } }
 .ce-iso { font: 600 20px var(--fuente-texto); letter-spacing: 6px; fill: var(--gris); text-anchor: middle; }
-.ce-num { font: 700 62px var(--fuente-titulo); fill: var(--rojo); text-anchor: middle; }
+.ce-num { font: 700 62px var(--fuente-titulo); fill: var(--c, var(--rojo)); text-anchor: middle; }
 .ce-sello figcaption { margin-top: 20px; }
 .ce-sello figcaption b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 26px; color: var(--fg); }
 .ce-sello figcaption small { display: block; margin-top: 4px; font-size: 13px; letter-spacing: .06em; color: var(--fg2); }
