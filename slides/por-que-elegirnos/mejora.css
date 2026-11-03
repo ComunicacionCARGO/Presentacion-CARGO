@@ -207,7 +207,8 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .sc-izq { position: absolute; left: 0; top: 0; width: 640px; }
 .sc-ante { font-size: 46px; font-weight: 300; line-height: 1; color: var(--fg); }
 .sc-titulo { font-family: var(--fuente-titulo); font-weight: 700; font-size: 108px; line-height: .95; letter-spacing: -.01em; color: var(--rojo); --i: 1; }
-.sc-texto { margin-top: 24px; font-size: 20px; font-weight: 300; line-height: 1.55; color: var(--fg2); --i: 2; }
+/* con .capitulo delante: si no, ".capitulo p { margin: 0 }" les quitaba el margen y el texto quedaba pegado al título */
+.capitulo .sc-texto { margin-top: 44px; font-size: 20px; font-weight: 300; line-height: 1.55; color: var(--fg2); --i: 2; }
 .sc-version { display: flex; align-items: center; gap: 18px; margin-top: 30px; --i: 3; }
 .sc-version b { font-family: var(--fuente-titulo); font-weight: 700; font-size: 50px; color: var(--rojo); white-space: nowrap; }
 .sc-version p { font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
@@ -224,15 +225,15 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 }
 .sc-der::before { content: ""; position: absolute; left: -24px; top: 50%; width: 26px; height: 52px; margin-top: -26px; background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
 .sc-etq { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
-.sc-letras { margin-top: 8px; }
+.capitulo .sc-letras { margin-top: 8px; }
 .sc-letras li { display: flex; align-items: baseline; line-height: 1.04; cursor: default; }
-.sc-letras b { width: 64px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 72px; color: var(--rojo); transition: translate .35s ease; }
+.sc-letras b { flex: none; width: 40px; margin-right: 3px; text-align: right; font-family: var(--fuente-titulo); font-weight: 700; font-size: 72px; color: var(--rojo); transition: translate .35s ease; }
 .sc-letras span { font-size: 38px; font-weight: 300; color: var(--fg); transition: color .3s ease; }
-.sc-letras li:hover b { translate: 6px 0; }
+.sc-letras li:hover b { translate: 0 -3px; }
 .sc-letras li:hover span { color: var(--rojo); }
 .cap-sec .sc-letras li { opacity: 0; translate: 24px 0; transition: opacity .5s ease, translate .7s cubic-bezier(.2, .8, .2, 1); }
 .cap-sec.visible .sc-letras li { opacity: 1; translate: 0 0; transition-delay: calc(.4s + var(--i) * .09s); }
-.sc-sig { margin-top: 18px; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
+.capitulo .sc-sig { margin-top: 40px; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
 
 /* ----- Calidad 2: Objetivos ----- */
 .ob-diana { position: absolute; right: 0; top: -14px; width: 190px; height: 190px; fill: none; stroke: var(--rojo); stroke-width: 9; opacity: .22; }
@@ -284,8 +285,8 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }
 .ap-titulo { font-family: var(--fuente-titulo); font-weight: 700; font-size: 92px; line-height: .95; color: var(--rojo); }
-.ap-texto { margin-top: 26px; font-size: 23px; font-weight: 300; line-height: 1.55; color: var(--fg); --i: 1; }
-.ap-plat { margin-top: 24px; padding-left: 18px; border-left: 3px solid var(--rojo); font-size: 19px; font-weight: 300; line-height: 1.5; color: var(--fg2); --i: 2; }
+.capitulo .ap-texto { margin-top: 30px; font-size: 23px; font-weight: 300; line-height: 1.55; color: var(--fg); --i: 1; }
+.capitulo .ap-plat { margin-top: 24px; padding-left: 18px; border-left: 3px solid var(--rojo); font-size: 19px; font-weight: 300; line-height: 1.5; color: var(--fg2); --i: 2; }
 .ap-nav { position: absolute; left: 640px; top: 20px; width: 832px; margin: 0; --i: 2; }
 .ap-vidrio {
   overflow: hidden;
