@@ -241,6 +241,17 @@ Se edita en  datos\rse.js  (con el Bloc de notas). Aparecen en este orden:
     y grupo ("Ambiente" o "Comunidad"; las fichas se agrupan solas).
   • Para cambiar un logo o una foto por uno de mejor calidad, guardalo en esa
     carpeta con el mismo nombre de archivo.
+NUESTROS CLIENTES (al final de "¿Por qué elegirnos?")
+-----------------------------------------------------
+Se edita en  datos\clientes.js  (con el Bloc de notas).
+  • Títulos, texto del contador y del botón "Volver al inicio".
+  • rubros: los botones para filtrar (Automotriz, Consumo masivo...).
+  • clientes: un renglón por empresa con nombre, imagen y rubro (el rubro tiene
+    que estar escrito igual que en la lista de rubros).
+  • Los logos van en img\clientes, en PNG o SVG con fondo transparente y en
+    blanco (se ven sobre el fondo rojo). Para cambiar uno, guardalo con el
+    mismo nombre de archivo; para agregar uno, copiá un renglón con su coma.
+  • El tamaño de cada logo se ajusta solo para que todos se vean parejos.
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:

@@ -5,7 +5,7 @@
 
 /* La pista vacía solo da el largo del scroll; diapositiva.js sube las capas con translate */
 .pista { position: absolute; left: 0; top: 0; width: 1600px; pointer-events: none; visibility: hidden; }
-.pista-espacio { height: 4500px; }   /* ¿Por qué elegirnos? (900) + pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) */
+.pista-espacio { height: 5400px; }   /* ¿Por qué elegirnos? (900) + pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) + Clientes (900) */
 
 /* ---------- ¿Por qué elegirnos? ---------- */
 .seccion-mejora {
