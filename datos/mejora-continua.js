@@ -11,14 +11,8 @@
 
 window.MEJORA = {
 
-  // ---------- Portada (título que aparece al bajar con el scroll) ----------
-  portada: {
-    antetitulo: "Mejora",
-    titulo: "CONTINUA",
-    imagen: "img/slides/nuestra-estructura/mejora-autoelevador.webp"
-  },
-
   // ---------- Pantalla partida: las dos opciones ----------
+  // La primera va del lado crema (izquierda) y la segunda del lado gris (derecha).
   // icono: sello, birrete, personas, cono, hoja
   opciones: [
     {

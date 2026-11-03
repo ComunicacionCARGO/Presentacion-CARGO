@@ -1,11 +1,12 @@
 /* =========================================================
    MEJORA CONTINUA — después de "¿Por qué elegirnos?" (datos/mejora-continua.js)
-   1. Portada "Mejora CONTINUA" (llega con el scroll, como en el diseño).
-   2. Pantalla partida por las tres franjas de la marca (rojo, rojo, gris):
-      CALIDAD a la izquierda y CAPACITACIONES a la derecha. Al pasar el
-      cursor, las franjas se corren y agrandan esa mitad; al hacer clic,
-      barren la pantalla y se abre el tema.
-   3. Cada tema ("capítulo") tiene secciones que se recorren con la rueda,
+   1. Pantalla partida (diseño de la persona): una banda de franjas rojas que
+      viene de la izquierda arriba, dobla en curva, baja en diagonal y vuelve a
+      doblar hacia la derecha abajo. Del lado crema, CALIDAD; del lado gris
+      (que sigue al gris de "¿Por qué elegirnos?"), CAPACITACIONES. Al pasar el
+      cursor la diagonal se corre y agranda ese lado; al hacer clic barre la
+      pantalla y se abre el tema.
+   2. Cada tema ("capítulo") tiene secciones que se recorren con la rueda,
       las flechas o las pestañas. Esc vuelve a la pantalla partida.
    ========================================================= */
 (function () {
@@ -41,63 +42,78 @@
   const icono = (n, clase) => `<svg class="${clase || ''}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ICONOS.sello}</svg>`;
   const franjitas = '<i class="mc-franjitas" aria-hidden="true"><b></b><b></b><b></b></i>';
 
-  const tramo = $('.mc-tramo'), portada = $('.mc-portada'), elegir = $('.mc-elegir');
+  const tramo = $('.mc-tramo'), elegir = $('.mc-elegir');
   const capitulo = $('.capitulo');
 
   // =========================================================
-  // 1. PORTADA "Mejora CONTINUA" (medida del diseño de la persona)
-  // =========================================================
-  const P = M.portada || {};
-  portada.innerHTML =
-    '<div class="mcp-fondo"></div><div class="mcp-gris"></div>' +
-    `<div class="mcp-foto"${P.imagen ? ` style="background-image:url('${ruta(P.imagen)}')"` : ''}></div>` +
-    '<div class="mcp-franjas"><i></i><i></i></div>' +
-    `<p class="mcp-ante">${esc(P.antetitulo)}</p><h2 class="mcp-titulo">${esc(P.titulo)}</h2>` +
-    '<i class="mcp-linea"></i>';
-
-  // =========================================================
-  // 2. PANTALLA PARTIDA
-  // La línea divisoria va en diagonal: x(y) = d + INCL - 2·INCL·y/900.
-  // Las mitades y las franjas cubren de sobra la ventana a lo ancho y hacia abajo
-  // (caja de 4000 × 1500 desde -1200, 0); hacia arriba no, porque ahí está la portada.
+  // 1. PANTALLA PARTIDA
+  // Geometría medida de la referencia de la persona (1921 px = 1600, ×0,8329):
+  // la banda va arriba a la izquierda en y 35–125, dobla con una curva, baja en
+  // diagonal (pendiente 0,4133, la misma de "¿Quiénes somos?") y vuelve a doblar
+  // abajo a la derecha en y 810–900. "d" es la x de la diagonal en la mitad de la
+  // altura (y 450). Todo se calcula en px del escenario.
   // =========================================================
   const OP = M.opciones || [];
-  const INCL = 110;                                   // corrimiento de la diagonal entre arriba y abajo
-  const CAJA = { x: -1200, y: 0, w: 4000, h: 1500 };
-  // franjas de la marca, medidas en horizontal: rojo, hueco, rojo, hueco, gris (37/11 en perpendicular)
-  const FRANJAS = [[-68.45, -30.37, 'rojo'], [-19.05, 19.03, 'rojo'], [30.35, 68.43, 'gris']];
-  const lineaX = (d, y) => d + INCL - 2 * INCL * y / 900;
+  const G = {
+    arriba: 80.2,        // eje de la banda en el tramo de arriba
+    abajo: 854.8,        // eje de la banda en el tramo de abajo
+    pend: 0.4133,        // corrimiento horizontal de la diagonal por cada px que baja
+    r1: 98.1,            // radio (eje) de la curva de arriba a la derecha
+    r2: 130.7,           // radio (eje) de la curva de abajo a la izquierda
+    reposo: 781.6,       // x de la diagonal en y 450, sin cursor
+    // capas, de afuera hacia adentro: [corrimiento hacia el lado gris, grosor, clase]
+    capas: [[0, 90.4, 'mc-plata'], [17.5, 34.6, 'mc-rojo'], [-27.9, 34.6, 'mc-rojo']]
+  };
+  const L = -1200, R = 2800;                         // la banda llega a los bordes de cualquier ventana
+  const NORMA = Math.hypot(1, G.pend);
+  const NX = 1 / NORMA, NY = G.pend / NORMA;         // normal de la diagonal, hacia el lado gris
+  const VX = -G.pend / NORMA, VY = 1 / NORMA;        // dirección de la diagonal, hacia abajo
+  const TAN = Math.tan(Math.acos(VX) / 2);           // para el largo de las curvas (giro de 112°)
+  const diagX = (d, y) => d - G.pend * (y - 450);
+  // Camino de la banda corrido "o" px hacia el lado gris (mismos centros, otros radios)
+  function camino(d, o) {
+    const c1x = diagX(d, G.arriba) - G.r1 * TAN, c1y = G.arriba + G.r1;
+    const c2x = diagX(d, G.abajo) + G.r2 * TAN, c2y = G.abajo - G.r2;
+    const ra = G.r1 + o, rb = G.r2 - o, n = (v) => v.toFixed(1);
+    return `M${L},${n(G.arriba - o)}H${n(c1x)}` +
+      `A${n(ra)},${n(ra)} 0 0 1 ${n(c1x + ra * NX)},${n(c1y + ra * NY)}` +
+      `L${n(c2x - rb * NX)},${n(c2y - rb * NY)}` +
+      `A${n(rb)},${n(rb)} 0 0 0 ${n(c2x)},${n(G.abajo - o)}H${R}`;
+  }
+  const zonaGris = (d) => camino(d, 0) + `V-2H${L}Z`;
 
   elegir.innerHTML =
+    `<svg class="mc-svg" viewBox="${L} 0 ${R - L} 1500" preserveAspectRatio="none" aria-hidden="true">` +
+      '<defs>' +
+        '<clipPath id="mc-recorte-gris"><path/></clipPath>' +
+        // líneas claras con brillo metálico (entre las rojas y del lado gris)
+        '<linearGradient id="mc-brillo" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1600" y2="900">' +
+          '<stop offset="0" stop-color="#B9B8B2"/><stop offset=".3" stop-color="#F3EEE4"/><stop offset=".5" stop-color="#C6C4BD"/>' +
+          '<stop offset=".72" stop-color="#F6F1E7"/><stop offset="1" stop-color="#C2C0B9"/></linearGradient>' +
+      '</defs>' +
+      `<rect x="${L}" y="0" width="${R - L}" height="1500" fill="#FFFBF3"/>` +
+      // fondos ya preparados (foto difuminada y mezclada como en la referencia): cubren x -200..1800
+      `<image class="mc-foto-calidad" href="${ruta('img/slides/nuestra-estructura/fondo-calidad.jpg')}" x="-200" y="0" width="2000" height="1000" preserveAspectRatio="none"/>` +
+      '<path class="mc-gris"/>' +
+      `<image class="mc-foto-capacitaciones" href="${ruta('img/slides/nuestra-estructura/fondo-capacitaciones.jpg')}" x="-200" y="0" width="2000" height="1000" preserveAspectRatio="none" clip-path="url(#mc-recorte-gris)"/>` +
+      G.capas.map(([o, g, c]) => `<path class="mc-banda ${c}" data-o="${o}" stroke-width="${g}"/>`).join('') +
+    '</svg>' +
     OP.slice(0, 2).map((o, k) =>
-      `<div class="mc-mitad mc-mitad-${k}" data-k="${k}">` +
-        `<div class="mc-m-fondo"></div>` +
-        `<div class="mc-m-marco"><div class="mc-m-bloque">` +
-          `<span class="mc-m-icono">${icono(o.icono)}</span>` +
-          `<p class="mc-m-num">${franjitas}<span>${esc(o.numero)}</span></p>` +
-          `<h3 class="mc-m-titulo">${esc(o.titulo)}</h3>` +
-          `<p class="mc-m-bajada">${esc(o.bajada)}</p>` +
-          `<span class="mc-m-boton">${esc(o.boton || 'Explorar')} <b>→</b></span>` +
-        `</div></div>` +
-      `</div>`).join('') +
-    `<svg class="mc-franjas" viewBox="${CAJA.x} ${CAJA.y} ${CAJA.w} ${CAJA.h}" aria-hidden="true"><g>` +
-      FRANJAS.map(([a, b, c]) => {
-        const y0 = CAJA.y, y1 = CAJA.y + CAJA.h;
-        const p = [[lineaX(800, y0) + a, y0], [lineaX(800, y0) + b, y0], [lineaX(800, y1) + b, y1], [lineaX(800, y1) + a, y1]];
-        return `<polygon class="${c}" points="${p.map((q) => q.map((v) => v.toFixed(1)).join(',')).join(' ')}"/>`;
-      }).join('') +
-    '</g></svg>';
-  const mitades = [...elegir.querySelectorAll('.mc-mitad')];
-  const bloques = mitades.map((m) => $('.mc-m-bloque', m));
-  const grupoFranjas = $('.mc-franjas g', elegir);
-  // fondo de cada mitad: Calidad sobre gris con el depósito; Capacitaciones sobre crema con la planta
-  const FOTOS = ['img/cartas/quienes-somos.webp', 'img/cartas/nuestra-estructura.jpg'];
-  mitades.forEach((m, k) => { $('.mc-m-fondo', m).style.backgroundImage = `url('${ruta(FOTOS[k])}')`; });
-  // si un título no entra en su mitad se achican los dos por igual (así quedan parejos)
+      `<div class="mc-bloque mc-bloque-${k}">` +
+        `<span class="mc-m-icono">${icono(o.icono)}</span>` +
+        `<p class="mc-m-num">${franjitas}<span>${esc(o.numero)}</span></p>` +
+        `<h3 class="mc-m-titulo">${esc(o.titulo)}</h3>` +
+        `<p class="mc-m-bajada">${esc(o.bajada)}</p>` +
+        `<span class="mc-m-boton">${esc(o.boton || 'Explorar')} <b>→</b></span>` +
+      `</div>`).join('');
+  const bloques = [...elegir.querySelectorAll('.mc-bloque')];
+  const gris = $('.mc-gris', elegir), recorte = $('#mc-recorte-gris path', elegir);
+  const bandas = [...elegir.querySelectorAll('.mc-banda')];
+  // si un título no entra en su lado se achican los dos por igual (así quedan parejos)
   function ajustarTitulos() {
-    const titulos = mitades.map((m) => $('.mc-m-titulo', m));
+    const titulos = bloques.map((b) => $('.mc-m-titulo', b));
     titulos.forEach((t) => { t.style.fontSize = ''; });
-    const max = 560, ancho = Math.max(...titulos.map((t) => t.scrollWidth));
+    const max = 520, ancho = Math.max(...titulos.map((t) => t.scrollWidth));
     if (ancho > max) {
       const tam = (parseFloat(getComputedStyle(titulos[0]).fontSize) * max / ancho).toFixed(1) + 'px';
       titulos.forEach((t) => { t.style.fontSize = tam; });
@@ -105,16 +121,15 @@
   }
   if (document.fonts) document.fonts.ready.then(ajustarTitulos); else ajustarTitulos();
 
-  let d = 800, dObjetivo = 800, hover = -1, eligiendo = -1, bucle = null, ultimo = 0;
+  let d = G.reposo, dObjetivo = G.reposo, hover = -1, eligiendo = -1, bucle = null, ultimo = 0;
   function dibujarDivision() {
-    const y0 = CAJA.y, y1 = CAJA.y + CAJA.h, ox = -CAJA.x, oy = -CAJA.y;
-    const a = lineaX(d, y0) + ox, b = lineaX(d, y1) + ox;
-    mitades[0].style.clipPath = `polygon(0 0, ${a.toFixed(1)}px 0, ${b.toFixed(1)}px ${CAJA.h}px, 0 ${CAJA.h}px)`;
-    mitades[1].style.clipPath = `polygon(${a.toFixed(1)}px 0, ${CAJA.w}px 0, ${CAJA.w}px ${CAJA.h}px, ${b.toFixed(1)}px ${CAJA.h}px)`;
-    grupoFranjas.setAttribute('transform', `translate(${(d - 800).toFixed(1)} 0)`);
-    // cada bloque queda centrado en la parte visible de su mitad (sin contar las franjas)
-    bloques[0].style.transform = `translateX(${((d - 70) / 2 - 400).toFixed(1)}px)`;
-    bloques[1].style.transform = `translateX(${((d + 70 + 1600) / 2 - 1200).toFixed(1)}px)`;
+    const z = zonaGris(d);
+    gris.setAttribute('d', z);
+    recorte.setAttribute('d', z);
+    bandas.forEach((b) => b.setAttribute('d', camino(d, +b.dataset.o)));
+    // cada bloque queda centrado en su lado, a la altura del texto (sin contar la banda)
+    bloques[0].style.transform = `translateX(${((diagX(d, 450) - 60) / 2 - 400).toFixed(1)}px)`;
+    bloques[1].style.transform = `translateX(${((diagX(d, 450) + 60 + 1600) / 2 - 1200).toFixed(1)}px)`;
   }
   function animarDivision(t) {
     const dt = Math.min(.05, (t - ultimo) / 1000);
@@ -130,49 +145,52 @@
     if (!bucle) { ultimo = performance.now(); bucle = requestAnimationFrame(animarDivision); }
   }
   function resaltar(k) {
-    if (eligiendo >= 0) return;
+    if (eligiendo >= 0 || k === hover) return;
     hover = k;
     elegir.classList.toggle('con-foco', k >= 0);
-    mitades.forEach((m, i) => m.classList.toggle('foco', i === k));
-    moverDivision(k === 0 ? 1010 : k === 1 ? 590 : 800);
+    bloques.forEach((b, i) => b.classList.toggle('foco', i === k));
+    moverDivision(k === 0 ? G.reposo + 220 : k === 1 ? G.reposo - 220 : G.reposo);
   }
-  mitades.forEach((m, k) => {
-    m.addEventListener('pointerenter', () => resaltar(k));
-    m.addEventListener('click', () => elegirTema(k));
-  });
+  // de qué lado está el cursor: gris arriba de la banda y a la derecha de la diagonal
+  function ladoEn(e) {
+    const r = elegir.getBoundingClientRect(), k = r.width / 1600;
+    const x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k;
+    return (y < G.arriba || (y < G.abajo && x > diagX(d, y))) ? 1 : 0;
+  }
+  elegir.addEventListener('pointermove', (e) => resaltar(ladoEn(e)));
   elegir.addEventListener('pointerleave', () => resaltar(-1));
+  elegir.addEventListener('click', (e) => elegirTema(ladoEn(e)));
   dibujarDivision();
 
   function elegirTema(k) {
     if (eligiendo >= 0 || !OP[k]) return;
     resaltar(k);
     eligiendo = k;
-    elegir.classList.add('eligiendo', 'eligiendo-' + k);
-    moverDivision(k === 0 ? 2500 : -900);            // la mitad elegida barre la pantalla
+    elegir.classList.add('eligiendo');
+    moverDivision(k === 0 ? 3200 : -1800);           // el lado elegido barre la pantalla
     setTimeout(() => abrirCapitulo(k), 420);
   }
 
   // =========================================================
-  // Visibilidad con el scroll (la portada y la pantalla partida suben)
+  // Visibilidad con el scroll (la pantalla partida sube detrás de "¿Por qué elegirnos?")
   // =========================================================
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
     bajada = Math.max(0, e.detail.y - 900);
-    portada.classList.toggle('visible', bajada > 420);
-    elegir.classList.toggle('visible', bajada > 1350);
+    elegir.classList.toggle('visible', bajada > 450);
     tramo.setAttribute('aria-hidden', bajada > 300 ? 'false' : 'true');
-    if (bajada < 1500 && hover >= 0 && eligiendo < 0) resaltar(-1);
+    if (bajada < 600 && hover >= 0 && eligiendo < 0) resaltar(-1);
   });
-  // en la pantalla partida: ← → eligen una mitad y Enter la abre
+  // en la pantalla partida: ← → eligen un lado y Enter lo abre
   addEventListener('keydown', (e) => {
-    if (capitulo.classList.contains('abierto') || bajada < 1700) return;
+    if (capitulo.classList.contains('abierto') || bajada < 800) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); resaltar(0); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); resaltar(1); }
     else if (e.key === 'Enter' && hover >= 0) { e.preventDefault(); elegirTema(hover); }
   });
 
   // =========================================================
-  // 3. CAPÍTULOS (temas): secciones que se recorren
+  // 2. CAPÍTULOS (temas): secciones que se recorren
   // =========================================================
   const C = M.calidad || {}, K = M.capacitaciones || {};
 
@@ -189,7 +207,7 @@
       <line class="ls-mango" x1="112" y1="262" x2="46" y2="328"/>
       <circle class="ls-aro" cx="200" cy="175" r="118"/>
       <circle class="ls-rojo" cx="200" cy="175" r="118" pathLength="100"/>
-      <image href="${ruta('img/marca/isologo.png')}" x="134" y="107" width="132" height="210" clip-path="url(#ls-c)" filter="url(#ls-crema)"/>
+      <image href="${ruta('img/marca/isologo.png')}" x="134" y="107" width="132" height="210" clip-path="url(#ls-c)" class="ls-c"/>
       <text class="ls-texto"><textPath href="#ls-arco" startOffset="50%" text-anchor="middle">s·c·o·p·e</textPath></text>
       <g class="ls-version" transform="translate(${vx.toFixed(1)} ${vy.toFixed(1)})"><circle r="36"/><text y="11">${esc((C.scope || {}).version || '1.0')}</text></g>
     </svg>`;
@@ -214,11 +232,11 @@
     </svg>`;
   };
 
-  // ----- Secciones de cada tema -----
+  // ----- Secciones de cada tema (Calidad va en claro, como su lado crema; Capacitaciones en oscuro) -----
   const S = C.scope || {};
   const TEMAS = [
     {
-      clase: 'tema-calidad', numero: (OP[0] || {}).numero || '01', titulo: C.titulo || 'CALIDAD',
+      clase: 'tema-claro', numero: (OP[0] || {}).numero || '01', titulo: C.titulo || 'CALIDAD',
       secciones: [
         {
           pestana: 'S.C.O.P.E.',
@@ -296,7 +314,7 @@
       ]
     },
     {
-      clase: 'tema-capacitaciones', numero: (OP[1] || {}).numero || '02', titulo: K.titulo || 'CAPACITACIONES',
+      clase: 'tema-oscuro', numero: (OP[1] || {}).numero || '02', titulo: K.titulo || 'CAPACITACIONES',
       secciones: [
         {
           pestana: (K.aprende || {}).pestana || '#Exp Aprende',
@@ -399,7 +417,7 @@
       document.body.classList.remove('capitulo-abierto');
       tema = null;
       // las franjas vuelven a su lugar
-      elegir.classList.remove('eligiendo', 'eligiendo-0', 'eligiendo-1');
+      elegir.classList.remove('eligiendo');
       eligiendo = -1;
       resaltar(-1);
     }, 380);

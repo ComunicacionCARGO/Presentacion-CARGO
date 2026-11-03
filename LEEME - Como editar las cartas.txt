@@ -176,9 +176,13 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
 MEJORA CONTINUA (después de "¿Por qué elegirnos?", en Nuestra estructura)
 -------------------------------------------------------------------------
 Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
-  • portada: el título "Mejora CONTINUA" y su foto.
-  • opciones: las dos mitades de la pantalla partida (Calidad y Capacitaciones):
-    número, título, bajada e ícono (sello, birrete, personas, cono, hoja).
+  • opciones: los dos lados de la pantalla partida (el primero, Calidad, va del
+    lado crema; el segundo, Capacitaciones, del lado gris): número, título,
+    bajada e ícono (sello, birrete, personas, cono, hoja).
+  • Las fotos de fondo de esa pantalla ya vienen difuminadas y mezcladas. Para
+    cambiarlas, reemplazá las originales en img\slides\nuestra-estructura\originales
+    (calidad.webp y capacitaciones.webp) y pedile a Claude que corra
+    herramientas\fondos-pantalla-partida.ps1.
   • calidad: S.C.O.P.E. (texto y significado letra por letra), objetivos,
     pilares (con su ícono: carretilla, caja, camion, sello, personas, casco,
     monedas), políticas (nombre, código, norma, cita y directrices) y
@@ -189,7 +193,7 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     certificaciones copiando una línea o un bloque con su coma.
   • **texto** = negrita;  *texto* = rojo en cursiva.
   • Al ver la presentación: con la rueda se baja hasta la pantalla partida; al
-    pasar el cursor por una mitad, las franjas se corren; clic para abrir el
+    pasar el cursor por un lado, la banda de franjas se corre; clic para abrir el
     tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
 
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL

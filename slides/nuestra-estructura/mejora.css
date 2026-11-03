@@ -1,112 +1,48 @@
 /* =========================================================
-   MEJORA CONTINUA — portada, pantalla partida y temas (mejora.js)
+   MEJORA CONTINUA — pantalla partida y temas (mejora.js)
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
 
 /* Después de los anillos el scroll es un scroll común: lo de "¿Por qué elegirnos?"
-   sube (--bajada lo pone diapositiva.js) y debajo llega "Mejora continua" */
+   sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
+   parte gris continúa el gris de arriba */
 .anillos, .seccion-mejora, .mc-tramo { translate: 0 calc(var(--bajada, 0) * -1px); }
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 1800px; z-index: 7; pointer-events: none; }
-.mc-tramo > section { position: absolute; left: 0; width: 1600px; height: 900px; }
-.mc-portada { top: 0; }
-.mc-elegir { top: 900px; }
-/* lo que tiene que cubrir toda la ventana a lo ancho */
-.mcp-fondo, .mcp-gris, .mcp-franjas i, .mcp-foto {
-  position: absolute;
-  left: calc(800px - 50vw / var(--escala, 1));
-  width: calc(100vw / var(--escala, 1));
-}
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 900px; z-index: 7; pointer-events: none; }
+.mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.mc-elegir.visible { pointer-events: auto; cursor: pointer; }
+.mc-elegir.eligiendo { pointer-events: none; }
 
-/* ---------- 1. Portada "Mejora CONTINUA" ----------
-   Medida del diseño (938 px de ancho = 1600 del escenario, ×1,7058):
-   banda gris 0–34,5; franjas rojas 44,4–80,2 y 89,9–125,2; "Mejora" Inter Light
-   glifo x 37,5–232, y 163,8–223,5; "CONTINUA" Oswald glifo x 52,9–545,9, y 226,9–324,1 */
-.mcp-fondo { top: 0; height: calc(900px + 50vh / var(--escala, 1)); background: var(--blanco); }
-.mcp-gris { top: 0; height: 34.5px; background: var(--gris); }
-/* Foto original (2000 × 1125) al 76,9 % desde x 101, y 34,5 (ajustada contra el diseño:
-   correlación .98). Lavada como en el diseño: al 45,7 % sobre el crema. Se funde hacia la
-   izquierda con la misma curva medida (invisible en x 200, entera desde x 760). */
-.mcp-foto {
-  left: 101px;
-  top: 34.5px;
-  width: calc(800px + 50vw / var(--escala, 1) - 101px);
-  height: 865.1px;
-  background: left top / max(1538px, 100%) auto no-repeat;
-  opacity: .457;
-  --fundido: linear-gradient(90deg, transparent 99px, rgba(0, 0, 0, .05) 179px, rgba(0, 0, 0, .11) 259px, rgba(0, 0, 0, .2) 339px, rgba(0, 0, 0, .33) 419px, rgba(0, 0, 0, .5) 499px, rgba(0, 0, 0, .75) 579px, rgba(0, 0, 0, .95) 659px, #000 719px);
-  -webkit-mask-image: var(--fundido);
-  mask-image: var(--fundido);
-}
-.mcp-franjas i { height: 35.8px; background: var(--rojo); }
-.mcp-franjas i:first-child { top: 44.4px; }
-.mcp-franjas i:last-child { top: 89.9px; height: 35.3px; }
-.mcp-linea { position: absolute; left: 96.5px; top: 34.5px; width: 1.5px; height: 865.5px; background: rgba(58, 58, 58, .07); }
-.mcp-ante, .mcp-titulo {
-  position: absolute;
-  line-height: 1;
-  white-space: nowrap;
-  opacity: 0;
-  translate: 0 34px;
-  transition: opacity .9s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1);
-}
-/* cada texto ubicado por su línea base (Inter .865 y Oswald .95 con line-height 1) */
-.mcp-ante { left: 31.8px; top: 155.9px; font-size: 63.5px; font-weight: 300; color: var(--gris); }
-.mcp-titulo {
-  left: 48.3px;
-  top: 211.8px;
-  font-family: var(--fuente-titulo);
-  font-weight: 700;
-  font-size: 116px;
-  letter-spacing: .02em;
-  color: var(--rojo);
-  transition-delay: .08s;
-}
-.mc-portada.visible .mcp-ante, .mc-portada.visible .mcp-titulo { opacity: 1; translate: 0 0; }
+/* ---------- Pantalla partida (diseño de la persona) ----------
+   Un solo SVG de -1200 a 2800 en x (llega a los bordes de cualquier ventana) y
+   0 a 1500 en y: crema con la foto de Calidad, zona gris con la de Capacitaciones
+   (recortada con la misma curva) y la banda: línea clara de brillo metálico y dos rojas.
+   Las fotos ya vienen difuminadas y mezcladas (fondo-calidad.jpg, fondo-capacitaciones.jpg). */
+.mc-svg { position: absolute; left: -1200px; top: 0; width: 4000px; height: 1500px; overflow: hidden; }
+.mc-gris { fill: var(--gris); }
+.mc-banda { fill: none; stroke-linejoin: round; }
+.mc-plata { stroke: url(#mc-brillo); }
+.mc-rojo { stroke: var(--rojo); }
 
-/* ---------- 2. Pantalla partida por las franjas ----------
-   Cada mitad y las franjas ocupan una caja de 4000 × 1500 desde (-1200, 0):
-   así cubren la ventana aunque sea más ancha o más alta que 16:9 (hacia arriba
-   no se extienden: ahí está la portada). */
-.mc-mitad, .mc-franjas { position: absolute; left: -1200px; top: 0; width: 4000px; height: 1500px; }
-.mc-mitad { cursor: pointer; overflow: hidden; }
-.mc-elegir:not(.visible) .mc-mitad, .mc-elegir.eligiendo .mc-mitad { pointer-events: none; }
-.mc-elegir.visible .mc-mitad { pointer-events: auto; }
-.mc-mitad-0 { background: var(--gris); color: var(--blanco); }
-.mc-mitad-1 { background: var(--blanco); color: var(--gris); }
-.mc-m-fondo {
-  position: absolute;
-  left: calc(2000px - 50vw / var(--escala, 1));
-  top: calc(450px - 50vh / var(--escala, 1));
-  width: calc(100vw / var(--escala, 1));
-  height: calc(100vh / var(--escala, 1));
-  background: center / cover no-repeat;
-  filter: grayscale(1) contrast(1.05);
-  opacity: .14;
-  transform: scale(1.06);
-  transition: opacity .6s ease, transform 1.2s cubic-bezier(.2, .8, .2, 1);
-}
-.mc-mitad-1 .mc-m-fondo { opacity: .1; }
-.mc-mitad.foco .mc-m-fondo { opacity: .3; transform: scale(1); }
-.mc-mitad-1.foco .mc-m-fondo { opacity: .2; }
-.mc-m-marco { position: absolute; left: 1200px; top: 0; width: 1600px; height: 900px; }
-.mc-m-bloque {
+.mc-bloque {
   position: absolute;
   top: 262px;
-  width: 640px;
-  margin-left: -320px;
+  width: 560px;
+  margin-left: -280px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   opacity: 0;
+  pointer-events: none;
   transition: opacity .6s ease, scale .6s cubic-bezier(.2, .8, .2, 1);
 }
-.mc-mitad-0 .mc-m-bloque { left: 400px; }
-.mc-mitad-1 .mc-m-bloque { left: 1200px; }
-.mc-elegir.visible .mc-m-bloque { opacity: 1; transition-delay: .25s, 0s; }
-.mc-elegir.visible.con-foco .mc-mitad:not(.foco) .mc-m-bloque { opacity: .42; scale: .8; transition-delay: 0s; }
-.mc-elegir.visible .mc-mitad.foco .mc-m-bloque { scale: 1.04; transition-delay: 0s; }
-.mc-elegir.eligiendo .mc-m-bloque { opacity: 0 !important; transition: opacity .25s ease; }
+.mc-bloque-0 { left: 400px; color: var(--gris); }
+.mc-bloque-1 { left: 1200px; color: var(--blanco); }
+.mc-bloque-1 .mc-franjitas { --franja3: rgba(255, 251, 243, .6); }
+.mc-elegir.visible .mc-bloque { opacity: 1; transition-delay: .25s, 0s; }
+.mc-elegir.visible.con-foco .mc-bloque:not(.foco) { opacity: .42; scale: .8; transition-delay: 0s; }
+.mc-elegir.visible .mc-bloque.foco { scale: 1.04; transition-delay: 0s; }
+.mc-elegir.eligiendo .mc-bloque { opacity: 0 !important; transition: opacity .25s ease; }
 .mc-m-icono svg { display: block; width: 84px; height: 84px; fill: var(--rojo); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .18)); }
 .mc-m-num {
   display: flex;
@@ -119,7 +55,6 @@
   letter-spacing: .24em;
   opacity: .75;
 }
-.mc-mitad-0 .mc-franjitas { --franja3: rgba(255, 251, 243, .6); }
 .mc-m-titulo {
   display: flex;
   align-items: center;
@@ -131,8 +66,7 @@
   line-height: .95;
   white-space: nowrap;
 }
-.mc-mitad-0 .mc-m-titulo { color: var(--blanco); }
-.mc-m-bajada { margin-top: 14px; font-size: 21px; font-weight: 300; opacity: .8; white-space: nowrap; }
+.mc-m-bajada { margin-top: 14px; font-size: 21px; font-weight: 300; opacity: .85; white-space: nowrap; }
 .mc-m-boton {
   display: inline-flex;
   align-items: center;
@@ -148,13 +82,8 @@
   transition: background .3s ease, border-color .3s ease, color .3s ease;
 }
 .mc-m-boton b { transition: translate .3s ease; }
-.mc-mitad.foco .mc-m-boton { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
-.mc-mitad.foco .mc-m-boton b { translate: 5px 0; }
-.mc-franjas { pointer-events: none; overflow: hidden; opacity: 0; translate: 0 -60px; transition: opacity .8s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1); }
-.mc-elegir.visible .mc-franjas { opacity: 1; translate: 0 0; }
-.mc-franjas .rojo { fill: var(--rojo); }
-.mc-franjas .gris { fill: var(--gris); }
-
+.mc-bloque.foco .mc-m-boton { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
+.mc-bloque.foco .mc-m-boton b { translate: 5px 0; }
 /* Tres franjitas de la marca (rojo, rojo, gris) */
 .mc-franjitas { display: inline-flex; gap: 3px; height: 5px; }
 .mc-franjitas b { display: block; width: 14px; height: 5px; background: var(--rojo); }
@@ -164,7 +93,7 @@
 .capitulo { position: absolute; inset: 0; z-index: 9; visibility: hidden; pointer-events: none; }
 .capitulo.abierto, .capitulo.cerrando { visibility: visible; }
 .capitulo.abierto { pointer-events: auto; }
-.tema-calidad {
+.tema-oscuro {
   --fg: var(--blanco);
   --fg2: rgba(255, 251, 243, .74);
   --linea: rgba(255, 251, 243, .16);
@@ -172,7 +101,7 @@
   --franja3: rgba(255, 251, 243, .6);
   color: var(--fg);
 }
-.tema-capacitaciones {
+.tema-claro {
   --fg: var(--gris);
   --fg2: rgba(58, 58, 58, .8);
   --linea: rgba(58, 58, 58, .15);
@@ -188,8 +117,8 @@
   opacity: 0;
   transition: opacity .3s ease;
 }
-.tema-calidad .cap-fondo { background: radial-gradient(110% 90% at 18% 0%, #484848, var(--gris) 55%, #333 100%); }
-.tema-capacitaciones .cap-fondo { background: radial-gradient(110% 90% at 18% 0%, #FFFDF8, var(--blanco) 55%, #F4EDE1 100%); }
+.tema-oscuro .cap-fondo { background: radial-gradient(110% 90% at 18% 0%, #484848, var(--gris) 55%, #333 100%); }
+.tema-claro .cap-fondo { background: radial-gradient(110% 90% at 18% 0%, #FFFDF8, var(--blanco) 55%, #F4EDE1 100%); }
 .capitulo.abierto .cap-fondo { opacity: 1; }
 .capitulo > :not(.cap-fondo) { opacity: 0; transition: opacity .3s ease; }
 .capitulo.abierto > :not(.cap-fondo) { opacity: 1; transition: opacity .5s ease .2s; }
@@ -341,6 +270,7 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
   transition: transform .7s cubic-bezier(.2, .8, .2, 1);
 }
 .ls-mango { stroke: var(--fg); stroke-width: 40; stroke-linecap: round; }
+.tema-oscuro .ls-c { filter: url(#ls-crema); }   /* la C del isologo pasa a crema sobre el gris */
 .ls-texto { font: 300 36px var(--fuente-texto); letter-spacing: 3px; fill: var(--fg); }
 .ls-version circle { fill: var(--rojo); }
 .ls-version text { font: 700 28px var(--fuente-titulo); fill: var(--blanco); text-anchor: middle; }
@@ -457,7 +387,7 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .eq-col:hover .eq-puzzle svg:nth-child(3) { translate: -6px 0; opacity: 1; }
 .eq-franjas { display: flex; justify-content: center; gap: 5px; height: 100%; }
 .eq-franjas b { display: block; width: 9px; background: var(--rojo); opacity: .9; }
-.eq-franjas b:last-child { background: var(--gris); }
+.eq-franjas b:last-child { background: var(--franja3, var(--gris)); }
 
 @media (prefers-reduced-motion: reduce) {
   .ce-giro, .ap-insignia { animation: none; }

@@ -547,7 +547,7 @@
   }
   const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo'), escenarioEl = $('.escenario');
   // Después de los anillos el scroll sigue como un scroll común: "¿Por qué elegirnos?"
-  // sube y aparecen "Mejora continua" y la pantalla partida (--bajada, en mejora.css)
+  // sube y aparece la pantalla partida Calidad / Capacitaciones (--bajada, en mejora.css)
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
     const nuevaBajada = Math.max(0, e.detail.y - RECORRIDO);
@@ -565,9 +565,9 @@
   // cada muesca de la rueda (o tecla) suma un paso al destino en el momento, y el
   // movimiento sigue con su impulso hacia el nuevo destino (resorte amortiguado, sin
   // frenar ni volver a arrancar). Dos muescas seguidas pasan los dos pasos de una vez.
-  // Paradas del scroll: 2 pasos de anillos (0 → 450 → 900: "¿Por qué elegirnos?"),
-  // después "Mejora continua" (1800) y la pantalla partida Calidad / Capacitaciones (2700)
-  const PARADAS = [0, RECORRIDO / 2, RECORRIDO, RECORRIDO + 900, RECORRIDO + 1800];
+  // Paradas del scroll: 2 pasos de anillos (0 → 450 → 900: "¿Por qué elegirnos?")
+  // y después la pantalla partida Calidad / Capacitaciones (1800)
+  const PARADAS = [0, RECORRIDO / 2, RECORRIDO, RECORRIDO + 900];
   const ULTIMA = PARADAS.length - 1, MAXIMO = PARADAS[ULTIMA];
   const RIGIDEZ = 7.5;                            // más alto = más rápido (7,5 ≈ 1 s por paso)
   const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
