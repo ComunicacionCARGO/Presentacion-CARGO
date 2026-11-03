@@ -66,6 +66,7 @@
         <span class="rse-tecla">${String(i + 1).padStart(2, '0')}</span><i class="rse-led"></i>
         <span class="rse-riel"><span class="rse-llenado"></span><span class="rse-mango"></span></span>
         ${icono(p.icono)}<span class="rse-nombre">${esc(p.nombre)}</span></button>`).join('')}</div>` +
+    '<div class="rse-halo" aria-hidden="true"><i class="rojo"><b></b></i><i class="verde"></i></div>' +
     `<div class="rse-medidor ent" style="--i:2"><svg viewBox="0 0 716 330" aria-hidden="true">${medidor}</svg>
        <div class="rse-lectura"><b></b><span></span></div></div>` +
     `<div class="rse-tarjeta ent" style="--i:4"><div class="rse-contenido"></div></div>`;
@@ -73,6 +74,8 @@
   const botones = [...raiz.querySelectorAll('.rse-palanca')];
   const segs = [...raiz.querySelectorAll('.rse-seg')];
   const aguja = raiz.querySelector('.rse-aguja');
+  const haloRojo = raiz.querySelector('.rse-halo .rojo');   // su opacidad sigue a la aguja
+  let haloPrevio = -1;
   const lecturaN = raiz.querySelector('.rse-lectura b'), lecturaT = raiz.querySelector('.rse-lectura span');
   const contenido = raiz.querySelector('.rse-contenido');
   const activas = new Set();
@@ -147,6 +150,9 @@
     const temblor = objetivo > 0 ? (Math.sin(ahora / 83) * .6 + Math.sin(ahora / 31) * .4) * .0022 : 0;
     const v = Math.max(-.03, Math.min(1.03, t + temblor));
     aguja.setAttribute('transform', `translate(${CX} ${CY}) rotate(${(180 + v * 180).toFixed(2)})`);
+    // alarma roja: fuerte con la aguja arriba, se apaga a medida que baja
+    const h = Math.round(Math.max(0, Math.min(1, v)) * 100) / 100;
+    if (h !== haloPrevio) { haloRojo.style.opacity = h; haloPrevio = h; }
     const n = Math.max(0, Math.min(SEGMENTOS, Math.round(v * SEGMENTOS)));
     if (n !== encendidos) { segs.forEach((s, k) => s.classList.toggle('encendido', k < n)); encendidos = n; }
     if (visible) requestAnimationFrame(cuadro); else { enMarcha = false; previo = 0; }

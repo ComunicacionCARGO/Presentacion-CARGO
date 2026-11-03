@@ -47,7 +47,7 @@
 .rse-orbes i:nth-child(2) { width: 480px; height: 480px; background: radial-gradient(circle, rgba(244, 161, 39, .2), rgba(244, 161, 39, 0) 68%); animation-duration: 27s; animation-delay: -9s; }
 .rse-orbes i:nth-child(3) { width: 540px; height: 540px; background: radial-gradient(circle, rgba(117, 154, 171, .22), rgba(117, 154, 171, 0) 68%); animation-duration: 31s; animation-delay: -15s; }
 @keyframes rse-deriva { from { translate: 0 0; } 50% { translate: 60px -40px; } to { translate: -50px 50px; } }
-.mc-rse .rse-orbes i:nth-child(1) { left: 900px; top: 60px; }
+.mc-rse .rse-orbes i:nth-child(1) { left: 380px; top: 420px; }   /* detrás del medidor va su propio resplandor (.rse-halo) */
 .mc-rse .rse-orbes i:nth-child(2) { left: 1180px; top: 430px; }
 .mc-rse .rse-orbes i:nth-child(3) { left: 120px; top: 360px; }
 .mc-num .rse-orbes i:nth-child(1) { left: 120px; top: 260px; }
@@ -111,6 +111,18 @@
 .rse-palanca svg { position: absolute; left: 50%; top: 178px; width: 26px; height: 26px; margin-left: -13px; fill: var(--acento); }
 .rse-nombre { position: absolute; left: 10px; right: 10px; top: 212px; font: 500 14px/1.15 var(--fuente-titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--tinta2); transition: color .3s ease; }
 .rse-palanca.activa .rse-nombre { color: var(--gris); }
+
+/* ---------- Resplandor detrás del medidor ----------
+   Rojo que parpadea como una alarma cuando la aguja está alta; su intensidad sigue
+   a la aguja (rse.js pone la opacidad de .rojo), así se va apagando con cada
+   palanca. En cero se enciende el verde. Centro en el arco: (1178, 360). */
+.rse-halo { position: absolute; left: 818px; top: 0; width: 720px; height: 720px; pointer-events: none; }
+.rse-halo i, .rse-halo b { position: absolute; inset: 0; border-radius: 50%; }
+.rse-halo .rojo { opacity: 0; }
+.rse-halo .rojo b { background: radial-gradient(circle, rgba(239, 69, 41, .55), rgba(239, 69, 41, .2) 40%, rgba(239, 69, 41, 0) 66%); animation: rse-alarma 1.1s ease-in-out infinite; }
+@keyframes rse-alarma { 0%, 100% { opacity: 1; } 50% { opacity: .15; } }
+.rse-halo .verde { background: radial-gradient(circle, rgba(76, 149, 108, .48), rgba(76, 149, 108, .14) 40%, rgba(76, 149, 108, 0) 66%); opacity: 0; transition: opacity 1.2s ease .3s; }
+.mc-rse.completo .rse-halo .verde { opacity: 1; }
 
 /* ---------- Medidor: arranca al máximo y baja a CERO apagando las luces ---------- */
 .rse-medidor { position: absolute; left: 820px; top: 140px; width: 716px; height: 410px; }
@@ -262,5 +274,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .rse-mango, .rse-llenado { transition: none; }
-  .rse-orbes i, .nu-flota { animation: none; }
+  .rse-orbes i, .nu-flota, .rse-halo .rojo b { animation: none; }
 }
