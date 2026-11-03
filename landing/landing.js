@@ -335,7 +335,7 @@
 
   // Lleva la carta i al frente del carrusel
   function centrar(i) {
-    objetivo = giro + normalizar(-i * paso - giro);
+    objetivo = giro + normalizar(i * paso - giro);
   }
 
   // ---------- Mouse ----------
@@ -406,11 +406,11 @@
     const actual = objetivo === null ? giro : objetivo;
     if (Math.abs(d) >= 50) {                       // muesca de la rueda del mouse: una carta por muesca
       inicioGesto = null;
-      objetivo = Math.round(actual / paso) * paso - Math.sign(d) * paso;
+      objetivo = Math.round(actual / paso) * paso + Math.sign(d) * paso;   // hacia abajo: la carta siguiente
       return;
     }
     if (inicioGesto === null) inicioGesto = actual;
-    objetivo = actual - d * .25;
+    objetivo = actual + d * .25;
     finRueda = setTimeout(() => {
       const fin = objetivo === null ? giro : objetivo;
       const movido = fin - inicioGesto;
@@ -754,7 +754,7 @@
       if (Math.abs(mOp - ca.op) < .004) ca.op = mOp;
       ca.act += (mAct - ca.act) * fBrillo;
 
-      const grados = i * paso + giro;
+      const grados = giro - i * paso;   // en orden inverso al giro: al girar pasan 1, 2, 3…
       const c = Math.cos(grados * RAD);
       if (c > mejor) { mejor = c; frente = i; }
 
