@@ -189,7 +189,8 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     certificaciones (norma, número, nombre y política).
   • Políticas y certificaciones se editan acá (en "calidad") pero se ven en
     ¿Quiénes somos?, después de Nuestra estructura y antes de Nuestros logros,
-    bajo el título rojo "Políticas y Certificaciones" (se cambia en
+    bajo el título "Políticas y CERTIFICACIONES" (el texto chico se cambia en
+    politicasCertificacionesAntetitulo y la palabra grande en
     politicasCertificacionesTitulo).
   • Cada política tiene su color (color: "#759AAB" y así). Ese color pinta
     su pestaña, su cita, sus directrices y el sello de la certificación con

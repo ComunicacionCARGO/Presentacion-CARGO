@@ -82,8 +82,10 @@ window.MEJORA = {
     pilaresNota: "La cantidad de Pilares y sus nombres, contenidos y aplicabilidad, podrían variar a medida que SCOPE vaya evolucionando.",
 
     // ---------- Políticas y Certificaciones ----------
-    // Van debajo de la pantalla partida, con scroll común, bajo este título:
-    politicasCertificacionesTitulo: "Políticas y Certificaciones",
+    // Se ven en ¿Quiénes somos?, antes de Nuestros logros, bajo este título
+    // (texto chico arriba y palabra grande abajo):
+    politicasCertificacionesAntetitulo: "Políticas y",
+    politicasCertificacionesTitulo: "CERTIFICACIONES",
 
     // Políticas (icono: sello, cono, hoja)
     // color: el de la política (pestaña, cita, directrices y su sello), en código "#rrggbb"
@@ -102,7 +104,7 @@ window.MEJORA = {
           "Exigir calidad en todos los productos, servicios y procesos.",
           "Fomentar la detección temprana de riesgos que puedan afectar al SGC y la prestación de los servicios del cliente.",
           "Promover la mejora continua y desarrollar nuestro equipo de trabajo con personas competentes, motivadas y responsables por la calidad.",
-          "Fomentar relaciones de largo plazo con los colaboradores, accionistas.",
+          "Fomentar relaciones de largo plazo con los colaboradores y accionistas.",
           "Contar con un marco adecuado para la definición y seguimiento de objetivos de calidad."
         ]
       },

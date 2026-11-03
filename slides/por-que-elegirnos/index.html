@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>¿Por qué elegirnos? — Grupo CARGO</title>
   <link rel="icon" type="image/png" href="../../img/marca/favicon.png">
@@ -20,7 +20,7 @@
   <main class="escenario">
 
     <!-- 1. ¿Por qué elegirnos? El título aparece en el centro, sube y muestra las tarjetas -->
-    <section class="seccion-mejora">
+    <section class="seccion-mejora" data-indice="¿Por qué elegirnos?">
       <div class="el-fondo"><div class="el-imagen"></div></div>
       <h1 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h1>
       <div class="el-tarjetas"></div>
@@ -28,15 +28,15 @@
 
     <!-- 2. Mejora continua: pantalla partida Calidad / Capacitaciones (mejora.js) -->
     <div class="mc-tramo" aria-hidden="true">
-      <section class="mc-elegir"></section>
+      <section class="mc-elegir" data-indice="Mejora continua"></section>
       <!-- 3. RSE: tablero "Hacia un impacto CERO" (rse.js), "Lo que hacemos, EN NÚMEROS" (rse-numeros.js)
            y "Acompañamos a la COMUNIDAD" (rse-comunidad.js) -->
       <div class="rse-fondo-comun" aria-hidden="true"><div class="rse-trama"></div></div>
-      <section class="mc-rse"></section>
-      <section class="mc-num"></section>
-      <section class="mc-com"></section>
+      <section class="mc-rse" data-indice="Impacto cero"></section>
+      <section class="mc-num" data-indice="En números"></section>
+      <section class="mc-com" data-indice="Comunidad"></section>
       <!-- 4. Nuestros CLIENTES: logos por rubro (clientes.js, datos/clientes.js) -->
-      <section class="mc-cli"></section>
+      <section class="mc-cli" data-indice="Clientes" data-indice-y="final"></section>
     </div>
 
     <!-- Tema abierto (Calidad o Capacitaciones) -->
@@ -57,6 +57,7 @@
   <script src="../../datos/rse.js"></script>
   <script src="../../datos/clientes.js"></script>
   <script src="../../compartido/base.js"></script>
+  <script src="../../compartido/indice.js"></script>
   <script src="diapositiva.js"></script>
   <script src="mejora.js"></script>
   <script src="rse-numeros.js"></script>

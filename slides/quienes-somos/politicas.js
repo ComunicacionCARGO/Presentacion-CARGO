@@ -52,7 +52,7 @@
   const politicaDe = (c, i) => politicas.find((p) => p.codigo === c.politica) || politicas[i];
   poli.innerHTML =
     '<div class="mp-fondo"></div>' +
-    `<h2 class="mp-titulo ent">${esc(C.politicasCertificacionesTitulo || 'Políticas y Certificaciones')}</h2>` +
+    `<h2 class="mp-titulo ent"><span>${esc(C.politicasCertificacionesAntetitulo || 'Políticas y')}</span><b>${esc(C.politicasCertificacionesTitulo || 'CERTIFICACIONES')}</b></h2>` +
     `<div class="s-pol">
       <ul class="po-tabs">${politicas.map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}" style="${colorDe(p)}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
       <div class="po-detalle ent" style="--i:2"></div>

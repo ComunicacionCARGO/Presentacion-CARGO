@@ -24,7 +24,10 @@
 .seccion-politicas h2, .seccion-politicas p, .seccion-politicas blockquote, .seccion-politicas figure { margin: 0; }
 .seccion-politicas strong { font-weight: 600; color: var(--fg); }
 .seccion-politicas em { font-style: italic; color: var(--rojo); }
-.mp-titulo { position: absolute; left: 64px; top: 78px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 64px; line-height: 1; color: var(--rojo); }
+/* Título como los demás (texto chico arriba y palabra grande abajo), con las medidas del de Nuestra estructura */
+.mp-titulo { position: absolute; left: 64px; top: 64px; line-height: 1; white-space: nowrap; }
+.mp-titulo span { display: block; font-weight: 300; font-size: 36px; color: var(--gris); }
+.mp-titulo b { display: block; margin-top: 2px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 74px; line-height: .95; color: var(--rojo); }
 .seccion-politicas .s-pol { position: absolute; left: 64px; top: 196px; width: 1472px; height: 430px; }
 .seccion-politicas .po-tabs, .seccion-politicas .po-detalle { top: 0; }
 .seccion-politicas .s-cert { position: absolute; left: 64px; top: 586px; width: 1472px; }   /* justo debajo de las directrices más largas */

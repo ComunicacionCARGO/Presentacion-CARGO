@@ -163,6 +163,7 @@
       animacion = requestAnimationFrame(mover);
     }
   }
+  window.desplazarA = (y) => irA(y);              // para el índice de secciones (compartido/indice.js)
   let ultimaRueda = 0, acumulado = 0;
   addEventListener('wheel', (e) => {
     // la rueda la maneja esta diapositiva

@@ -3,8 +3,11 @@
    Medidas en px sobre el escenario de 1600×900.
    ========================================================= */
 
+/* El fondo sobra 40 px por lado para el paralaje; el marco lo recorta (si no, en los
+   celulares el navegador toma la página como más ancha que la pantalla) */
+.fondo-marco { position: fixed; inset: 0; overflow: hidden; }
 .fondo {
-  position: fixed;
+  position: absolute;
   inset: -40px;
   background: var(--blanco) url(../img/landing/fondo.jpg) center / cover no-repeat;
   will-change: transform;

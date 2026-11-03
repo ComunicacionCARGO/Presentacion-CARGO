@@ -14,6 +14,23 @@
   escalar();
   addEventListener('resize', escalar);
 
+  // En un celular parado la presentación (16:9) se ve muy chica: se sugiere girarlo.
+  // Solo se muestra con esa orientación (base.css); "Seguir igual" lo cierra por esta visita.
+  let cerrado = false;
+  try { cerrado = sessionStorage.getItem('aviso-girar') === '1'; } catch (e) { /* sin almacenamiento */ }
+  if (!cerrado) {
+    const aviso = document.createElement('div');
+    aviso.className = 'aviso-girar';
+    aviso.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="5" width="18" height="38" rx="3"/><path d="M21 38h6"/></svg>' +
+      '<b>Girá el teléfono</b><p>La presentación está pensada para verse horizontal o en una computadora.</p>' +
+      '<button type="button">Seguir igual</button>';
+    aviso.querySelector('button').addEventListener('click', () => {
+      aviso.classList.add('cerrado');
+      try { sessionStorage.setItem('aviso-girar', '1'); } catch (e) { /* sin almacenamiento */ }
+    });
+    document.body.appendChild(aviso);
+  }
+
   const cortina = document.querySelector('.cortina');
   let revelado = false;
 

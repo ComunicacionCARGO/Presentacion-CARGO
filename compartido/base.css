@@ -90,6 +90,83 @@ html, body {
 .cortina.saliendo .banda { transform-origin: right; }
 .cortina.cubre { pointer-events: auto; }
 
+/* ---------- Índice de secciones (compartido/indice.js) ----------
+   Discreto: una pastilla crema como la de "Volver", a la derecha y al medio, con una rayita
+   por sección; la de la sección en pantalla es roja y más larga. Al pasar el cursor aparecen
+   los nombres. Se oculta con un tema o una tarjeta abiertos. */
+.indice {
+  position: absolute;
+  right: 16px;
+  top: 450px;
+  translate: 0 -50%;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 10px 8px;
+  border-radius: 999px;
+  background: rgba(255, 251, 243, .72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 22px -10px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(255, 255, 255, .6);
+  transition: opacity .3s ease;
+}
+.indice button { position: relative; display: flex; align-items: center; justify-content: flex-end; width: 22px; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; }
+.indice i { display: block; width: 10px; height: 2px; border-radius: 2px; background: rgba(58, 58, 58, .4); transition: width .35s cubic-bezier(.2, .8, .2, 1), height .3s ease, background .3s ease; }
+.indice button:hover i { width: 14px; background: var(--gris); }
+.indice button.activa i { width: 18px; height: 3px; background: var(--rojo); }
+.indice span {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  translate: 8px -50%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(255, 251, 243, .94);
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .35);
+  font: 600 11px var(--fuente-texto);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gris);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, translate .3s cubic-bezier(.2, .8, .2, 1);
+}
+.indice:hover span { opacity: 1; translate: 0 -50%; }
+.indice button.activa span { color: var(--rojo); }
+.indice button:hover span { background: #fff; }
+body.capitulo-abierto .indice, .tarjeta-capa.abierta ~ .indice { opacity: 0; pointer-events: none; }
+
+/* ---------- Aviso en celulares parados (base.js) ----------
+   La presentación es un escenario fijo de 16:9: en un celular vertical se ve muy chica.
+   Se sugiere girarlo (o abrirla en una computadora); "Seguir igual" lo cierra. */
+.aviso-girar { display: none; }
+@media (orientation: portrait) and (max-width: 820px) {
+  .aviso-girar {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 32px;
+    text-align: center;
+    background: var(--blanco);
+    color: var(--gris);
+  }
+}
+.aviso-girar.cerrado { display: none !important; }
+.aviso-girar svg { width: 76px; height: 76px; fill: none; stroke: var(--rojo); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; animation: aviso-girar 2.4s ease-in-out infinite; }
+@keyframes aviso-girar { 0%, 30% { transform: rotate(0); } 55%, 85% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+.aviso-girar b { font: 700 32px/1.05 var(--fuente-titulo); letter-spacing: .02em; text-transform: uppercase; }
+.aviso-girar p { max-width: 300px; margin: 0; font-size: 16px; font-weight: 300; line-height: 1.5; }
+.aviso-girar button { margin-top: 8px; padding: 10px 22px; border: 1px solid rgba(58, 58, 58, .35); border-radius: 999px; background: none; font: 500 14px var(--fuente-titulo); letter-spacing: .12em; text-transform: uppercase; color: var(--gris); }
+
 @media (prefers-reduced-motion: reduce) {
   .cortina .banda { transition-duration: .01s; }
+  .aviso-girar svg { animation: none; }
 }
