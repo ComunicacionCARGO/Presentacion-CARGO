@@ -65,22 +65,22 @@ window.CARTAS = [
   {
     antetitulo: "¿Quiénes",
     titulo: "SOMOS?",
-    portada: "img/cartas/quienes-somos.webp",
+    portada: "img/cartas/nuestra-estructura.jpg",
     foco: 50,
     destino: "slides/quienes-somos/index.html"
   },
   {
     antetitulo: "Servicio",
     titulo: "DIFERENCIAL",
-    portada: "img/cartas/servicio-diferencial.webp",
-    foco: 30,
+    portada: "img/cartas/quienes-somos.webp",
+    foco: 50,
     destino: "slides/servicio-a-medida/index.html"
   },
   {
     antetitulo: "¿Por qué",
     titulo: "ELEGIRNOS?",
-    portada: "img/cartas/nuestra-estructura.jpg",
-    foco: 50,
+    portada: "img/cartas/servicio-diferencial.webp",
+    foco: 30,
     destino: "slides/por-que-elegirnos/index.html"
   }
 ];
