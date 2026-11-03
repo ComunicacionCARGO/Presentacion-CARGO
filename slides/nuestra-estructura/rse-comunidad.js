@@ -20,7 +20,6 @@
   let k = 0;
 
   raiz.innerHTML =
-    '<div class="rse-fondo"></div>' +
     `<h2 class="rse-titulo ent" style="--i:1"><span>${esc(D.titulo)}</span><b>${esc(D.tituloGrande)}</b></h2>` +
     `<div class="co-acciones">${(D.acciones || []).map((a, i) => `
       <article class="co-accion ent" style="--i:${i + 2}">

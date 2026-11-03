@@ -32,15 +32,31 @@
 .mc-rse ul { list-style: none; }
 .mc-rse strong, .mc-num strong, .mc-com strong { font-weight: 600; color: var(--gris); }
 
-/* Fondo crema a todo el ancho de la ventana (también cubre lo que sobre abajo en ventanas altas) */
-.rse-fondo {
+/* Un solo fondo crema para las tres secciones (va antes que ellas en .mc-tramo, de y 1900 al
+   final, a todo el ancho de la ventana). Las secciones no tienen fondo propio: así las sombras,
+   los resplandores y las manchas de una pasan sobre la siguiente sin cortes. */
+.rse-fondo-comun {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
-  top: 0;
+  top: 1900px;
   width: calc(100vw / var(--escala, 1));
-  height: calc(900px + 50vh / var(--escala, 1));
+  height: calc(2700px + 50vh / var(--escala, 1));
   background: var(--blanco);
+  pointer-events: none;
 }
+/* Trama sutil de sustentabilidad (hojas, pinos, brote, gota y flecha circular) que aparece
+   con un fundido al entrar a RSE; arriba se funde para no marcar dónde empieza */
+.rse-trama {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 420px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 420px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' fill='none' stroke='rgb(76,149,108)' stroke-opacity='.13' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(28 46) rotate(-24)'%3E%3Cpath d='M0 20C10 0 34 0 44 8C36 24 14 32 0 20ZM2 19L32 9'/%3E%3C/g%3E%3Cg transform='translate(160 22)'%3E%3Cpath d='M20 0L36 26H28L42 46H-2L12 26H4ZM20 46V56'/%3E%3C/g%3E%3Cg transform='translate(66 182)'%3E%3Cpath d='M-16 0A16 16 0 1 1 0 16M0 16L7 11M0 16L6 22'/%3E%3C/g%3E%3Cg transform='translate(196 176)'%3E%3Cpath d='M0 30V8M0 14C-14 14-18 2-18-4C-6-4 0 4 0 14M0 10C12 10 16 0 16-6C6-6 0 2 0 10'/%3E%3C/g%3E%3Cg transform='translate(128 116)'%3E%3Cpath d='M0-14C6-4 10 2 10 6A10 10 0 0 1-10 6C-10 2-6-4 0-14Z'/%3E%3C/g%3E%3Ccircle cx='112' cy='40' r='1.6'/%3E%3Ccircle cx='232' cy='118' r='1.6'/%3E%3Ccircle cx='20' cy='128' r='1.6'/%3E%3Ccircle cx='150' cy='232' r='1.6'/%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+.rse-fondo-comun.visible .rse-trama { opacity: 1; }
 /* Manchas verdes suaves detrás del vidrio (degradés, sin filtros: no cargan el cuadro) */
 .rse-orbes { position: absolute; inset: 0; pointer-events: none; }
 .rse-orbes i { position: absolute; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, rgba(76, 149, 108, .34), rgba(76, 149, 108, 0) 68%); animation: rse-deriva 22s ease-in-out infinite alternate; }

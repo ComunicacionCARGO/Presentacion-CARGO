@@ -85,7 +85,7 @@
   }
 
   raiz.innerHTML =
-    '<div class="rse-fondo"></div><div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
+    '<div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
     `<h2 class="rse-titulo ent" style="--i:1"><span>${esc(D.titulo)}</span><b>${esc(D.tituloGrande)}</b></h2>` +
     `<div class="nu-flota izq"><div class="nu-vidrio ent" style="--i:2"><div class="nu-panel">
        <h3 class="ent" style="--i:2">${esc(D.reciclajeTitulo)}</h3>

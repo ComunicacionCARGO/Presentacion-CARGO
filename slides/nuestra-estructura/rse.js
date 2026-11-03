@@ -59,7 +59,7 @@
     `<circle class="rse-eje" cx="${CX}" cy="${CY}" r="17"/><circle class="rse-eje2" cx="${CX}" cy="${CY}" r="5"/>`;
 
   raiz.innerHTML =
-    '<div class="rse-fondo"></div><div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
+    '<div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
     `<h2 class="rse-titulo ent" style="--i:1"><span>${esc(R.titulo)}</span><b>${esc(R.tituloGrande)}</b></h2>` +
     `<p class="rse-texto ent" style="--i:2">${formato(R.texto)}</p>` +
     `<div class="rse-tablero">${P.map((p, i) => `<button type="button" class="rse-palanca ent" style="--i:${i + 3}" data-i="${i}" aria-pressed="false">
@@ -164,8 +164,10 @@
   // cuando la bajada (y − 900) pasa ese top y queda entera en pantalla con top + 900
   const TOP = raiz.offsetTop;
   let enPantalla = false, asentar = 0;
+  const fondoComun = document.querySelector('.rse-fondo-comun');   // su trama aparece al entrar a RSE
   document.addEventListener('desplazamiento', (e) => {
     const baj = Math.max(0, e.detail.y - 900);
+    if (fondoComun) fondoComun.classList.toggle('visible', baj > TOP + 100);
     const ver = baj > TOP + 150 && baj < TOP + 1500;
     if (ver !== visible) {
       visible = ver;
