@@ -20,8 +20,8 @@
       `<button type="button" class="activo" data-r="">${esc(D.todos || 'Todos')} <i>${clientes.length}</i></button>` +
       rubros.map((r) => `<button type="button" data-r="${esc(r)}">${esc(r)} <i>${cuantos(r)}</i></button>`).join('') +
     '</div>' +
-    `<a class="cli-volver ent" style="--i:3" href="../../index.html" data-transicion><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${esc(D.volver || 'Volver al inicio')}</a>` +
-    `<ul class="cli-grilla">${clientes.map((c, k) => `<li class="cli-logo" style="--k:${k}" data-r="${esc(c.rubro)}"><img src="../../img/clientes/${esc(c.imagen)}" alt="${esc(c.nombre)}" decoding="async"><span>${esc(c.nombre)}</span></li>`).join('')}</ul>`;
+    `<ul class="cli-grilla">${clientes.map((c, k) => `<li class="cli-logo" style="--k:${k}" data-r="${esc(c.rubro)}"><img src="../../img/clientes/${esc(c.imagen)}" alt="${esc(c.nombre)}" decoding="async"><span>${esc(c.nombre)}</span></li>`).join('')}</ul>` +
+    `<a class="cli-volver" href="../../index.html" data-transicion><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${esc(D.volver || 'Volver al inicio')}</a>`;
 
   // ---------- Tamaño parejo: todos los logos con más o menos la misma superficie ----------
   // (si no, los anchos y bajos se ven enormes y los cuadrados chiquitos)
@@ -66,6 +66,8 @@
   const TOP = raiz.offsetTop;
   let visible = false, asentar = 0;
   document.addEventListener('desplazamiento', (e) => {
+    // el botón Volver aparece al bajar un poco más (la sección ya entera en pantalla)
+    raiz.classList.toggle('con-volver', e.detail.y > TOP + 940);
     const ver = e.detail.y > TOP + 150;
     if (ver === visible) return;
     visible = ver;
