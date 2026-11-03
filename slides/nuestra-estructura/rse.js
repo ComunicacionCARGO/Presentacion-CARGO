@@ -77,13 +77,15 @@
   const haloRojo = raiz.querySelector('.rse-halo .rojo');   // su opacidad sigue a la aguja
   let haloPrevio = -1;
   const lecturaN = raiz.querySelector('.rse-lectura b'), lecturaT = raiz.querySelector('.rse-lectura span');
-  const contenido = raiz.querySelector('.rse-contenido');
+  const contenido = raiz.querySelector('.rse-contenido'), tarjeta = raiz.querySelector('.rse-tarjeta');
   const activas = new Set();
   let fijada = 'inicio', mostrada = null;
 
   // ---------- Tarjeta ----------
   function htmlDe(clave) {
-    if (clave === 'inicio') return `<p class="rse-num">0 / ${N}</p><h3>${esc(R.ayuda)}</h3><p class="rse-frase">${formato(R.ayudaTexto)}</p>`;
+    // inicio: título grande y centrado, con una flecha que señala las palancas (a la izquierda)
+    if (clave === 'inicio') return `<svg class="rse-flecha" viewBox="0 0 96 40" aria-hidden="true"><path class="cola" d="M90 20H16"/><path class="punta" d="M26 6 10 20l16 14"/></svg>` +
+      `<p class="rse-num">0 / ${N}</p><h3>${esc(R.ayuda)}</h3><p class="rse-frase">${formato(R.ayudaTexto)}</p>`;
     if (clave === 'final') return `<p class="rse-num">${N} / ${N}</p><h3 class="rse-final">${esc(R.finalTarjetaTitulo || R.finalTitulo)}</h3><p class="rse-frase">${formato(R.finalTexto)}</p><div><button type="button" class="rse-reiniciar">Reiniciar</button></div>`;
     const p = P[clave];
     return `<p class="rse-num">${String(clave + 1).padStart(2, '0')} · ${activas.has(clave) ? 'Activada' : 'Sin activar'}</p><h3>${esc(p.nombre)}</h3>` +
@@ -93,6 +95,7 @@
     const html = htmlDe(clave);
     if (!forzar && clave === mostrada && contenido.innerHTML === html) return;
     mostrada = clave;
+    tarjeta.classList.toggle('inicio', clave === 'inicio');
     contenido.classList.remove('lista');
     contenido.innerHTML = html;
     requestAnimationFrame(() => requestAnimationFrame(() => contenido.classList.add('lista')));
@@ -165,6 +168,98 @@
   const TOP = raiz.offsetTop;
   let enPantalla = false, asentar = 0;
   const fondoComun = document.querySelector('.rse-fondo-comun');   // su trama aparece al entrar a RSE
+  const trama = fondoComun && fondoComun.querySelector('.rse-trama');
+  if (trama) trama.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(dibujarTrama())}")`;
+
+  // ---------- Trama orgánica (como el ejemplo de la persona, invertido: verde sobre crema) ----------
+  // Un SVG de 1600 × 1200 que se repite: campos de ondas paralelas (algunas cortadas en trazos),
+  // campos de puntos que se achican hacia el borde, filas de rayitas, manchas orgánicas, destellos
+  // de cuatro puntas y círculos. Siempre sale igual (azar con semilla fija).
+  function dibujarTrama() {
+    const W = 1600, H = 1200, MARGEN = 70;
+    let s = 20251103;
+    const azar = () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const entre = (a, b) => a + azar() * (b - a);
+    const f = (n) => n.toFixed(1);
+    const centros = [];
+    // ubica cada figura lejos de las demás y de los bordes del mosaico (así no se corta al repetirse)
+    function lugar(radio) {
+      for (let k = 0; k < 400; k++) {
+        const x = entre(MARGEN + radio, W - MARGEN - radio), y = entre(MARGEN + radio, H - MARGEN - radio);
+        if (centros.every((c) => Math.hypot(c[0] - x, c[1] - y) > c[2] + radio + 30)) { centros.push([x, y, radio]); return [x, y]; }
+      }
+      return null;
+    }
+    const rot = (x, y, cx, cy, a) => [cx + (x - cx) * Math.cos(a) - (y - cy) * Math.sin(a), cy + (x - cx) * Math.sin(a) + (y - cy) * Math.cos(a)];
+    let svg = '';
+    // ondas paralelas: las de los costados más cortas (forma de lente); algunas cortadas en trazos
+    for (let n = 0; n < 6; n++) {
+      const R = entre(120, 175), c = lugar(R); if (!c) continue;
+      const a = entre(0, Math.PI), lineas = Math.round(entre(7, 11)), sep = entre(13, 17), amp = entre(5, 11), onda = entre(55, 90);
+      const cortada = azar() < .5;
+      for (let i = 0; i < lineas; i++) {
+        const u = (i - (lineas - 1) / 2) / ((lineas - 1) / 2), largo = R * 1.9 * Math.sqrt(Math.max(.05, 1 - u * u));
+        let d = '';
+        for (let x = -largo / 2; x <= largo / 2; x += 8) {
+          const p = rot(c[0] + x, c[1] + u * sep * (lineas - 1) / 2 + Math.sin(x / onda * 2 * Math.PI + i * .5) * amp, c[0], c[1], a);
+          d += (d ? 'L' : 'M') + f(p[0]) + ' ' + f(p[1]);
+        }
+        svg += `<path d="${d}" fill="none" stroke-width="3.2"${cortada ? ` stroke-dasharray="${f(entre(22, 46))} ${f(entre(10, 16))}"` : ''}/>`;
+      }
+    }
+    // campos de puntos (semitono): grilla girada, el punto se achica hacia el borde
+    for (let n = 0; n < 6; n++) {
+      const R = entre(90, 140), c = lugar(R); if (!c) continue;
+      const a = entre(0, Math.PI), paso = entre(11, 14), rMax = entre(2.2, 3);
+      for (let gy = -R; gy <= R; gy += paso) for (let gx = -R; gx <= R; gx += paso) {
+        const d = Math.hypot(gx, gy) / R; if (d > 1) continue;
+        const r = rMax * Math.pow(1 - d, .7); if (r < .55) continue;
+        const p = rot(c[0] + gx, c[1] + gy, c[0], c[1], a);
+        svg += `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="${f(r)}" stroke="none"/>`;
+      }
+    }
+    // filas de rayitas (como lluvia): trazos cortos que se acortan hacia el borde del campo
+    for (let n = 0; n < 4; n++) {
+      const R = entre(80, 120), c = lugar(R); if (!c) continue;
+      const a = entre(-.6, .6) + Math.PI / 2, paso = 15;
+      for (let gy = -R; gy <= R; gy += paso) for (let gx = -R; gx <= R; gx += paso * 1.3) {
+        const d = Math.hypot(gx, gy) / R; if (d > 1) continue;
+        const largo = 9 * (1 - d) + 2, x = gx + (Math.round(gy / paso) % 2 ? paso * .65 : 0);
+        const p0 = rot(c[0] + x, c[1] + gy - largo / 2, c[0], c[1], a - Math.PI / 2), p1 = rot(c[0] + x, c[1] + gy + largo / 2, c[0], c[1], a - Math.PI / 2);
+        svg += `<path d="M${f(p0[0])} ${f(p0[1])}L${f(p1[0])} ${f(p1[1])}" fill="none" stroke-width="3"/>`;
+      }
+    }
+    // manchas orgánicas (radio con armónicos, contorno suave), algunas con puntos adentro
+    for (let n = 0; n < 4; n++) {
+      const R = entre(70, 120), c = lugar(R * 1.3); if (!c) continue;
+      const fases = [entre(0, 6), entre(0, 6), entre(0, 6)], pts = [];
+      for (let k = 0; k < 18; k++) {
+        const t = k / 18 * 2 * Math.PI, r = R * (1 + .22 * Math.sin(2 * t + fases[0]) + .14 * Math.sin(3 * t + fases[1]) + .08 * Math.sin(5 * t + fases[2]));
+        pts.push([c[0] + r * Math.cos(t), c[1] + r * Math.sin(t)]);
+      }
+      let d = `M${f((pts[0][0] + pts[1][0]) / 2)} ${f((pts[0][1] + pts[1][1]) / 2)}`;
+      for (let k = 1; k <= pts.length; k++) { const p = pts[k % pts.length], q = pts[(k + 1) % pts.length]; d += `Q${f(p[0])} ${f(p[1])} ${f((p[0] + q[0]) / 2)} ${f((p[1] + q[1]) / 2)}`; }
+      svg += `<path d="${d}Z" stroke="none" opacity=".55"/>`;
+    }
+    // destellos de cuatro puntas y círculos llenos
+    for (let n = 0; n < 9; n++) {
+      const t = entre(9, 15), c = lugar(t + 10); if (!c) continue;
+      const q = t * .28;
+      svg += `<path d="M${f(c[0])} ${f(c[1] - t)}Q${f(c[0] + q)} ${f(c[1] - q)} ${f(c[0] + t)} ${f(c[1])}Q${f(c[0] + q)} ${f(c[1] + q)} ${f(c[0])} ${f(c[1] + t)}Q${f(c[0] - q)} ${f(c[1] + q)} ${f(c[0] - t)} ${f(c[1])}Q${f(c[0] - q)} ${f(c[1] - q)} ${f(c[0])} ${f(c[1] - t)}Z" stroke="none"/>`;
+    }
+    for (let n = 0; n < 3; n++) {
+      const r = entre(24, 46), c = lugar(r); if (!c) continue;
+      svg += `<circle cx="${f(c[0])}" cy="${f(c[1])}" r="${f(r)}" stroke="none" opacity=".7"/>`;
+    }
+    // puntitos sueltos para rellenar
+    for (let n = 0; n < 60; n++) {
+      const x = entre(MARGEN, W - MARGEN), y = entre(MARGEN, H - MARGEN);
+      if (centros.some((c) => Math.hypot(c[0] - x, c[1] - y) < c[2] + 12)) continue;
+      svg += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(entre(1.6, 2.8))}" stroke="none"/>`;
+    }
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">` +
+      `<g fill="#4C956C" stroke="#4C956C" stroke-linecap="round" stroke-linejoin="round" opacity=".13">${svg}</g></svg>`;
+  }
   document.addEventListener('desplazamiento', (e) => {
     const baj = Math.max(0, e.detail.y - 900);
     if (fondoComun) fondoComun.classList.toggle('visible', baj > TOP + 100);
