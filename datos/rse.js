@@ -14,7 +14,7 @@
 window.RSE = {
 
   // =====================================================================
-  // 1. LO QUE HACEMOS, EN NÚMEROS (antes del tablero)
+  // 2. LO QUE HACEMOS, EN NÚMEROS (debajo del tablero)
   //    Los números van entre comillas, como se escriben: "65.916", "2,1".
   // =====================================================================
   numeros: {
@@ -127,16 +127,17 @@ window.RSE = {
   },
 
   // =====================================================================
-  // 2. TABLERO "HACIA UN IMPACTO CERO"
+  // 1. TABLERO "HACIA UN IMPACTO CERO" (va primero)
+  //    titulo = texto chico de arriba;  tituloGrande = la palabra grande
   // =====================================================================
-  antetitulo: "Responsabilidad Social Empresaria",
   titulo: "Hacia un impacto",
   tituloGrande: "CERO",
   texto: "Nos propusimos alcanzar un **impacto cero en nuestra huella de carbono**. Para lograrlo diseñamos un plan con **acciones concretas**.",
   ayuda: "Activá cada palanca",
   ayudaTexto: "Cada acción de nuestro plan baja la aguja del medidor. Activalas una por una para ver cómo llegamos a **impacto cero**.",
 
-  // Medidor: texto de cada punta y lo que dice cuando están todas activadas
+  // Medidor: arranca al máximo (HOY, a la derecha) y baja hasta CERO (izquierda).
+  // Texto de cada punta y lo que dice cuando están todas activadas
   medidorDesde: "HOY",
   medidorHasta: "CERO",
   medidorTitulo: "Huella de carbono",

@@ -1,8 +1,10 @@
 /* =========================================================
    RSE — "Hacia un impacto CERO" (datos/rse.js)
-   Tablero industrial debajo de "Políticas y Certificaciones": cada palanca
-   que se activa (clic o teclas 1–8) muestra su acción en la tarjeta y baja
-   la aguja del medidor de huella de carbono. Con todas activadas llega a CERO.
+   Tablero debajo de "Políticas y Certificaciones": cada palanca que se activa
+   (clic o teclas 1–8) muestra su acción en la tarjeta y baja la aguja del
+   medidor de huella de carbono. El medidor arranca al máximo (todas las luces
+   prendidas) y, al bajar, las va apagando; con todas activadas llega a CERO y
+   solo queda prendido el "CERO".
    La aguja es un resorte (pasa un poquito y vuelve, como un instrumento real)
    y tiembla apenas mientras no llega a cero.
    ========================================================= */
@@ -32,9 +34,9 @@
   const CX = 358, CY = 290, RADIO = 250, SEGMENTOS = 48;
   const px = (r, a) => (CX + r * Math.cos(a)).toFixed(1), py = (r, a) => (CY + r * Math.sin(a)).toFixed(1);
   const pt = (r, a) => `${px(r, a)} ${py(r, a)}`;
-  const angulo = (t) => Math.PI + t * Math.PI;             // t 0 = HOY (izquierda), 1 = CERO (derecha)
-  // color de la banda: rojo → ámbar → verde
-  const COLORES = [[239, 69, 41], [244, 161, 39], [76, 149, 108]];
+  const angulo = (t) => Math.PI + t * Math.PI;             // t 0 = CERO (izquierda), 1 = máximo, HOY (derecha)
+  // color de la banda: verde (cero) → ámbar → rojo (máximo)
+  const COLORES = [[76, 149, 108], [244, 161, 39], [239, 69, 41]];
   function colorEn(t) {
     const x = t * 2, i = Math.min(1, Math.floor(x)), f = x - i;
     const a = COLORES[i], b = COLORES[i + 1];
@@ -51,14 +53,13 @@
   }
   medidor +=
     `<text class="rse-m-titulo" x="${CX}" y="${CY - RADIO - 30}">${esc(R.medidorTitulo)}</text>` +   // arriba del arco: la aguja no lo tapa
-    `<text class="rse-punta" x="${CX - RADIO}" y="${CY + 36}">${esc(R.medidorDesde)}</text>` +
-    `<text class="rse-punta hasta" x="${CX + RADIO}" y="${CY + 36}">${esc(R.medidorHasta)}</text>` +
+    `<text class="rse-punta cero" x="${CX - RADIO}" y="${CY + 38}">${esc(R.medidorHasta)}</text>` +
+    `<text class="rse-punta hoy" x="${CX + RADIO}" y="${CY + 38}">${esc(R.medidorDesde)}</text>` +
     `<g class="rse-aguja" transform="translate(${CX} ${CY}) rotate(180)"><path d="M0 -8 L196 -1.6 L206 0 L196 1.6 L0 8 L-30 4 L-30 -4z"/></g>` +
     `<circle class="rse-eje" cx="${CX}" cy="${CY}" r="17"/><circle class="rse-eje2" cx="${CX}" cy="${CY}" r="5"/>`;
 
   raiz.innerHTML =
-    '<div class="rse-fondo"></div>' +
-    `<p class="rse-ante ent">${esc(R.antetitulo)}</p>` +
+    '<div class="rse-fondo"></div><div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
     `<h2 class="rse-titulo ent" style="--i:1"><span>${esc(R.titulo)}</span><b>${esc(R.tituloGrande)}</b></h2>` +
     `<p class="rse-texto ent" style="--i:2">${formato(R.texto)}</p>` +
     `<div class="rse-tablero">${P.map((p, i) => `<button type="button" class="rse-palanca ent" style="--i:${i + 3}" data-i="${i}" aria-pressed="false">
@@ -133,15 +134,17 @@
   mostrar('inicio');
 
   // ---------- Aguja: resorte con un poco de rebote y un temblor leve ----------
+  // Arranca en 0 y, la primera vez que se ve, sube al máximo encendiendo las luces (como un
+  // instrumento al prenderse); cada palanca activada la baja y apaga las luces de arriba.
   let t = 0, vel = 0, encendidos = -1, previo = 0, enMarcha = false, visible = false;
   const RIGIDEZ = 60, AMORTIGUACION = 2 * Math.sqrt(RIGIDEZ) * .42;
   function cuadro(ahora) {
     const dt = Math.min(.05, (ahora - (previo || ahora)) / 1000);
     previo = ahora;
-    const objetivo = N ? activas.size / N : 0;
+    const objetivo = N ? 1 - activas.size / N : 1;
     vel += (RIGIDEZ * (objetivo - t) - AMORTIGUACION * vel) * dt;
     t += vel * dt;
-    const temblor = objetivo < 1 ? (Math.sin(ahora / 83) * .6 + Math.sin(ahora / 31) * .4) * .0022 : 0;
+    const temblor = objetivo > 0 ? (Math.sin(ahora / 83) * .6 + Math.sin(ahora / 31) * .4) * .0022 : 0;
     const v = Math.max(-.03, Math.min(1.03, t + temblor));
     aguja.setAttribute('transform', `translate(${CX} ${CY}) rotate(${(180 + v * 180).toFixed(2)})`);
     const n = Math.max(0, Math.min(SEGMENTOS, Math.round(v * SEGMENTOS)));

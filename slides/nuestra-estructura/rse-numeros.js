@@ -1,5 +1,6 @@
 /* =========================================================
-   RSE 1 — "Lo que hacemos, EN NÚMEROS" (datos/rse.js → numeros)
+   RSE 2 — "Lo que hacemos, EN NÚMEROS" (datos/rse.js → numeros), debajo del
+   tablero. Dos tarjetas de vidrio que flotan y se inclinan con el mouse:
    • Reciclaje: contadores que suben al llegar y 12 columnas de "fardos"
      (cada bloque son 500 kg) que caen uno por uno; el cursor muestra los kg.
    • Huella de carbono: la línea del índice es una ruta y un camioncito la
@@ -35,7 +36,7 @@
 
   // ---------- Fardos ----------
   const KG_BLOQUE = 500, ALTO_BLOQUE = 15.1, PASO = 18.1;
-  const ancho = 688, colW = 42, sep = meses.length > 1 ? (ancho - meses.length * colW) / (meses.length - 1) : 0;
+  const ancho = 648, colW = 40, sep = meses.length > 1 ? (ancho - meses.length * colW) / (meses.length - 1) : 0;
   const fardos = meses.map((m, c) => {
     const llenos = Math.floor(m.kg / KG_BLOQUE), resto = (m.kg % KG_BLOQUE) / KG_BLOQUE;
     let bloques = '';
@@ -45,7 +46,7 @@
   }).join('');
 
   // ---------- Ruta de la huella (SVG 688 × 300 de gráfico + 30 de años) ----------
-  const GW = 688, GH = 290, PAD = 14, MAX_I = 3.5, MAX_M3 = 25000;
+  const GW = 648, GH = 290, PAD = 14, MAX_I = 3.5, MAX_M3 = 25000;
   const n = huella.length;
   const X = (i) => PAD + (n > 1 ? i * (GW - 2 * PAD) / (n - 1) : 0);
   const Y = (v) => GH - (v / MAX_I) * (GH - 10);
@@ -84,10 +85,9 @@
   }
 
   raiz.innerHTML =
-    '<div class="nu-fondo"></div>' +
+    '<div class="rse-fondo"></div><div class="rse-orbes" aria-hidden="true"><i></i><i></i><i></i></div>' +
     `<h2 class="rse-titulo ent" style="--i:1"><span>${esc(D.titulo)}</span><b>${esc(D.tituloGrande)}</b></h2>` +
-    '<i class="nu-division"></i>' +
-    `<div class="nu-panel izq">
+    `<div class="nu-flota izq"><div class="nu-vidrio ent" style="--i:2"><div class="nu-panel">
        <h3 class="ent" style="--i:2">${esc(D.reciclajeTitulo)}</h3>
        <p class="nu-texto ent" style="--i:2">${formato(D.reciclajeTexto)}</p>
        <div class="nu-datos ent" style="--i:3">
@@ -96,8 +96,8 @@
        </div>
        <p class="nu-etq ent" style="--i:4">${esc(D.registroTitulo)}</p>
        <div class="nu-fardos">${fardos}</div>
-     </div>` +
-    `<div class="nu-panel der">
+     </div></div></div>` +
+    `<div class="nu-flota der"><div class="nu-vidrio ent" style="--i:3"><div class="nu-panel">
        <h3 class="ent" style="--i:2">${esc(D.huellaTitulo)}</h3>
        <p class="nu-texto ent" style="--i:2">${formato(D.huellaTexto)}</p>
        <div class="nu-datos ent" style="--i:3">
@@ -117,7 +117,20 @@
          </svg>
          <div class="nu-info"></div>
        </div>
-     </div>`;
+     </div></div></div>`;
+
+  // ---------- Vidrio: cada tarjeta se inclina apenas hacia el cursor ----------
+  const vidrios = [...raiz.querySelectorAll('.nu-vidrio')];
+  raiz.addEventListener('pointermove', (e) => {
+    vidrios.forEach((v) => {
+      const r = v.getBoundingClientRect();
+      const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / r.width));
+      const dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / r.height));
+      v.style.setProperty('--ry', (dx * 4).toFixed(2) + 'deg');
+      v.style.setProperty('--rx', (-dy * 4).toFixed(2) + 'deg');
+    });
+  });
+  raiz.addEventListener('pointerleave', () => vidrios.forEach((v) => { v.style.setProperty('--rx', '0deg'); v.style.setProperty('--ry', '0deg'); }));
 
   // ---------- Fardos: el cursor muestra los kg ----------
   const cajaFardos = raiz.querySelector('.nu-fardos');

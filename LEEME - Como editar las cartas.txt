@@ -205,11 +205,28 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pasar el cursor por un lado, la banda de franjas se corre; clic para abrir el
     tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
 
-RSE (al final de Nuestra estructura): EN NÚMEROS, TABLERO Y COMUNIDAD
+RSE (al final de Nuestra estructura): TABLERO, EN NÚMEROS Y COMUNIDAD
 ---------------------------------------------------------------------
-Se edita en  datos\rse.js  (con el Bloc de notas). Son tres partes:
+Se edita en  datos\rse.js  (con el Bloc de notas). Aparecen en este orden:
 
-1. numeros — "Lo que hacemos, EN NÚMEROS"
+1. Tablero "Hacia un impacto CERO"
+  • titulo es el texto chico de arriba ("Hacia un impacto") y tituloGrande la
+    palabra grande ("CERO"). Lo mismo en las otras dos partes.
+  • Texto de arriba, textos del medidor (HOY / CERO) y el mensaje final que
+    aparece cuando están todas las palancas activadas.
+  • palancas: cada una tiene nombre (lo que se lee debajo), icono (ruta,
+    camion, grafico, foco, escudo, arboles, reciclar, digital), texto (la frase
+    principal) y puntos (hasta 4 renglones cortos).
+  • Están pensadas para ser 8 (dos filas de 4). Si se agregan más, conviene
+    pedirle a Claude que ajuste el tablero.
+  • **texto** = negrita.
+  • Al ver la presentación: el medidor arranca al máximo, con todas las luces
+    prendidas. Clic en cada palanca (o las teclas 1 a 8) para activarla: la
+    tarjeta muestra la acción, la aguja baja y se apagan luces. Con todas
+    activadas solo queda prendido "CERO", aparece "IMPACTO CERO" y el botón
+    Reiniciar.
+
+2. numeros — "Lo que hacemos, EN NÚMEROS" (dos tarjetas de vidrio)
   • Reciclaje: kilos y árboles (van entre comillas, con punto de miles:
     "65.916") y los 12 meses del registro (mes y kg).
   • Huella de carbono: un renglón por mes con m3 e índice (con coma decimal:
@@ -224,20 +241,6 @@ Se edita en  datos\rse.js  (con el Bloc de notas). Son tres partes:
     y grupo ("Ambiente" o "Comunidad"; las fichas se agrupan solas).
   • Para cambiar un logo o una foto por uno de mejor calidad, guardalo en esa
     carpeta con el mismo nombre de archivo.
-
-2. Tablero "Hacia un impacto CERO":
-  • Títulos, texto de arriba, textos del medidor (HOY / CERO) y el mensaje
-    final que aparece cuando están todas las palancas activadas.
-  • palancas: cada una tiene nombre (lo que se lee debajo), icono (ruta,
-    camion, grafico, foco, escudo, arboles, reciclar, digital), texto (la frase
-    principal) y puntos (hasta 4 renglones cortos).
-  • Están pensadas para ser 8 (dos filas de 4). Si se agregan más, conviene
-    pedirle a Claude que ajuste el tablero.
-  • **texto** = negrita.
-  • Al ver la presentación: clic en cada palanca (o las teclas 1 a 8) para
-    activarla; la tarjeta muestra la acción y la aguja baja hacia CERO. Con
-    todas activadas aparece "IMPACTO CERO" y el botón Reiniciar.
-
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:
