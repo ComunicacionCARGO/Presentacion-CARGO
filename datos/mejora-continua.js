@@ -19,7 +19,7 @@ window.MEJORA = {
       id: "calidad",
       numero: "01",
       titulo: "CALIDAD",
-      bajada: "S.C.O.P.E. · Políticas · Certificaciones",
+      bajada: "S.C.O.P.E. · Objetivos · Pilares",
       icono: "sello",
       boton: "Explorar"
     },
@@ -81,7 +81,11 @@ window.MEJORA = {
     ],
     pilaresNota: "La cantidad de Pilares y sus nombres, contenidos y aplicabilidad, podrían variar a medida que SCOPE vaya evolucionando.",
 
-    // 4. Políticas (icono: sello, cono, hoja)
+    // ---------- Políticas y Certificaciones ----------
+    // Van debajo de la pantalla partida, con scroll común, bajo este título:
+    politicasCertificacionesTitulo: "Políticas y Certificaciones",
+
+    // Políticas (icono: sello, cono, hoja)
     politicasTitulo: "Políticas",
     certificadoPor: "Certificado por IRAM · IQNET",
     politicas: [
@@ -132,7 +136,7 @@ window.MEJORA = {
       }
     ],
 
-    // 5. Certificaciones (sellos)
+    // Certificaciones (sellos)
     certificacionesTitulo: "Certificaciones",
     certificacionesTexto: "Nuestros sistemas de gestión están certificados por **IRAM** e **IQNET** bajo las normas:",
     certificaciones: [

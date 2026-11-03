@@ -7,7 +7,7 @@
    sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
    parte gris continúa el gris de arriba */
 .anillos, .seccion-mejora, .mc-tramo { translate: 0 calc(var(--bajada, 0) * -1px); }
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 900px; z-index: 7; pointer-events: none; }
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 1980px; z-index: 7; pointer-events: none; }
 .mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
 .mc-elegir.eligiendo { pointer-events: none; }
@@ -41,6 +41,7 @@
   transition: opacity .6s ease, scale .6s cubic-bezier(.2, .8, .2, 1);
 }
 .mc-bloque-0 { left: 400px; color: var(--gris); }
+.mc-bloque-0 .mc-m-titulo { color: var(--rojo); }
 .mc-bloque-1 { left: 1200px; color: var(--blanco); }
 .mc-bloque-1 .mc-franjitas { --franja3: rgba(255, 251, 243, .6); }
 .mc-elegir.visible .mc-bloque { opacity: 1; transition-delay: .25s, 0s; }
@@ -88,6 +89,45 @@
 .mc-m-boton b { transition: translate .3s ease; }
 .mc-bloque.foco .mc-m-boton { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
 .mc-bloque.foco .mc-m-boton b { translate: 5px 0; }
+/* ---------- Políticas y Certificaciones ----------
+   Debajo de la pantalla partida, con scroll común. Sigue el crema del lado de Calidad
+   (la banda roja de abajo termina justo en y 900, donde empieza esta sección). */
+.mc-poli {
+  --fg: var(--gris);
+  --fg2: rgba(58, 58, 58, .8);
+  --linea: rgba(58, 58, 58, .15);
+  --oscuro: #F1EADC;
+  position: absolute;
+  left: 0;
+  top: 900px;
+  width: 1600px;
+  height: 1080px;
+  color: var(--fg);
+  pointer-events: auto;
+}
+.mp-fondo {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: 0;
+  width: calc(100vw / var(--escala, 1));
+  height: calc(1080px + 50vh / var(--escala, 1));   /* también cubre lo que sobre abajo en ventanas altas */
+  background: var(--blanco);
+}
+.mc-poli ol, .mc-poli ul { margin: 0; padding: 0; list-style: none; }
+.mc-poli h2, .mc-poli p, .mc-poli blockquote, .mc-poli figure { margin: 0; }
+.mc-poli strong { font-weight: 600; color: var(--fg); }
+.mc-poli em { font-style: italic; color: var(--rojo); }
+.mp-titulo { position: absolute; left: 64px; top: 78px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 64px; line-height: 1; color: var(--rojo); }
+.mc-poli .s-pol { position: absolute; left: 64px; top: 196px; width: 1472px; height: 430px; }
+.mc-poli .po-tabs, .mc-poli .po-detalle { top: 0; }
+.mc-poli .s-cert { position: absolute; left: 64px; top: 650px; width: 1472px; }
+.mc-poli .ce-texto { margin-top: 0; }
+.mc-poli .ce-sellos { margin-top: 26px; }
+.mc-poli .ce-svg { width: 250px; height: 250px; }
+.mc-poli .ce-sello figcaption { margin-top: 14px; }
+.mc-poli .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
+.mc-poli.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.08s + var(--i, 0) * .07s); }
+
 /* Tres franjitas de la marca (rojo, rojo, gris) */
 .mc-franjitas { display: inline-flex; gap: 3px; height: 5px; }
 .mc-franjitas b { display: block; width: 14px; height: 5px; background: var(--rojo); }

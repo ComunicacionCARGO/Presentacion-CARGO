@@ -187,6 +187,10 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pilares (con su ícono: carretilla, caja, camion, sello, personas, casco,
     monedas), políticas (nombre, código, norma, cita y directrices) y
     certificaciones (norma, número, nombre y política).
+  • Políticas y certificaciones no están dentro del tema Calidad: se ven más
+    abajo, al seguir bajando después de la pantalla partida, bajo el título
+    rojo "Políticas y Certificaciones" (se cambia en
+    politicasCertificacionesTitulo).
   • capacitaciones: #Exp Aprende (textos e imagen de la plataforma) y
     Trabajo en equipo (inducción y liderazgo).
   • Se pueden agregar o quitar objetivos, pilares, directrices, políticas o

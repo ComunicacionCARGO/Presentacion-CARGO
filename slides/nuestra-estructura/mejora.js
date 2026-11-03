@@ -182,11 +182,11 @@
     bajada = Math.max(0, e.detail.y - 900);
     elegir.classList.toggle('visible', bajada > 450);
     tramo.setAttribute('aria-hidden', bajada > 300 ? 'false' : 'true');
-    if (bajada < 600 && hover >= 0 && eligiendo < 0) resaltar(-1);
+    if ((bajada < 600 || bajada > 1300) && hover >= 0 && eligiendo < 0) resaltar(-1);
   });
   // en la pantalla partida: ← → eligen un lado y Enter lo abre
   addEventListener('keydown', (e) => {
-    if (capitulo.classList.contains('abierto') || bajada < 800) return;
+    if (capitulo.classList.contains('abierto') || bajada < 800 || bajada > 1100) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); resaltar(0); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); resaltar(1); }
     else if (e.key === 'Enter' && hover >= 0) { e.preventDefault(); elegirTema(hover); }
@@ -281,39 +281,6 @@
             }));
           }
         },
-        {
-          pestana: 'Políticas',
-          html: () => `<div class="s-pol">
-            <h3 class="cap-h ent">${esc(C.politicasTitulo)}</h3>
-            <ul class="po-tabs">${(C.politicas || []).map((p, i) => `<li class="ent" style="--i:${i}"><button type="button" data-i="${i}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
-            <div class="po-detalle ent"></div>
-            <p class="po-cert ent">${esc(C.certificadoPor)}</p>
-          </div>`,
-          alMostrar: (el) => {
-            const det = $('.po-detalle', el), botones = [...el.querySelectorAll('.po-tabs button')];
-            const mostrar = (i) => {
-              const p = (C.politicas || [])[i];
-              if (!p) return;
-              botones.forEach((b, j) => b.classList.toggle('activo', j === i));
-              det.classList.remove('lista');
-              det.innerHTML = `<p class="po-norma">${esc(p.norma)} <span>${esc(p.codigo)}</span></p>
-                <blockquote>${esc(p.cita)}</blockquote>
-                <p class="po-etq">Directrices</p>
-                <ul class="po-dir">${(p.directrices || []).map((d, k) => `<li style="--i:${k}">${formato(d)}</li>`).join('')}</ul>`;
-              requestAnimationFrame(() => requestAnimationFrame(() => det.classList.add('lista')));
-            };
-            botones.forEach((b) => b.addEventListener('click', () => mostrar(+b.dataset.i)));
-            mostrar(0);
-          }
-        },
-        {
-          pestana: 'Certificaciones',
-          html: () => `<div class="s-cert">
-            <h3 class="cap-h ent">${esc(C.certificacionesTitulo)}</h3>
-            <p class="ce-texto ent">${formato(C.certificacionesTexto)}</p>
-            <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>
-          </div>`
-        }
       ]
     },
     {
@@ -375,6 +342,44 @@
     }
   ];
 
+  // =========================================================
+  // 3. POLÍTICAS Y CERTIFICACIONES: debajo de la pantalla partida, con scroll común
+  //    (antes eran dos secciones del tema Calidad)
+  // =========================================================
+  const poli = $('.mc-poli');
+  poli.innerHTML =
+    '<div class="mp-fondo"></div>' +
+    `<h2 class="mp-titulo ent">${esc(C.politicasCertificacionesTitulo || 'Políticas y Certificaciones')}</h2>` +
+    `<div class="s-pol">
+      <ul class="po-tabs">${(C.politicas || []).map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
+      <div class="po-detalle ent" style="--i:2"></div>
+    </div>` +
+    `<div class="s-cert">
+      <p class="ce-texto ent" style="--i:1">${formato(C.certificacionesTexto)}</p>
+      <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>
+    </div>`;
+  (function () {
+    // al elegir una política aparecen su cita y sus directrices
+    const det = $('.po-detalle', poli), botones = [...poli.querySelectorAll('.po-tabs button')];
+    const mostrar = (i) => {
+      const p = (C.politicas || [])[i];
+      if (!p) return;
+      botones.forEach((b, j) => b.classList.toggle('activo', j === i));
+      det.classList.remove('lista');
+      det.innerHTML = `<p class="po-norma">${esc(p.norma)} <span>${esc(p.codigo)}</span></p>
+        <blockquote>${esc(p.cita)}</blockquote>
+        <p class="po-etq">Directrices</p>
+        <ul class="po-dir">${(p.directrices || []).map((d, k) => `<li style="--i:${k}">${formato(d)}</li>`).join('')}</ul>`;
+      requestAnimationFrame(() => requestAnimationFrame(() => det.classList.add('lista')));
+    };
+    botones.forEach((b) => b.addEventListener('click', () => mostrar(+b.dataset.i)));
+    mostrar(0);
+  })();
+  // las entradas se ven al llegar con el scroll (la sección empieza en y 900 del tramo)
+  document.addEventListener('desplazamiento', (e) => {
+    const baj = Math.max(0, e.detail.y - 900);
+    poli.classList.toggle('visible', baj > 1000);
+  });
   // ----- Estructura del capítulo -----
   capitulo.innerHTML =
     '<div class="cap-fondo"></div>' +
