@@ -227,7 +227,7 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .sc-etq { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
 .capitulo .sc-letras { margin-top: 8px; }
 .sc-letras li { display: flex; align-items: baseline; line-height: 1.04; cursor: default; }
-.sc-letras b { flex: none; width: 40px; margin-right: 3px; text-align: right; font-family: var(--fuente-titulo); font-weight: 700; font-size: 72px; color: var(--rojo); transition: translate .35s ease; }
+.sc-letras b { flex: none; margin-right: 3px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 72px; color: var(--rojo); transition: translate .35s ease; }
 .sc-letras span { font-size: 38px; font-weight: 300; color: var(--fg); transition: color .3s ease; }
 .sc-letras li:hover b { translate: 0 -3px; }
 .sc-letras li:hover span { color: var(--rojo); }
