@@ -609,7 +609,7 @@
   })();
 
   // =========================================================
-  // LOGROS: fondo gris y tarjetas de vidrio flotantes
+  // LOGROS: video gris de fondo, título que sube desde el centro y tarjetas de vidrio flotantes
   // =========================================================
   (function () {
     const seccion = $('.seccion-logros');
@@ -703,12 +703,36 @@
     ajustarTarjetas();
     document.fonts.ready.then(ajustarTarjetas);
 
-    // Aparición al llegar a la sección
-    new IntersectionObserver((en, obs) => {
-      if (!en[0].isIntersecting) return;
-      obs.disconnect();
-      seccion.classList.add('visible');
-    }, { threshold: .35 }).observe(seccion);
+    // El título aparece en el centro de la pantalla y, cuando la sección llega a su lugar,
+    // sube a su posición y entran las tarjetas (como en "¿Por qué elegirnos?"); al volver
+    // hacia arriba se recentra y las tarjetas se van enseguida
+    const titulo = $('.logros-titulo');
+    function centrarTitulo() {
+      const cx = 800 - (titulo.offsetLeft + titulo.offsetWidth / 2);
+      const cy = 450 - (titulo.offsetTop + titulo.offsetHeight / 2);
+      titulo.style.setProperty('--cx', cx.toFixed(1) + 'px');
+      titulo.style.setProperty('--cy', cy.toFixed(1) + 'px');
+    }
+    centrarTitulo();
+    document.fonts.ready.then(centrarTitulo);
+    let arriba = false, subir = 0;
+    document.addEventListener('desplazamiento', (e) => {
+      const borde = seccion.offsetTop - e.detail.y;   // borde de arriba de la sección en pantalla
+      seccion.classList.toggle('visible', borde < 600 && borde > -900);
+      const ahora = arriba ? borde < 300 : borde < 60;
+      if (ahora === arriba) return;
+      arriba = ahora;
+      clearTimeout(subir);
+      if (arriba) subir = setTimeout(() => seccion.classList.add('arriba'), 150);
+      else seccion.classList.remove('arriba');
+    });
+
+    // El video (ya preparado para repetirse) solo se reproduce cerca de la pantalla
+    const video = seccion.querySelector('.logros-fondo video');
+    if (video) new IntersectionObserver((en) => {
+      if (en[0].isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    }, { rootMargin: '50% 0px' }).observe(seccion);
 
   })();
 })();

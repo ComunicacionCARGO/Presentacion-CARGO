@@ -140,8 +140,11 @@ Logros (cierre de la diapositiva):
   • Cada premio tiene su texto y, si querés, la fuente o programa
     ("DPO", "WCM"...), que aparece en rojo y cursiva. Si no lleva: fuente: "".
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
-  • Logros tiene fondo gris (con la foto img\slides\nuestra-estructura\fondo-elegirnos.jpg).
-    Llega después de Políticas y Certificaciones con la transición de anillos.
+  • Logros llega después de Políticas y Certificaciones con la transición de
+    anillos. El video de fondo es img\slides\quienes-somos\logros-gris.mp4.
+    Para cambiarlo, reemplazá ese archivo por otro con el mismo nombre (MP4,
+    horizontal, idealmente de menos de 20 MB, ya preparado para repetirse
+    sin corte y con el borde de arriba gris, para que se una con los anillos).
 
 
 NUESTRA ESTRUCTURA (red de áreas, en ¿Quiénes somos?, después del mapa)

@@ -604,10 +604,10 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
 .operativos .numero-valor .suf { font-size: 22px; margin-left: 4px; }
 .operativos .numero-texto { font-size: 18px; font-weight: 300; color: rgba(58, 58, 58, .8); }
 
-/* 7. Logros: fondo gris (después de los anillos que se cierran en Políticas) y tarjetas de vidrio */
+/* 7. Logros: video gris de fondo (después de los anillos que se cierran en Políticas) y tarjetas de vidrio */
 .seccion-logros { height: 900px; z-index: 3; }   /* por encima de Políticas (y de sus anillos) */
-/* Gris institucional a todo el ancho de la ventana y hasta el borde de abajo, con la foto
-   gris de camiones de la persona (fondo-elegirnos.jpg) fundida en los bordes */
+/* Video gris de la persona (logros-gris.mp4, ya preparado para repetirse) a todo el ancho de
+   la ventana y hasta el borde de abajo, sobre el gris institucional */
 .logros-fondo {
   position: absolute;
   top: -8px;                                     /* se pisa con el gris de los anillos: sin rendija de 1 px */
@@ -618,22 +618,24 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
   background: var(--gris);
   z-index: -1;
 }
-.logros-imagen {
+.logros-fondo video {
   position: absolute;
-  left: calc(50vw / var(--escala, 1) - 800px - 60px);
-  top: -26px;
-  width: 1720px;
-  height: 968px;
-  background: url(../../img/slides/nuestra-estructura/fondo-elegirnos.jpg) center / cover no-repeat;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
 }
+/* El título aparece en el centro de la pantalla (--cx/--cy los calcula diapositiva.js) y,
+   cuando la sección llega a su lugar, .arriba lo sube a su posición y entran las tarjetas
+   (como en "¿Por qué elegirnos?") */
 .logros-titulo {
   position: absolute;
   left: 80px;
   top: 92px;
   color: var(--blanco);
   line-height: 1;
+  transform: translate(var(--cx, 0px), var(--cy, 0px));
 }
 .logros-titulo span { display: block; font-weight: 300; font-size: 42px; letter-spacing: -.01em; }
 .logros-titulo b {
@@ -661,10 +663,11 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
 .logros-titulo, .logros-nota {
   opacity: 0;
   translate: 0 30px;
-  transition: opacity 1s ease, translate 1.2s cubic-bezier(.2, .8, .2, 1);
+  transition: opacity 1s ease, translate 1.2s cubic-bezier(.2, .8, .2, 1), transform 1s cubic-bezier(.33, .1, .2, 1);
 }
-.seccion-logros.visible .logros-titulo, .seccion-logros.visible .logros-nota { opacity: 1; translate: 0 0; }
-.seccion-logros.visible .logros-nota { transition-delay: .15s; }
+.seccion-logros.visible .logros-titulo { opacity: 1; translate: 0 0; }
+.seccion-logros.arriba .logros-titulo { transform: none; }
+.seccion-logros.arriba .logros-nota { opacity: 1; translate: 0 0; transition-delay: .5s; }
 
 .logros-tarjetas {
   position: absolute;
@@ -709,7 +712,9 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
     transform .35s cubic-bezier(.2, .8, .2, 1),
     box-shadow .5s ease;
 }
-.seccion-logros.visible .logro-vidrio { opacity: 1; translate: 0 0; }
+.seccion-logros.arriba .logro-vidrio { opacity: 1; translate: 0 0; }
+/* al volver, desaparecen enseguida */
+.seccion-logros:not(.arriba) .logro-vidrio { transition-delay: 0s, 0s, 0s, 0s; transition-duration: .35s, .45s, .35s, .5s; }
 .logro.activa .logro-vidrio {
   --lev: -12px;
   box-shadow:
@@ -842,7 +847,7 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
     box-shadow .35s ease,
     background-color .35s ease;
 }
-.seccion-logros.visible .logros-volver { opacity: 1; translate: -50% 0; }
+.seccion-logros.arriba .logros-volver { opacity: 1; translate: -50% 0; }
 .logros-volver svg {
   width: 20px;
   height: 20px;
