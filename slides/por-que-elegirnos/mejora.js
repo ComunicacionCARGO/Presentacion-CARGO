@@ -179,7 +179,7 @@
   // =========================================================
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
-    bajada = Math.max(0, e.detail.y - 900);
+    bajada = Math.max(0, e.detail.y);   // la pantalla partida empieza en y 900 de la diapositiva (debajo de "¿Por qué elegirnos?")
     elegir.classList.toggle('visible', bajada > 450);
     tramo.setAttribute('aria-hidden', bajada > 300 ? 'false' : 'true');
     if ((bajada < 600 || bajada > 1300) && hover >= 0 && eligiendo < 0) resaltar(-1);
@@ -213,25 +213,6 @@
       <image href="${ruta('img/marca/isologo.png')}" x="134" y="107" width="132" height="210" clip-path="url(#ls-c)" class="ls-c"/>
       <text class="ls-texto"><textPath href="#ls-arco" startOffset="50%" text-anchor="middle">s·c·o·p·e</textPath></text>
       <g class="ls-version" transform="translate(${vx.toFixed(1)} ${vy.toFixed(1)})"><circle r="36"/><text y="11">${esc((C.scope || {}).version || '1.0')}</text></g>
-    </svg>`;
-  };
-
-  // ----- Sello de una certificación -----
-  const sello = (c, i) => {
-    const dientes = 48, p = [];
-    for (let k = 0; k < dientes * 2; k++) {
-      const r = k % 2 ? 136 : 146, a = (k / (dientes * 2)) * Math.PI * 2;
-      p.push(`${(150 + r * Math.cos(a)).toFixed(1)},${(150 + r * Math.sin(a)).toFixed(1)}`);
-    }
-    const anillo = `${c.norma} ${c.numero} · ${c.nombre.toUpperCase()} · ${M.calidad.certificadoras || ''} · `;
-    return `<svg class="ce-svg" viewBox="0 0 300 300" aria-hidden="true">
-      <defs><path id="ce-p${i}" d="M150 150 m-98 0 a98 98 0 1 1 196 0 a98 98 0 1 1 -196 0"/></defs>
-      <polygon class="ce-dientes" points="${p.join(' ')}"/>
-      <circle class="ce-disco" cx="150" cy="150" r="124"/>
-      <circle class="ce-linea" cx="150" cy="150" r="80"/>
-      <g class="ce-giro"><text class="ce-anillo"><textPath href="#ce-p${i}" textLength="612">${esc(anillo)}</textPath></text></g>
-      <text class="ce-iso" x="150" y="128">${esc(c.norma)}</text>
-      <text class="ce-num" x="150" y="182">${esc(c.numero)}</text>
     </svg>`;
   };
 
@@ -342,49 +323,6 @@
     }
   ];
 
-  // =========================================================
-  // 3. POLÍTICAS Y CERTIFICACIONES: debajo de la pantalla partida, con scroll común
-  //    (antes eran dos secciones del tema Calidad)
-  // =========================================================
-  const poli = $('.mc-poli');
-  // cada política tiene su color (--c); el sello toma el de su política (por el código)
-  const politicas = C.politicas || [];
-  const colorDe = (p) => (p && p.color ? `--c:${esc(p.color)};` : '');
-  const politicaDe = (c, i) => politicas.find((p) => p.codigo === c.politica) || politicas[i];
-  poli.innerHTML =
-    '<div class="mp-fondo"></div>' +
-    `<h2 class="mp-titulo ent">${esc(C.politicasCertificacionesTitulo || 'Políticas y Certificaciones')}</h2>` +
-    `<div class="s-pol">
-      <ul class="po-tabs">${politicas.map((p, i) => `<li class="ent" style="--i:${i + 1}"><button type="button" data-i="${i}" style="${colorDe(p)}"><span class="po-ico">${icono(p.icono)}</span><span class="po-txt"><b>${esc(p.nombre)}</b><small>${esc(p.norma)} · ${esc(p.codigo)}</small></span></button></li>`).join('')}</ul>
-      <div class="po-detalle ent" style="--i:2"></div>
-    </div>` +
-    `<div class="s-cert">
-      ${C.certificacionesTexto ? `<p class="ce-texto ent" style="--i:1">${formato(C.certificacionesTexto)}</p>` : ''}
-      <div class="ce-sellos">${(C.certificaciones || []).map((c, i) => `<figure class="ce-sello ent" style="--i:${i + 2};${colorDe(politicaDe(c, i))}">${sello(c, i)}<figcaption><b>${esc(c.nombre)}</b><small>Política ${esc(c.politica)}</small></figcaption></figure>`).join('')}</div>
-    </div>`;
-  (function () {
-    // al elegir una política aparecen su cita y sus directrices
-    const det = $('.po-detalle', poli), botones = [...poli.querySelectorAll('.po-tabs button')];
-    const mostrar = (i) => {
-      const p = politicas[i];
-      if (!p) return;
-      botones.forEach((b, j) => b.classList.toggle('activo', j === i));
-      if (p.color) det.style.setProperty('--c', p.color); else det.style.removeProperty('--c');
-      det.classList.remove('lista');
-      det.innerHTML = `<p class="po-norma">${esc(p.norma)} <span>${esc(p.codigo)}</span></p>
-        <blockquote>${esc(p.cita)}</blockquote>
-        <p class="po-etq">Directrices</p>
-        <ul class="po-dir">${(p.directrices || []).map((d, k) => `<li style="--i:${k}">${formato(d)}</li>`).join('')}</ul>`;
-      requestAnimationFrame(() => requestAnimationFrame(() => det.classList.add('lista')));
-    };
-    botones.forEach((b) => b.addEventListener('click', () => mostrar(+b.dataset.i)));
-    mostrar(0);
-  })();
-  // las entradas se ven al llegar con el scroll (la sección empieza en y 900 del tramo)
-  document.addEventListener('desplazamiento', (e) => {
-    const baj = Math.max(0, e.detail.y - 900);
-    poli.classList.toggle('visible', baj > 1000 && baj < 2850);   // pasado 2850 ya no se ve (los sellos dejan de girar)
-  });
   // ----- Estructura del capítulo -----
   capitulo.innerHTML =
     '<div class="cap-fondo"></div>' +

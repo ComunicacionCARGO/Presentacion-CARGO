@@ -209,7 +209,7 @@
   const TOP = raiz.offsetTop;
   let yaEntro = false, asentar = 0;
   document.addEventListener('desplazamiento', (e) => {
-    const baj = Math.max(0, e.detail.y - 900);
+    const baj = Math.max(0, e.detail.y);
     const ver = baj > TOP + 300 && baj < TOP + 1500;
     if (ver === visible) return;
     visible = ver;

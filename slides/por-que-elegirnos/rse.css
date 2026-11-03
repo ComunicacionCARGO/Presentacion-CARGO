@@ -1,8 +1,8 @@
 /* =========================================================
    RSE (datos/rse.js) — tres secciones de 900 px dentro de .mc-tramo:
-   1. Tablero "Hacia un impacto CERO" (rse.js, y 1900)
-   2. "Lo que hacemos, EN NÚMEROS" (rse-numeros.js, y 2800)
-   3. "Acompañamos a la COMUNIDAD" (rse-comunidad.js, y 3700)
+   1. Tablero "Hacia un impacto CERO" (rse.js, y 900)
+   2. "Lo que hacemos, EN NÚMEROS" (rse-numeros.js, y 1800)
+   3. "Acompañamos a la COMUNIDAD" (rse-comunidad.js, y 2700)
    Fondo crema como el resto y acento VERDE (excepción al manual pedida por la
    persona para esta parte). Vidrio vivo: tarjetas translúcidas con
    backdrop-filter sobre manchas verdes suaves (quietas, para no recalcular el vidrio en cada cuadro).
@@ -23,22 +23,22 @@
   color: var(--gris);
   pointer-events: auto;
 }
-.mc-rse { top: 1900px; }
-.mc-num { top: 2800px; }
-.mc-com { top: 3700px; }
+.mc-rse { top: 900px; }
+.mc-num { top: 1800px; }
+.mc-com { top: 2700px; }
 .mc-rse h2, .mc-rse h3, .mc-rse p, .mc-rse ul,
 .mc-num h2, .mc-num h3, .mc-num p,
 .mc-com h2, .mc-com h3, .mc-com p, .mc-com figure { margin: 0; padding: 0; }
 .mc-rse ul { list-style: none; }
 .mc-rse strong, .mc-num strong, .mc-com strong { font-weight: 600; color: var(--gris); }
 
-/* Un solo fondo crema para las tres secciones (va antes que ellas en .mc-tramo, de y 1900 al
+/* Un solo fondo crema para las tres secciones (va antes que ellas en .mc-tramo, de y 900 al
    final, a todo el ancho de la ventana). Las secciones no tienen fondo propio: así las sombras,
    los resplandores y las manchas de una pasan sobre la siguiente sin cortes. */
 .rse-fondo-comun {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
-  top: 1900px;
+  top: 900px;
   width: calc(100vw / var(--escala, 1));
   height: calc(2700px + 50vh / var(--escala, 1));
   background: var(--blanco);

@@ -137,10 +137,7 @@
     const margen = ALTO * .7 * s;                           // la ventana siempre queda cubierta
     const arriba = Math.max(fy + margen - h, Math.min(fy - margen, fy - h * ca.foco / 100));
     const tr = `translate(${(fx - w / 2).toFixed(1)}px, ${arriba.toFixed(1)}px) scale(${s.toFixed(4)})`;
-    ca.foto[0].style.transform = ca.foto[1].style.transform = tr;
-    // la copia normal aparece según cuánto está levantada la carta (cursor encima o abriéndose)
-    const op = ca.act < .005 ? '0' : ca.act > .995 ? '1' : ca.act.toFixed(3);
-    if (op !== ca.fotoOpTxt) { ca.fotoOpTxt = op; ca.foto[1].style.opacity = op; }
+    ca.foto[0].style.transform = tr;
   }
 
   // Título como en el diseño de la persona (medido sobre su carta de 668 × 241 y llevado
@@ -257,11 +254,10 @@
     // Foto de fondo (plana) dentro del vidrio de la parte de adelante.
     // Si la imagen no existe, la carta queda de vidrio con su número y su título.
     const ca = { a, foco: Math.max(0, Math.min(100, datos.foco === undefined ? 50 : +datos.foco || 0)), foto: null, fotoAlto: FOTO_ANCHO * 9 / 16 };
-    // Dos copias de la foto, siempre opacas: una en modo de fusión "superponer" (en reposo,
-    // se mezcla con el vidrio) y otra normal encima, que aparece con el cursor (el modo de
-    // fusión no se puede animar: así el cambio es suave).
+    // Una sola copia de la foto, en modo de fusión "superponer" y algo transparente: se mezcla
+    // con el vidrio. Con el cursor encima o al abrir no cambia, solo se agranda (pedido de la persona).
     if (datos.portada) {
-      ca.foto = ['vf-superponer', 'vf-normal'].map((clase) => {
+      ca.foto = ['vf-superponer'].map((clase) => {
         const el = crear('div', 'vidrio-foto ' + clase, partes[0].vidrio);
         el.style.backgroundImage = `url("${datos.portada}")`;
         el.style.width = FOTO_ANCHO + 'px';

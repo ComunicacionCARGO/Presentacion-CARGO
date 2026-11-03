@@ -604,44 +604,35 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
 .operativos .numero-valor .suf { font-size: 22px; margin-left: 4px; }
 .operativos .numero-texto { font-size: 18px; font-weight: 300; color: rgba(58, 58, 58, .8); }
 
-/* 5. Logros: video de fondo y tarjetas de vidrio */
-.seccion-logros { height: 900px; margin-top: -1px; z-index: 0; }
-/* El video cubre todo el ancho de la ventana (aunque sea más ancha que 16:9)
-   y llega hasta el borde de abajo; su parte de arriba ya es del color de fondo */
-.logros-video {
+/* 7. Logros: fondo gris (después de los anillos que se cierran en Políticas) y tarjetas de vidrio */
+.seccion-logros { height: 900px; z-index: 3; }   /* por encima de Políticas (y de sus anillos) */
+/* Gris institucional a todo el ancho de la ventana y hasta el borde de abajo, con la foto
+   gris de camiones de la persona (fondo-elegirnos.jpg) fundida en los bordes */
+.logros-fondo {
   position: absolute;
-  top: 0;
+  top: -8px;                                     /* se pisa con el gris de los anillos: sin rendija de 1 px */
   left: calc(800px - 50vw / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
-  height: calc(450px + 50vh / var(--escala, 1));
+  height: calc(458px + 50vh / var(--escala, 1));
   overflow: hidden;
-  background: var(--blanco);
+  background: var(--gris);
   z-index: -1;
 }
-.logros-video video {
+.logros-imagen {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  left: calc(50vw / var(--escala, 1) - 800px - 60px);
+  top: -26px;
+  width: 1720px;
+  height: 968px;
+  background: url(../../img/slides/nuestra-estructura/fondo-elegirnos.jpg) center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
 }
-/* Velo suave para que el video quede de fondo y las tarjetas se lean */
-.logros-video::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background:
-    radial-gradient(70% 55% at 22% 18%, rgba(255, 251, 243, .55), rgba(255, 251, 243, 0) 70%),
-    linear-gradient(rgba(255, 251, 243, .12), rgba(255, 251, 243, .22));
-}
-
 .logros-titulo {
   position: absolute;
   left: 80px;
   top: 92px;
-  color: var(--gris);
+  color: var(--blanco);
   line-height: 1;
 }
 .logros-titulo span { display: block; font-weight: 300; font-size: 42px; letter-spacing: -.01em; }
@@ -664,9 +655,9 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
   font-weight: 300;
   font-style: italic;
   line-height: 1.45;
-  color: var(--gris);
+  color: rgba(255, 251, 243, .82);
 }
-.logros-nota strong { font-weight: 600; }
+.logros-nota strong { font-weight: 600; color: var(--blanco); }
 .logros-titulo, .logros-nota {
   opacity: 0;
   translate: 0 30px;

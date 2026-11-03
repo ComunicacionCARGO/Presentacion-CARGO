@@ -1,13 +1,16 @@
 /* =========================================================
-   NUESTRA ESTRUCTURA — red de áreas a partir de datos/estructura.js:
-   burbujas flotantes con el ícono de cada área (la dirección en el centro,
-   las áreas de servicio hacia los bordes), caminos curvos que las unen con
-   mensajes que viajan sin parar, paralaje con el mouse y una tarjeta con la
-   información de cada área.
+   NUESTRA ESTRUCTURA (¿Quiénes somos?, después del mapa) — red de áreas a partir
+   de datos/estructura.js: burbujas flotantes con el ícono de cada área (la
+   dirección en el centro, las áreas de servicio hacia los bordes), caminos curvos
+   que las unen con mensajes que viajan sin parar, paralaje con el mouse y una
+   tarjeta con la información de cada área. Antes era el comienzo de la diapositiva
+   "Nuestra estructura" (hoy "¿Por qué elegirnos?").
    ========================================================= */
 (function () {
   const E = Object.assign({ antetitulo: '', titulo: '', bajada: '', ayuda: '', areas: [] }, window.ESTRUCTURA || {});
   const $ = (s, r = document) => r.querySelector(s);
+  const raiz = $('.seccion-estructura');
+  if (!raiz) return;
   const NS = 'http://www.w3.org/2000/svg';
   const esc = (t) => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   // **negrita** y *rojo en cursiva*
@@ -265,9 +268,11 @@
     while (cuerpo.scrollHeight > cuerpo.clientHeight + 1 && t > .62) { t -= .03; tarjeta.style.setProperty('--t', t.toFixed(2)); }
   }
   // Punto de la tarjeta que coincide con la burbuja (para que nazca y vuelva ahí)
+  // (la sección se desliza con la pista: se suma dónde está ahora en pantalla)
   function origen(n) {
+    const arriba = raiz.offsetTop - (window.desplazamiento ? window.desplazamiento.y : 0);
     tarjeta.style.setProperty('--ox', (n.px - tarjeta.offsetLeft).toFixed(0) + 'px');
-    tarjeta.style.setProperty('--oy', (n.py - tarjeta.offsetTop).toFixed(0) + 'px');
+    tarjeta.style.setProperty('--oy', (n.py + arriba - tarjeta.offsetTop).toFixed(0) + 'px');
   }
   function abrir(k) {
     const n = nodos[k];
@@ -306,13 +311,17 @@
     n.el.focus({ preventScroll: true });
   }
   capa.addEventListener('click', (e) => { if (e.target === capa) cerrar(); });
-  // Esc cierra la tarjeta antes de volver a la portada; flechas recorren las áreas
+  // Esc cierra la tarjeta antes de volver a la portada; flechas recorren las áreas.
+  // Con la tarjeta abierta, la rueda y las teclas no mueven la página (ni la línea de tiempo).
   addEventListener('keydown', (e) => {
     if (abierta < 0) return;
-    if (e.key === 'Escape') { e.stopImmediatePropagation(); e.preventDefault(); cerrar(); }
+    e.stopImmediatePropagation();
+    if (e.key === 'Escape') { e.preventDefault(); cerrar(); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); abrir((abierta + 1) % nodos.length); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); abrir((abierta - 1 + nodos.length) % nodos.length); }
+    else if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(e.key)) e.preventDefault();
   }, true);
+  addEventListener('wheel', (e) => { if (abierta >= 0) { e.stopImmediatePropagation(); e.preventDefault(); } }, { capture: true, passive: false });
 
   // ---------- Ayuda: desaparece apenas se abre un área ----------
   const ayuda = $('.te-ayuda');
@@ -321,7 +330,7 @@
   // =========================================================
   // ANIMACIÓN: flotación, paralaje, caminos y mensajes en cada cuadro
   // =========================================================
-  const seccion = $('.seccion-red'), fondo = $('.fondo-imagen');
+  const seccion = raiz, fondo = $('.est-fondo-imagen', raiz);
   let visible = false;
   new IntersectionObserver((en, obs) => {
     if (!en[0].isIntersecting) return;
@@ -337,15 +346,19 @@
     my = (e.clientY / innerHeight) * 2 - 1;
   });
 
-  // Avance de la transición a "Mejora continua" (0 = red a la vista, 1 = todo gris)
-  let avance = 0;
+  // Solo se anima cuando la sección está cerca de la pantalla (se desliza con la pista)
+  let enVista = false;
+  document.addEventListener('desplazamiento', (e) => {
+    const arriba = raiz.offsetTop - e.detail.y;
+    enVista = arriba < 1100 && arriba + raiz.offsetHeight > -200;
+  });
 
   // Cada tanto una burbuja late para invitar a tocarla
   let ultimoLatido = 0;
   let ultimoMensaje = 0;
   (function cuadro(ahora) {
     requestAnimationFrame(cuadro);
-    if (avance >= 1) return;                     // la red está tapada por completo: no se calcula nada
+    if (!enVista) return;                        // fuera de pantalla: no se calcula nada
     const t = ahora / 1000;
     gx += (mx - gx) * .05;
     gy += (my - gy) * .05;
@@ -356,8 +369,6 @@
       n.py = n.y + Math.cos(t * .7 + n.fase * 1.3) * n.amp - gy * 12 * n.prof;
       n.el.style.transform = `translate3d(${n.px.toFixed(2)}px, ${n.py.toFixed(2)}px, 0)`;
     });
-    // durante la transición, los anillos siguen a la Dirección mientras flota
-    if (avance > 0) dibujarAnillos();
     aristas.forEach((e) => {
       const c = controles(e);
       e.c = c;
@@ -385,289 +396,4 @@
       n.el.classList.add('late');
     }
   })(performance.now());
-
-  // =========================================================
-  // TRANSICIÓN A "MEJORA CONTINUA"
-  // Al bajar, tres anillos (rojo, rojo y gris, con huecos entre ellos y el
-  // grosor fijo de la referencia) llegan desde los bordes y se cierran hacia
-  // el centro; detrás queda todo gris y aparece el título. Sigue al scroll
-  // (se puede volver) y, al soltar la rueda, se completa solo.
-  // =========================================================
-  $('.mc-ante').textContent = E.elegirnosAntetitulo || '¿Por qué';
-  $('.mc-grande').textContent = E.elegirnosTitulo || 'ELEGIRNOS?';
-
-  // ---------- Tarjetas de "¿Por qué elegirnos?" (íconos redibujados de las diapositivas originales) ----------
-  const sello = (() => {
-    // sello dentado con un aro y un tilde calados
-    const pts = [], n = 16;
-    for (let k = 0; k < n * 2; k++) {
-      const a = k / (n * 2) * Math.PI * 2 - Math.PI / 2, r = k % 2 ? 10.3 : 11.6;
-      pts.push(`${(12 + r * Math.cos(a)).toFixed(2)},${(12 + r * Math.sin(a)).toFixed(2)}`);
-    }
-    return `<path fill-rule="evenodd" d="M${pts.join('L')}Z M12 4.6a7.4 7.4 0 1 0 0 14.8 7.4 7.4 0 0 0 0-14.8zM12 6.1a5.9 5.9 0 1 1 0 11.8 5.9 5.9 0 0 1 0-11.8z"/>` +
-      '<path class="hueco" d="M8.9 12.2l2.2 2.2 4.1-4.6"/>';
-  })();
-  const ICONOS_EL = {
-    excelencia: sello,
-    // nube grande en el centro con caminos de circuito en ángulo recto y un punto al final de cada uno
-    innovacion:
-      '<path transform="translate(5.2 4.2) scale(.567)" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>' +
-      '<path class="trazo" d="M10.4 7.2V3.5M13.6 6.9V5.3h2.4M5.4 12.6H3M6.4 15.5H4.6v1.9M18.8 12.3h2.1M17.6 15.6v1.4h1.8M9.2 15.6v2.6l-1.3 1.3M12 15.6v4.5M14.8 15.6v2.6l1.3 1.3"/>' +
-      '<circle cx="10.4" cy="2.4" r="1.25"/><circle cx="17.2" cy="5.3" r="1.25"/><circle cx="1.9" cy="12.6" r="1.25"/><circle cx="4.6" cy="18.6" r="1.25"/>' +
-      '<circle cx="22" cy="12.3" r="1.25"/><circle cx="20.6" cy="17" r="1.25"/><circle cx="7.2" cy="20.3" r="1.25"/><circle cx="12" cy="21.3" r="1.25"/><circle cx="16.8" cy="20.3" r="1.25"/>',
-    flexibilidad:
-      '<path fill-rule="evenodd" d="M6.6 3h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM17.2 5a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>' +
-      '<path fill-rule="evenodd" d="M6.6 13.2h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM6.8 15.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>',
-    // tres personas de la mano (la de la izquierda con vestido) y una flecha en zigzag que sube
-    crecimiento: (() => {
-      const persona = (cx, vestido) => {
-        const cabeza = `<circle cx="${cx}" cy="3.3" r="1.75"/>`;
-        const cuerpo = vestido
-          ? `<path d="M${cx - 1.5} 5.6h3l1.4 4.6.9 3.4h-2.2v4.8h-1.3v-4.8h-.6v4.8h-1.3v-4.8h-2.2l.9-3.4z"/>`
-          : `<path d="M${cx - 1.6} 5.6h3.2c.8 0 1.4.6 1.4 1.4v4.9h-1.2v6.2h-1.4v-5.4h-.8v5.4H${cx - 1.6}v-6.2h-1.2V7c0-.8.6-1.4 1.4-1.4z"/>`;
-        return cabeza + cuerpo;
-      };
-      return persona(5.2, true) + persona(12, false) + persona(18.8, false) +
-        '<path d="M7.4 9.6h2.6v1.1H7.4zM14 9.6h2.6v1.1H14z"/>' +
-        '<path class="hueco" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/><path class="trazo flecha" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/>' +
-        '<path d="M22.8 8.4l-.6 6.4-2.4-2.4-1.6-1.6-2.4-2.4z"/>';
-    })()
-  };
-  // Título al lado del ícono en dos líneas: la última palabra baja, junto con su artículo
-  // ("Excelencia en / el servicio", "Innovación y / tecnología")
-  const tituloEnDosLineas = (titulo) => {
-    const p = String(titulo || '').trim().split(/\s+/);
-    if (p.length < 2) return formato(titulo);
-    let corte = p.length - 1;
-    if (corte > 1 && /^(el|la|los|las|un|una|lo)$/i.test(p[corte - 1])) corte--;
-    return formato(p.slice(0, corte).join(' ')) + '<br>' + formato(p.slice(corte).join(' '));
-  };
-  const contEl = $('.el-tarjetas');
-  (E.elegirnos || []).slice(0, 4).forEach((t, i) => {
-    const art = crear('article', 'el-tarjeta', contEl);
-    art.style.setProperty('--i', i);
-    const v = crear('div', 'el-vidrio', art);
-    v.style.setProperty('--i', i);
-    const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
-    const cont = crear('div', 'el-contenido', v,
-      `<div class="el-cabeza"><span class="el-icono"></span><h3 class="el-titulo">${tituloEnDosLineas(t.titulo)}</h3></div><p class="el-texto">${formato(t.texto)}</p>` +
-      (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : ''));
-    // Ícono propio en SVG (si está); si no, el incluido
-    const ic = $('.el-icono', cont);
-    const incluido = () => { ic.classList.remove('propio'); ic.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg>`; };
-    if (t.imagen) {
-      ic.classList.add('propio');
-      const img = crear('img', '', ic);
-      img.alt = '';
-      img.onerror = incluido;
-      img.src = '../../' + t.imagen;
-    } else incluido();
-    crear('i', 'el-brillo', v);
-    // inclinación 3D y reflejo que siguen al cursor
-    art.addEventListener('pointermove', (e) => {
-      const r = v.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      v.style.setProperty('--ry', `${(x - .5) * 10}deg`);
-      v.style.setProperty('--rx', `${(.5 - y) * 8}deg`);
-      v.style.setProperty('--mx', `${x * 100}%`);
-      v.style.setProperty('--my', `${y * 100}%`);
-    });
-    art.addEventListener('pointerenter', () => art.classList.add('activa'));
-    art.addEventListener('pointerleave', () => {
-      art.classList.remove('activa');
-      v.style.setProperty('--rx', '0deg');
-      v.style.setProperty('--ry', '0deg');
-    });
-  });
-  const lienzo = $('.anillos'), ctx = lienzo.getContext('2d');
-  const tituloAnte = $('.mc-ante'), tituloGrande = $('.mc-grande');
-  const RECORRIDO = 900;                          // scroll (px del escenario) que dura la transición
-  const BANDA = 66, HUECO = 20;                   // grosor de cada anillo y de cada hueco (como la referencia: 54 / 16,5)
-  const ROJO = '#EF4529', GRIS = '#3A3A3A';
-  const suave = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-
-  function dibujarAnillos() {
-    const k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--escala')) || 1;
-    const dpr = window.devicePixelRatio || 1;
-    const w = innerWidth, h = innerHeight;
-    if (lienzo.width !== Math.round(w * dpr) || lienzo.height !== Math.round(h * dpr)) {
-      lienzo.width = Math.round(w * dpr);
-      lienzo.height = Math.round(h * dpr);
-    }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    lienzo.style.visibility = avance > 0 ? 'visible' : 'hidden';
-    if (avance <= 0) return;
-    const b = BANDA * k, g = HUECO * k;
-    const ancho = 2 * b + 2 * g;                  // rojo, hueco, rojo, hueco (después, gris hasta el borde)
-    // Centro: la burbuja de la Dirección, donde esté en este momento (flota y se mueve con el paralaje)
-    const dir = nodos.find((n) => n.nivel === 0);
-    const sx = dir && dir.px != null ? dir.px : 800, sy = dir && dir.py != null ? dir.py : 450;
-    const cx = w / 2 + (sx - 800) * k, cy = h / 2 + (sy - 450) * k;
-    const lejos = Math.hypot(Math.max(cx, w - cx), Math.max(cy, h - cy)) + 4;   // hasta la esquina más lejana
-    // R = borde interior del anillo rojo de adelante: arranca fuera de la pantalla y termina pasado el centro
-    // (lineal: cada uno de los 3 pasos cierra lo mismo; la suavidad la da la animación de cada paso)
-    const R = lejos + (-ancho - 2 - lejos) * avance;
-    const aro = (r0, r1, color) => {
-      r0 = Math.max(0, r0);
-      if (r1 <= r0) return;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r1, 0, Math.PI * 2);
-      if (r0 > 0) ctx.arc(cx, cy, r0, 0, Math.PI * 2, true);
-      ctx.fillStyle = color;
-      ctx.fill();
-    };
-    // gris: todo lo que queda afuera del último hueco
-    const rGris = R + ancho;
-    ctx.fillStyle = GRIS;
-    ctx.beginPath();
-    ctx.rect(0, 0, w, h);
-    if (rGris > 0) ctx.arc(cx, cy, rGris, 0, Math.PI * 2, true);
-    ctx.fill('evenodd');
-    aro(R + b + g, R + 2 * b + g, ROJO);          // anillo rojo de afuera
-    aro(R, R + b, ROJO);                          // anillo rojo de adelante
-  }
-
-  function aplicarAvance() {
-    dibujarAnillos();
-    seccion.classList.toggle('tapada', avance > .15);
-    // el título aparece en el último paso, cuando los anillos ya cerraron casi todo
-    const a1 = suave(.7, .95, avance), a2 = suave(.76, 1, avance);
-    tituloAnte.style.opacity = a1.toFixed(3);
-    tituloAnte.style.transform = `translateY(${((1 - a1) * 26).toFixed(1)}px)`;
-    tituloGrande.style.opacity = a2.toFixed(3);
-    tituloGrande.style.transform = `translateY(${((1 - a2) * 40).toFixed(1)}px) scale(${(.94 + a2 * .06).toFixed(3)})`;
-    $('.seccion-mejora').setAttribute('aria-hidden', avance < .9 ? 'true' : 'false');
-    // el fondo de camiones aparece sobre el gris al final de los anillos
-    fondoEl.style.opacity = suave(.8, 1, avance).toFixed(3);
-    // cuando los anillos están por cerrar, el título sube y entran las tarjetas sin pausa
-    // (se encadena con el final del movimiento, así nunca parece que el scroll se frenó);
-    // al volver, bajan enseguida
-    seccionEl.classList.toggle('arriba', avance >= .97);
-  }
-  const seccionEl = $('.seccion-mejora'), fondoEl = $('.el-fondo');
-  // Después de los anillos el scroll sigue como un scroll común: "¿Por qué elegirnos?"
-  // sube y aparece la pantalla partida Calidad / Capacitaciones. Se mueve con `translate`
-  // directo en cada capa (no con una variable en .escenario: eso obligaba a recalcular los
-  // estilos de toda la diapositiva en cada cuadro del scroll).
-  const capasQueSuben = [$('.anillos'), seccionEl, $('.mc-tramo')];
-  let bajada = 0;
-  document.addEventListener('desplazamiento', (e) => {
-    const nuevaBajada = Math.max(0, e.detail.y - RECORRIDO);
-    if (nuevaBajada !== bajada) {
-      bajada = nuevaBajada;
-      const t = `0 ${(-bajada).toFixed(1)}px`;
-      capasQueSuben.forEach((c) => { c.style.translate = t; });
-      // "¿Por qué elegirnos?" y los anillos ya quedaron muy arriba: no se dibujan
-      const lejos = bajada > 1800;
-      seccionEl.classList.toggle('lejos', lejos);
-      capasQueSuben[0].classList.toggle('lejos', lejos);
-    }
-    // con los anillos cerrados la red y el fondo de camiones quedan tapados: no se dibujan
-    document.body.classList.toggle('red-tapada', e.detail.y >= RECORRIDO);
-    const nuevo = Math.max(0, Math.min(1, e.detail.y / RECORRIDO));
-    if (Math.abs(nuevo - avance) < .0005 && nuevo !== 0 && nuevo !== 1) return;
-    if (nuevo === avance && (nuevo === 0 || nuevo === 1)) return;
-    avance = nuevo;
-    aplicarAvance();
-  });
-  addEventListener('resize', aplicarAvance);
-  aplicarAvance();
-
-  // Dos tramos de scroll:
-  //  • Anillos (0 → 450 → 900): avanzan en PASOS. Nunca hay que esperar a que termine una
-  //    animación: cada muesca de la rueda (o tecla) suma un paso al destino en el momento y
-  //    el movimiento sigue con su impulso (resorte amortiguado). Dos muescas pasan los dos pasos.
-  //  • Desde "¿Por qué elegirnos?" (900) hasta el final: scroll libre, como una web: la rueda,
-  //    el touchpad y las teclas mueven la página lo que piden, con un suavizado corto.
-  const PARADAS = [0, RECORRIDO / 2, RECORRIDO];
-  const MAXIMO = RECORRIDO + 900 + 1000 + 2700;   // pantalla partida (900) + Políticas y Certificaciones (1000) + RSE (números, tablero y comunidad: 3 × 900)
-  const RIGIDEZ = 7.5;                            // pasos de los anillos (7,5 ≈ 1 s por paso)
-  const RIGIDEZ_LIBRE = 13;                       // scroll libre: más ágil
-  const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
-  let objetivoY = 0, rigidez = RIGIDEZ, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
-  let acumulado = 0, ultimaRueda = 0, ultimaDir = 0, topeLibre = false;
-  // adónde va el scroll: el destino si se está moviendo; si no, donde está
-  const destino = () => (animacion ? objetivoY : (window.desplazamiento ? window.desplazamiento.y : 0));
-  const paradaCercana = (y) => PARADAS.reduce((m, p, i) => (Math.abs(p - y) < Math.abs(PARADAS[m] - y) ? i : m), 0);
-  const pasoActual = () => paradaCercana(destino());
-  // ¿este movimiento va por el tramo libre? (de 900 para abajo, o bajando desde 900)
-  const enLibre = (dir) => { const y = destino(); return y > RECORRIDO + .5 || (y >= RECORRIDO - .5 && dir > 0); };
-  // Con un tema de Mejora continua abierto, la rueda y las teclas recorren sus secciones (mejora.js)
-  const capituloAbierto = () => document.body.classList.contains('capitulo-abierto');
-  const pasoCapitulo = (dir) => document.dispatchEvent(new CustomEvent('capitulo-paso', { detail: dir }));
-  window.irAParada = (n) => irAPaso(n);           // para mejora.js
-  function mover(ahora) {
-    let dt = Math.min(.05, Math.max(0, (ahora - ultimoCuadro) / 1000));
-    ultimoCuadro = ahora;
-    // resorte críticamente amortiguado, en subpasos cortos para que sea estable
-    while (dt > 0) {
-      const h = Math.min(dt, 1 / 240);
-      velocidad += (rigidez * rigidez * (objetivoY - posicion) - 2 * rigidez * velocidad) * h;
-      posicion += velocidad * h;
-      dt -= h;
-    }
-    posicion = Math.max(0, Math.min(MAXIMO, posicion));
-    const termino = Math.abs(objetivoY - posicion) < 1.5 && Math.abs(velocidad) < 40;  // los últimos píxeles no se notan
-    if (termino) { posicion = objetivoY; velocidad = 0; }
-    window.desplazamiento.ir(posicion, true);
-    animacion = termino ? null : requestAnimationFrame(mover);
-  }
-  // mueve hacia "y"; si ya se está moviendo, solo cambia el destino (sigue con su impulso)
-  function irA(y, k) {
-    objetivoY = Math.max(0, Math.min(MAXIMO, y));
-    rigidez = k;
-    if (!window.desplazamiento) return;
-    if (!animacion) {
-      if (Math.abs(window.desplazamiento.y - objetivoY) < .5) return;
-      posicion = window.desplazamiento.y;
-      velocidad = 0;
-      ultimoCuadro = performance.now();
-      animacion = requestAnimationFrame(mover);
-    }
-  }
-  function irAPaso(n) { irA(PARADAS[Math.max(0, Math.min(PARADAS.length - 1, n))], RIGIDEZ); }
-  function irLibre(dy) {
-    const y = Math.max(RECORRIDO, Math.min(MAXIMO, destino() + dy));
-    if (dy < 0 && y <= RECORRIDO) topeLibre = true;   // llegó arriba de "¿Por qué elegirnos?": frena ahí
-    irA(y, RIGIDEZ_LIBRE);
-  }
-  addEventListener('wheel', (e) => {
-    // la rueda la maneja esta diapositiva
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    if (abierta >= 0 || !e.deltaY) return;          // con una tarjeta abierta, la rueda no hace nada
-    const d = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? 800 : 1);
-    const ahora = performance.now();
-    const nuevoGesto = ahora - ultimaRueda > 220 || Math.sign(d) !== ultimaDir;
-    if (nuevoGesto) { acumulado = 0; topeLibre = false; }
-    ultimaRueda = ahora;
-    ultimaDir = Math.sign(d);
-    if (!capituloAbierto() && enLibre(Math.sign(d))) { irLibre(d); return; }
-    // al subir y llegar a "¿Por qué elegirnos?", el mismo gesto no entra en los anillos
-    if (!capituloAbierto() && topeLibre) return;
-    const dar = (dir) => (capituloAbierto() ? pasoCapitulo(dir) : irAPaso(pasoActual() + dir));
-    if (Math.abs(d) >= 50) {                        // muesca de rueda de mouse: un paso cada una
-      acumulado = 0;
-      dar(Math.sign(d));
-      return;
-    }
-    acumulado += d;                                 // touchpad: se suma hasta completar un paso
-    if (Math.abs(acumulado) >= UMBRAL_TOUCHPAD) {
-      acumulado -= Math.sign(acumulado) * UMBRAL_TOUCHPAD;
-      dar(Math.sign(d));
-    }
-  }, { capture: true, passive: false });
-  addEventListener('keydown', (e) => {
-    const abajo = ['ArrowDown', 'PageDown', ' '], arriba = ['ArrowUp', 'PageUp'];
-    if (![...abajo, ...arriba, 'Home', 'End'].includes(e.key)) return;
-    e.stopImmediatePropagation();
-    if (abierta >= 0) return;
-    e.preventDefault();
-    const dir = abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1;
-    if (capituloAbierto()) { if (e.key !== 'Home' && e.key !== 'End') pasoCapitulo(dir); return; }
-    if (e.key === 'Home') irAPaso(0);
-    else if (e.key === 'End') irA(MAXIMO, RIGIDEZ);
-    else if (enLibre(dir)) irLibre(dir * (e.key.startsWith('Arrow') ? 120 : 760));   // flechas de a poco, Av/Re Pág y espacio de a una pantalla
-    else irAPaso(pasoActual() + dir);
-  }, true);})();
+})();

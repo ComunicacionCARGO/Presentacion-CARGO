@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Nuestra estructura — Grupo CARGO</title>
+  <title>¿Por qué elegirnos? — Grupo CARGO</title>
   <link rel="icon" type="image/png" href="../../img/marca/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,50 +16,19 @@
 </head>
 <body data-volver="../../index.html">
 
-  <!-- Fondo con paralaje (se mueve con el mouse) -->
-  <div class="fondo"><div class="fondo-imagen"></div></div>
-
   <main class="escenario">
 
-    <!-- Escenas fijas: el scroll no las desplaza, maneja la transición de anillos -->
-    <div class="escenas">
-      <section class="seccion-red">
-        <div class="titulo-estructura">
-          <p class="te-ante"></p>
-          <h1 class="te-titulo"></h1>
-          <p class="te-bajada"></p>
-          <p class="te-ayuda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V4.6a1.6 1.6 0 0 1 3.2 0v5.6h.4V8.7a1.6 1.6 0 0 1 3.2 0v1.6h.4V9.5a1.6 1.6 0 0 1 3.2 0v5.4c0 3.8-2.6 6.8-6.4 6.8h-1.1c-1.9 0-3.6-.9-4.6-2.5l-3-4.6a1.5 1.5 0 0 1 2.4-1.8L9 14.4z"/></svg><span></span></p>
-        </div>
-
-        <!-- Red: caminos curvos, mensajes que viajan y burbujas de cada área -->
-        <div class="red">
-          <svg class="red-caminos" viewBox="0 0 1600 900" aria-hidden="true">
-            <g class="caminos"></g>
-            <g class="mensajes"></g>
-          </svg>
-          <div class="burbujas"></div>
-        </div>
-
-        <i class="registro" style="left: 40px; top: 840px"></i>
-        <i class="registro" style="left: 1542px; top: 840px"></i>
-      </section>
-    </div>
-
-    <!-- Transición: anillos (rojo, rojo y gris) que se cierran desde los bordes hasta cubrir todo de gris -->
-    <canvas class="anillos" aria-hidden="true"></canvas>
-
-    <!-- 2. ¿Por qué elegirnos? El título aparece en el centro, sube y muestra las tarjetas -->
-    <section class="seccion-mejora" aria-hidden="true">
+    <!-- 1. ¿Por qué elegirnos? El título aparece en el centro, sube y muestra las tarjetas -->
+    <section class="seccion-mejora">
       <div class="el-fondo"><div class="el-imagen"></div></div>
-      <h2 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h2>
+      <h1 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h1>
       <div class="el-tarjetas"></div>
     </section>
 
-    <!-- 3. Mejora continua: pantalla partida Calidad / Capacitaciones (mejora.js) -->
+    <!-- 2. Mejora continua: pantalla partida Calidad / Capacitaciones (mejora.js) -->
     <div class="mc-tramo" aria-hidden="true">
       <section class="mc-elegir"></section>
-      <section class="mc-poli"></section>
-      <!-- 4. RSE: tablero "Hacia un impacto CERO" (rse.js), "Lo que hacemos, EN NÚMEROS" (rse-numeros.js)
+      <!-- 3. RSE: tablero "Hacia un impacto CERO" (rse.js), "Lo que hacemos, EN NÚMEROS" (rse-numeros.js)
            y "Acompañamos a la COMUNIDAD" (rse-comunidad.js) -->
       <div class="rse-fondo-comun" aria-hidden="true"><div class="rse-trama"></div></div>
       <section class="mc-rse"></section>
@@ -73,13 +42,8 @@
     <!-- Pista: solo da el recorrido del scroll (lo usa compartido/desplazamiento.js) -->
     <div class="pista"><div class="pista-espacio"></div></div>
 
-    <!-- Tarjeta de cada área -->
-    <div class="tarjeta-capa" aria-hidden="true">
-      <article class="tarjeta-area" role="dialog" aria-modal="true" aria-labelledby="ta-titulo"></article>
-    </div>
-
     <a class="volver" href="../../index.html" data-transicion>← Volver <span>Esc</span></a>
-    <p class="sello"><b>03</b> | Nuestra estructura</p>
+    <p class="sello"><b>03</b> | ¿Por qué elegirnos?</p>
   </main>
 
   <div class="grano"></div>

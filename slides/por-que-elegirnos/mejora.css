@@ -3,13 +3,11 @@
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
 
-/* Después de los anillos el scroll es un scroll común: lo de "¿Por qué elegirnos?"
-   sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
-   parte gris continúa el gris de arriba */
-.anillos, .seccion-mejora, .mc-tramo { will-change: translate; }   /* diapositiva.js les pone `translate` con el scroll; cada una es su propia capa */
-.anillos.lejos, .seccion-mejora.lejos { visibility: hidden; }        /* ya quedaron muy arriba */
-body.red-tapada .seccion-red, body.red-tapada .fondo { visibility: hidden; }   /* tapadas por los anillos */
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 4600px; z-index: 7; pointer-events: none; }
+/* Scroll común: "¿Por qué elegirnos?" sube y debajo llega la pantalla partida, cuya
+   parte gris continúa el gris de arriba; después sigue RSE (rse.css) */
+.seccion-mejora, .mc-tramo { will-change: translate; }   /* diapositiva.js les pone `translate` con el scroll; cada una es su propia capa */
+.seccion-mejora.lejos { visibility: hidden; }        /* ya quedó muy arriba */
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 3600px; z-index: 7; pointer-events: none; }
 .mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
 .mc-elegir.eligiendo { pointer-events: none; }
@@ -91,45 +89,6 @@ body.red-tapada .seccion-red, body.red-tapada .fondo { visibility: hidden; }   /
 .mc-m-boton b { transition: translate .3s ease; }
 .mc-bloque.foco .mc-m-boton { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
 .mc-bloque.foco .mc-m-boton b { translate: 5px 0; }
-/* ---------- Políticas y Certificaciones ----------
-   Debajo de la pantalla partida, con scroll común. Sigue el crema del lado de Calidad
-   (la banda roja de abajo termina justo en y 900, donde empieza esta sección). */
-.mc-poli {
-  --fg: var(--gris);
-  --fg2: rgba(58, 58, 58, .8);
-  --linea: rgba(58, 58, 58, .15);
-  --oscuro: #F1EADC;
-  position: absolute;
-  left: 0;
-  top: 900px;
-  width: 1600px;
-  height: 1000px;
-  color: var(--fg);
-  pointer-events: auto;
-}
-.mp-fondo {
-  position: absolute;
-  left: calc(800px - 50vw / var(--escala, 1));
-  top: 0;
-  width: calc(100vw / var(--escala, 1));
-  height: calc(1000px + 50vh / var(--escala, 1));   /* también cubre lo que sobre abajo en ventanas altas */
-  background: var(--blanco);
-}
-.mc-poli ol, .mc-poli ul { margin: 0; padding: 0; list-style: none; }
-.mc-poli h2, .mc-poli p, .mc-poli blockquote, .mc-poli figure { margin: 0; }
-.mc-poli strong { font-weight: 600; color: var(--fg); }
-.mc-poli em { font-style: italic; color: var(--rojo); }
-.mp-titulo { position: absolute; left: 64px; top: 78px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 64px; line-height: 1; color: var(--rojo); }
-.mc-poli .s-pol { position: absolute; left: 64px; top: 196px; width: 1472px; height: 430px; }
-.mc-poli .po-tabs, .mc-poli .po-detalle { top: 0; }
-.mc-poli .s-cert { position: absolute; left: 64px; top: 586px; width: 1472px; }   /* justo debajo de las directrices más largas */
-.mc-poli .ce-texto { margin-top: 0; }
-.mc-poli .ce-sellos { margin-top: 0; }
-.mc-poli .ce-svg { width: 250px; height: 250px; }
-.mc-poli .ce-sello figcaption { margin-top: 14px; }
-.mc-poli .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
-.mc-poli.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.08s + var(--i, 0) * .07s); }
-
 /* Tres franjitas de la marca (rojo, rojo, gris) */
 .mc-franjitas { display: inline-flex; gap: 3px; height: 5px; }
 .mc-franjitas b { display: block; width: 14px; height: 5px; background: var(--rojo); }
@@ -322,64 +281,6 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .ls-version text { font: 700 28px var(--fuente-titulo); fill: var(--blanco); text-anchor: middle; }
 .pi-nota { position: absolute; right: 0; bottom: 4px; width: 430px; font-size: 14px; font-style: italic; font-weight: 300; line-height: 1.5; text-align: right; color: var(--fg2); --i: 4; }
 
-/* ----- Calidad 4: Políticas ----- */
-.po-tabs { position: absolute; left: 0; top: 84px; width: 430px; }
-.po-tabs li { margin-bottom: 12px; }
-.po-tabs button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  padding: 16px 18px;
-  border: 1px solid var(--linea);
-  border-radius: 16px;
-  background: none;
-  color: var(--fg);
-  text-align: left;
-  cursor: pointer;
-  transition: background .3s ease, border-color .3s ease;
-}
-.po-tabs button:hover { border-color: var(--fg2); }
-.po-tabs button.activo { background: color-mix(in srgb, var(--c, var(--rojo)) 12%, var(--blanco)); border-color: var(--c, var(--rojo)); }
-.po-ico svg { display: block; width: 32px; height: 32px; fill: var(--fg2); transition: fill .3s ease; }
-.po-tabs button.activo .po-ico svg { fill: var(--c, var(--rojo)); }
-.po-txt b { display: block; font-size: 16px; font-weight: 600; line-height: 1.3; }
-.po-txt small { display: block; margin-top: 4px; font-size: 13px; letter-spacing: .04em; color: var(--fg2); }
-.po-detalle { position: absolute; left: 490px; top: 84px; width: 982px; --i: 3; }
-.po-norma { font-family: var(--fuente-titulo); font-weight: 500; font-size: 18px; letter-spacing: .16em; color: var(--c, var(--rojo)); }
-.po-norma span { margin-left: 10px; font-family: var(--fuente-texto); font-size: 13px; letter-spacing: .06em; color: var(--fg2); }
-.po-detalle blockquote { position: relative; margin-top: 14px; padding-left: 40px; font-size: 23px; font-style: italic; font-weight: 300; line-height: 1.45; color: var(--fg); }
-.po-detalle blockquote::before { content: "\201C"; position: absolute; left: -4px; top: -16px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 78px; font-style: normal; line-height: 1; color: var(--c, var(--rojo)); transition: color .3s ease; }
-.po-etq { margin-top: 26px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 24px; color: var(--c, var(--rojo)); }
-.po-dir { margin-top: 12px; columns: 2; column-gap: 44px; }
-.po-dir li { position: relative; margin-bottom: 12px; padding-left: 20px; font-size: 16px; font-weight: 300; line-height: 1.45; color: var(--fg2); break-inside: avoid; }
-.po-dir li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--rojo)); }
-.po-detalle blockquote, .po-detalle .po-dir li { opacity: 0; translate: 0 10px; transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
-.po-detalle.lista blockquote, .po-detalle.lista .po-dir li { opacity: 1; translate: 0 0; }
-.po-detalle.lista .po-dir li { transition-delay: calc(.12s + var(--i) * .05s); }
-.po-cert { position: absolute; left: 0; bottom: 4px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg2); --i: 4; }
-
-/* ----- Calidad 5: Certificaciones ----- */
-.ce-texto { margin-top: 12px; font-size: 20px; font-weight: 300; color: var(--fg2); --i: 1; }
-.ce-sellos { display: flex; justify-content: space-around; margin-top: 34px; }
-.ce-sello { width: 320px; margin: 0; text-align: center; cursor: default; }
-.ce-svg { display: block; width: 280px; height: 280px; margin: 0 auto; filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .28)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-.ce-sello:hover .ce-svg { transform: translateY(-10px) rotate(-6deg); }
-.ce-dientes { fill: var(--c, var(--rojo)); }
-.ce-disco { fill: var(--blanco); }
-.ce-linea { fill: none; stroke: var(--c, var(--rojo)); stroke-width: 1.5; }
-.ce-anillo { font: 600 15px var(--fuente-texto); letter-spacing: 2px; fill: var(--gris); }
-.ce-giro { transform-origin: 150px 150px; animation: ce-girar 40s linear infinite; }
-.mc-poli:not(.visible) .ce-giro { animation-play-state: paused; }   /* sellos fuera de pantalla: no giran */
-.ce-sello:hover .ce-giro { animation-duration: 12s; }
-@keyframes ce-girar { to { transform: rotate(360deg); } }
-.ce-iso { font: 600 20px var(--fuente-texto); letter-spacing: 6px; fill: var(--gris); text-anchor: middle; }
-.ce-num { font: 700 62px var(--fuente-titulo); fill: var(--c, var(--rojo)); text-anchor: middle; }
-.ce-sello figcaption { margin-top: 20px; }
-.ce-sello figcaption b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 26px; color: var(--fg); }
-.ce-sello figcaption small { display: block; margin-top: 4px; font-size: 13px; letter-spacing: .06em; color: var(--fg2); }
-
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }
 .ap-titulo { font-family: var(--fuente-titulo); font-weight: 700; font-size: 92px; line-height: .95; color: var(--rojo); }
@@ -437,5 +338,5 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .eq-franjas b:last-child { background: var(--franja3, var(--gris)); }
 
 @media (prefers-reduced-motion: reduce) {
-  .ce-giro, .ap-insignia { animation: none; }
+  .ap-insignia { animation: none; }
 }

@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
   <link rel="stylesheet" href="../../compartido/base.css">
   <link rel="stylesheet" href="estilo.css">
+  <link rel="stylesheet" href="estructura.css">
+  <link rel="stylesheet" href="politicas.css">
 </head>
 <body data-volver="../../index.html">
 
@@ -77,11 +79,33 @@
         <div class="mapa-info"><svg class="mapa-lineas" viewBox="0 0 1600 900" aria-hidden="true"></svg></div>
       </section>
 
-      <!-- 5. Logros: video de fondo en loop y tarjetas de vidrio -->
-      <section class="seccion-logros">
-        <div class="logros-video">
-          <video src="../../img/slides/quienes-somos/logros.mp4" muted loop playsinline preload="metadata"></video>
+      <!-- 5. Nuestra estructura: red de áreas (estructura.js, datos/estructura.js) -->
+      <section class="seccion-red seccion-estructura">
+        <div class="est-fondo" aria-hidden="true"><div class="est-fondo-imagen"></div></div>
+        <div class="titulo-estructura">
+          <p class="te-ante"></p>
+          <h2 class="te-titulo"></h2>
+          <p class="te-bajada"></p>
+          <p class="te-ayuda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V4.6a1.6 1.6 0 0 1 3.2 0v5.6h.4V8.7a1.6 1.6 0 0 1 3.2 0v1.6h.4V9.5a1.6 1.6 0 0 1 3.2 0v5.4c0 3.8-2.6 6.8-6.4 6.8h-1.1c-1.9 0-3.6-.9-4.6-2.5l-3-4.6a1.5 1.5 0 0 1 2.4-1.8L9 14.4z"/></svg><span></span></p>
         </div>
+        <!-- Red: caminos curvos, mensajes que viajan y burbujas de cada área -->
+        <div class="red">
+          <svg class="red-caminos" viewBox="0 0 1600 900" aria-hidden="true">
+            <g class="caminos"></g>
+            <g class="mensajes"></g>
+          </svg>
+          <div class="burbujas"></div>
+        </div>
+      </section>
+
+      <!-- 6. Políticas y Certificaciones (politicas.js, datos/mejora-continua.js). Al terminar queda
+           quieta y se cierran los anillos (rojo, rojo y gris) hasta cubrir todo de gris -->
+      <section class="seccion-politicas"></section>
+      <section class="seccion-transicion" aria-hidden="true"></section>
+
+      <!-- 7. Logros: fondo gris y tarjetas de vidrio -->
+      <section class="seccion-logros">
+        <div class="logros-fondo" aria-hidden="true"><div class="logros-imagen"></div></div>
         <h2 class="logros-titulo"><span></span><b></b></h2>
         <p class="logros-nota"></p>
         <div class="logros-tarjetas"></div>
@@ -90,6 +114,11 @@
         </a>
       </section>
 
+    </div>
+
+    <!-- Tarjeta de cada área de Nuestra estructura -->
+    <div class="tarjeta-capa" aria-hidden="true">
+      <article class="tarjeta-area" role="dialog" aria-modal="true" aria-labelledby="ta-titulo"></article>
     </div>
 
     <!-- Interfaz fija por encima de todo -->
@@ -101,10 +130,14 @@
   <div class="cortina cubre"><div class="banda"></div><div class="banda"></div><div class="banda"></div></div>
 
   <script src="../../datos/quienes-somos.js"></script>
+  <script src="../../datos/estructura.js"></script>
+  <script src="../../datos/mejora-continua.js"></script>
   <script src="../../compartido/base.js"></script>
   <script src="mapa-sudamerica.js"></script>
   <script src="grabados.js"></script>
   <script src="diapositiva.js"></script>
+  <script src="estructura.js"></script>
+  <script src="politicas.js"></script>
   <script src="../../compartido/desplazamiento.js"></script>
 </body>
 </html>

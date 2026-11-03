@@ -77,10 +77,10 @@ window.CARTAS = [
     destino: "slides/servicio-a-medida/index.html"
   },
   {
-    antetitulo: "Nuestra",
-    titulo: "ESTRUCTURA",
+    antetitulo: "¿Por qué",
+    titulo: "ELEGIRNOS?",
     portada: "img/cartas/nuestra-estructura.jpg",
     foco: 50,
-    destino: "slides/nuestra-estructura/index.html"
+    destino: "slides/por-que-elegirnos/index.html"
   }
 ];

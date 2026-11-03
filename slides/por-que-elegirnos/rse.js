@@ -166,7 +166,7 @@
 
   // ---------- Scroll: entra al llegar; teclas 1–8 solo con el tablero en pantalla ----------
   // La sección empieza en su "top" dentro del tramo (que arranca en y 900): asoma por abajo
-  // cuando la bajada (y − 900) pasa ese top y queda entera en pantalla con top + 900
+  // cuando el scroll pasa ese top y queda entera en pantalla con top + 900
   const TOP = raiz.offsetTop;
   let enPantalla = false, asentar = 0;
   const fondoComun = document.querySelector('.rse-fondo-comun');   // su trama aparece al entrar a RSE
@@ -263,7 +263,7 @@
       `<g fill="#4C956C" stroke="#4C956C" stroke-linecap="round" stroke-linejoin="round" opacity=".13">${svg}</g></svg>`;
   }
   document.addEventListener('desplazamiento', (e) => {
-    const baj = Math.max(0, e.detail.y - 900);
+    const baj = Math.max(0, e.detail.y);
     if (fondoComun) fondoComun.classList.toggle('visible', baj > TOP + 100);
     const ver = baj > TOP + 150 && baj < TOP + 1500;
     if (ver !== visible) {

@@ -609,7 +609,7 @@
   })();
 
   // =========================================================
-  // LOGROS: video de fondo en loop y tarjetas de vidrio flotantes
+  // LOGROS: fondo gris y tarjetas de vidrio flotantes
   // =========================================================
   (function () {
     const seccion = $('.seccion-logros');
@@ -710,11 +710,5 @@
       seccion.classList.add('visible');
     }, { threshold: .35 }).observe(seccion);
 
-    // El video (ya preparado para repetirse) solo se reproduce cerca de la pantalla
-    const video = seccion.querySelector('.logros-video video');
-    new IntersectionObserver((en) => {
-      if (en[0].isIntersecting) video.play().catch(() => {});
-      else video.pause();
-    }, { rootMargin: '50% 0px' }).observe(seccion);
   })();
 })();

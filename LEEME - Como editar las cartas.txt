@@ -140,15 +140,12 @@ Logros (cierre de la diapositiva):
   • Cada premio tiene su texto y, si querés, la fuente o programa
     ("DPO", "WCM"...), que aparece en rojo y cursiva. Si no lleva: fuente: "".
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
-  • El video de fondo es img\slides\quienes-somos\logros.mp4. Para cambiarlo,
-    reemplazá ese archivo por otro con el mismo nombre (MP4, horizontal,
-    idealmente de menos de 20 MB, ya preparado para repetirse sin corte).
-    Conviene que la parte de arriba sea clara para que se una sin corte
-    con la sección anterior.
+  • Logros tiene fondo gris (con la foto img\slides\nuestra-estructura\fondo-elegirnos.jpg).
+    Llega después de Políticas y Certificaciones con la transición de anillos.
 
 
-NUESTRA ESTRUCTURA (red de áreas)
----------------------------------
+NUESTRA ESTRUCTURA (red de áreas, en ¿Quiénes somos?, después del mapa)
+------------------------------------------------------------------------
 Se edita en  datos\estructura.js  (con el Bloc de notas).
   • Cada área es un bloque { ... } con nombre, título de la tarjeta, nivel,
     ícono y contenido (intro, subtitulo, destacados, lista, parrafos, nota).
@@ -159,8 +156,8 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     reacomoda sola y los caminos se vuelven a trazar.
   • **texto** = negrita;  *texto* = rojo en cursiva.
   • Íconos propios: ver img\estructura\LEEME.txt.
-  • Al bajar con el scroll, después de la transición de anillos, aparece
-    "¿Por qué ELEGIRNOS?" (elegirnosAntetitulo / elegirnosTitulo) con cuatro
+  • En el mismo archivo están los textos de la diapositiva "¿Por qué ELEGIRNOS?"
+    (carta 3 de la portada): elegirnosAntetitulo / elegirnosTitulo y cuatro
     tarjetas de vidrio. Cada tarjeta, en "elegirnos", tiene imagen (su ícono
     en SVG, en img\estructura\elegirnos), icono de respaldo (excelencia,
     innovacion, flexibilidad o crecimiento), titulo, texto y, si querés,
@@ -173,8 +170,8 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
 
 
-MEJORA CONTINUA (después de "¿Por qué elegirnos?", en Nuestra estructura)
--------------------------------------------------------------------------
+MEJORA CONTINUA (después de "¿Por qué elegirnos?", en la carta 3)
+-----------------------------------------------------------------
 Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
   • opciones: los dos lados de la pantalla partida (el primero, Calidad, va del
     lado crema; el segundo, Capacitaciones, del lado gris): número, título,
@@ -187,9 +184,9 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pilares (con su ícono: carretilla, caja, camion, sello, personas, casco,
     monedas), políticas (nombre, código, norma, cita y directrices) y
     certificaciones (norma, número, nombre y política).
-  • Políticas y certificaciones no están dentro del tema Calidad: se ven más
-    abajo, al seguir bajando después de la pantalla partida, bajo el título
-    rojo "Políticas y Certificaciones" (se cambia en
+  • Políticas y certificaciones se editan acá (en "calidad") pero se ven en
+    ¿Quiénes somos?, después de Nuestra estructura y antes de Nuestros logros,
+    bajo el título rojo "Políticas y Certificaciones" (se cambia en
     politicasCertificacionesTitulo).
   • Cada política tiene su color (color: "#759AAB" y así). Ese color pinta
     su pestaña, su cita, sus directrices y el sello de la certificación con
@@ -205,7 +202,7 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pasar el cursor por un lado, la banda de franjas se corre; clic para abrir el
     tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
 
-RSE (al final de Nuestra estructura): TABLERO, EN NÚMEROS Y COMUNIDAD
+RSE (al final de "¿Por qué elegirnos?"): TABLERO, EN NÚMEROS Y COMUNIDAD
 ---------------------------------------------------------------------
 Se edita en  datos\rse.js  (con el Bloc de notas). Aparecen en este orden:
 
