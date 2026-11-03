@@ -91,52 +91,56 @@ html, body {
 .cortina.cubre { pointer-events: auto; }
 
 /* ---------- Índice de secciones (compartido/indice.js) ----------
-   Discreto: una pastilla crema como la de "Volver", a la derecha y al medio, con una rayita
-   por sección; la de la sección en pantalla es roja y más larga. Al pasar el cursor aparecen
-   los nombres. Se oculta con un tema o una tarjeta abiertos. */
+   Discreto: una columna alta de rayitas pegada al borde derecho de la ventana (truco de 100vw),
+   en un vidrio casi transparente; la rayita de la sección en pantalla es roja y más larga.
+   Al pasar el cursor el vidrio se vuelve crema y se abre hacia la izquierda con los nombres
+   (Inter Light; el de la sección actual en negrita y rojo). Sobre fondos grises o rojos
+   (data-indice-tono en la sección) las rayitas se aclaran. Se oculta con un tema o una tarjeta abiertos. */
 .indice {
   position: absolute;
-  right: 16px;
+  right: calc(800px - 50vw / var(--escala, 1) + 10px);
   top: 450px;
   translate: 0 -50%;
   z-index: 8;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  padding: 10px 8px;
-  border-radius: 999px;
-  background: rgba(255, 251, 243, .72);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 22px -10px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(255, 255, 255, .6);
-  transition: opacity .3s ease;
+  align-items: stretch;
+  padding: 14px 6px;
+  border-radius: 20px;
+  background: rgba(255, 251, 243, .06);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
+  transition: opacity .3s ease, background .35s ease, box-shadow .35s ease, -webkit-backdrop-filter .35s ease, backdrop-filter .35s ease;
 }
-.indice button { position: relative; display: flex; align-items: center; justify-content: flex-end; width: 22px; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; }
-.indice i { display: block; width: 10px; height: 2px; border-radius: 2px; background: rgba(58, 58, 58, .4); transition: width .35s cubic-bezier(.2, .8, .2, 1), height .3s ease, background .3s ease; }
-.indice button:hover i { width: 14px; background: var(--gris); }
-.indice button.activa i { width: 18px; height: 3px; background: var(--rojo); }
+.indice:hover {
+  background: rgba(255, 251, 243, .9);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .7);
+}
+.indice button { display: flex; align-items: center; justify-content: flex-end; height: 36px; padding: 0 4px; border: 0; background: none; cursor: pointer; }
+.indice i { flex: none; display: block; width: 12px; height: 2px; margin-left: auto; border-radius: 2px; background: rgba(58, 58, 58, .42); transition: width .35s cubic-bezier(.2, .8, .2, 1), height .3s ease, background .3s ease; }
+.indice button:hover i { width: 18px; background: var(--gris); }
+.indice button.activa i { width: 24px; height: 3px; background: var(--rojo); }
+/* Los nombres ocupan lugar solo con el cursor encima: así el vidrio se abre y quedan aireados */
 .indice span {
-  position: absolute;
-  right: 32px;
-  top: 50%;
-  translate: 8px -50%;
-  padding: 4px 10px;
-  border-radius: 999px;
+  max-width: 0;
+  overflow: hidden;
   white-space: nowrap;
-  background: rgba(255, 251, 243, .94);
-  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .35);
-  font: 600 11px var(--fuente-texto);
-  letter-spacing: .12em;
+  font: 300 13px var(--fuente-texto);
+  letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--gris);
   opacity: 0;
-  pointer-events: none;
-  transition: opacity .25s ease, translate .3s cubic-bezier(.2, .8, .2, 1);
+  transition: max-width .45s cubic-bezier(.2, .8, .2, 1), margin .45s cubic-bezier(.2, .8, .2, 1), opacity .25s ease, color .2s ease;
 }
-.indice:hover span { opacity: 1; translate: 0 -50%; }
-.indice button.activa span { color: var(--rojo); }
-.indice button:hover span { background: #fff; }
+.indice:hover span { max-width: 300px; margin: 0 18px 0 12px; opacity: 1; transition-delay: 0s, 0s, .1s, 0s; }
+.indice button:hover span { color: var(--rojo); }
+.indice button.activa span { font-weight: 700; color: var(--rojo); }
+/* Sobre gris o rojo: rayitas claras (con el cursor encima vuelve el vidrio crema y los colores normales) */
+.indice.sobre-oscuro:not(:hover) i, .indice.sobre-rojo:not(:hover) i { background: rgba(255, 251, 243, .5); }
+.indice.sobre-rojo:not(:hover) .activa i { background: var(--blanco); }
 body.capitulo-abierto .indice, .tarjeta-capa.abierta ~ .indice { opacity: 0; pointer-events: none; }
 
 /* ---------- Aviso en celulares parados (base.js) ----------

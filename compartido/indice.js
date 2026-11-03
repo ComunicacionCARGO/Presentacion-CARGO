@@ -1,11 +1,12 @@
 /* =========================================================
    ÍNDICE DE SECCIONES — para las diapositivas largas.
-   Una columna discreta de rayitas a la derecha (en una pastilla crema como la
-   de "Volver"): la de la sección en pantalla se pone roja y más larga; al pasar
-   el cursor aparecen los nombres y un clic lleva a esa sección.
+   Una columna discreta de rayitas pegada al borde derecho, en un vidrio casi
+   transparente: la de la sección en pantalla se pone roja y más larga; al pasar
+   el cursor el vidrio se abre con los nombres y un clic lleva a esa sección.
    Las secciones se marcan en el HTML con data-indice="Nombre". Dónde empieza
    cada una se calcula solo (dentro de .pista o de .mc-tramo); con
-   data-indice-y="final" se va al final del recorrido.
+   data-indice-y="final" se va al final del recorrido. Con
+   data-indice-tono="oscuro" o "rojo" las rayitas se aclaran sobre ese fondo.
    Detalle sin mención: Av Pág / Re Pág saltan de sección en sección.
    ========================================================= */
 (function () {
@@ -21,6 +22,10 @@
     const y = el.dataset.indiceY;
     if (y === 'final') return maximo();
     if (y != null && y !== '') return +y;
+    return yInicio(el);
+  }
+  // donde la sección empieza a verse arriba (sin contar data-indice-y)
+  function yInicio(el) {
     if (el.closest('.mc-tramo')) return el.offsetTop + 900;   // ¿Por qué elegirnos?: el tramo empieza en y 900
     if (el.closest('.pista')) return el.offsetTop;
     return 0;
@@ -41,10 +46,20 @@
   botones.forEach((b, i) => b.addEventListener('click', () => ir(yDe(marcadas[i]))));
 
   // la sección en pantalla: la última que ya empezó (con un margen de un tercio de pantalla)
-  let activa = -1;
+  // y el tono del fondo detrás del índice (mitad de la pantalla): data-indice-tono="oscuro" o "rojo"
+  let activa = -1, tono = null;
   function marcar(y) {
-    let k = 0;
-    marcadas.forEach((el, i) => { if (yDe(el) <= y + 300) k = i; });
+    let k = 0, t = 0;
+    marcadas.forEach((el, i) => {
+      if (yDe(el) <= y + 300) k = i;
+      if (yInicio(el) <= y + 450) t = i;
+    });
+    const nuevoTono = marcadas[t].dataset.indiceTono || '';
+    if (nuevoTono !== tono) {
+      tono = nuevoTono;
+      nav.classList.toggle('sobre-oscuro', tono === 'oscuro');
+      nav.classList.toggle('sobre-rojo', tono === 'rojo');
+    }
     if (k === activa) return;
     activa = k;
     botones.forEach((b, i) => b.classList.toggle('activa', i === k));
