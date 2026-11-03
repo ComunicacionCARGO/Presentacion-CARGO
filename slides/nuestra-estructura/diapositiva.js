@@ -561,63 +561,78 @@
   addEventListener('resize', aplicarAvance);
   aplicarAvance();
 
-  // La transición avanza en PASOS. Nunca hay que esperar a que termine una animación:
-  // cada muesca de la rueda (o tecla) suma un paso al destino en el momento, y el
-  // movimiento sigue con su impulso hacia el nuevo destino (resorte amortiguado, sin
-  // frenar ni volver a arrancar). Dos muescas seguidas pasan los dos pasos de una vez.
-  // Paradas del scroll: 2 pasos de anillos (0 → 450 → 900: "¿Por qué elegirnos?")
-  // y después la pantalla partida Calidad / Capacitaciones (1800)
-  const PARADAS = [0, RECORRIDO / 2, RECORRIDO, RECORRIDO + 900];
-  const ULTIMA = PARADAS.length - 1, MAXIMO = PARADAS[ULTIMA];
-  const RIGIDEZ = 7.5;                            // más alto = más rápido (7,5 ≈ 1 s por paso)
+  // Dos tramos de scroll:
+  //  • Anillos (0 → 450 → 900): avanzan en PASOS. Nunca hay que esperar a que termine una
+  //    animación: cada muesca de la rueda (o tecla) suma un paso al destino en el momento y
+  //    el movimiento sigue con su impulso (resorte amortiguado). Dos muescas pasan los dos pasos.
+  //  • Desde "¿Por qué elegirnos?" (900) hasta el final: scroll libre, como una web: la rueda,
+  //    el touchpad y las teclas mueven la página lo que piden, con un suavizado corto.
+  const PARADAS = [0, RECORRIDO / 2, RECORRIDO];
+  const MAXIMO = RECORRIDO + 900;                 // final de la pantalla partida Calidad / Capacitaciones
+  const RIGIDEZ = 7.5;                            // pasos de los anillos (7,5 ≈ 1 s por paso)
+  const RIGIDEZ_LIBRE = 13;                       // scroll libre: más ágil
   const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
-  let paso = 0, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
-  let acumulado = 0, ultimaRueda = 0;
+  let objetivoY = 0, rigidez = RIGIDEZ, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
+  let acumulado = 0, ultimaRueda = 0, ultimaDir = 0, topeLibre = false;
+  // adónde va el scroll: el destino si se está moviendo; si no, donde está
+  const destino = () => (animacion ? objetivoY : (window.desplazamiento ? window.desplazamiento.y : 0));
   const paradaCercana = (y) => PARADAS.reduce((m, p, i) => (Math.abs(p - y) < Math.abs(PARADAS[m] - y) ? i : m), 0);
-  // paso actual: el de destino si hay una animación en curso; si no, el de la posición real
-  const pasoActual = () => (animacion || !window.desplazamiento ? paso : paradaCercana(window.desplazamiento.y));
+  const pasoActual = () => paradaCercana(destino());
+  // ¿este movimiento va por el tramo libre? (de 900 para abajo, o bajando desde 900)
+  const enLibre = (dir) => { const y = destino(); return y > RECORRIDO + .5 || (y >= RECORRIDO - .5 && dir > 0); };
   // Con un tema de Mejora continua abierto, la rueda y las teclas recorren sus secciones (mejora.js)
   const capituloAbierto = () => document.body.classList.contains('capitulo-abierto');
   const pasoCapitulo = (dir) => document.dispatchEvent(new CustomEvent('capitulo-paso', { detail: dir }));
-  window.irAParada = (n) => irAPaso(n);           // para mejora.js (por ejemplo, volver a la pantalla partida)
+  window.irAParada = (n) => irAPaso(n);           // para mejora.js
   function mover(ahora) {
     let dt = Math.min(.05, Math.max(0, (ahora - ultimoCuadro) / 1000));
     ultimoCuadro = ahora;
-    const objetivo = PARADAS[paso];
     // resorte críticamente amortiguado, en subpasos cortos para que sea estable
     while (dt > 0) {
       const h = Math.min(dt, 1 / 240);
-      velocidad += (RIGIDEZ * RIGIDEZ * (objetivo - posicion) - 2 * RIGIDEZ * velocidad) * h;
+      velocidad += (rigidez * rigidez * (objetivoY - posicion) - 2 * rigidez * velocidad) * h;
       posicion += velocidad * h;
       dt -= h;
     }
     posicion = Math.max(0, Math.min(MAXIMO, posicion));
-    const termino = Math.abs(objetivo - posicion) < 2.5 && Math.abs(velocidad) < 60;  // los últimos píxeles no se notan
-    if (termino) { posicion = objetivo; velocidad = 0; }
+    const termino = Math.abs(objetivoY - posicion) < 1.5 && Math.abs(velocidad) < 40;  // los últimos píxeles no se notan
+    if (termino) { posicion = objetivoY; velocidad = 0; }
     window.desplazamiento.ir(posicion, true);
     animacion = termino ? null : requestAnimationFrame(mover);
   }
-  function irAPaso(n) {
-    n = Math.max(0, Math.min(ULTIMA, n));
-    if (!window.desplazamiento) { paso = n; return; }
-    if (n === paso && !animacion && Math.abs(window.desplazamiento.y - PARADAS[n]) < .5) return;
-    paso = n;
-    if (!animacion) {                             // arranca desde donde está, quieto
+  // mueve hacia "y"; si ya se está moviendo, solo cambia el destino (sigue con su impulso)
+  function irA(y, k) {
+    objetivoY = Math.max(0, Math.min(MAXIMO, y));
+    rigidez = k;
+    if (!window.desplazamiento) return;
+    if (!animacion) {
+      if (Math.abs(window.desplazamiento.y - objetivoY) < .5) return;
       posicion = window.desplazamiento.y;
       velocidad = 0;
       ultimoCuadro = performance.now();
       animacion = requestAnimationFrame(mover);
-    }                                             // si ya se está moviendo, solo cambia el destino
+    }
+  }
+  function irAPaso(n) { irA(PARADAS[Math.max(0, Math.min(PARADAS.length - 1, n))], RIGIDEZ); }
+  function irLibre(dy) {
+    const y = Math.max(RECORRIDO, Math.min(MAXIMO, destino() + dy));
+    if (dy < 0 && y <= RECORRIDO) topeLibre = true;   // llegó arriba de "¿Por qué elegirnos?": frena ahí
+    irA(y, RIGIDEZ_LIBRE);
   }
   addEventListener('wheel', (e) => {
-    // la rueda la maneja esta diapositiva (no el scroll libre)
+    // la rueda la maneja esta diapositiva
     e.stopImmediatePropagation();
     e.preventDefault();
     if (abierta >= 0 || !e.deltaY) return;          // con una tarjeta abierta, la rueda no hace nada
     const d = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? 800 : 1);
     const ahora = performance.now();
-    if (ahora - ultimaRueda > 220 || Math.sign(d) !== Math.sign(acumulado)) acumulado = 0;
+    const nuevoGesto = ahora - ultimaRueda > 220 || Math.sign(d) !== ultimaDir;
+    if (nuevoGesto) { acumulado = 0; topeLibre = false; }
     ultimaRueda = ahora;
+    ultimaDir = Math.sign(d);
+    if (!capituloAbierto() && enLibre(Math.sign(d))) { irLibre(d); return; }
+    // al subir y llegar a "¿Por qué elegirnos?", el mismo gesto no entra en los anillos
+    if (!capituloAbierto() && topeLibre) return;
     const dar = (dir) => (capituloAbierto() ? pasoCapitulo(dir) : irAPaso(pasoActual() + dir));
     if (Math.abs(d) >= 50) {                        // muesca de rueda de mouse: un paso cada una
       acumulado = 0;
@@ -639,7 +654,7 @@
     const dir = abajo.includes(e.key) && !(e.key === ' ' && e.shiftKey) ? 1 : -1;
     if (capituloAbierto()) { if (e.key !== 'Home' && e.key !== 'End') pasoCapitulo(dir); return; }
     if (e.key === 'Home') irAPaso(0);
-    else if (e.key === 'End') irAPaso(ULTIMA);
+    else if (e.key === 'End') irA(MAXIMO, RIGIDEZ);
+    else if (enLibre(dir)) irLibre(dir * (e.key.startsWith('Arrow') ? 120 : 760));   // flechas de a poco, Av/Re Pág y espacio de a una pantalla
     else irAPaso(pasoActual() + dir);
-  }, true);
-})();
+  }, true);})();
