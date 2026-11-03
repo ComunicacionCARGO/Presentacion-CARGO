@@ -106,5 +106,5 @@
   pointer-events: none;
   visibility: hidden;
 }
-/* Espacio de scroll de la transición (la sección de Políticas lo tapa mientras está quieta) */
-.seccion-transicion { height: 900px; z-index: 0; }
+/* Scroll extra después de Logros: al seguir bajando, el título sube y entran las tarjetas */
+.seccion-cierre { height: 300px; z-index: 0; }

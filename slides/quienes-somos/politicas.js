@@ -135,7 +135,19 @@
     aro(R, R + b, ROJO);                            // anillo rojo de adelante
   }
 
-  // Con el scroll: entrada, sección quieta durante la transición y anillos
+  // =========================================================
+  // "NUESTROS LOGROS" (como era "¿Por qué elegirnos?" en la carta 3): la sección queda quieta
+  // en pantalla desde que empiezan los anillos (invisible); justo al cerrar el círculo
+  // aparecen con un fundido el video de fondo y el título, en el centro; al seguir bajando
+  // (LOGROS_EXTRA de scroll) el título sube a su lugar y entran las tarjetas.
+  // =========================================================
+  const logros = document.querySelector('.seccion-logros');
+  const logrosFondo = logros && logros.querySelector('.logros-fondo');
+  const logrosTitulo = logros && logros.querySelector('.logros-titulo');
+  const suave = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  let fijadoLogros = null, opFondo = '', opTitulo = '', conTarjetas = false;
+
+  // Con el scroll: entrada, sección quieta durante la transición, anillos y Logros
   let fijado = -1;
   document.addEventListener('desplazamiento', (e) => {
     const y = e.detail.y, top = poli.offsetTop;
@@ -145,6 +157,19 @@
     const arriba = top + fijar - y;                 // borde de arriba de la sección en pantalla
     poli.classList.toggle('visible', arriba < 800 && arriba + ALTO > 0);
     const nuevo = Math.max(0, Math.min(1, (y - A) / RECORRIDO));
+    if (logros) {
+      // quieta con su borde de arriba en el borde de la pantalla desde que empiezan los anillos
+      const fl = y >= A ? y - logros.offsetTop : 0;
+      if (fl !== fijadoLogros) { fijadoLogros = fl; logros.style.translate = `0 ${fl.toFixed(1)}px`; }
+      const of = suave(.8, 1, nuevo).toFixed(3), ot = suave(.7, .95, nuevo).toFixed(3);
+      if (of !== opFondo) { opFondo = of; logrosFondo.style.opacity = of; }
+      if (ot !== opTitulo) { opTitulo = ot; logrosTitulo.style.opacity = ot; }
+      logros.style.pointerEvents = nuevo >= 1 ? '' : 'none';   // invisible: no tapa los botones de Políticas
+      // las tarjetas entran al seguir bajando después de cerrar el círculo; al volver, se van
+      const fin = A + RECORRIDO;
+      const tarjetas = conTarjetas ? y > fin + 40 : y > fin + 100;
+      if (tarjetas !== conTarjetas) { conTarjetas = tarjetas; logros.classList.toggle('arriba', tarjetas); }
+    }
     if (nuevo === avance) return;
     avance = nuevo;
     dibujarAnillos();

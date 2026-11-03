@@ -703,9 +703,9 @@
     ajustarTarjetas();
     document.fonts.ready.then(ajustarTarjetas);
 
-    // El título aparece en el centro de la pantalla y, cuando la sección llega a su lugar,
-    // sube a su posición y entran las tarjetas (como en "¿Por qué elegirnos?"); al volver
-    // hacia arriba se recentra y las tarjetas se van enseguida
+    // El título aparece en el centro de la pantalla (--cx/--cy); politicas.js maneja la entrada:
+    // fundido al cerrar los anillos y, al seguir bajando, .arriba lo sube y entran las tarjetas
+
     const titulo = $('.logros-titulo');
     function centrarTitulo() {
       const cx = 800 - (titulo.offsetLeft + titulo.offsetWidth / 2);
@@ -715,17 +715,7 @@
     }
     centrarTitulo();
     document.fonts.ready.then(centrarTitulo);
-    let arriba = false, subir = 0;
-    document.addEventListener('desplazamiento', (e) => {
-      const borde = seccion.offsetTop - e.detail.y;   // borde de arriba de la sección en pantalla
-      seccion.classList.toggle('visible', borde < 600 && borde > -900);
-      const ahora = arriba ? borde < 300 : borde < 60;
-      if (ahora === arriba) return;
-      arriba = ahora;
-      clearTimeout(subir);
-      if (arriba) subir = setTimeout(() => seccion.classList.add('arriba'), 150);
-      else seccion.classList.remove('arriba');
-    });
+
 
     // El video (ya preparado para repetirse) solo se reproduce cerca de la pantalla
     const video = seccion.querySelector('.logros-fondo video');
