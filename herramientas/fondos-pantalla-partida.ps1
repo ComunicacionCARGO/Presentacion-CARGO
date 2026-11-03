@@ -2,7 +2,7 @@ param([string]$Carpeta = (Join-Path $PSScriptRoot '..\img\slides\nuestra-estruct
 # Fondos de la pantalla partida de "Mejora continua" (Nuestra estructura), preparados
 # como en la referencia de la persona, para que el navegador no tenga que difuminar
 # ni mezclar en cada cuadro:
-#   originales\calidad.webp        -> fondo-calidad.jpg        (foto ~42 % sobre crema, fundida hacia abajo)
+#   originales\calidad.webp        -> fondo-calidad.jpg        (foto ~42 % sobre crema, fundida hacia abajo y hacia la banda)
 #   originales\capacitaciones.webp -> fondo-capacitaciones.jpg (foto en modo "aclarar" sobre gris, al 42 %)
 # Cubren x -200..1800 y y 0..1000 del escenario, a media resolucion (1000 x 500 px).
 # Posiciones medidas sobre la referencia (1921 px = 1600 del escenario, x 0,8329):
@@ -73,7 +73,9 @@ function Hornear($fuente, $salida, $tipo, $fx, $fy, $fw, $fh) {
       $sx = $x / $R + $X0
       $a = 0
       if ($filaDentro -and $fyA -gt 0 -and $sx -ge $fx -and $sx -lt $fx + $fw) {
-        if ($tipo -eq 0) { $a = $fyA * (Suave $fx ($fx + 110) $sx) * (1 - (Suave ($fx + $fw - 220) ($fx + $fw) $sx)) }   # bordes izquierdo y derecho suaves
+        # Calidad: se apaga hacia la banda, espejo del fundido de Capacitaciones (que aparece de x 870 a 1060
+        # alrededor de la diagonal en x 781,6): entera hasta x 502, desaparece en x 692
+        if ($tipo -eq 0) { $a = $fyA * (Suave $fx ($fx + 110) $sx) * (1 - (Suave 502 692 $sx)) }
         else { $a = 0.42 * $fyA * (Suave 870 1060 $sx) * (1 - (Suave ($fx + $fw - 100) ($fx + $fw) $sx)) }
       }
       $i = $y * $st + $x * 3
