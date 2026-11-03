@@ -205,6 +205,21 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pasar el cursor por un lado, la banda de franjas se corre; clic para abrir el
     tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
 
+RSE — "HACIA UN IMPACTO CERO" (al final de Nuestra estructura)
+---------------------------------------------------------------
+Se edita en  datos\rse.js  (con el Bloc de notas).
+  • Títulos, texto de arriba, textos del medidor (HOY / CERO) y el mensaje
+    final que aparece cuando están todas las palancas activadas.
+  • palancas: cada una tiene nombre (lo que se lee debajo), icono (ruta,
+    camion, grafico, foco, escudo, arboles, reciclar, digital), texto (la frase
+    principal) y puntos (hasta 4 renglones cortos).
+  • Están pensadas para ser 8 (dos filas de 4). Si se agregan más, conviene
+    pedirle a Claude que ajuste el tablero.
+  • **texto** = negrita.
+  • Al ver la presentación: clic en cada palanca (o las teclas 1 a 8) para
+    activarla; la tarjeta muestra la acción y la aguja baja hacia CERO. Con
+    todas activadas aparece "IMPACTO CERO" y el botón Reiniciar.
+
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:

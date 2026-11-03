@@ -1,0 +1,148 @@
+/* =========================================================
+   RSE — "Hacia un impacto CERO" (rse.js, datos/rse.js)
+   Tablero industrial: 8 palancas que, al activarse, muestran su acción y
+   bajan la aguja del medidor de huella de carbono hasta CERO.
+   Va debajo de "Políticas y Certificaciones", dentro de .mc-tramo (y 1900).
+   Medidas en px del escenario de 1600 × 900.
+   ========================================================= */
+.mc-rse {
+  --crema2: rgba(255, 251, 243, .62);
+  --crema3: rgba(255, 251, 243, .14);
+  position: absolute;
+  left: 0;
+  top: 1900px;
+  width: 1600px;
+  height: 900px;
+  color: var(--blanco);
+  pointer-events: auto;
+}
+.mc-rse h2, .mc-rse h3, .mc-rse p, .mc-rse ul { margin: 0; padding: 0; }
+.mc-rse ul { list-style: none; }
+.mc-rse strong { font-weight: 600; color: var(--blanco); }
+
+/* Fondo a todo el ancho de la ventana: el crema de arriba, las tres franjas
+   (rojo, hueco crema, rojo, hueco crema, gris: las mismas medidas de la banda
+   de la pantalla partida) y el gris del tablero */
+.rse-fondo {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: 0;
+  width: calc(100vw / var(--escala, 1));
+  height: calc(900px + 50vh / var(--escala, 1));
+  background: linear-gradient(to bottom,
+    var(--blanco) 0 24px, var(--rojo) 24px 58.6px, var(--blanco) 58.6px 69.4px,
+    var(--rojo) 69.4px 104px, var(--blanco) 104px 114.8px, var(--gris) 114.8px);
+}
+
+/* ---------- Título ---------- */
+.rse-ante { position: absolute; left: 64px; top: 160px; font-size: 13px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--crema2); }
+.rse-ante::before { content: ""; display: inline-block; width: 26px; height: 3px; margin: 0 12px 4px 0; vertical-align: middle; background: var(--rojo); box-shadow: 0 -6px 0 var(--rojo), 0 6px 0 rgba(255, 251, 243, .5); }
+.rse-titulo { position: absolute; left: 60px; top: 186px; white-space: nowrap; line-height: 1; }
+.rse-titulo span { font-weight: 300; font-size: 50px; letter-spacing: -.01em; }
+.rse-titulo b { margin-left: 14px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 124px; letter-spacing: .01em; color: var(--rojo); }
+.rse-texto { position: absolute; left: 64px; top: 330px; width: 660px; font-size: 18px; font-weight: 300; line-height: 1.45; color: var(--crema2); }
+
+/* ---------- Tablero de palancas (2 filas de 4) ---------- */
+.rse-tablero { position: absolute; left: 64px; top: 412px; width: 696px; height: 448px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 16px; }
+.rse-palanca {
+  position: relative;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--crema3);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 251, 243, .07), rgba(255, 251, 243, .02));
+  transition: border-color .3s ease, background .3s ease;
+}
+.rse-palanca:hover, .rse-palanca:focus-visible { border-color: rgba(255, 251, 243, .38); outline: none; }
+.rse-palanca.activa { border-color: rgba(76, 149, 108, .75); background: linear-gradient(180deg, rgba(76, 149, 108, .2), rgba(76, 149, 108, .05)); }
+.rse-tecla { position: absolute; left: 12px; top: 10px; font: 500 12px var(--fuente-titulo); letter-spacing: .12em; color: rgba(255, 251, 243, .35); }
+.rse-led { position: absolute; right: 13px; top: 13px; width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 251, 243, .16); transition: background .3s ease, box-shadow .3s ease; }
+.rse-palanca.activa .rse-led { background: #6FD39A; box-shadow: 0 0 10px 2px rgba(111, 211, 154, .7); }
+
+/* riel con marcas a los costados, llenado verde y mango (como un fader de consola) */
+.rse-riel { position: absolute; left: 50%; top: 30px; width: 14px; height: 104px; margin-left: -7px; border-radius: 7px; background: rgba(0, 0, 0, .35); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .5); }
+.rse-riel::before, .rse-riel::after { content: ""; position: absolute; top: 4px; bottom: 4px; width: 10px; background: repeating-linear-gradient(to bottom, rgba(255, 251, 243, .28) 0 1px, transparent 1px 12px); }
+.rse-riel::before { right: 22px; }
+.rse-riel::after { left: 22px; }
+.rse-llenado { position: absolute; left: 3px; right: 3px; bottom: 3px; height: 0; border-radius: 4px; background: var(--verde); transition: height .55s cubic-bezier(.3, 1.3, .5, 1); }
+.rse-palanca.activa .rse-llenado { height: calc(100% - 6px); }
+.rse-mango {
+  position: absolute;
+  left: 50%;
+  top: 82px;
+  width: 64px;
+  height: 22px;
+  margin-left: -32px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #FFFBF3, #D9D3C7);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .45), inset 0 -2px 0 rgba(0, 0, 0, .12);
+  transition: top .55s cubic-bezier(.3, 1.4, .5, 1);
+}
+.rse-mango::before { content: ""; position: absolute; left: 8px; right: 8px; top: 50%; height: 3px; margin-top: -1.5px; background: var(--rojo); }
+.rse-palanca:not(.activa):hover .rse-mango { top: 74px; }
+.rse-palanca.activa .rse-mango { top: 0; }
+.rse-palanca svg { position: absolute; left: 50%; top: 150px; width: 26px; height: 26px; margin-left: -13px; fill: var(--rojo); }
+.rse-nombre { position: absolute; left: 10px; right: 10px; top: 182px; font: 500 14px/1.15 var(--fuente-titulo); letter-spacing: .05em; text-transform: uppercase; color: var(--crema2); transition: color .3s ease; }
+.rse-palanca.activa .rse-nombre { color: var(--blanco); }
+
+/* ---------- Medidor ---------- */
+.rse-medidor { position: absolute; left: 820px; top: 140px; width: 716px; height: 410px; }
+.rse-medidor svg { display: block; width: 716px; height: 330px; overflow: visible; }
+.rse-seg { fill: none; stroke-width: 20; opacity: .2; transition: opacity .25s ease; }
+.rse-seg.encendido { opacity: 1; }
+.rse-marca { stroke: rgba(255, 251, 243, .35); stroke-width: 1.5; }
+.rse-marca.mayor { stroke: rgba(255, 251, 243, .7); stroke-width: 2.5; }
+.rse-punta { font: 700 20px var(--fuente-titulo); letter-spacing: .1em; fill: var(--crema2); text-anchor: middle; }
+.rse-punta.hasta { fill: #6FD39A; }
+.rse-m-titulo { font: 600 12px var(--fuente-texto); letter-spacing: .24em; text-transform: uppercase; fill: var(--crema2); text-anchor: middle; }
+.rse-aguja path { fill: var(--rojo); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .45)); }
+.rse-eje { fill: var(--gris); stroke: var(--blanco); stroke-width: 3; }
+.rse-eje2 { fill: var(--rojo); }
+.rse-lectura { position: absolute; left: 0; top: 336px; width: 716px; text-align: center; }
+.rse-lectura b { display: block; font: 700 46px/1 var(--fuente-titulo); letter-spacing: .02em; transition: color .4s ease; }
+.rse-lectura span { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--crema2); }
+.mc-rse.completo .rse-lectura b { color: #6FD39A; }
+.mc-rse.completo .rse-seg { filter: drop-shadow(0 0 10px rgba(111, 211, 154, .45)); }
+
+/* ---------- Tarjeta con la acción elegida ---------- */
+.rse-tarjeta {
+  position: absolute;
+  left: 820px;
+  top: 572px;
+  width: 716px;
+  height: 288px;
+  box-sizing: border-box;
+  padding: 24px 32px;
+  border: 1px solid var(--crema3);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .09), rgba(255, 251, 243, .03));
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+.rse-contenido > * { opacity: 0; translate: 0 10px; transition: opacity .4s ease, translate .55s cubic-bezier(.2, .8, .2, 1); }
+.rse-contenido.lista > * { opacity: 1; translate: 0 0; }
+.rse-contenido.lista > :nth-child(2) { transition-delay: .04s; }
+.rse-contenido.lista > :nth-child(3) { transition-delay: .08s; }
+.rse-contenido.lista > :nth-child(4) { transition-delay: .12s; }
+.rse-num { font: 500 14px var(--fuente-titulo); letter-spacing: .2em; color: var(--rojo); }
+.rse-tarjeta h3 { margin-top: 2px; font: 700 32px/1.1 var(--fuente-titulo); }
+.rse-tarjeta h3.rse-final { color: #6FD39A; }
+.rse-frase { margin-top: 8px; font-size: 17px; font-weight: 300; line-height: 1.45; color: rgba(255, 251, 243, .9); }
+.rse-puntos { margin-top: 12px; }
+.rse-puntos li { position: relative; margin-bottom: 6px; padding-left: 18px; font-size: 15px; font-weight: 300; line-height: 1.4; color: var(--crema2); }
+.rse-puntos li::before { content: ""; position: absolute; left: 0; top: .5em; width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
+.rse-reiniciar { margin-top: 18px; padding: 9px 18px; font: 600 12px var(--fuente-texto); letter-spacing: .16em; text-transform: uppercase; color: var(--blanco); cursor: pointer; border: 1px solid rgba(255, 251, 243, .4); border-radius: 999px; background: transparent; transition: background .25s ease; }
+.rse-reiniciar:hover { background: rgba(255, 251, 243, .12); }
+
+/* ---------- Entrada al llegar con el scroll ---------- */
+.mc-rse .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
+.mc-rse.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.08s + var(--i, 0) * .06s); }
+.mc-rse .rse-palanca.ent { transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1), border-color .3s ease, background .3s ease; }
+.mc-rse.asentado .ent { transition-delay: 0s; }   /* ya entraron: el cursor responde sin demora */
+
+@media (prefers-reduced-motion: reduce) {
+  .rse-mango, .rse-llenado { transition: none; }
+}

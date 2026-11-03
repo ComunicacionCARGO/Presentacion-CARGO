@@ -7,7 +7,7 @@
    sube (--bajada lo pone diapositiva.js) y debajo llega la pantalla partida, cuya
    parte gris continúa el gris de arriba */
 .anillos, .seccion-mejora, .mc-tramo { translate: 0 calc(var(--bajada, 0) * -1px); }
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 1900px; z-index: 7; pointer-events: none; }
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 2800px; z-index: 7; pointer-events: none; }
 .mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
 .mc-elegir.eligiendo { pointer-events: none; }
