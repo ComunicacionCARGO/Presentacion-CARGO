@@ -205,9 +205,27 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     pasar el cursor por un lado, la banda de franjas se corre; clic para abrir el
     tema; dentro, la rueda o las flechas ← → recorren las secciones y Esc vuelve.
 
-RSE — "HACIA UN IMPACTO CERO" (al final de Nuestra estructura)
----------------------------------------------------------------
-Se edita en  datos\rse.js  (con el Bloc de notas).
+RSE (al final de Nuestra estructura): EN NÚMEROS, TABLERO Y COMUNIDAD
+---------------------------------------------------------------------
+Se edita en  datos\rse.js  (con el Bloc de notas). Son tres partes:
+
+1. numeros — "Lo que hacemos, EN NÚMEROS"
+  • Reciclaje: kilos y árboles (van entre comillas, con punto de miles:
+    "65.916") y los 12 meses del registro (mes y kg).
+  • Huella de carbono: un renglón por mes con m3 e índice (con coma decimal:
+    "2,1"). Los renglones marcados "verificar" se copiaron de una captura:
+    revisalos. El porcentaje de baja se calcula solo, comparando el promedio
+    de comparacionDesde con el de comparacionHasta.
+  • Para agregar un mes, copiá un renglón completo con su coma.
+
+3. comunidad — "Acompañamos a la COMUNIDAD"
+  • acciones: título, texto e imagen (la foto va en img\rse\acciones\).
+  • aliados: nombre, imagen (PNG con fondo transparente en img\rse\aliados\)
+    y grupo ("Ambiente" o "Comunidad"; las fichas se agrupan solas).
+  • Para cambiar un logo o una foto por uno de mejor calidad, guardalo en esa
+    carpeta con el mismo nombre de archivo.
+
+2. Tablero "Hacia un impacto CERO":
   • Títulos, texto de arriba, textos del medidor (HOY / CERO) y el mensaje
     final que aparece cuando están todas las palancas activadas.
   • palancas: cada una tiene nombre (lo que se lee debajo), icono (ruta,

@@ -2,7 +2,7 @@
    RSE — "Hacia un impacto CERO" (rse.js, datos/rse.js)
    Tablero industrial: 8 palancas que, al activarse, muestran su acción y
    bajan la aguja del medidor de huella de carbono hasta CERO.
-   Va debajo de "Políticas y Certificaciones", dentro de .mc-tramo (y 1900).
+   Va después de "En números", dentro de .mc-tramo (y 2800).
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
 .mc-rse {
@@ -10,7 +10,7 @@
   --crema3: rgba(255, 251, 243, .14);
   position: absolute;
   left: 0;
-  top: 1900px;
+  top: 2800px;
   width: 1600px;
   height: 900px;
   color: var(--blanco);
@@ -146,3 +146,95 @@
 @media (prefers-reduced-motion: reduce) {
   .rse-mango, .rse-llenado { transition: none; }
 }
+
+/* =========================================================
+   RSE 1 — "Lo que hacemos, EN NÚMEROS" (rse-numeros.js)
+   Crema, a continuación de "Políticas y Certificaciones" (tramo y 1900).
+   Izquierda: reciclaje con ZYCLAR (contadores y 12 columnas de "fardos" de
+   500 kg). Derecha: huella de carbono (la línea del índice es una ruta y un
+   camioncito la recorre; con el mouse se elige el mes).
+   ========================================================= */
+.mc-num { position: absolute; left: 0; top: 1900px; width: 1600px; height: 900px; color: var(--gris); pointer-events: auto; }
+.mc-num h2, .mc-num h3, .mc-num p { margin: 0; }
+.mc-num strong { font-weight: 600; }
+.nu-fondo { position: absolute; left: calc(800px - 50vw / var(--escala, 1)); top: 0; width: calc(100vw / var(--escala, 1)); height: 900px; background: var(--blanco); }
+.mc-num .rse-titulo, .mc-com .rse-titulo { top: 84px; }   /* sin antetítulo: arriba a la izquierda está el botón Volver */
+.nu-panel { position: absolute; top: 236px; width: 688px; height: 640px; }
+.nu-panel.izq { left: 64px; }
+.nu-panel.der { left: 848px; }
+.nu-division { position: absolute; left: 800px; top: 246px; width: 1px; height: 600px; background: rgba(58, 58, 58, .14); }
+.nu-panel h3 { font: 700 30px/1.1 var(--fuente-titulo); }
+.nu-panel h3::before { content: ""; display: inline-block; width: 10px; height: 10px; margin: 0 12px 5px 0; border-radius: 50%; background: var(--verde); vertical-align: middle; }
+.nu-texto { margin-top: 10px; font-size: 16px; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .78); }
+.nu-datos { position: absolute; left: 0; top: 118px; display: flex; gap: 40px; }
+.nu-dato { display: flex; align-items: center; gap: 14px; }
+.nu-dato svg { width: 44px; height: 44px; fill: var(--verde); flex: none; }
+.nu-dato b { display: block; font: 700 58px/1 var(--fuente-titulo); color: var(--verde); letter-spacing: -.01em; }
+.nu-dato span { display: block; margin-top: 4px; font-size: 13px; color: rgba(58, 58, 58, .75); }
+.nu-etq { position: absolute; left: 0; top: 232px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+
+/* fardos: cada bloque son 500 kg */
+.nu-fardos { position: absolute; left: 0; top: 262px; width: 688px; height: 330px; }
+.nu-fardos::after { content: ""; position: absolute; left: 0; right: 0; top: 300px; height: 2px; background: var(--gris); }
+.nu-col { position: absolute; bottom: 30px; width: 42px; display: flex; flex-direction: column-reverse; gap: 3px; cursor: default; transition: opacity .25s ease; }
+.nu-fardos.enfocado .nu-col:not(.foco) { opacity: .3; }
+.nu-bloque { height: 15.1px; border-radius: 2px; background: var(--verde); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .12), inset 0 1px 0 rgba(255, 255, 255, .25);
+  opacity: 0; translate: 0 -26px; transition: opacity .35s ease, translate .5s cubic-bezier(.3, 1.4, .5, 1); transition-delay: var(--d, 0s); }
+.nu-bloque:nth-child(even) { background: #57A178; }
+.mc-num.visible .nu-bloque { opacity: 1; translate: 0 0; }
+.nu-mes { position: absolute; bottom: -26px; left: -10px; width: 62px; text-align: center; font-size: 12px; color: rgba(58, 58, 58, .6); }
+.nu-kg { position: absolute; left: 50%; bottom: calc(100% + 8px); translate: -50% 4px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; font: 600 13px var(--fuente-texto); color: var(--blanco); background: var(--gris); opacity: 0; pointer-events: none; transition: opacity .2s ease, translate .2s ease; }
+.nu-col.foco .nu-kg { opacity: 1; translate: -50% 0; }
+.nu-col.foco .nu-mes { color: var(--gris); font-weight: 600; }
+
+/* huella: comparación y gráfico */
+.nu-compara b { color: var(--verde); }
+.nu-ruta { position: absolute; left: 0; top: 262px; width: 688px; height: 330px; cursor: crosshair; }
+.nu-ruta svg { position: absolute; left: 0; top: 0; width: 688px; height: 330px; overflow: visible; }
+.nu-rejilla { stroke: rgba(58, 58, 58, .1); stroke-width: 1; }
+.nu-eje-txt { font: 500 11px var(--fuente-texto); fill: rgba(58, 58, 58, .5); }
+.nu-anio { font: 700 15px var(--fuente-titulo); letter-spacing: .08em; fill: rgba(58, 58, 58, .7); text-anchor: middle; }
+.nu-corte { stroke: rgba(58, 58, 58, .3); stroke-width: 1; }
+.nu-m3 { fill: rgba(58, 58, 58, .09); }
+.nu-m3.foco { fill: rgba(76, 149, 108, .35); }
+.nu-camino { fill: none; stroke: var(--gris); stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+.nu-carril { fill: none; stroke: var(--blanco); stroke-width: 1.5; stroke-dasharray: 6 6; }
+.nu-recorrido { fill: none; stroke: var(--verde); stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+.nu-guia { stroke: rgba(58, 58, 58, .35); stroke-width: 1; stroke-dasharray: 3 4; }
+.nu-camion path, .nu-camion circle { fill: var(--rojo); }
+.nu-camion .rueda { fill: var(--gris); }
+.nu-info { position: absolute; left: 0; top: 0; padding: 7px 11px; border-radius: 8px; white-space: nowrap; font-size: 13px; line-height: 1.35; color: var(--blanco); background: var(--gris); box-shadow: 0 8px 18px rgba(0, 0, 0, .2); pointer-events: none; translate: -50% -100%; }
+.nu-info b { font: 700 15px var(--fuente-titulo); letter-spacing: .04em; margin-right: 6px; }
+.nu-info em { font-style: normal; color: #9FD8B5; font-weight: 600; }
+
+.mc-num .ent, .mc-com .ent { opacity: 0; translate: 0 22px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
+.mc-num.visible .ent, .mc-com.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.08s + var(--i, 0) * .07s); }
+.mc-num.asentado .ent, .mc-com.asentado .ent { transition-delay: 0s; }
+
+/* =========================================================
+   RSE 3 — "Acompañamos a la COMUNIDAD" (rse-comunidad.js)
+   Gris, después del tablero (tramo y 3700): tres acciones con foto y los
+   logos de las organizaciones aliadas en fichas crema.
+   ========================================================= */
+.mc-com { position: absolute; left: 0; top: 3700px; width: 1600px; height: 900px; color: var(--blanco); pointer-events: auto; }
+.mc-com h2, .mc-com h3, .mc-com p, .mc-com figure { margin: 0; }
+.mc-com strong { font-weight: 600; color: var(--blanco); }
+.co-fondo { position: absolute; left: calc(800px - 50vw / var(--escala, 1)); top: 0; width: calc(100vw / var(--escala, 1)); height: calc(900px + 50vh / var(--escala, 1)); background: var(--gris); }
+.co-acciones { position: absolute; left: 64px; top: 236px; width: 1472px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.co-accion { position: relative; }
+.co-foto { position: relative; height: 250px; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, .3); }
+.co-foto img { display: block; width: 100%; height: 100%; object-fit: cover; transition: scale .8s cubic-bezier(.2, .8, .2, 1); }
+.co-foto::after { content: ""; position: absolute; inset: 0; border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .18); background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .35)); }
+.co-accion:hover .co-foto img { scale: 1.06; }
+.co-num { position: absolute; left: 16px; top: 14px; z-index: 1; font: 700 15px var(--fuente-titulo); letter-spacing: .14em; color: var(--blanco); text-shadow: 0 1px 6px rgba(0, 0, 0, .5); }
+.co-accion h3 { margin-top: 18px; font: 700 28px/1.1 var(--fuente-titulo); }
+.co-accion h3::before { content: ""; display: inline-block; width: 22px; height: 3px; margin: 0 10px 8px 0; background: var(--rojo); vertical-align: middle; }
+.co-accion p { margin-top: 8px; font-size: 15.5px; font-weight: 300; line-height: 1.45; color: rgba(255, 251, 243, .72); }
+.co-aliados-t { position: absolute; left: 64px; top: 662px; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(255, 251, 243, .6); }
+.co-aliados { position: absolute; left: 64px; top: 694px; width: 1472px; display: flex; gap: 12px; }
+.co-grupo { display: flex; flex-direction: column; gap: 8px; }
+.co-grupo > span { padding-bottom: 6px; border-bottom: 1px solid rgba(255, 251, 243, .25); font: 500 13px var(--fuente-titulo); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 251, 243, .55); }
+.co-fichas { display: flex; gap: 12px; }
+.co-ficha { display: flex; align-items: center; justify-content: center; width: 152px; height: 128px; box-sizing: border-box; padding: 16px; border-radius: 12px; background: var(--blanco); box-shadow: 0 10px 24px rgba(0, 0, 0, .25); transition: translate .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s ease; }
+.co-ficha:hover { translate: 0 -6px; box-shadow: 0 18px 30px rgba(0, 0, 0, .35); }
+.co-ficha img { display: block; max-width: 100%; max-height: 92px; object-fit: contain; }

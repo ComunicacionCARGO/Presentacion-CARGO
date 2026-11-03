@@ -151,12 +151,13 @@
   function despertar() { if (!enMarcha && visible) { enMarcha = true; requestAnimationFrame(cuadro); } }
 
   // ---------- Scroll: entra al llegar; teclas 1–8 solo con el tablero en pantalla ----------
-  // La sección empieza en y 1900 del tramo: asoma por abajo cuando la bajada (y − 900) pasa 1900
-  // y queda entera en pantalla con 2800 (el final del scroll)
+  // La sección empieza en su "top" dentro del tramo (que arranca en y 900): asoma por abajo
+  // cuando la bajada (y − 900) pasa ese top y queda entera en pantalla con top + 900
+  const TOP = raiz.offsetTop;
   let enPantalla = false, asentar = 0;
   document.addEventListener('desplazamiento', (e) => {
     const baj = Math.max(0, e.detail.y - 900);
-    const ver = baj > 2050;
+    const ver = baj > TOP + 150 && baj < TOP + 1500;
     if (ver !== visible) {
       visible = ver;
       raiz.classList.toggle('visible', ver);
@@ -164,7 +165,7 @@
       if (ver) { despertar(); asentar = setTimeout(() => raiz.classList.add('asentado'), 1400); }
       else raiz.classList.remove('asentado');
     }
-    enPantalla = baj > 2400;
+    enPantalla = baj > TOP + 500 && baj < TOP + 1250;
   });
   addEventListener('keydown', (e) => {
     if (!enPantalla || document.body.classList.contains('capitulo-abierto')) return;

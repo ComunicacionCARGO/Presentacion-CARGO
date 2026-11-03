@@ -21,7 +21,7 @@
 .escenas { position: absolute; inset: 0; }
 .escenas section { position: absolute; inset: 0; }
 .pista { position: absolute; left: 0; top: 0; width: 1600px; pointer-events: none; visibility: hidden; }
-.pista-espacio { height: 4600px; }   /* anillos (900) + pantalla partida (900) + Políticas y Certificaciones (1000) + RSE (900) + 900 de pantalla */
+.pista-espacio { height: 6400px; }   /* anillos (900) + pantalla partida (900) + Políticas y Certificaciones (1000) + RSE: números, tablero y comunidad (3 × 900) + 900 de pantalla */
 .seccion-red { transition: opacity .3s ease; }
 .seccion-red.tapada { pointer-events: none; }
 

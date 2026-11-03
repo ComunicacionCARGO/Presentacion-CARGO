@@ -568,7 +568,7 @@
   //  • Desde "¿Por qué elegirnos?" (900) hasta el final: scroll libre, como una web: la rueda,
   //    el touchpad y las teclas mueven la página lo que piden, con un suavizado corto.
   const PARADAS = [0, RECORRIDO / 2, RECORRIDO];
-  const MAXIMO = RECORRIDO + 900 + 1000 + 900;    // pantalla partida (900) + Políticas y Certificaciones (1000) + RSE (900)
+  const MAXIMO = RECORRIDO + 900 + 1000 + 2700;   // pantalla partida (900) + Políticas y Certificaciones (1000) + RSE (números, tablero y comunidad: 3 × 900)
   const RIGIDEZ = 7.5;                            // pasos de los anillos (7,5 ≈ 1 s por paso)
   const RIGIDEZ_LIBRE = 13;                       // scroll libre: más ágil
   const UMBRAL_TOUCHPAD = 120;                    // desplazamiento del touchpad que equivale a un paso
