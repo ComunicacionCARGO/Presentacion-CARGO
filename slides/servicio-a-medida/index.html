@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
   <link rel="stylesheet" href="../../compartido/base.css">
   <link rel="stylesheet" href="estilo.css">
+  <link rel="stylesheet" href="como.css">
+  <link rel="stylesheet" href="inversa.css">
 </head>
 <body data-volver="../../index.html">
 
@@ -18,11 +20,30 @@
 
   <main class="escenario">
 
-    <!-- Pista: por ahora una sola sección; las que vengan antes se agregan arriba -->
+    <!-- Pista: las secciones se recorren con el scroll (textos en datos/servicio.js) -->
     <div class="pista">
 
+      <!-- ¿Cómo lo hacemos? (entrada con las tres partes) -->
+      <section class="sv-intro" data-indice="¿Cómo lo hacemos?"></section>
+
+      <!-- Milk run: el circuito se recorre con el scroll (la sección queda quieta mientras tanto) -->
+      <section class="sv-milk" data-indice="Milk run">
+        <div class="sv-fondo"></div>
+        <div class="mr-fijo"></div>
+      </section>
+
+      <!-- Nuestro TMS: gestión de carga (planchada) e interfases -->
+      <section class="sv-tms" data-indice="Nuestro TMS" data-indice-tono="oscuro">
+        <div class="sv-fondo"></div>
+      </section>
+
+      <!-- Logística inversa: simulación de un reclamo -->
+      <section class="sv-inv" data-indice="Logística inversa">
+        <div class="sv-fondo"></div>
+      </section>
+
       <!-- Mapa de distribución (datos desde datos/distribucion.js, que se arma con el Excel) -->
-      <section class="seccion-distribucion">
+      <section class="seccion-distribucion" data-indice="¿Dónde lo hacemos?">
         <div class="mapa-ar">
           <div class="mapa-giro"><div class="mapa-plano"></div></div>
         </div>
@@ -59,9 +80,15 @@
   <div class="cortina cubre"><div class="banda"></div><div class="banda"></div><div class="banda"></div></div>
 
   <script src="../../datos/distribucion.js"></script>
+  <script src="../../datos/servicio.js"></script>
   <script src="../../compartido/base.js"></script>
+  <script src="../../compartido/indice.js"></script>
   <script src="mapa-argentina.js"></script>
   <script src="diapositiva.js"></script>
+  <script src="como.js"></script>
+  <script src="milkrun.js"></script>
+  <script src="tms.js"></script>
+  <script src="inversa.js"></script>
   <script src="../../compartido/desplazamiento.js"></script>
 </body>
 </html>

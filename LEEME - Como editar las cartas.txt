@@ -257,6 +257,31 @@ Se edita en  datos\clientes.js  (con el Bloc de notas).
     blanco (se ven sobre el fondo rojo). Para cambiar uno, guardalo con el
     mismo nombre de archivo; para agregar uno, copiá un renglón con su coma.
   • El tamaño de cada logo se ajusta solo para que todos se vean parejos.
+¿CÓMO LO HACEMOS? ("Servicio a medida": Milk run, TMS y Logística inversa)
+--------------------------------------------------------------------------
+Se edita en  datos\servicio.js  (con el Bloc de notas).
+  • cliente: el nombre del cliente ("FORD"). En los textos, donde dice {cliente}
+    aparece ese nombre: si cambia el cliente, se cambia solo ahí.
+  • como: la pantalla de entrada (título, frase y las tres tarjetas).
+  • milkRun: título, texto, la lista "El servicio incluye", el nombre de la
+    planta y de los proveedores, y los 6 pasos del circuito (titulo, texto y
+    dato). El circuito está dibujado para 6 pasos: cambiá los textos, no la
+    cantidad.
+  • tms: título y las dos demos.
+      carga:      textos de la planchada y los indicadores (nombre y número
+                  inicial; después cambian solos con la demo).
+      interfases: nombres de los sistemas del dibujo y las 4 interfases
+                  (título, texto y "paquete", lo que viaja por la línea).
+  • inversa: la simulación del reclamo.
+      - número de reclamo, remito, dirección y cantidad de bultos de ejemplo;
+      - tipos: lo que se puede elegir en el celular (nombre, detalle, a dónde va
+        después de la inspección y si lleva reposición: true = sí, false = no);
+      - destinos: las 3 opciones que aparecen en la inspección;
+      - estados: cómo cambia el estado del reclamo en la ficha;
+      - pasos: título, texto y eventos (hora y texto) de cada paso. En los
+        textos se pueden usar {numero}, {tipo} y {destino};
+      - cierre: textos del final y del botón "Simular otro reclamo".
+    Los horarios y números son de ejemplo: es una simulación.
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:

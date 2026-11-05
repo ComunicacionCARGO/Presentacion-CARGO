@@ -47,6 +47,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 | `datos/mejora-continua.js` | "Mejora continua": pantalla partida y temas Calidad / Capacitaciones (`window.MEJORA`); también Políticas y Certificaciones, que se muestran en ¿Quiénes somos? |
 | `datos/rse.js` | RSE: tablero "Hacia un impacto CERO" (8 palancas), números (reciclaje y huella de carbono) y comunidad con aliados (`window.RSE`) |
 | `datos/clientes.js` | "Nuestros CLIENTES" (cierre de ¿Por qué elegirnos?): logos, rubros y textos (`window.CLIENTES`) |
+| `datos/servicio.js` | "¿Cómo lo hacemos?" de Servicio a medida: entrada, Milk run, Nuestro TMS y simulación de logística inversa (`window.SERVICIO`; `{cliente}` = Ford) |
 | `img/` | Imágenes (`landing/`, `marca/`, `slides/`, `cartas/`, `linea-de-tiempo/`) |
 | `herramientas/` | Scripts para desarrollo (no forman parte del sitio) |
 
@@ -115,7 +116,17 @@ Es una diapositiva larga con scroll (`desplazamiento.js`). Tiene una capa fija (
 
 ### "Servicio a medida" (`slides/servicio-a-medida/`)
 
-Mapa interactivo de distribución de Argentina (carta 2). Por ahora una sola sección dentro de una `.pista`; lo que venga antes (carátula, servicio de distribución) se agrega como secciones arriba.
+Carta 2. La persona la quiere como la diapositiva más larga e interactiva, en cinco partes: Qué hacemos (falta), **Cómo lo hacemos** (hecha), Cómo lo cumplimos / lead times (falta), Dónde lo hacemos (el mapa) y Con qué lo hacemos / recursos (falta). Es una propuesta **exclusiva para Ford**: se los nombra en los textos con `{cliente}` (`datos/servicio.js` → `cliente`). El Ecosistema Fénix (TMS → Web tracking → App) va después del proceso de entrega (pendiente). Envío aéreo y marítimo: la persona lo está averiguando. Scroll con `desplazamiento.js` e índice (`indice.js`); secciones en la `.pista`: `.sv-intro`, `.sv-milk`, `.sv-tms`, `.sv-inv` y el mapa.
+
+#### ¿Cómo lo hacemos? (`como.js` + `como.css`, `milkrun.js`, `tms.js`, `inversa.js` + `inversa.css`; datos en `datos/servicio.js`, `window.SERVICIO`)
+
+- `como.js` arma la entrada (título "¿Cómo lo HACEMOS?", sello "Pensado para FORD" y tres tarjetas que llevan a cada parte) y deja funciones comunes en `window.SV` (`txt(t, vars)` reemplaza `{cliente}` y otras marcas y pone negritas; `irA(seccion, extra)`; `escala()`).
+- **Milk run** (de la carpeta técnica de la persona, `Milk run - Carpeta Técnica.ppt`: 20 años en inbound automotriz, STU = TMS propio, AXIODIS ruteo, CUBE IQ cubicaje, QlikView, LogicTracker, Centro de Monitoreo 24 h; datos viejos sin confirmar). Sección de 900 + `RECORRIDO` (1600) con el contenido quieto (`.mr-fijo`, `translate` = scroll local). Circuito = rectángulo redondeado (X 540–1400, Y 160–790, radio 150) dibujado con las tres franjas (rojo, rojo, gris; base al .13 y lo recorrido a color, buscando el largo en cada franja por el punto más cercano al camión). 6 paradas (planta abajo, carga, hoja de ruta y viaje arriba, proveedor A a la izquierda, vuelta abajo) + proveedores B y C. El camión (visto desde arriba) frena `GAP` antes de cada parada, queda quieto el 30 % de cada tramo y lleva 6 embalajes: vacíos (contorno punteado) desde la carga, llenos (rojo) al pasar cada proveedor. Tarjeta del paso en el centro; clic en parada o rayitas = `irPaso`.
+- **Nuestro TMS** (fondo gris, tono oscuro del índice): pestañas Gestión de carga / Interfases / Logística inversa (esta baja a la simulación). Carga: indicadores (Stock, Urgente, V.I., Total; valores de su tablero), planchada con STAGE ST-300…800 y ZSTAGE ZS x01/x02 como el diseño, cola de recepción con cursor de lector: al pasarlo, el bulto se lee (láser) y vuela a su zona; con 14 bultos la zona se despacha; lector automático tras 3,5 s sin uso. Interfases: TMS en el centro, ERP del cliente, Warehouse, Transporte de terceros y App; cada interfase enciende sus líneas y hace viajar un paquete con su nombre; pasan solas cada 4,5 s (8 s después de usarlas).
+- **Logística inversa** — simulación de un reclamo (pedido de la persona): ficha del reclamo (TMS) a la izquierda, pasos arriba, escena SVG (centro de distribución con logo, calle, concesionario con cartel `{cliente}`, camión de costado con ruedas que giran) y relato abajo, celular del chofer (App "Fénix", pantallas como sus capturas) a la derecha y mails debajo. Pasos: observación (la persona toca Observaciones, elige el tipo y saca la foto) → registro (el dato vuela del celular a la ficha, mails) → programación (el retiro se suma a la hoja de ruta) → retiro (escanea y **firma con el mouse** en un canvas) → regreso (satélite y GPS) → resolución (inspección con 3 destinos; reposición si el tipo la lleva) → cierre. Cada acción se hace sola si nadie toca nada (9 s, sin contar mientras se mueve el mouse), "Siguiente" pasa solo a los 6 s, y la simulación arranca sola a los 14 s en pantalla. Tiempos que se pausan fuera de pantalla y se cancelan al reiniciar (`corrida`, `Cancelado`). Las animaciones son WAAPI con `commitStyles` + `cancel` al terminar (no se acumulan).
+- Datos de ejemplo (RC-24117, remito, horarios): ficticios, por ser sitio público.
+
+#### Mapa de distribución (Dónde lo hacemos)
 
 - **Datos editables en Excel**: `datos/distribucion.xlsx` → doble clic en `datos/Actualizar mapa de distribucion.bat` → `herramientas/excel-a-datos.ps1` reescribe `datos/distribucion.js` (`window.DISTRIBUCION`). No usa Excel instalado: lee el .xlsx como zip (soporta inlineStr y sharedStrings, coma o punto decimal, avisa errores). `herramientas/datos-a-excel.ps1` hace lo inverso (crea el Excel desde el JS, con listas desplegables). Funciones comunes en `comun-excel.ps1` (los textos con acentos van con códigos `#a`, `#o`… por ser scripts ASCII).
 - **Contornos**: `mapa-argentina.js`, generado con `herramientas/extraer-argentina.ps1` desde Natural Earth 10m admin-1 (`ne_10m_admin_1_states_provinces.geojson`, -Tolerancia 0.06 -AreaMinima 0.08). Arma una topología propia: corta cada anillo en tramos entre puntos de unión y simplifica cada tramo una sola vez. CABA queda cubierta por Buenos Aires. Sin Malvinas (como las referencias).
@@ -161,7 +172,7 @@ La red de áreas y Políticas y Certificaciones pasaron a ¿Quiénes somos?. Las
 
 ### Pendientes conocidos
 
-- La portada tiene 3 cartas (se sacaron Nuestro TMS, Tecnología y Ubicación Estratégica). Servicio a medida tiene solo el mapa de distribución.
+- La portada tiene 3 cartas (se sacaron Nuestro TMS, Tecnología y Ubicación Estratégica). Servicio a medida tiene "¿Cómo lo hacemos?" y el mapa; faltan Qué hacemos, Lead times, Recursos y el Ecosistema Fénix. Los textos de las interfases y del reclamo son interpretación de sus diapositivas: verificarlos.
 - Los puntos del mapa de distribución se interpretaron de capturas: verificarlos con la empresa (sobre todo los destinos propios: Jesús María, Rafaela, Paraná, La Plata).
 - Línea de tiempo: el texto de 2020 es provisorio ("Completar…"). En 1994 quizás falta una "y" entre los nombres.
 - Las sedes del mapa son estimadas a partir de fuentes públicas: verificarlas con la empresa.
