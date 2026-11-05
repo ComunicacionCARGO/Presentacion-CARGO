@@ -42,7 +42,7 @@
   if (!intro) return;
   const destinos = ['.sv-milk', '.sv-tms', '.sv-inv'];
   const iconos = [ICONOS.milk, ICONOS.tms, ICONOS.inversa];
-  intro.innerHTML =
+  intro.innerHTML = '<div class="sv-fondo"></div>' +
     `<div class="in-titulo ent" style="--i:0"><p class="in-sello"><i class="franjitas"></i>${txt(C.sello)}</p>` +
     `<span>${txt(C.antetitulo)}</span><b>${txt(C.titulo)}</b></div>` +
     `<p class="in-bajada ent" style="--i:1">${txt(C.bajada)}</p>` +

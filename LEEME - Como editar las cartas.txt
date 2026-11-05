@@ -272,16 +272,21 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   inicial; después cambian solos con la demo).
       interfases: nombres de los sistemas del dibujo y las 4 interfases
                   (título, texto y "paquete", lo que viaja por la línea).
-  • inversa: la simulación del reclamo.
-      - número de reclamo, remito, dirección y cantidad de bultos de ejemplo;
-      - tipos: lo que se puede elegir en el celular (nombre, detalle, a dónde va
-        después de la inspección y si lleva reposición: true = sí, false = no);
-      - destinos: las 3 opciones que aparecen en la inspección;
+  • inversa: la simulación del reclamo (el concesionario pide la devolución
+    desde el celular y después lo usa el chofer).
+      - número de reclamo, pieza y dirección de ejemplo; nombres de las apps y
+        de quién usa el celular (Concesionario / Chofer CARGO);
+      - tipos: los motivos que elige el concesionario (Devolución, Garantía,
+        Rotación): detalle, a dónde va después de la inspección, si lleva
+        reposición (true = sí, false = no) y delMes (cuántas hubo este mes,
+        para el gráfico del análisis de causas);
+      - destinos: las 3 opciones de la disposición final;
       - estados: cómo cambia el estado del reclamo en la ficha;
-      - pasos: título, texto y eventos (hora y texto) de cada paso. En los
-        textos se pueden usar {numero}, {tipo} y {destino};
-      - cierre: textos del final y del botón "Simular otro reclamo".
-    Los horarios y números son de ejemplo: es una simulación.
+      - pasos: título, texto y eventos (hora y texto) de cada uno de los 7
+        pasos. En los textos se pueden usar {numero}, {tipo} y {destino};
+      - cierre: textos del final, los beneficios y el botón "Simular otro
+        reclamo".
+    Los horarios, números y cantidades son de ejemplo: es una simulación.
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:

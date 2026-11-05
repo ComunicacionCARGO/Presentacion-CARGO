@@ -50,7 +50,7 @@
 @keyframes iv-pop { from { scale: .7; opacity: 0; } }
 .tk-tipo { min-height: 20px; margin-top: 10px; font-size: 13px; font-weight: 300; color: rgba(58, 58, 58, .75); }
 .tk-tipo b { font-weight: 600; color: var(--rojo); }
-.tk-barra { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 14px; }
+.tk-barra { display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 4px; margin-top: 14px; }
 .tk-barra i { height: 5px; border-radius: 3px; background: rgba(58, 58, 58, .1); transition: background .5s ease; }
 .tk-barra i.hecho { background: var(--rojo); }
 .iv-ticket.cerrado .tk-barra i { background: var(--verde); }
@@ -76,8 +76,8 @@
 .tk-pie { position: absolute; left: 26px; bottom: 16px; font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(58, 58, 58, .38); }
 
 /* ---------- Pasos ---------- */
-.iv-pasos { position: absolute; left: 500px; top: 96px; width: 1020px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
-.iv-pasos li { position: relative; padding-top: 14px; font-size: 12.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(58, 58, 58, .4); transition: color .4s ease; }
+.iv-pasos { position: absolute; left: 500px; top: 96px; width: 1020px; display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 8px; }
+.iv-pasos li { position: relative; padding-top: 14px; font-size: 11.5px; line-height: 1.25; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(58, 58, 58, .4); transition: color .4s ease; }
 .iv-pasos li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 2px; background: rgba(58, 58, 58, .1); transition: background .4s ease; }
 .iv-pasos b { margin-right: 6px; font-family: var(--fuente-titulo); font-weight: 500; letter-spacing: .04em; }
 .iv-pasos li.hecho { color: rgba(58, 58, 58, .75); }
@@ -211,7 +211,7 @@
 @keyframes iv-toca { 50% { translate: 3px 3px; scale: .92; } }
 
 /* ---------- Celular del chofer ---------- */
-.iv-cel { position: absolute; left: 1262px; top: 146px; width: 258px; height: 520px; }
+.iv-cel { position: absolute; left: 1262px; top: 176px; width: 258px; height: 520px; }
 .cel-marco {
   position: relative;
   width: 258px;
@@ -300,7 +300,7 @@
 .cel-viaje div i { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--rojo); transition: width 3s cubic-bezier(.45, 0, .25, 1); }
 
 /* ---------- Mails que llegan ---------- */
-.iv-mails { position: absolute; left: 1262px; top: 690px; width: 258px; display: flex; flex-direction: column; gap: 8px; }
+.iv-mails { position: absolute; left: 1262px; top: 708px; width: 258px; display: flex; flex-direction: column; gap: 8px; }
 .iv-mail { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #fff; box-shadow: 0 14px 28px -18px rgba(120, 40, 20, .55), inset 0 0 0 1px rgba(58, 58, 58, .06); font-size: 12px; line-height: 1.35; color: var(--gris); animation: iv-mail .6s cubic-bezier(.2, .8, .2, 1) both; transition: opacity .6s ease; }
 .iv-mail svg { flex: none; width: 22px; height: 22px; fill: var(--rojo); }
 .iv-mail.visto { opacity: .55; }
@@ -317,3 +317,39 @@
 @media (prefers-reduced-motion: reduce) {
   .andando .iv-giro, .andando .iv-carga, .andando .iv-cabina { animation: none; }
 }
+
+/* ---------- Quién usa el celular (concesionario o chofer) ---------- */
+.cel-quien { position: absolute; left: 50%; top: -30px; translate: -50% 0; z-index: 4; display: flex; align-items: center; gap: 7px; padding: 5px 13px; border-radius: 999px; background: var(--gris); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--blanco); white-space: nowrap; box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .5); }
+.cel-quien::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blanco); }
+.cel-quien.chofer { background: var(--rojo); }
+.cel-quien.cambia { animation: iv-pop .5s cubic-bezier(.3, 1.5, .5, 1) both; }
+/* pantallas del concesionario */
+.cel-nueva { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 54px; margin: 4px 0 14px; border: 0; border-radius: 12px; background: var(--rojo); font: 600 13px var(--fuente-texto); letter-spacing: .04em; text-transform: uppercase; color: #fff; cursor: pointer; box-shadow: 0 10px 18px -10px rgba(200, 50, 20, .7); transition: transform .2s ease; }
+.cel-nueva i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 255, 255, .25); font-style: normal; font-size: 18px; line-height: 1; }
+.cel-nueva:hover { transform: translateY(-1px); }
+.cel-sub { margin: 0 2px 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
+.cel-hist { display: flex; flex-direction: column; gap: 6px; }
+.cel-hist span { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .05); font-size: 11px; color: #33774F; }
+.cel-hist b { font-weight: 600; color: #333; }
+.cel-pieza { margin: -6px 2px 10px; font-size: 11px; color: rgba(58, 58, 58, .6); }
+
+/* ---------- Análisis de causas (gráfico de motivos en la escena) ---------- */
+.iv-analisis { position: absolute; left: 276px; top: 10px; width: 300px; padding: 12px 14px 14px; border-radius: 16px; background: rgba(255, 255, 255, .94); box-shadow: 0 18px 34px -20px rgba(120, 40, 20, .55), inset 0 0 0 1px rgba(58, 58, 58, .08); opacity: 0; translate: 0 12px; transition: opacity .5s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
+.iv-analisis.visible { opacity: 1; translate: 0 0; }
+.iv-analisis p { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rojo); }
+.iv-analisis ul { margin-top: 8px; }
+.iv-analisis li { display: grid; grid-template-columns: 74px 1fr 24px; align-items: center; gap: 8px; margin-top: 7px; font-size: 12.5px; color: rgba(58, 58, 58, .75); }
+.iv-analisis li i { height: 10px; border-radius: 5px; background: rgba(58, 58, 58, .08); overflow: hidden; }
+.iv-analisis li u { display: block; height: 100%; border-radius: 5px; background: rgba(58, 58, 58, .35); transition: width .9s cubic-bezier(.2, .8, .2, 1), background .4s ease; }
+.iv-analisis li b { font: 700 15px var(--fuente-titulo); text-align: right; transition: color .4s ease; }
+.iv-analisis li.elegido { color: var(--gris); font-weight: 600; }
+.iv-analisis li.elegido u { background: var(--rojo); }
+.iv-analisis li.elegido b { color: var(--rojo); animation: iv-pop .5s cubic-bezier(.3, 1.5, .5, 1); }
+
+/* ---------- Beneficios (al cerrar el reclamo) ---------- */
+.iv-beneficios { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.iv-beneficios span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: rgba(76, 149, 108, .12); font-size: 13px; font-weight: 500; color: #33774F; animation: iv-pop .5s cubic-bezier(.3, 1.4, .5, 1) both; }
+.iv-beneficios span:nth-child(2) { animation-delay: .1s; }
+.iv-beneficios span:nth-child(3) { animation-delay: .2s; }
+.iv-beneficios span:nth-child(4) { animation-delay: .3s; }
+.iv-beneficios svg { width: 16px; height: 16px; fill: var(--verde); }

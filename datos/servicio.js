@@ -106,39 +106,44 @@ window.SERVICIO = {
   },
 
   // ---------- Logística inversa: simulación de un reclamo ----------
-  // Los horarios y números son de ejemplo (es una simulación).
+  // Los horarios, números y cantidades son de ejemplo (es una simulación).
   inversa: {
     antetitulo: "Logística",
     titulo: "INVERSA",
-    bajada: "Cuando algo no llega como debía, el reclamo se resuelve con el mismo sistema que la entrega: **digital, trazable y sin viajes de más**.",
-    app: "Fénix",
+    bajada: "Gestionamos de forma integral la **recolección, traslado, trazabilidad y disposición final** de productos y partes que reingresan al circuito logístico por devolución, garantía o rotación.",
+    app: "Fénix",                        // App del chofer
+    appConcesionario: "Devoluciones",    // lo que ve el concesionario en el celular
+    quienConcesionario: "Concesionario",
+    quienChofer: "Chofer CARGO",
     concesionario: "Concesionario {cliente}",
     direccion: "Av. Ejemplo 1234",
-    centro: "Centro de distribución",
+    centro: "Depósito",
     numero: "RC-24117",
-    remito: "0001-00012345",
-    bultos: 3,
-    introTitulo: "¿Y si algo llega mal?",
-    introTexto: "Seguí un pedido de {cliente} desde la entrega hasta que el reclamo se cierra. **Vos manejás la App del chofer.**",
+    pieza: "Pieza 7A2B-14K",
+    introTitulo: "¿Y si una pieza tiene que volver?",
+    introTexto: "Seguí una devolución de {cliente}: el concesionario la **autogestiona** y nosotros nos ocupamos del resto. **Vos manejás el celular.**",
     empezar: "Simular un reclamo",
     ejemplo: "Simulación con datos de ejemplo",
     sinReclamo: "Todavía no hay ningún reclamo. Empezá la simulación y mirá cómo se completa el seguimiento.",
-    // Estado del reclamo en la ficha, en orden
-    estados: ["Abierto", "Retiro programado", "Retirado", "En viaje", "En resolución", "Cerrado"],
-    // Qué le pasó al bulto (se elige en el celular)
+    // Estado del reclamo en la ficha, en orden (uno por paso a partir del registro, y el último al cerrar)
+    estados: ["Abierto", "Retiro programado", "Retirado", "En viaje", "En depósito", "En análisis", "Cerrado"],
+    // Motivos que elige el concesionario.
+    // destino: a dónde va después de la inspección (tiene que estar en la lista "destinos")
+    // reposicion: true = se le manda una pieza nueva / false = no
+    // delMes: cuántas hubo este mes por ese motivo (para el gráfico del análisis, ejemplo)
     tipos: [
-      { nombre: "Bulto dañado", detalle: "La caja llegó golpeada", destino: "Devolución al proveedor", reposicion: true },
-      { nombre: "Pieza equivocada", detalle: "No coincide con el pedido", destino: "Reingreso a stock", reposicion: true },
-      { nombre: "Devolución", detalle: "El concesionario no la necesita", destino: "Reingreso a stock", reposicion: false }
+      { nombre: "Devolución", detalle: "Pieza equivocada o que no se necesita", destino: "Reingreso a stock", reposicion: true, delMes: 14 },
+      { nombre: "Garantía", detalle: "La pieza presentó una falla", destino: "Devolución al proveedor", reposicion: true, delMes: 8 },
+      { nombre: "Rotación", detalle: "Stock sin movimiento en el concesionario", destino: "Reingreso a stock", reposicion: false, delMes: 5 }
     ],
-    // Los 3 destinos posibles después de la inspección
+    // Los 3 destinos posibles después de la inspección (disposición final)
     destinos: ["Reingreso a stock", "Devolución al proveedor", "Destrucción certificada"],
     pasos: [
       {
-        titulo: "Observación",
-        texto: "En la entrega, el chofer registra la observación en la App, **con foto**.",
-        accion: "Tocá «Observaciones» en el celular",
-        eventos: [{ hora: "Día 1 · 10:42", texto: "Observación en la entrega: {tipo}, con foto" }]
+        titulo: "Solicitud",
+        texto: "El concesionario **autogestiona su devolución** desde el celular: elige el motivo y adjunta una foto.",
+        accion: "Tocá «Nueva devolución» en el celular",
+        eventos: [{ hora: "Día 1 · 10:42", texto: "Solicitud del concesionario: {tipo}, con foto" }]
       },
       {
         titulo: "Registro",
@@ -147,44 +152,52 @@ window.SERVICIO = {
           { hora: "Día 1 · 10:43", texto: "Reclamo {numero} creado en el TMS" },
           { hora: "Día 1 · 10:43", texto: "Aviso por mail a {cliente} y al concesionario" }
         ],
-        mails: ["{cliente}: reclamo {numero} registrado", "Concesionario: recibimos tu reclamo"]
+        mails: ["{cliente}: reclamo {numero} registrado", "Concesionario: recibimos tu devolución"]
       },
       {
         titulo: "Programación",
-        texto: "El retiro se suma a la **próxima ruta** que pasa por el concesionario: sin viajes extra.",
+        texto: "El retiro se suma a la **próxima ruta** que pasa por el concesionario: menos tiempo y menos costo.",
         eventos: [{ hora: "Día 1 · 15:00", texto: "Retiro programado en la hoja de ruta del día 2" }],
         paradas: ["Concesionario Norte", "Concesionario Centro", "Concesionario Sur"]
       },
       {
         titulo: "Retiro",
-        texto: "El chofer escanea el bulto y el concesionario **firma en la App**.",
+        texto: "El chofer escanea la pieza y el concesionario **firma en la App**.",
         accion: "Firmá en el celular",
-        eventos: [{ hora: "Día 2 · 09:18", texto: "Bulto retirado: escaneado y firmado" }]
+        eventos: [{ hora: "Día 2 · 09:18", texto: "Pieza retirada: escaneada y firmada" }]
       },
       {
-        titulo: "Regreso",
-        texto: "Vuelve al centro de distribución con **seguimiento satelital** en todo el camino.",
+        titulo: "Traslado",
+        texto: "Vuelve al depósito con **seguimiento satelital**: trazabilidad total en todo el camino.",
         eventos: [
-          { hora: "Día 2 · 09:20", texto: "En viaje al centro de distribución" },
-          { hora: "Día 2 · 14:05", texto: "Ingreso al centro de distribución" }
+          { hora: "Día 2 · 09:20", texto: "En viaje al depósito" },
+          { hora: "Día 2 · 14:05", texto: "Ingreso al depósito" }
         ]
       },
       {
-        titulo: "Resolución",
-        texto: "Se inspecciona, se le da su destino y, si hace falta, la **reposición** sale en el próximo despacho.",
+        titulo: "Disposición final",
+        texto: "Se inspecciona y se le da su destino. Si hace falta, la **reposición** sale en el próximo despacho.",
         eventos: [
           { hora: "Día 2 · 15:30", texto: "Inspección: {destino}" },
-          // soloConReposicion: este evento no aparece si el tipo elegido no lleva reposición
+          // soloConReposicion: este evento no aparece si el motivo elegido no lleva reposición
           { hora: "Día 2 · 18:00", texto: "Reposición despachada", soloConReposicion: true }
         ]
+      },
+      {
+        titulo: "Análisis",
+        texto: "Cada motivo queda registrado: **analizamos las causas** de los desvíos para prevenir reincidencias y minimizar las devoluciones.",
+        eventos: [{ hora: "Día 3 · 09:00", texto: "Motivo «{tipo}» sumado al análisis de causas" }],
+        grafico: "Motivos de devolución · este mes"
       }
     ],
     cierre: {
       titulo: "Reclamo cerrado",
-      texto: "Cada paso quedó registrado, {cliente} lo siguió en línea y **no se usó un solo papel**.",
+      texto: "Un proceso controlado que aporta valor real: {cliente} lo siguió en línea y **no se usó un solo papel**.",
       reposicion: "Reposición entregada al concesionario",
       evento: { hora: "Día 3 · 10:15", texto: "Reclamo cerrado" },
       mail: "{cliente}: reclamo {numero} cerrado",
+      // Beneficios que se muestran al final
+      beneficios: ["Trazabilidad total", "Respuesta ágil", "Menos pérdidas", "Autogestión del concesionario"],
       boton: "Simular otro reclamo"
     }
   }

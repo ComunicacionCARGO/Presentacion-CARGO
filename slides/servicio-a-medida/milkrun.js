@@ -1,47 +1,50 @@
 /* =========================================================
-   MILK RUN — el circuito se recorre con el scroll.
-   La sección mide 900 + RECORRIDO: mientras se baja, su contenido queda
-   quieto (.mr-fijo) y el camión da la vuelta al circuito (las tres franjas
-   de la marca), parando en cada paso. Lleva los embalajes vacíos (contorno)
-   y los cambia por llenos (rojo) en cada proveedor.
-   Textos en datos/servicio.js → milkRun.
+   MILK RUN — el camino se recorre con el scroll.
+   El rojo de la entrada sigue en las tres franjas de la marca (rojo, rojo,
+   gris; franjas de 34,6 y huecos de 10,8 como en el resto): cruzan arriba,
+   doblan en la esquina, bajan por el costado derecho y vuelven por abajo
+   (diseño de la persona). Es un camino lineal: el camión va por la franja
+   roja del medio, parando en cada paso. Lleva los embalajes vacíos
+   (contorno) y los cambia por llenos (rojo) en cada proveedor.
+   Mientras se baja, el contenido queda quieto (.mr-fijo).
+   Las franjas van hasta los bordes de la ventana (se recalculan al cambiar
+   su tamaño). Textos en datos/servicio.js → milkRun.
    ========================================================= */
 (function () {
   const SV = window.SV;
   const seccion = document.querySelector('.sv-milk');
   if (!SV || !seccion) return;
-  const { S, txt, crear } = SV;
+  const { S, txt, crear, escala } = SV;
   const M = S.milkRun || {};
   const fijo = seccion.querySelector('.mr-fijo');
   const NS = 'http://www.w3.org/2000/svg';
 
-  const RECORRIDO = 1600;                 // px de scroll para dar la vuelta
+  const RECORRIDO = 1600;                 // px de scroll para hacer todo el camino
   seccion.style.height = 900 + RECORRIDO + 'px';
 
-  // ---------- Circuito: rectángulo redondeado (px del escenario) ----------
-  const X0 = 540, X1 = 1400, Y0 = 160, Y1 = 790, R = 150;
-  const INICIO = 1010;                    // la planta, en el lado de abajo
+  // ---------- Franjas (medidas desde el borde de la ventana) ----------
+  const F = 34.6, H = 10.8;               // franja y hueco (los mismos de toda la presentación)
+  const C_ROJO = F + H + F / 2;           // centro de la franja roja: el camino del camión
+  const C_GRIS = 2 * (F + H) + F / 2;
+  const ANCHO_FONDO = 400;                // la franja de afuera es el rojo de la entrada: ancha, sale de la pantalla
+  const C_FONDO = F - ANCHO_FONDO / 2;
+  const RC = 2 * (F + H) + F + 50;        // radio de afuera de las curvas (la gris queda con 50 de radio adentro)
   const GAP = 80;                         // el camión frena antes de cada parada (no la tapa)
   const DEMORA = .3;                      // parte de cada tramo en que el camión queda quieto
-  function camino(o) {                    // o > 0: corrido hacia adentro
-    const x0 = X0 + o, x1 = X1 - o, y0 = Y0 + o, y1 = Y1 - o, r = R - o;
-    return `M${INICIO},${y1}L${x1 - r},${y1}A${r},${r} 0 0 0 ${x1},${y1 - r}L${x1},${y0 + r}` +
-      `A${r},${r} 0 0 0 ${x1 - r},${y0}L${x0 + r},${y0}A${r},${r} 0 0 0 ${x0},${y0 + r}` +
-      `L${x0},${y1 - r}A${r},${r} 0 0 0 ${x0 + r},${y1}Z`;
-  }
 
   const PROV = M.proveedores || [];
   const PASOS = (M.pasos || []).slice(0, 6);
   const N = PASOS.length;
+  // banda: arriba (x), der (y) o abajo (x)
   const PARADAS = [
-    { x: 1010, y: Y1, lado: 'abajo', icono: 'planta', em: M.planta },
-    { x: 1200, y: Y1, lado: 'abajo', icono: 'carga' },
-    { x: 1150, y: Y0, lado: 'arriba', icono: 'hoja' },
-    { x: 760, y: Y0, lado: 'arriba', icono: 'viaje' },
-    { x: X0, y: 300, lado: 'der', icono: 'proveedor', em: PROV[0] },
-    { x: 800, y: Y1, lado: 'abajo', icono: 'llegada' }
+    { banda: 'arriba', pos: 400, icono: 'planta', em: M.planta },
+    { banda: 'arriba', pos: 680, icono: 'carga' },
+    { banda: 'arriba', pos: 960, icono: 'hoja' },
+    { banda: 'arriba', pos: 1240, icono: 'viaje' },
+    { banda: 'der', pos: 300, icono: 'proveedor', em: PROV[0] },
+    { banda: 'abajo', pos: 1000, icono: 'llegada', em: M.planta }
   ].slice(0, N);
-  const OTROS_PROV = [{ x: X0, y: 470, nombre: PROV[1] }, { x: X0, y: 640, nombre: PROV[2] }].filter((p) => p.nombre);
+  const OTROS_PROV = [{ banda: 'der', pos: 440, nombre: PROV[1] }, { banda: 'der', pos: 580, nombre: PROV[2] }].filter((p) => p.nombre);
 
   const ICONOS = {
     planta: '<path d="M2 21V10l5 3v-3l5 3v-3l5 3V4h4.5v17z"/>',
@@ -63,72 +66,86 @@
     PASOS.map((p, i) => `<button type="button" data-i="${i}" aria-label="${String(i + 1).padStart(2, '0')} ${txt(p.titulo)}"><i></i></button>`).join('') +
     '</div></div>');
 
-  // ---------- Dibujo: franjas, camión ----------
-  const OFF = [-12, 0, 12], TONO = ['r', 'r', 'g'];
+  // ---------- Dibujo: franjas, marcas del camino y camión ----------
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('class', 'mr-svg');
-  svg.setAttribute('viewBox', '0 0 1600 900');
   svg.setAttribute('aria-hidden', 'true');
-  // Camión visto desde arriba, mirando hacia +x; la caja tiene 6 lugares (2 × 3) para los embalajes
   let slots = '';
   for (let f = 0; f < 2; f++) for (let c = 0; c < 3; c++) {
     slots += `<rect class="mr-slot" x="${-37 + c * 17.5}" y="${-11 + f * 11.5}" width="15" height="9.5" rx="1.5"/>`;
   }
   svg.innerHTML =
-    `<g class="mr-base">${OFF.map((o, i) => `<path class="${TONO[i]}" d="${camino(o)}"/>`).join('')}</g>` +
-    `<g class="mr-prog">${OFF.map((o, i) => `<path class="${TONO[i]}" d="${camino(o)}"/>`).join('')}</g>` +
+    `<path class="mr-f r fondo" style="stroke-width:${ANCHO_FONDO}"/><path class="mr-f r camino"/><path class="mr-f g"/>` +
+    '<path class="mr-marca"/><path class="mr-hecho"/>' +
     '<g class="mr-camion"><g class="mr-camion-cuerpo">' +
       '<rect class="mr-sombra" x="-42" y="-14" width="90" height="34" rx="7"/>' +
-      '<rect class="mr-caja" x="-43" y="-16" width="62" height="32" rx="3.5"/>' + slots +
-      '<rect class="mr-cabina" x="21" y="-14.5" width="22" height="29" rx="6"/>' +
-      '<rect class="mr-vidrio" x="35.5" y="-11" width="4.5" height="22" rx="1.6"/>' +
+      '<rect class="mr-caja" x="-43" y="-15.5" width="62" height="31" rx="3.5"/>' + slots +
+      '<rect class="mr-cabina" x="21" y="-14" width="22" height="28" rx="6"/>' +
+      '<rect class="mr-vidrio" x="35.5" y="-10.5" width="4.5" height="21" rx="1.6"/>' +
     '</g></g>';
   fijo.appendChild(svg);
+  const [pFondo, pRojo, pGris] = svg.querySelectorAll('.mr-f');
+  const marca = svg.querySelector('.mr-marca'), hecho = svg.querySelector('.mr-hecho');
   const camion = svg.querySelector('.mr-camion');
   const slotsEl = [...svg.querySelectorAll('.mr-slot')];
-  const medio = svg.querySelector('.mr-base path:nth-child(2)');
-  const L = medio.getTotalLength();
-  const progs = [...svg.querySelectorAll('.mr-prog path')].map((el) => {
-    const largo = el.getTotalLength();
-    el.style.strokeDasharray = `${largo} ${largo}`;
-    el.style.strokeDashoffset = largo;
-    const muestras = [];
-    for (let i = 0; i <= 900; i++) { const l = largo * i / 900, q = el.getPointAtLength(l); muestras.push([l, q.x, q.y]); }
-    return { el, largo, muestras };
-  });
-  // largo del camino en el punto más cercano a (x, y)
-  const muestrasMedio = [];
-  for (let i = 0; i <= 1200; i++) { const l = L * i / 1200, q = medio.getPointAtLength(l); muestrasMedio.push([l, q.x, q.y]); }
-  function largoEn(muestras, x, y) {
-    let mejor = 0, d = 1e9;
-    for (const m of muestras) { const dd = (m[1] - x) ** 2 + (m[2] - y) ** 2; if (dd < d) { d = dd; mejor = m[0]; } }
-    return mejor;
-  }
-  const punto = (l) => medio.getPointAtLength(((l % L) + L) % L);
 
-  // ---------- Paradas y proveedores ----------
+  // Paradas (círculos sobre la franja roja) y proveedores B y C
   const capaNodos = crear('div', 'mr-nodos', fijo);
+  const etqDe = { arriba: 'etq-abajo', der: 'etq-izq', abajo: 'etq-arriba' };
   PARADAS.forEach((p, i) => {
-    p.s = i === 0 ? 0 : largoEn(muestrasMedio, p.x, p.y);
-    p.parada = (i === 0 ? 0 : p.s) - GAP;            // donde frena el camión
-    const b = crear('button', `mr-nodo lado-${p.lado}`, capaNodos,
+    const b = crear('button', `mr-nodo ${etqDe[p.banda]}`, capaNodos,
       `<span class="mr-circulo">${svgIcono(p.icono)}</span>` +
       `<span class="mr-etq"><b>${String(i + 1).padStart(2, '0')}</b>${txt(PASOS[i].titulo)}${p.em ? `<em>${txt(p.em)}</em>` : ''}</span>`);
     b.type = 'button';
-    b.style.left = p.x + 'px';
-    b.style.top = p.y + 'px';
     b.addEventListener('click', () => irPaso(i));
     p.el = b;
   });
   OTROS_PROV.forEach((p) => {
-    p.s = largoEn(muestrasMedio, p.x, p.y);
-    p.el = crear('div', 'mr-prov', capaNodos, `<span class="mr-circulo">${svgIcono('proveedor')}</span><span class="mr-etq">${txt(p.nombre)}</span>`);
-    p.el.style.left = p.x + 'px';
-    p.el.style.top = p.y + 'px';
+    p.el = crear('div', `mr-prov ${etqDe[p.banda]}`, capaNodos, `<span class="mr-circulo">${svgIcono('proveedor')}</span><span class="mr-etq">${txt(p.nombre)}</span>`);
   });
-  // Lugares donde se cambian vacíos por llenos (2 por proveedor)
-  const cambios = [PARADAS[4], ...OTROS_PROV].filter(Boolean).map((p) => (p.parada !== undefined ? p.parada : p.s - GAP));
-  const POR_PROV = Math.ceil(6 / Math.max(1, cambios.length));
+
+  // ---------- Geometría según el tamaño de la ventana ----------
+  let E = 1600, L = 1, muestras = [];
+  function camino(o, x0) {                // o: distancia del centro de la franja al borde
+    const r = RC - o, cx = E - RC;
+    return `M${x0},${o}H${cx}A${r},${r} 0 0 1 ${E - o},${RC}V${900 - RC}A${r},${r} 0 0 1 ${cx},${900 - o}H${x0}`;
+  }
+  function puntoDe(p) {
+    if (p.banda === 'arriba') return [p.pos, C_ROJO];
+    if (p.banda === 'abajo') return [p.pos, 900 - C_ROJO];
+    return [E - C_ROJO, p.pos];
+  }
+  function largoEn(x, y) {
+    let mejor = 0, d = 1e9;
+    for (const m of muestras) { const dd = (m[1] - x) ** 2 + (m[2] - y) ** 2; if (dd < d) { d = dd; mejor = m[0]; } }
+    return mejor;
+  }
+  function armar() {
+    const k = escala();
+    const mitadAncho = Math.max(800, innerWidth / k / 2), mitadAlto = Math.max(450, innerHeight / k / 2);
+    E = 800 + mitadAncho;
+    const izqX = 800 - mitadAncho, arriba = 450 - mitadAlto, ancho = 2 * mitadAncho, alto = 2 * mitadAlto;
+    Object.assign(svg.style, { left: izqX + 'px', top: arriba + 'px', width: ancho + 'px', height: alto + 'px' });
+    svg.setAttribute('viewBox', `${izqX} ${arriba} ${ancho} ${alto}`);
+    const x0 = izqX - 300;
+    pFondo.setAttribute('d', camino(C_FONDO, x0));
+    pRojo.setAttribute('d', camino(C_ROJO, x0));
+    pGris.setAttribute('d', camino(C_GRIS, x0));
+    marca.setAttribute('d', camino(C_ROJO, x0));
+    hecho.setAttribute('d', camino(C_ROJO, x0));
+    L = pRojo.getTotalLength();
+    muestras = [];
+    for (let i = 0; i <= 1500; i++) { const l = L * i / 1500, q = pRojo.getPointAtLength(l); muestras.push([l, q.x, q.y]); }
+    [...PARADAS, ...OTROS_PROV].forEach((p) => {
+      const [x, y] = puntoDe(p);
+      p.el.style.left = x.toFixed(1) + 'px';
+      p.el.style.top = y.toFixed(1) + 'px';
+      p.s = largoEn(x, y);
+      p.parada = p.s - GAP;
+    });
+    estadoSlots = '';
+    pintar(avance);
+  }
 
   // ---------- Tarjeta del paso ----------
   const tarjeta = crear('div', 'mr-card', fijo,
@@ -140,41 +157,43 @@
   const medios = [...tarjeta.querySelectorAll('.mr-medios-slots i')];
 
   // ---------- Pintar según el avance (0 a 1) ----------
+  // 5 tramos entre las 6 paradas y un rato quieto en la última
+  const UNIDADES = N - 1 + .5;
   const suave = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  let pasoActual = -1, estadoSlots = '';
+  let pasoActual = -1, estadoSlots = '', avance = 0;
   function pintar(p) {
-    p = Math.max(0, Math.min(1, p));
-    const seg = Math.min(N - 1e-6, p * N), k = Math.floor(seg), t = seg - k;
-    const m = t < DEMORA ? 0 : suave((t - DEMORA) / (1 - DEMORA));
-    const a = PARADAS[k].parada, b = k + 1 < N ? PARADAS[k + 1].parada : L - GAP;
-    const l = a + (b - a) * m;
-    const q = punto(l), q1 = punto(l - 2), q2 = punto(l + 2);
+    avance = p = Math.max(0, Math.min(1, p));
+    const u = Math.min(UNIDADES - 1e-6, p * UNIDADES);
+    let k = Math.floor(u), t = u - k, l, paso;
+    if (k >= N - 1) { l = PARADAS[N - 1].parada; paso = N - 1; }
+    else {
+      const m = t < DEMORA ? 0 : suave((t - DEMORA) / (1 - DEMORA));
+      l = PARADAS[k].parada + (PARADAS[k + 1].parada - PARADAS[k].parada) * m;
+      paso = Math.min(N - 1, k + (t > .82 ? 1 : 0));
+    }
+    const q = pRojo.getPointAtLength(l), q1 = pRojo.getPointAtLength(l - 2), q2 = pRojo.getPointAtLength(l + 2);
     const ang = Math.atan2(q2.y - q1.y, q2.x - q1.x) * 180 / Math.PI;
     camion.setAttribute('transform', `translate(${q.x.toFixed(1)} ${q.y.toFixed(1)}) rotate(${ang.toFixed(1)})`);
-
-    // franjas recorridas
-    const completo = p > .995;
-    progs.forEach((g) => {
-      const lp = completo ? g.largo : (l <= 0 ? 0 : largoEn(g.muestras, q.x, q.y));
-      g.el.style.strokeDashoffset = (g.largo - lp).toFixed(1);
-    });
-    svg.classList.toggle('completo', completo);
+    // línea del camino ya recorrida (desde la primera parada hasta el camión)
+    const desde = PARADAS[0].parada;
+    hecho.style.strokeDasharray = `0 ${desde.toFixed(1)} ${Math.max(0, l - desde).toFixed(1)} ${(L * 2).toFixed(0)}`;
 
     // embalajes: vacíos desde la carga; llenos en cada proveedor
     const conVacios = l >= PARADAS[1].parada - 1;
-    const llenos = Math.min(6, cambios.filter((c) => l >= c - 1).length * POR_PROV);
+    const cambios = [PARADAS[4], ...OTROS_PROV].filter(Boolean);
+    const porProv = Math.ceil(6 / Math.max(1, cambios.length));
+    const llenos = Math.min(6, cambios.filter((c) => l >= c.s - GAP - 1).length * porProv);
     const estado = slotsEl.map((_, i) => (i < llenos ? 'l' : conVacios ? 'v' : 'o')).join('');
     if (estado !== estadoSlots) {
       estadoSlots = estado;
-      slotsEl.forEach((el, i) => el.setAttribute('class', 'mr-slot ' + { l: 'lleno', v: 'vacio', o: '' }[estado[i]]));
-      medios.forEach((el, i) => { el.className = { l: 'lleno', v: 'vacio', o: '' }[estado[i]]; });
+      const clase = { l: 'lleno', v: 'vacio', o: '' };
+      slotsEl.forEach((el, i) => el.setAttribute('class', 'mr-slot ' + clase[estado[i]]));
+      medios.forEach((el, i) => { el.className = clase[estado[i]]; });
     }
 
-    // paradas
-    const paso = Math.min(N - 1, k + (t > .82 ? 1 : 0));
     PARADAS.forEach((pp, i) => {
       pp.el.classList.toggle('activa', i === paso);
-      pp.el.classList.toggle('pasada', i < paso || completo);
+      pp.el.classList.toggle('pasada', i < paso);
     });
     OTROS_PROV.forEach((pp) => pp.el.classList.toggle('pasada', l >= pp.s - GAP - 1));
     if (paso !== pasoActual) mostrarPaso(paso);
@@ -196,7 +215,7 @@
 
   // Clic en una parada o en las rayitas: ir a ese paso (el camión quieto en la parada)
   function irPaso(i) {
-    SV.irA(seccion, Math.round(RECORRIDO * (i + DEMORA * .5) / N));
+    SV.irA(seccion, Math.round(RECORRIDO * (i + DEMORA * .5) / UNIDADES));
   }
   izq.querySelectorAll('.mr-rayas button').forEach((b) => b.addEventListener('click', () => irPaso(+b.dataset.i)));
 
@@ -209,5 +228,7 @@
     if (!visto && local > -450) { visto = true; seccion.classList.add('visible'); }
     pintar(local / RECORRIDO);
   });
-  pintar(0);
+  let relojTam = null;
+  addEventListener('resize', () => { clearTimeout(relojTam); relojTam = setTimeout(armar, 60); });
+  armar();
 })();

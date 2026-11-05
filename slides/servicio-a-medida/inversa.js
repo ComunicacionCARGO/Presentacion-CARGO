@@ -1,10 +1,12 @@
 /* =========================================================
-   LOGÍSTICA INVERSA — simulación de un reclamo.
-   Una escena (centro de distribución, calle y concesionario con el camión),
-   el celular del chofer (la App, que la persona usa: Observaciones, tipo de
-   problema, foto, escaneo y firma) y la ficha del reclamo en el TMS, que se
-   completa con cada evento. Pasos: observación → registro → programación →
-   retiro → regreso → resolución → cierre.
+   LOGÍSTICA INVERSA — simulación de un reclamo (con la info de la persona:
+   recolección, traslado, trazabilidad y disposición final por devolución,
+   garantía o rotación; el concesionario autogestiona su devolución).
+   Una escena (depósito, calle y concesionario con el camión), el celular
+   (primero lo usa el concesionario, después el chofer: Nueva devolución,
+   motivo, foto, escaneo y firma) y la ficha del reclamo en el TMS, que se
+   completa con cada evento. Pasos: solicitud → registro → programación →
+   retiro → traslado → disposición final → análisis de causas → cierre.
    Si nadie toca nada, cada acción se hace sola al rato (y la simulación
    arranca sola si la sección queda en pantalla sin uso).
    Textos en datos/servicio.js → inversa.
@@ -15,7 +17,7 @@
   if (!SV || !seccion) return;
   const { S, txt, esc, crear, escala, cliente } = SV;
   const I = S.inversa || {};
-  const PASOS = (I.pasos || []).slice(0, 6);
+  const PASOS = (I.pasos || []).slice(0, 7);
   const TIPOS = I.tipos || [];
   const DESTINOS = (I.destinos || []).slice();
   const ESTADOS = I.estados || [];
@@ -87,13 +89,14 @@
     `<div class="iv-izq"><p class="iv-ante ent" style="--i:0">${t(I.antetitulo)}</p><h2 class="iv-titulo ent" style="--i:1">${t(I.titulo)}</h2>` +
     `<p class="iv-bajada ent" style="--i:2">${t(I.bajada)}</p></div>` +
     '<div class="iv-ticket ent" style="--i:3"><div class="tk-cab"><div><span class="tk-ante">Reclamo</span><b class="tk-num">—</b></div><span class="tk-estado">—</span></div>' +
-    `<p class="tk-tipo"></p><div class="tk-barra">${'<i></i>'.repeat(PASOS.length)}</div>` +
+    `<p class="tk-tipo"></p><div class="tk-barra" style="--n:${PASOS.length}">${'<i></i>'.repeat(PASOS.length)}</div>` +
     `<ol class="tk-eventos"></ol><p class="tk-vacio">${t(I.sinReclamo)}</p><p class="tk-pie">${t(I.ejemplo)}</p></div>` +
-    `<ol class="iv-pasos ent" style="--i:2">${PASOS.map((p, i) => `<li><b>${pad(i + 1)}</b><span>${t(p.titulo)}</span></li>`).join('')}</ol>` +
+    `<ol class="iv-pasos ent" style="--i:2;--n:${PASOS.length}">${PASOS.map((p, i) => `<li><b>${pad(i + 1)}</b><span>${t(p.titulo)}</span></li>`).join('')}</ol>` +
     `<div class="iv-escena ent" style="--i:3">${ESCENA}<p class="iv-dia">${ICONO_RELOJ}<span></span></p>` +
-    `<div class="iv-insp"><p>Inspección</p><ul>${DESTINOS.map((d) => `<li><i></i>${t(d)}</li>`).join('')}</ul></div></div>` +
+    `<div class="iv-insp"><p>Inspección</p><ul>${DESTINOS.map((d) => `<li><i></i>${t(d)}</li>`).join('')}</ul></div>` +
+    '<div class="iv-analisis"></div></div>' +
     '<div class="iv-relato ent" style="--i:4"><p class="iv-num"></p><h3 class="iv-rel-titulo"></h3><p class="iv-rel-texto"></p><div class="iv-acciones"></div></div>' +
-    '<div class="iv-cel ent" style="--i:5"><div class="cel-marco"><div class="cel-barra"><span class="cel-hora">9:41</span><span class="cel-bat"><i></i></span></div>' +
+    '<div class="iv-cel ent" style="--i:5"><p class="cel-quien"></p><div class="cel-marco"><div class="cel-barra"><span class="cel-hora">9:41</span><span class="cel-bat"><i></i></span></div>' +
     `<div class="cel-cab"><span class="cel-menu"></span><b>${esc(I.app || '')}</b></div><div class="cel-cuerpo"></div><i class="cel-home"></i></div></div>` +
     '<div class="iv-mails"></div>' +
     `<div class="iv-mano">${ICONO_MANO}</div><i class="iv-dato"></i>`);
@@ -229,22 +232,32 @@
     contacto: '<svg viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4.5"/><path d="M3.5 21c0-4.4 3.8-7.5 8.5-7.5s8.5 3.1 8.5 7.5z"/></svg>',
     ok: '<svg viewBox="0 0 24 24"><path d="M9.5 16.2 5.3 12l-1.6 1.6 5.8 5.8L20.3 8.6 18.7 7z"/></svg>'
   };
-  const vInicio = () => pantalla(I.app || '',
+  // Quién usa el celular en cada momento (el concesionario o el chofer)
+  const quienEl = $('.cel-quien');
+  function quien(texto, chofer) {
+    quienEl.textContent = plano(texto);
+    quienEl.classList.toggle('chofer', !!chofer);
+    quienEl.classList.remove('cambia'); void quienEl.offsetWidth; quienEl.classList.add('cambia');
+  }
+  // App del chofer (inicio, como la captura de Fénix)
+  const vChofer = () => pantalla(I.app || '',
     '<div class="cel-banner"></div><div class="cel-iconos">' +
     `<span><i class="naranja">${IC.ruta}</i>Hojas de ruta</span><span><i class="amarillo">${IC.entrega}</i>Entrega</span><span><i class="celeste">${IC.contacto}</i>Contacto</span></div>`);
-  const vEntrega = () => pantalla('Entrega',
-    `<div class="cel-tarj"><b>${t(I.concesionario).toUpperCase()}</b><small>${t(I.direccion)}</small><small>Remito ${t(I.remito)}</small></div>` +
-    `<div class="cel-tarj"><small>Bultos entregados</small><b class="cel-grande">${I.bultos} / ${I.bultos}</b><small>Bultos faltantes</small><b class="cel-grande">0</b></div>` +
-    '<div class="cel-botones"><button type="button" class="cel-btn borde cel-obs">Observaciones</button><button type="button" class="cel-btn" disabled>Conformar</button></div>');
-  const vTipos = () => pantalla('Observaciones',
-    '<p class="cel-preg">¿Qué pasó con el bulto?</p>' +
+  // Lo que ve el concesionario: autogestión de devoluciones
+  const vConcesionario = () => pantalla(plano(I.appConcesionario),
+    `<div class="cel-tarj"><b>${t(I.concesionario).toUpperCase()}</b><small>${t(I.direccion)}</small></div>` +
+    '<button type="button" class="cel-nueva"><i>+</i>Nueva devolución</button>' +
+    '<p class="cel-sub">Últimas devoluciones</p>' +
+    '<div class="cel-hist"><span><b>RC-23980</b>Cerrado</span><span><b>RC-23871</b>Cerrado</span></div>');
+  const vTipos = () => pantalla(plano(I.appConcesionario),
+    `<p class="cel-preg">¿Por qué la devolvés?</p><p class="cel-pieza">${t(I.pieza)}</p>` +
     TIPOS.map((tp) => `<button type="button" class="cel-tipo"><b>${t(tp.nombre)}</b><small>${t(tp.detalle)}</small></button>`).join(''));
-  const vFoto = () => pantalla('Observaciones',
-    '<p class="cel-preg">Sacá una foto del bulto</p><div class="cel-visor"><i class="esq"></i>' +
+  const vFoto = () => pantalla(plano(I.appConcesionario),
+    '<p class="cel-preg">Sacá una foto de la pieza</p><div class="cel-visor"><i class="esq"></i>' +
     '<svg viewBox="0 0 120 100"><g transform="translate(60 78)"><rect x="-30" y="-52" width="60" height="52" rx="4" fill="#EADBC2" stroke="#3A3A3A" stroke-width="2"/><path d="M-30 -33h60M-6 -52v19" stroke="#EF4529" stroke-width="5" fill="none"/>' +
     '<path d="M18 -52l-6 12 7 6-8 12" stroke="#3A3A3A" stroke-width="2" fill="none"/></g></svg><i class="flash"></i></div>' +
     '<button type="button" class="cel-disparo" aria-label="Sacar foto"><i></i></button>');
-  const vListo = (titulo, sub) => pantalla(I.app || '',
+  const vListo = (cabecera, titulo, sub) => pantalla(plano(cabecera),
     `<div class="cel-listo"><i>${IC.ok}</i><b>${titulo}</b><small>${sub || ''}</small></div>`);
   const vRuta = () => {
     const pr = pantalla('Hoja de ruta · Día 2',
@@ -253,15 +266,15 @@
     return pr;
   };
   const vRetiro = () => pantalla('Retiro',
-    `<div class="cel-tarj"><small>Retiro</small><b>${t(I.numero)}</b><small>${t(I.concesionario)} · 1 bulto</small><small class="rojo">${t(tipo ? tipo.nombre : '')}</small></div>` +
-    '<div class="cel-codigo"><i class="barras"></i><i class="laser"></i><span>Escaneá el bulto</span></div>' +
-    '<div class="cel-botones"><button type="button" class="cel-btn cel-escanear">Escanear bulto</button></div>');
+    `<div class="cel-tarj"><small>Retiro</small><b>${t(I.numero)}</b><small>${t(I.concesionario)} · ${t(I.pieza)}</small><small class="rojo">${t(tipo ? tipo.nombre : '')}</small></div>` +
+    '<div class="cel-codigo"><i class="barras"></i><i class="laser"></i><span>Escaneá la pieza</span></div>' +
+    '<div class="cel-botones"><button type="button" class="cel-btn cel-escanear">Escanear pieza</button></div>');
   const vFirma = () => pantalla('Firma',
     `<div class="cel-tarj"><b>${t(I.concesionario).toUpperCase()}</b><small>Conformidad del retiro ${t(I.numero)}</small></div>` +
     '<div class="cel-firma"><canvas></canvas><span>Firmá acá</span></div>' +
     '<div class="cel-botones"><button type="button" class="cel-btn borde cel-borrar">Borrar</button><button type="button" class="cel-btn cel-ok" disabled>Firmar</button></div>');
   const vViaje = () => pantalla('En viaje',
-    `<div class="cel-tarj"><small>Destino</small><b>${t(I.centro)}</b><small>Retiro ${t(I.numero)} · 1 bulto</small></div>` +
+    `<div class="cel-tarj"><small>Destino</small><b>${t(I.centro)}</b><small>Retiro ${t(I.numero)} · ${t(I.pieza)}</small></div>` +
     '<div class="cel-viaje"><span>Seguimiento satelital</span><div><i></i></div></div>');
 
   // Firma: con el mouse (o sola, si nadie firma)
@@ -365,22 +378,15 @@
   // =========================================================
   // PASOS DE LA SIMULACIÓN
   // =========================================================
-  async function observacion() {
+  // 1. El concesionario autogestiona la devolución desde el celular
+  async function solicitud() {
     marcarPaso(0); relatoPaso(0);
-    pista('Mirá: el camión sale a entregar');
-    await moverCamion(X_CON, 2300);
-    // descarga los bultos en la vereda del concesionario
-    for (let i = 0; i < 3; i++) {
-      poner(bultos[i], X_CON + 30, 340, .7, 0);
-      mover(bultos[i], LUGARES[i], VEREDA, 1, 1, 650, 26).catch(() => {});
-      await esperar(220);
-    }
-    await esperar(600);
-    const pe = vEntrega();
+    quien(I.quienConcesionario);
+    const pd = vConcesionario();
     pista(t(PASOS[0].accion));
-    await esperarClic(pe.querySelector('.cel-obs'), 9000);
+    await esperarClic(pd.querySelector('.cel-nueva'), 9000);
     const pt = vTipos();
-    pista('Elegí qué pasó con el bulto');
+    pista('Elegí el motivo de la devolución');
     const k = await esperarClic([...pt.querySelectorAll('.cel-tipo')], 8000);
     tipo = TIPOS[k] || TIPOS[0];
     pt.querySelectorAll('.cel-tipo')[k].classList.add('elegido');
@@ -391,13 +397,12 @@
     await esperarClic(pf.querySelector('.cel-disparo'), 6000);
     pf.querySelector('.cel-visor').classList.add('disparo');
     await esperar(700);
-    vListo('Observación enviada', 'Con foto adjunta');
+    vListo(I.appConcesionario, 'Solicitud enviada', 'Te avisamos por mail en cada paso');
     await eventos(PASOS[0].eventos);
   }
+  // 2. Entra al TMS y se avisa por mail
   async function registro() {
     marcarPaso(1); relatoPaso(1); acciones.innerHTML = '';
-    const vuelta = moverCamion(X_CD, 2600);
-    vuelta.catch(() => {});
     await volarDato();
     ticket.classList.add('activo');
     $('.tk-num').textContent = plano(I.numero);
@@ -409,11 +414,11 @@
     evento(ev[1]);
     for (const m of PASOS[1].mails || []) { mail(m); await esperar(450); }
     await eventos(ev.slice(2));
-    await vuelta;
-    vInicio();
   }
+  // 3. El retiro se suma a la hoja de ruta del chofer
   async function programacion() {
     marcarPaso(2); relatoPaso(2); acciones.innerHTML = '';
+    quien(I.quienChofer, true);
     const pr = vRuta();
     await esperar(1100);
     const lista = pr.querySelector('.cel-ruta');
@@ -425,12 +430,13 @@
     await eventos(PASOS[2].eventos);
     await esperar(500);
   }
+  // 4. Retiro: escaneo y firma
   async function retiro() {
     marcarPaso(3); relatoPaso(3);
-    pista('El camión vuelve a pasar por el concesionario');
+    pista('El camión pasa por el concesionario');
     await moverCamion(X_CON, 2300);
     const pr = vRetiro();
-    pista('Tocá «Escanear bulto»');
+    pista('Tocá «Escanear pieza»');
     await esperarClic(pr.querySelector('.cel-escanear'), 6000);
     pr.querySelector('.cel-codigo').classList.add('escaneando');
     await esperar(1100);
@@ -442,13 +448,14 @@
     const firma = esperarClic(pf.querySelector('.cel-ok'), 9000, () => pf.firmar());
     mano(pf.querySelector('canvas'));        // la mano señala dónde firmar
     await firma;
-    vListo('Retiro conformado', 'Firmado por el concesionario');
-    // el bulto sube al camión
+    vListo(I.app, 'Retiro conformado', 'Firmado por el concesionario');
+    // la pieza sube al camión
     await mover(bultos[2], X_CON + 20, 336, .6, 0, 700, 30);
     estado(2);
     await eventos(PASOS[3].eventos);
   }
-  async function regreso() {
+  // 5. Traslado al depósito con seguimiento satelital
+  async function traslado() {
     marcarPaso(4); relatoPaso(4); acciones.innerHTML = '';
     const ev = PASOS[4].eventos || [];
     evento(ev[0]);
@@ -462,9 +469,10 @@
     poner(bultos[2], X_CD + 20, 336, .6, 0);
     await mover(bultos[2], PUERTA_CD, VEREDA, 1, 1, 650, 26);
     await eventos(ev.slice(1));
-    vInicio();
+    vChofer();
   }
-  async function resolucion() {
+  // 6. Disposición final: inspección, destino y reposición
+  async function disposicion() {
     marcarPaso(5); relatoPaso(5); acciones.innerHTML = '';
     estado(4);
     insp.classList.add('visible');
@@ -491,6 +499,30 @@
       await eventos(ev.slice(1));
     }
   }
+  // 7. Análisis de causas: el motivo se suma al gráfico del mes
+  function armarAnalisis() {
+    const max = Math.max(1, ...TIPOS.map((tp) => (+tp.delMes || 0) + 1));
+    analisisEl.innerHTML = `<p>${t((PASOS[6] || {}).grafico)}</p><ul>` + TIPOS.map((tp) =>
+      `<li><span>${t(tp.nombre)}</span><i><u style="width:${((+tp.delMes || 0) / max * 100).toFixed(1)}%"></u></i><b>${+tp.delMes || 0}</b></li>`).join('') + '</ul>';
+    analisisEl.dataset.max = max;
+  }
+  async function analisis() {
+    marcarPaso(6); relatoPaso(6); acciones.innerHTML = '';
+    estado(5);
+    insp.classList.remove('visible');
+    armarAnalisis();
+    analisisEl.classList.add('visible');
+    await esperar(900);
+    const k = TIPOS.indexOf(tipo), li = analisisEl.querySelectorAll('li')[k];
+    if (li) {
+      const n = (+tipo.delMes || 0) + 1;
+      li.classList.add('elegido');
+      li.querySelector('u').style.width = (n / +analisisEl.dataset.max * 100).toFixed(1) + '%';
+      li.querySelector('b').textContent = n;
+    }
+    await esperar(600);
+    await eventos((PASOS[6] || {}).eventos);
+  }
   async function cierre() {
     marcarPaso(PASOS.length);
     if (tipo.reposicion) { evento({ hora: C.evento && C.evento.hora, texto: C.reposicion }); await esperar(500); }
@@ -498,10 +530,10 @@
     estado(ESTADOS.length - 1);
     if (C.mail) mail(C.mail);
     ticket.classList.add('cerrado');
-    vListo('Sin pendientes', 'Ruta del día completa');
-    const n = eventosEl.children.length;
+    quien(I.quienChofer, true);
+    vListo(I.app, 'Sin pendientes', 'Ruta del día completa');
     relato(`<i class="iv-check">${IC.ok}</i>`, t(C.titulo),
-      t(C.texto) + `<span class="iv-resumen"><span><b>${n}</b>eventos registrados</span><span><b>0</b>papeles</span><span><b>100 %</b>en línea</span></span>`);
+      t(C.texto) + '<span class="iv-beneficios">' + (C.beneficios || []).map((b) => `<span>${IC.ok}${t(b)}</span>`).join('') + '</span>');
     boton(t(C.boton), 'otra').addEventListener('click', correr);
   }
 
@@ -515,6 +547,7 @@
   // =========================================================
   // REINICIO Y ARRANQUE
   // =========================================================
+  const analisisEl = $('.iv-analisis');
   function reiniciar() {
     vivas.forEach((a) => a.cancel());
     vivas.clear();
@@ -523,10 +556,11 @@
     svg.classList.remove('con-alerta', 'rastreo');
     camion.classList.remove('andando');
     ponerCamion(X_CD, 1);
-    bultos.forEach((b, i) => poner(b, LUGARES[i], VEREDA, 1, 0));
+    bultos.forEach((b, i) => poner(b, LUGARES[i], VEREDA, 1, 1));   // las piezas ya están en el concesionario
     poner(repo, PUERTA_CD, VEREDA, 1, 0);
     insp.classList.remove('visible', 'leyendo');
     insp.querySelectorAll('li').forEach((li) => li.classList.remove('elegido'));
+    analisisEl.classList.remove('visible');
     ticket.classList.remove('activo', 'con-eventos', 'cerrado');
     $('.tk-num').textContent = '—';
     $('.tk-tipo').innerHTML = '';
@@ -534,22 +568,22 @@
     $('.tk-estado').className = 'tk-estado';
     eventosEl.innerHTML = '';
     mails.innerHTML = '';
-    dia.textContent = 'Día 1 · 10:15';
-    celHora.textContent = '10:15';
+    dia.textContent = 'Día 1 · 10:30';
+    celHora.textContent = '10:30';
     marcarPaso(-1);
-    vInicio();
+    quien(I.quienConcesionario);
+    vConcesionario();
   }
   async function correr() {
     corrida++;
     reiniciar();
     seccion.classList.add('corriendo');
     try {
-      const pasos = [observacion, registro, programacion, retiro, regreso, resolucion];
+      const pasos = [solicitud, registro, programacion, retiro, traslado, disposicion, analisis].slice(0, PASOS.length);
       for (let i = 0; i < pasos.length; i++) {
         await pasos[i]();
-        if (i < pasos.length - 1) await siguiente(i);
+        await siguiente(i);
       }
-      await siguiente(pasos.length - 1);
       await cierre();
     } catch (e) {
       if (!(e instanceof Cancelado)) console.error(e);
