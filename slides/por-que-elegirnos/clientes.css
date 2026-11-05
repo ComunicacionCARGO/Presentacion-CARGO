@@ -5,21 +5,25 @@
    blanco en una grilla de 6 × 6 que se filtra por rubro.
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
-.mc-cli { position: absolute; left: 0; top: 3600px; width: 1600px; height: 1000px; color: var(--blanco); pointer-events: auto; }
+/* Sube por encima de Comunidad, que queda quieta (diapositiva.js le da su propio translate) */
+.mc-cli { position: absolute; left: 0; top: 3600px; width: 1600px; height: 1000px; z-index: 3; color: var(--blanco); pointer-events: auto; will-change: translate; }
 .mc-cli h2, .mc-cli p, .mc-cli ul { margin: 0; padding: 0; }
 .mc-cli ul { list-style: none; }
 
-/* Fondo a todo el ancho de la ventana: crema, franja gris, hueco, franja roja, hueco y el rojo */
+/* Fondo a todo el ancho de la ventana: franja gris, hueco, franja roja, hueco y el rojo.
+   Arranca con la franja gris (sin crema arriba) y una sombra suave hacia arriba: se ve como
+   una hoja que sube sobre Comunidad */
 .cli-fondo {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
-  top: 0;
+  top: 14px;
   width: calc(100vw / var(--escala, 1));
-  height: calc(1000px + 50vh / var(--escala, 1));
+  height: calc(986px + 50vh / var(--escala, 1));
   background:
     /* las franjas miden lo mismo (34,6) y los huecos también (10,8), como la banda de la pantalla partida */
-    linear-gradient(to bottom, var(--blanco) 0 14px, var(--gris) 14px 48.6px, var(--blanco) 48.6px 59.4px, var(--rojo) 59.4px 94px, var(--blanco) 94px 104.8px, transparent 104.8px),
+    linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, transparent 90.8px),
     radial-gradient(120% 95% at 18% 10%, #F2582F 0%, #E4421F 48%, #C93419 100%);
+  box-shadow: 0 -18px 46px -8px rgba(58, 58, 58, .28);
 }
 
 /* ---------- Título y contador ---------- */

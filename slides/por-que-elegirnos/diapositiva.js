@@ -118,14 +118,18 @@
   // con un resorte corto. Con un tema de Mejora continua abierto, la rueda y ↑ ↓
   // recorren sus secciones (mejora.js).
   // =========================================================
-  const capasQueSuben = [seccionEl, $('.mc-tramo')];
+  // Al final, RSE (Comunidad) queda quieta y "Nuestros clientes" sube por encima:
+  // pasado QUIETO_DESDE el tramo deja de subir y solo se mueve la sección de Clientes.
+  const tramo = $('.mc-tramo'), clientesEl = $('.mc-cli');
+  const QUIETO_DESDE = 900 + 2700;                  // Comunidad entera en pantalla
   let bajada = -1;
   document.addEventListener('desplazamiento', (e) => {
     const y = Math.max(0, e.detail.y);
     if (y === bajada) return;
     bajada = y;
-    const t = `0 ${(-y).toFixed(1)}px`;
-    capasQueSuben.forEach((c) => { c.style.translate = t; });
+    seccionEl.style.translate = `0 ${(-y).toFixed(1)}px`;
+    tramo.style.translate = `0 ${(-Math.min(y, QUIETO_DESDE)).toFixed(1)}px`;
+    if (clientesEl) clientesEl.style.translate = `0 ${(-Math.max(0, y - QUIETO_DESDE)).toFixed(1)}px`;
     seccionEl.classList.toggle('lejos', y > 1800);   // ya quedó muy arriba: no se dibuja
   });
 
