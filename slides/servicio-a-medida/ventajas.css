@@ -79,7 +79,8 @@
 
 .bi-ventana { position: absolute; left: 520px; top: 84px; width: 1016px; height: 736px; border-radius: 20px; background: var(--blanco); color: var(--gris); box-shadow: 0 40px 70px -36px rgba(100, 15, 0, .75); overflow: hidden; }
 .bi-barra { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; background: var(--gris); color: var(--blanco); }
-.bi-barra img { height: 30px; padding: 5px 10px; border-radius: 8px; background: var(--blanco); }
+/* logo de la marca en blanco, sin fondo (el SVG pasado a blanco con filtro) */
+.bi-barra img { height: 22px; width: auto; filter: brightness(0) invert(1); }
 .bi-vtitulo { font-size: 17px; font-weight: 600; letter-spacing: .02em; }
 .bi-barra span { margin-left: auto; font-size: 12px; opacity: .7; }
 .bi-cuerpo { position: absolute; left: 0; right: 0; top: 58px; bottom: 0; padding: 24px 30px; }
