@@ -134,7 +134,14 @@
 .iv-giro { transform-box: fill-box; transform-origin: center; }
 .andando .iv-giro { animation: iv-rodar .45s linear infinite; }
 @keyframes iv-rodar { to { rotate: 360deg; } }
-.andando .iv-carga, .andando .iv-cabina { animation: iv-traqueteo .3s ease-in-out infinite alternate; }
+.andando .iv-carga, .andando .iv-cabina, .andando .iv-carroceria { animation: iv-traqueteo .3s ease-in-out infinite alternate; }
+/* Quién actúa (inversa.js → actor()): brillo suave detrás del concesionario (azul), del depósito o del
+   camión (rojo, CARGO). Aparece con un fundido y "respira" despacio mientras dura la acción. */
+.iv-brillo { opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity .7s ease; pointer-events: none; }
+.iv-svg[data-actor="cd"] .iv-brillo-cd,
+.iv-svg[data-actor="con"] .iv-brillo-con,
+.iv-svg[data-actor="cam"] .iv-brillo-cam { opacity: 1; animation: iv-respira 2.6s ease-in-out infinite; }
+@keyframes iv-respira { 50% { opacity: .62; scale: 1.05; } }
 @keyframes iv-traqueteo { to { translate: 0 -1px; } }
 /* seguimiento satelital (en el regreso) */
 .iv-sat { opacity: 0; transition: opacity .5s ease; }
@@ -328,7 +335,8 @@
 }
 
 /* ---------- Quién usa el celular (concesionario o chofer) ---------- */
-.cel-quien { position: absolute; left: 50%; top: -30px; translate: -50% 0; z-index: 4; display: flex; align-items: center; gap: 7px; padding: 5px 13px; border-radius: 999px; background: var(--gris); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--blanco); white-space: nowrap; box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .5); }
+/* el cartel del concesionario va en el mismo azul que su brillo en la escena; el del chofer, en crema y rojo (CARGO) */
+.cel-quien { position: absolute; left: 50%; top: -30px; translate: -50% 0; z-index: 4; display: flex; align-items: center; gap: 7px; padding: 5px 13px; border-radius: 999px; background: #5F8DA3; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--blanco); white-space: nowrap; box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .5); }
 .cel-quien::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blanco); }
 .cel-quien.chofer { background: var(--blanco); color: var(--rojo); }
 .cel-quien.chofer::before { background: var(--rojo); }

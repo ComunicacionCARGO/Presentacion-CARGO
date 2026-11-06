@@ -32,9 +32,10 @@
   const plano = (s) => { const d = document.createElement('div'); d.innerHTML = t(s); return d.textContent; };
 
   // ---------- Posiciones en la escena (viewBox 720 × 430) ----------
-  const X_CD = 190, X_CON = 520, PISO = 384, VEREDA = 356;
+  // Depósito y concesionario: los dibujos de la persona (img/logistica-inversa/), con su vereda en y 356
+  const X_CD = 160, X_CON = 520, PISO = 393, VEREDA = 356;
   const LUGARES = [612, 640, 668];     // bultos entregados en la vereda del concesionario
-  const PUERTA_CD = 274;               // donde queda el bulto al volver
+  const PUERTA_CD = 242;               // donde queda el bulto al volver (vereda del depósito, al lado del portón)
 
   // =========================================================
   // ARMADO
@@ -42,44 +43,47 @@
   const caja = (clase, extra) =>
     `<g class="iv-caja ${clase}"><rect x="-14" y="-26" width="28" height="26" rx="2.5"/>` +
     '<path class="cinta" d="M-14 -16.5h28M-3 -26v9.5"/>' + (extra || '') + '</g>';
-  const ruedas = [-48, -24, 40].map((x) =>
-    `<g transform="translate(${x} -10)"><g class="iv-giro"><circle class="iv-goma" r="10"/><circle class="iv-llanta" r="4.5"/><path class="iv-rayos" d="M0 -7.5v15M-7.5 0h15"/></g></g>`).join('');
+  // Camión: el dibujo de la persona (camion.svg, 132 × 76) en línea para poder animar la carrocería.
+  // Origen: donde las ruedas tocan la calle; mira hacia +x.
+  const CAMION =
+    '<g transform="translate(-74 -75.85)"><g class="iv-carroceria">' +
+    '<path fill="#FFFBF3" d="M6.93,2.5h85.87c2.44,0,4.43,1.98,4.43,4.43v52H2.5V6.93c0-2.44,1.98-4.43,4.43-4.43Z"/>' +
+    '<path fill="#EF4529" d="M68.26,49.89l-9.03,9.03h-7.2l12.63-12.63c7.45-7.43,7.45-19.54,0-26.97L47.84,2.5h7.21l13.21,13.21c9.43,9.43,9.43,24.76,0,34.19Z"/>' +
+    '<path fill="#EF4529" d="M63.32,45.43l-13.49,13.49h-7.21l17.09-17.09c4.98-4.980,4.98-13.07,0-18.05L38.43,2.5h7.2l17.68,17.68c6.97,6.96,6.97,18.29.01,25.26Z"/>' +
+    '<path fill="#3A3A3A" d="M58.48,40.84l-18.09,18.09h-7.2l21.69-21.690c2.45-2.45,2.45-6.43,0-8.88L29.02,2.5h7.2l22.26,22.26c4.43,4.44,4.43,11.65,0,16.08Z"/>' +
+    '<path fill="none" stroke="#424243" stroke-width="5" d="M6.93,2.5h85.87c2.44,0,4.43,1.98,4.43,4.43v52H2.5V6.93c0-2.44,1.98-4.43,4.43-4.43Z"/>' +
+    '<path fill="#EF4529" stroke="#424243" stroke-width="5" d="M129.48,58.93h-37.62V17.56h19.57c7.05,7.05,11,11,18.04,18.04v23.32Z"/>' +
+    '<path fill="#85D5F8" d="M118.75,34.24h-20.72v-10.55h10.17c4.17,4.18,7.26,7.27,10.55,10.55Z"/></g>' +
+    '<g fill="#E4E8EB" stroke="#424243" stroke-width="5"><circle cx="18.24" cy="63.14" r="10.21"/><circle cx="41.85" cy="63.14" r="10.21"/><circle cx="110.67" cy="63.14" r="10.21"/></g></g>';
   const ESCENA =
     '<svg class="iv-svg" viewBox="0 0 720 430" aria-hidden="true"><defs>' +
-    '<linearGradient id="iv-vidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6EEF1"/><stop offset=".6" stop-color="#C9D8DF"/><stop offset="1" stop-color="#B3C7D0"/></linearGradient></defs>' +
+    // brillos de quién actúa: rojo para CARGO (depósito y camión), azul para el concesionario
+    '<radialGradient id="iv-brillo-cargo"><stop offset="0" stop-color="#EF4529" stop-opacity=".42"/><stop offset=".55" stop-color="#EF4529" stop-opacity=".2"/><stop offset="1" stop-color="#EF4529" stop-opacity="0"/></radialGradient>' +
+    '<radialGradient id="iv-brillo-cliente"><stop offset="0" stop-color="#4F82A0" stop-opacity=".5"/><stop offset=".55" stop-color="#5F8DA3" stop-opacity=".24"/><stop offset="1" stop-color="#759AAB" stop-opacity="0"/></radialGradient>' +
+    // los dibujos traen debajo de la vereda unas rayas de piso: se recortan para que no pisen la calle
+    '<clipPath id="iv-sin-piso"><rect x="0" y="0" width="720" height="369.5"/></clipPath></defs>' +
+    '<ellipse class="iv-brillo iv-brillo-cd" cx="135" cy="292" rx="205" ry="150" fill="url(#iv-brillo-cargo)"/>' +
+    '<ellipse class="iv-brillo iv-brillo-con" cx="593" cy="280" rx="190" ry="160" fill="url(#iv-brillo-cliente)"/>' +
     // satélite (se enciende en el regreso)
     '<g class="iv-sat" transform="translate(360 52)"><g class="iv-sat-cuerpo"><rect x="-30" y="-5" width="18" height="10" rx="1.5"/><rect x="12" y="-5" width="18" height="10" rx="1.5"/>' +
     '<rect x="-8" y="-8" width="16" height="16" rx="3"/></g><path class="iv-ondas o1" d="M-10 18a14 14 0 0 0 20 0"/><path class="iv-ondas o2" d="M-17 26a24 24 0 0 0 34 0"/><path class="iv-ondas o3" d="M-24 34a34 34 0 0 0 48 0"/></g>' +
-    // suelo
-    '<rect class="iv-vereda" x="0" y="356" width="720" height="8"/><rect class="iv-calle" x="0" y="364" width="720" height="34" rx="2"/>' +
-    '<line class="iv-linea" x1="10" y1="381" x2="710" y2="381"/>' +
-    // centro de distribución
-    '<g class="iv-cd"><path class="iv-edif" d="M20 356V196L58 174V196L96 174V196L134 174V196L172 174V196L210 174V196L250 174V356Z"/>' +
-    '<rect class="iv-fr r" x="20" y="204" width="230" height="7"/><rect class="iv-fr r" x="20" y="214" width="230" height="7"/><rect class="iv-fr g" x="20" y="224" width="230" height="5"/>' +
-    '<image href="../../img/marca/logo-cargo.svg" x="34" y="242" width="96" height="26" preserveAspectRatio="xMinYMid meet"/>' +
-    `<text class="iv-rotulo" x="35" y="284">${esc(plano(I.centro).toUpperCase())}</text>` +
-    '<g class="iv-porton"><rect x="140" y="296" width="94" height="60"/><path d="M140 306h94M140 316h94M140 326h94M140 336h94M140 346h94"/></g>' +
-    '<rect class="iv-puertita" x="40" y="306" width="40" height="50"/></g>' +
-    // concesionario
-    '<g class="iv-con"><rect class="iv-edif" x="470" y="214" width="232" height="142"/>' +
-    '<rect class="iv-cartel" x="462" y="192" width="248" height="34" rx="3"/>' +
-    `<text class="iv-cartel-txt" x="586" y="217">${esc(cliente)}</text>` +
-    '<text class="iv-rotulo centro" x="586" y="240">CONCESIONARIO</text>' +
-    '<rect class="iv-vidrio" x="484" y="248" width="204" height="108"/>' +
-    '<path class="iv-montante" d="M535 248v108M637 248v108M484 300h82M606 300h82"/>' +
-    '<rect class="iv-puerta" x="566" y="286" width="40" height="70"/>' +
-    '<path class="iv-auto" d="M490 352c2-10 8-14 16-15l8-8c3-3 7-4 12-4h10c5 0 9 2 12 5l6 7c5 1 8 4 8 9v6z"/></g>' +
+    // calle (debajo de las veredas de los dibujos)
+    '<rect class="iv-calle" x="0" y="369" width="720" height="32" rx="2"/>' +
+    '<line class="iv-linea" x1="10" y1="385" x2="710" y2="385"/>' +
+    // depósito de CARGO (deposito.svg al 0,8: su vereda queda en y 356)
+    '<g class="iv-cd" clip-path="url(#iv-sin-piso)"><image href="../../img/logistica-inversa/deposito.svg" x="0" y="226.3" width="270.3" height="161.06"/>' +
+    `<text class="iv-rotulo centro" x="135" y="290">${esc(plano(I.centro).toUpperCase())}</text></g>` +
+    // concesionario (concesionario.svg al 0,85: su vereda queda en y 356)
+    '<g class="iv-con" clip-path="url(#iv-sin-piso)"><image href="../../img/logistica-inversa/concesionario.svg" x="476" y="198.3" width="233.62" height="191"/>' +
+    '<text class="iv-rotulo centro" x="621" y="274">CONCESIONARIO</text></g>' +
     // bultos
     caja('iv-b0') + caja('iv-b1') +
     caja('iv-b2', '<g class="iv-alerta" transform="translate(13 -28)"><circle r="8.5"/><text y="4">!</text></g>') +
     caja('iv-repo', '<g class="iv-ok" transform="translate(13 -28)"><circle r="8.5"/><path d="M-4 0l2.8 2.8L4.2-3"/></g>') +
     // camión (origen: donde las ruedas tocan la calle; mira hacia +x)
-    '<g class="iv-camion"><g class="iv-gps" transform="translate(-26 -96)"><circle class="iv-gps-onda" r="10"/><path d="M0 9s-8-7.5-8-13a8 8 0 0 1 16 0c0 5.5-8 13-8 13z"/><circle class="iv-gps-centro" cy="-4" r="3"/></g>' +
-    '<ellipse class="iv-sombra" cx="-6" cy="2" rx="74" ry="5"/>' +
-    '<rect class="iv-carga" x="-74" y="-76" width="94" height="58" rx="4"/>' +
-    '<rect class="iv-fr r" x="-68" y="-42" width="82" height="5"/><rect class="iv-fr r" x="-68" y="-35" width="82" height="5"/><rect class="iv-fr g" x="-68" y="-28" width="82" height="3.5"/>' +
-    '<path class="iv-cabina" d="M22 -18V-60h22l15 21v21z"/><path class="iv-ventana" d="M28 -55h13l10 14H28z"/>' +
-    '<rect class="iv-chasis" x="-74" y="-20" width="134" height="6" rx="2"/>' + ruedas + '</g></svg>';
+    '<g class="iv-camion"><ellipse class="iv-brillo iv-brillo-cam" cx="-8" cy="-38" rx="124" ry="78" fill="url(#iv-brillo-cargo)"/>' +
+    '<g class="iv-gps" transform="translate(-22 -98)"><circle class="iv-gps-onda" r="10"/><path d="M0 9s-8-7.5-8-13a8 8 0 0 1 16 0c0 5.5-8 13-8 13z"/><circle class="iv-gps-centro" cy="-4" r="3"/></g>' +
+    '<ellipse class="iv-sombra" cx="-8" cy="1" rx="70" ry="4.5"/>' + CAMION + '</g></svg>';
 
   const ICONO_MAIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M2 5h20v14H2zm2.2 2 7.8 6 7.8-6z"/></svg>';
   const ICONO_RELOJ = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15zM11 7h2v5.2l3.4 2-1 1.7-4.4-2.5z"/></svg>';
@@ -239,6 +243,9 @@
     quienEl.classList.toggle('chofer', !!chofer);
     quienEl.classList.remove('cambia'); void quienEl.offsetWidth; quienEl.classList.add('cambia');
   }
+  // Quién está actuando en la escena: brilla detrás del concesionario ('con', azul), del depósito
+  // ('cd', rojo) o del camión ('cam', rojo, viaja con él). Sin argumento se apagan todos.
+  function actor(a) { svg.dataset.actor = a || ''; }
   // App del chofer (inicio, como la captura de Fénix)
   const vChofer = () => pantalla(I.app || '',
     '<div class="cel-banner"></div><div class="cel-iconos">' +
@@ -382,6 +389,7 @@
   async function solicitud() {
     marcarPaso(0); relatoPaso(0);
     quien(I.quienConcesionario);
+    actor('con');
     const pd = vConcesionario();
     pista(t(PASOS[0].accion));
     await esperarClic(pd.querySelector('.cel-nueva'), 9000);
@@ -403,6 +411,7 @@
   // 2. Entra al TMS y se avisa por mail
   async function registro() {
     marcarPaso(1); relatoPaso(1); acciones.innerHTML = '';
+    actor('cd');                                   // el reclamo entra al TMS de CARGO
     await volarDato();
     ticket.classList.add('activo');
     $('.tk-num').textContent = plano(I.numero);
@@ -419,6 +428,7 @@
   async function programacion() {
     marcarPaso(2); relatoPaso(2); acciones.innerHTML = '';
     quien(I.quienChofer, true);
+    actor('cd');                                   // CARGO arma la hoja de ruta
     const pr = vRuta();
     await esperar(1100);
     const lista = pr.querySelector('.cel-ruta');
@@ -434,6 +444,7 @@
   async function retiro() {
     marcarPaso(3); relatoPaso(3);
     pista('El camión pasa por el concesionario');
+    actor('cam');                                  // el chofer de CARGO va, escanea y carga
     await moverCamion(X_CON, 2300);
     const pr = vRetiro();
     pista('Tocá «Escanear pieza»');
@@ -444,12 +455,14 @@
     await esperar(500);
     const pf = vFirma();
     prepararFirma(pf);
+    actor('con');                                  // firma el concesionario
     pista(t(PASOS[3].accion) + ' (con el mouse)');
     const firma = esperarClic(pf.querySelector('.cel-ok'), 9000, () => pf.firmar());
     mano(pf.querySelector('canvas'));        // la mano señala dónde firmar
     await firma;
     vListo(I.app, 'Retiro conformado', 'Firmado por el concesionario');
     // la pieza sube al camión
+    actor('cam');
     await mover(bultos[2], X_CON + 20, 336, .6, 0, 700, 30);
     estado(2);
     await eventos(PASOS[3].eventos);
@@ -457,6 +470,7 @@
   // 5. Traslado al depósito con seguimiento satelital
   async function traslado() {
     marcarPaso(4); relatoPaso(4); acciones.innerHTML = '';
+    actor('cam');
     const ev = PASOS[4].eventos || [];
     evento(ev[0]);
     estado(3);
@@ -466,6 +480,7 @@
     requestAnimationFrame(() => { barra.style.transitionDuration = '3.4s'; barra.style.width = '100%'; });
     await moverCamion(X_CD, 3400);
     svg.classList.remove('rastreo');
+    actor('cd');                                   // la pieza entra al depósito
     poner(bultos[2], X_CD + 20, 336, .6, 0);
     await mover(bultos[2], PUERTA_CD, VEREDA, 1, 1, 650, 26);
     await eventos(ev.slice(1));
@@ -474,6 +489,7 @@
   // 6. Disposición final: inspección, destino y reposición
   async function disposicion() {
     marcarPaso(5); relatoPaso(5); acciones.innerHTML = '';
+    actor('cd');                                   // inspección en el depósito
     estado(4);
     insp.classList.add('visible');
     await esperar(700);
@@ -492,6 +508,7 @@
       await esperar(300);
       await mover(repo, X_CD + 20, 336, .6, 0, 650, 26);
       await eventos(ev.slice(1));
+      actor('cam');                                // el camión lleva la reposición
       await moverCamion(X_CON, 2100);
       poner(repo, X_CON + 30, 340, .6, 0);
       await mover(repo, LUGARES[2], VEREDA, 1, 1, 650, 26);
@@ -508,6 +525,7 @@
   }
   async function analisis() {
     marcarPaso(6); relatoPaso(6); acciones.innerHTML = '';
+    actor('cd');                                   // CARGO analiza las causas
     estado(5);
     insp.classList.remove('visible');
     armarAnalisis();
@@ -525,6 +543,7 @@
   }
   async function cierre() {
     marcarPaso(PASOS.length);
+    actor();
     if (tipo.reposicion) { evento({ hora: C.evento && C.evento.hora, texto: C.reposicion }); await esperar(500); }
     evento(C.evento);
     estado(ESTADOS.length - 1);
@@ -554,6 +573,7 @@
     sinMano();
     tipo = null;
     svg.classList.remove('con-alerta', 'rastreo');
+    actor();
     camion.classList.remove('andando');
     ponerCamion(X_CD, 1);
     bultos.forEach((b, i) => poner(b, LUGARES[i], VEREDA, 1, 1));   // las piezas ya están en el concesionario
