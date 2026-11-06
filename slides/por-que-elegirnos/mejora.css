@@ -223,7 +223,8 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
   background: var(--oscuro);
   --i: 2;
 }
-.sc-der::before { content: ""; position: absolute; left: -24px; top: 50%; width: 26px; height: 52px; margin-top: -26px; background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+/* la flechita señala la palabra S.C.O.P.E.? (y 103 = centro de las letras: antetítulo de 46 + la mitad del título, medido) */
+.sc-der::before { content: ""; position: absolute; left: -24px; top: 103px; width: 26px; height: 52px; margin-top: -26px; background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
 .sc-etq { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
 .capitulo .sc-letras { margin-top: 8px; }
 .sc-letras li { display: flex; align-items: baseline; line-height: 1.04; cursor: default; }
@@ -236,8 +237,12 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .capitulo .sc-sig { margin-top: 40px; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
 
 /* ----- Calidad 2: Objetivos ----- */
-.ob-diana { position: absolute; right: 0; top: -14px; width: 190px; height: 190px; fill: none; stroke: var(--rojo); stroke-width: 9; opacity: .22; }
-.ob-lista { display: grid; grid-template-columns: repeat(3, 1fr); gap: 42px 52px; margin-top: 40px; }
+/* ícono de Objetivo (SVG de la persona): la flecha entra volando y se clava en el centro */
+.ob-diana { position: absolute; right: 6px; top: -32px; width: 114px; height: 114px; fill: var(--rojo); overflow: visible; }
+.ob-flecha { translate: 60px -60px; opacity: 0; transition: translate .7s cubic-bezier(.3, 1.4, .5, 1), opacity .3s ease; }
+.cap-sec.visible .ob-flecha { translate: 0 0; opacity: 1; transition-delay: .55s; }
+/* con .capitulo delante: ".capitulo ol { margin: 0 }" le quitaba el margen y la lista quedaba pegada al título (y al ícono) */
+.capitulo .ob-lista { display: grid; grid-template-columns: repeat(3, 1fr); gap: 42px 52px; margin-top: 40px; }
 .ob-lista li { position: relative; padding-top: 22px; border-top: 1px solid var(--linea); }
 .ob-lista li::before { content: ""; position: absolute; left: 0; top: -1px; width: 0; height: 2px; background: var(--rojo); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
 .ob-lista li:hover::before { width: 100%; }
@@ -246,41 +251,30 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .ob-lista p { margin-top: 12px; font-size: 19px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
 
 /* ----- Calidad 3: Pilares ----- */
-.pi-lista { position: absolute; left: 0; top: 84px; width: 760px; }
-.pi-lista li { display: flex; align-items: center; height: 62px; margin-bottom: 6px; cursor: default; }
-.pi-ico {
+/* izquierda: título, isologo (la persona en la lupa, quieto) y nota; derecha: el templo */
+.pi-iso { position: absolute; left: 40px; top: 104px; width: 290px; height: auto; --i: 1; }
+.pi-nota { position: absolute; left: 0; bottom: 4px; width: 370px; font-size: 14px; font-style: italic; font-weight: 300; line-height: 1.5; color: var(--fg2); --i: 3; }
+.pi-panel { position: absolute; left: 420px; top: 0; width: 1052px; height: 590px; border-radius: 26px; background: var(--oscuro); --i: 1; }
+.templo { position: absolute; left: 26px; top: 16px; width: 1000px; height: 560px; }
+.tp-cuerpo { position: absolute; inset: 0; width: 1000px; height: 560px; fill: #fff; overflow: visible; filter: drop-shadow(0 18px 24px rgba(58, 58, 58, .12)); }
+.tp-logo { position: absolute; left: 345px; top: 22px; width: 310px; height: auto; }
+.tp-columnas li { position: absolute; top: 210px; width: 100px; margin-left: -50px; display: flex; flex-direction: column; align-items: center; cursor: default; }
+.tp-capitel { display: block; width: 80px; height: 16px; border-radius: 8px; background: #fff; transition: background .3s ease; }
+.tp-fuste {
   display: grid;
   place-items: center;
-  width: 112px;
-  height: 62px;
-  padding-right: 18px;
-  background: var(--oscuro);
-  clip-path: polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%);
+  width: 58px;
+  height: 198px;
+  background: linear-gradient(90deg, rgba(58, 58, 58, .05), transparent 30%, transparent 70%, rgba(58, 58, 58, .07)) #fff;
   transition: background .3s ease;
 }
-.pi-ico svg { width: 30px; height: 30px; fill: var(--fg); transition: fill .3s ease; }
-.pi-nom { margin-left: 22px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 40px; color: var(--fg); transition: color .3s ease, translate .35s ease; }
-.pi-lista li:hover .pi-ico { background: var(--rojo); }
-.pi-lista li:hover .pi-ico svg { fill: var(--blanco); }
-.pi-lista li:hover .pi-nom { color: var(--rojo); translate: 8px 0; }
-.pi-logo { position: absolute; left: 900px; top: 10px; width: 470px; --i: 3; }
-.logo-scope { display: block; width: 100%; height: auto; overflow: visible; }
-.ls-aro { fill: none; stroke: var(--fg); stroke-width: 30; }
-.ls-rojo {
-  fill: none;
-  stroke: var(--rojo);
-  stroke-width: 30;
-  stroke-dasharray: 24 76;
-  transform-origin: 200px 175px;
-  transform: rotate(-80deg);
-  transition: transform .7s cubic-bezier(.2, .8, .2, 1);
-}
-.ls-mango { stroke: var(--fg); stroke-width: 40; stroke-linecap: round; }
-.tema-oscuro .ls-c { filter: url(#ls-crema); }   /* la C del isologo pasa a crema sobre el gris */
-.ls-texto { font: 300 36px var(--fuente-texto); letter-spacing: 3px; fill: var(--fg); }
-.ls-version circle { fill: var(--rojo); }
-.ls-version text { font: 700 28px var(--fuente-titulo); fill: var(--blanco); text-anchor: middle; }
-.pi-nota { position: absolute; right: 0; bottom: 4px; width: 430px; font-size: 14px; font-style: italic; font-weight: 300; line-height: 1.5; text-align: right; color: var(--fg2); --i: 4; }
+.tp-fuste svg { width: 66px; height: 66px; fill: var(--rojo); transition: fill .3s ease, scale .35s cubic-bezier(.3, 1.5, .5, 1); }
+.tp-columnas .tp-capitel, .tp-fuste { box-shadow: 0 14px 20px -14px rgba(58, 58, 58, .3); }
+/* nombre sobre la base */
+.tp-nombre { margin-top: 40px; width: 100px; min-height: 34px; display: flex; align-items: center; justify-content: center; font: 500 14px/1.15 var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: center; color: var(--fg2); transition: color .3s ease; }
+.tp-columnas li:hover .tp-capitel, .tp-columnas li:hover .tp-fuste { background: var(--rojo); }
+.tp-columnas li:hover .tp-fuste svg { fill: var(--blanco); scale: 1.12; }
+.tp-columnas li:hover .tp-nombre { color: var(--rojo); }
 
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }

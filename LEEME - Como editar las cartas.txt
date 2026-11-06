@@ -184,8 +184,9 @@ Se edita en  datos\mejora-continua.js  (con el Bloc de notas).
     (calidad.webp y capacitaciones.webp) y pedile a Claude que corra
     herramientas\fondos-pantalla-partida.ps1.
   • calidad: S.C.O.P.E. (texto y significado letra por letra), objetivos,
-    pilares (con su ícono: carretilla, caja, camion, sello, personas, casco,
-    monedas), políticas (nombre, código, norma, cita y directrices) y
+    pilares (cada uno es una columna del templo, en el orden de la lista; ícono:
+    logistica, warehouse, flota, delivery, calidad, gente, hys, costos),
+    políticas (nombre, código, norma, cita y directrices) y
     certificaciones (norma, número, nombre y política).
   • Políticas y certificaciones se editan acá (en "calidad") pero se ven en
     ¿Quiénes somos?, después de Nuestra estructura y antes de Nuestros logros,

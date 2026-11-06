@@ -68,16 +68,18 @@ window.MEJORA = {
       "Favorecer la **integración, sinergia y coherencia** entre las distintas unidades de negocio para lograr una gestión unificada y consistente."
     ],
 
-    // 3. Pilares (icono: carretilla, caja, camion, sello, personas, casco, monedas)
+    // 3. Pilares: cada uno es una columna del templo, en este orden.
+    // icono (los de S.C.O.P.E.): logistica, warehouse, flota, delivery, calidad, gente, hys, costos
     pilaresTitulo: "Pilares",
     pilares: [
-      { nombre: "Logística", icono: "carretilla" },
-      { nombre: "Warehouse", icono: "caja" },
-      { nombre: "Distribución", icono: "camion" },
-      { nombre: "Calidad", icono: "sello" },
-      { nombre: "Gente", icono: "personas" },
-      { nombre: "Higiene & Seguridad", icono: "casco" },
-      { nombre: "Costos", icono: "monedas" }
+      { nombre: "Logística", icono: "logistica" },
+      { nombre: "Warehouse", icono: "warehouse" },
+      { nombre: "Flota", icono: "flota" },
+      { nombre: "Delivery", icono: "delivery" },
+      { nombre: "Calidad", icono: "calidad" },
+      { nombre: "Gente", icono: "gente" },
+      { nombre: "Higiene & Seguridad", icono: "hys" },
+      { nombre: "Costos", icono: "costos" }
     ],
     pilaresNota: "La cantidad de Pilares y sus nombres, contenidos y aplicabilidad, podrían variar a medida que SCOPE vaya evolucionando.",
 
