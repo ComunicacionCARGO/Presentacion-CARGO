@@ -16,7 +16,7 @@ window.CLIENTES = {
 
   titulo: "Nuestros",
   tituloGrande: "CLIENTES",
-  // contador: "36 marcas nos eligieron" / con un rubro elegido: "13 en Automotriz"
+  // contador: "36 marcas nos eligieron" / con un rubro elegido: "12 en Automotriz"
   contadorTexto: "marcas nos eligieron",
   contadorRubro: "en",
   todos: "Todos",
@@ -29,7 +29,6 @@ window.CLIENTES = {
     { nombre: "Ford", imagen: "ford.png", rubro: "Automotriz" },
     { nombre: "Volkswagen", imagen: "volkswagen.png", rubro: "Automotriz" },
     { nombre: "Stellantis", imagen: "stellantis.png", rubro: "Automotriz" },
-    { nombre: "Fiat", imagen: "fiat.png", rubro: "Automotriz" },
     { nombre: "Renault", imagen: "renault.png", rubro: "Automotriz" },
     { nombre: "Nissan", imagen: "nissan.png", rubro: "Automotriz" },
     { nombre: "Audi", imagen: "audi.png", rubro: "Automotriz" },
@@ -49,6 +48,7 @@ window.CLIENTES = {
     { nombre: "Paclín", imagen: "paclin.png", rubro: "Consumo masivo" },
     { nombre: "Puma", imagen: "puma.png", rubro: "Consumo masivo" },
     { nombre: "Farmesa", imagen: "farmesa.png", rubro: "Consumo masivo" },
+    { nombre: "Georgalos", imagen: "georgalos.png", rubro: "Consumo masivo" },
 
     { nombre: "Whirlpool", imagen: "whirlpool.png", rubro: "Industria y construcción" },
     { nombre: "Siemens", imagen: "siemens.png", rubro: "Industria y construcción" },
