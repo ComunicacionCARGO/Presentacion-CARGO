@@ -356,7 +356,7 @@
   }
   function mail(texto) {
     const m = crear('div', 'iv-mail', mails, `${ICONO_MAIL}<span>${t(texto)}</span>`);
-    while (mails.children.length > 3) mails.firstElementChild.remove();
+    while (mails.children.length > 2) mails.firstElementChild.remove();   // dos a la vista: así no bajan hasta las franjas
     setTimeout(() => m.classList.add('visto'), 6000);
   }
   // Un punto rojo vuela del celular a la ficha del reclamo (el dato entra al TMS)
@@ -532,7 +532,7 @@
     ticket.classList.add('cerrado');
     quien(I.quienChofer, true);
     vListo(I.app, 'Sin pendientes', 'Ruta del día completa');
-    relato(`<i class="iv-check">${IC.ok}</i>`, t(C.titulo),
+    relato('', `<i class="iv-check">${IC.ok}</i><span>${t(C.titulo)}</span>`,
       t(C.texto) + '<span class="iv-beneficios">' + (C.beneficios || []).map((b) => `<span>${IC.ok}${t(b)}</span>`).join('') + '</span>');
     boton(t(C.boton), 'otra').addEventListener('click', correr);
   }
