@@ -133,6 +133,14 @@
       tip.classList.add('visible');
     }
     const ocultarTip = () => tip.classList.remove('visible');
+    // con el dedo, el globito queda a la vista hasta el próximo toque
+    // (el toque dispara pointerenter antes que pointerdown: el elemento tocado ya se marcó y no se apaga)
+    ventana.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      const tocado = e.target.closest('.bi-punto, .bi-col');
+      ventana.querySelectorAll('.bi-punto.activo, .bi-col.activo').forEach((el) => { if (el !== tocado) el.classList.remove('activo'); });
+      if (!tocado) ocultarTip();
+    }, true);
 
     // ---------- Pestaña 1: entregas a concesionarios ----------
     function vistaEntregas() {
@@ -162,7 +170,7 @@
       cuerpo.querySelectorAll('.bi-punto').forEach((g) => {
         const m = MESES[+g.dataset.i];
         g.addEventListener('pointerenter', () => { g.classList.add('activo'); mostrarTip(`<b>${esc(m.mes)}</b><span>OTD <strong>${fmt(m.otd, 2)} %</strong></span><span>${fmt(m.kg)} kg distribuidos</span>`, g.querySelector('circle')); });
-        g.addEventListener('pointerleave', () => { g.classList.remove('activo'); ocultarTip(); });
+        g.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; g.classList.remove('activo'); ocultarTip(); });
       });
     }
 
@@ -212,7 +220,7 @@
       cols.forEach((c, i) => {
         const p = PROV[i];
         c.addEventListener('pointerenter', () => { c.classList.add('activo'); mostrarTip(`<b>${esc(p.nombre)}</b><span><i class="tiempo"></i>${txt(L.enTiempo)}: <strong>${p.enTiempo}</strong></span><span><i class="demora"></i>${txt(L.demorado)}: <strong>${p.demorado}</strong></span>`, c.querySelector('.bi-b-demora') || c.querySelector('.bi-b-tiempo')); });
-        c.addEventListener('pointerleave', () => { c.classList.remove('activo'); ocultarTip(); });
+        c.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; c.classList.remove('activo'); ocultarTip(); });
         c.addEventListener('click', () => { prov = prov === i ? -1 : i; actualizar(); });
       });
       btnProv.addEventListener('click', () => { if (prov >= 0) { prov = -1; actualizar(); } });

@@ -22,6 +22,9 @@
 html, body {
   height: 100%;
   overflow: hidden;
+  /* pantallas táctiles: el navegador no se queda con el gesto (si no, cortaba el arrastre de
+     desplazamiento.js y el carrusel); los toques siguen funcionando como clics */
+  touch-action: none;
   background: var(--blanco);
   color: var(--gris);
   font-family: var(--fuente-texto);

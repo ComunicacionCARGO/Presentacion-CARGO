@@ -16,8 +16,8 @@
   if (!pista) return;
   const ALTO = 900;
 
-  let objetivo = 0, actual = 0, max = 0;
-  const limitar = (y) => Math.max(0, Math.min(max, y));
+  let objetivo = 0, actual = 0, max = 0, limite = Infinity;
+  const limitar = (y) => Math.max(0, Math.min(max, limite, y));
 
   function medir() {
     max = Math.max(0, pista.offsetHeight - ALTO);
@@ -43,18 +43,47 @@
     e.preventDefault();
   });
 
-  // Arrastre en pantallas táctiles
+  // Arrastre en pantallas táctiles (con impulso al soltar, como el scroll de un celular).
+  // Recién se mueve pasados 8 px (así un toque sigue siendo un toque) y, si hubo arrastre, el clic
+  // que el navegador dispara al soltar no aprieta lo que quedó debajo del dedo.
+  // No arrastra sobre un lienzo (la firma) ni sobre [data-sin-arrastre], ni con una tarjeta abierta.
+  // Con un tema abierto (body.capitulo-abierto) un deslizamiento pasa de sección (evento capitulo-paso).
   let toque = null;
+  const escalaActual = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--escala')) || 1;
   addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') toque = { y: e.clientY, desde: objetivo };
+    if (e.pointerType !== 'touch' || !e.isPrimary) return;
+    if (e.target.closest && e.target.closest('canvas, [data-sin-arrastre], .tarjeta-capa.abierta')) return;
+    toque = { x: e.clientX, y: e.clientY, desde: objetivo, movido: false, v: 0, ty: e.clientY, tt: performance.now() };
   });
   addEventListener('pointermove', (e) => {
-    if (!toque) return;
-    const escala = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--escala')) || 1;
-    objetivo = limitar(toque.desde - (e.clientY - toque.y) / escala);
+    if (!toque || e.pointerType !== 'touch') return;
+    const dy = e.clientY - toque.y, dx = e.clientX - toque.x;
+    if (!toque.movido && Math.hypot(dx, dy) < 8) return;
+    toque.movido = true;
+    if (document.body.classList.contains('capitulo-abierto')) return;   // se resuelve al soltar
+    const k = escalaActual(), ahora = performance.now(), dt = Math.max(1, ahora - toque.tt);
+    toque.v = toque.v * .6 + (-(e.clientY - toque.ty) / k / dt) * .4;     // px del escenario por ms
+    toque.ty = e.clientY; toque.tt = ahora;
+    objetivo = limitar(toque.desde - dy / k);
   });
-  addEventListener('pointerup', () => { toque = null; });
-  addEventListener('pointercancel', () => { toque = null; });
+  function soltar(e) {
+    if (!toque || e.pointerType !== 'touch') return;
+    const t = toque; toque = null;
+    if (!t.movido) return;
+    // el clic que viene después de arrastrar no cuenta
+    const anular = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+    addEventListener('click', anular, { capture: true, once: true });
+    setTimeout(() => removeEventListener('click', anular, { capture: true }), 400);
+    if (document.body.classList.contains('capitulo-abierto')) {
+      const dx = e.clientX - t.x, dy = e.clientY - t.y, d = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+      if (Math.abs(d) > 40) document.dispatchEvent(new CustomEvent('capitulo-paso', { detail: d < 0 ? 1 : -1 }));
+      return;
+    }
+    // impulso según la velocidad del dedo (como mucho, una pantalla)
+    if (performance.now() - t.tt < 90) objetivo = limitar(objetivo + Math.max(-ALTO, Math.min(ALTO, t.v * 320)));
+  }
+  addEventListener('pointerup', soltar);
+  addEventListener('pointercancel', soltar);
 
   // Elementos con paralaje
   const conParalaje = [...pista.querySelectorAll('[data-paralaje], [data-paralaje-x]')].map((el) => {
@@ -79,7 +108,10 @@
   // (con inmediato = true salta sin animación)
   window.desplazamiento = {
     ir(y, inmediato) { objetivo = limitar(y); if (inmediato) actual = objetivo; },
-    get y() { return actual; }
+    get y() { return actual; },
+    get destino() { return objetivo; },   // adonde va (y es donde está ahora)
+    // tope del recorrido si la diapositiva usa menos que el alto de la pista (¿Por qué elegirnos?)
+    set limite(v) { limite = v; objetivo = limitar(objetivo); }
   };
 
   let ultimo = performance.now();

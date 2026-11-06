@@ -168,6 +168,12 @@
     }
   }
   window.desplazarA = (y) => irA(y);              // para el índice de secciones (compartido/indice.js)
+  // el arrastre táctil (compartido/desplazamiento.js) tampoco pasa del final del recorrido
+  addEventListener('load', () => { if (window.desplazamiento) window.desplazamiento.limite = MAXIMO; });
+  // si el dedo empieza a arrastrar mientras el resorte se mueve, manda el dedo
+  addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch' && animacion) { cancelAnimationFrame(animacion); animacion = null; velocidad = 0; }
+  }, true);
   let ultimaRueda = 0, acumulado = 0;
   addEventListener('wheel', (e) => {
     // la rueda la maneja esta diapositiva

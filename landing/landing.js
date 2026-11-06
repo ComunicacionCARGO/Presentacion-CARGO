@@ -420,18 +420,35 @@
     }, 140);
   }, { passive: false });
 
+  // En pantallas táctiles un toque abre la carta (antes el primer toque solo la levantaba y parecía
+  // que no funcionaba); deslizar el dedo hacia un costado gira el carrusel una carta.
+  let deslizo = false;
   cartas.forEach((ca, i) => {
     ca.a.addEventListener('click', (e) => {
       e.preventDefault();
-      // En pantallas táctiles: primer toque levanta la carta, segundo toque la abre
-      if (e.pointerType === 'touch' && activa !== i) { activar(i); centrar(i); return; }
+      if (deslizo) return;
       abrir(i);
     });
   });
 
+  let dedo = null;
   document.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch' && !e.target.closest('.carta')) activar(-1);
+    if (e.pointerType !== 'touch' || !e.isPrimary) return;
+    dedo = { x: e.clientX, y: e.clientY };
+    deslizo = false;
+    if (!e.target.closest('.carta')) activar(-1);
   });
+  document.addEventListener('pointerup', (e) => {
+    if (!dedo || e.pointerType !== 'touch') return;
+    const dx = e.clientX - dedo.x, dy = e.clientY - dedo.y;
+    dedo = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) && N && !abriendo) {
+      deslizo = true;                         // el clic que llega después no abre nada
+      setTimeout(() => { deslizo = false; }, 400);
+      enfocar(frente + (dx < 0 ? 1 : -1));    // hacia la izquierda: la carta siguiente
+    }
+  });
+  document.addEventListener('pointercancel', () => { dedo = null; });
 
   // ---------- Teclado ----------
   function enfocar(i) {

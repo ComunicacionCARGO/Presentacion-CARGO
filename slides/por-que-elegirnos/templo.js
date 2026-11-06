@@ -220,10 +220,18 @@
     };
     window.addEventListener('pointermove', alMover);
 
+    const bajar = (c) => { c.meta = 0; c.g.classList.remove('alzada'); };
     cols.forEach((c) => {
       const toque = c.g.querySelector('.tp-toque');
-      toque.addEventListener('pointerenter', () => { c.meta = 1; c.g.classList.add('alzada'); mover(); });
-      toque.addEventListener('pointerleave', () => { c.meta = 0; c.g.classList.remove('alzada'); mover(); });
+      toque.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'touch') cols.forEach((o) => { if (o !== c) bajar(o); });
+        c.meta = 1; c.g.classList.add('alzada'); mover();
+      });
+      // con el dedo, la columna queda levantada hasta el próximo toque
+      toque.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; bajar(c); mover(); });
+    });
+    seccion.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch' && !e.target.closest('.tp-toque')) { cols.forEach(bajar); mover(); }
     });
 
     // al entrar a la sección se arma el templo; al salir se desarma (para volver a verlo la próxima vez)
