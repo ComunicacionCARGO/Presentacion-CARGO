@@ -25,7 +25,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
 
 - Rojo principal `#EF4529`, gris oscuro `#3A3A3A`, blanco base `#FFFBF3`. Acentos con moderación: `#F4A127`, `#4C956C`, `#759AAB`.
 - Títulos: **Oswald Bold**. Texto: **Inter** (Light, Regular, SemiBold; Light Italic y ExtraLight Italic en frases). El logo usa una tipografía stencil.
-- Recursos gráficos: tres franjas paralelas (rojo, rojo, gris) con curvas o en V y una textura de desgaste sutil (`.grano`, en modo normal: con `mix-blend-mode` el navegador volvía a mezclar toda la página en cada cuadro). Encima de todo (también de la cortina, z-index 150), una **textura de papel** que mandó la persona: `body::after` en base.css con `img/marca/textura-papel.webp` (843 × 474, motitas cálidas casi transparentes, alfa medio 3/255, estirada a toda la ventana; el color se unificó a #EBC5A1 para que pese menos: 432 → 195 KB). Si manda el original en más resolución, reemplazar ese archivo.
+- Recursos gráficos: tres franjas paralelas (rojo, rojo, gris) con curvas o en V y una textura de desgaste sutil (`.grano`, en modo normal: con `mix-blend-mode` el navegador volvía a mezclar toda la página en cada cuadro). Se probó una textura de papel fija encima de todo (motitas cálidas, imagen de la persona) y no le gustó: se sacó.
 - Íconos: sólidos y rojos, sin círculo de fondo.
 - Ícono de la pestaña: `img/marca/favicon.png` (32×32, "C" stencil sobre círculo crema). Cada página nueva lleva su `<link rel="icon">` (ya está en `slides/ejemplo`).
 
