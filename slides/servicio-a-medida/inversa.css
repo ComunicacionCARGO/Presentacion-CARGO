@@ -94,27 +94,21 @@
 /* la escena va en una tarjeta crema sobre el rojo */
 .iv-escena { position: absolute; left: 500px; top: 156px; width: 720px; height: 430px; border-radius: 24px; background: var(--blanco); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); }
 .iv-svg { position: absolute; inset: 0; width: 720px; height: 430px; overflow: visible; }
-.iv-vereda { fill: #E9E1D3; }
-.iv-calle { fill: #D8D2C8; }
-.iv-linea { stroke: #FFFBF3; stroke-width: 2; stroke-dasharray: 18 14; }
-.iv-edif { fill: #FFFFFF; stroke: var(--gris); stroke-width: 2; stroke-linejoin: round; }
-.iv-fr.r { fill: var(--rojo); }
-.iv-fr.g { fill: var(--gris); }
+/* suelo con el estilo de los dibujos de la persona: rellenos planos y trazo #424243 de 2,3 (su trazo al 0,8) */
+.iv-vereda { fill: #F9F1E4; }
+.iv-calle { fill: #E4E8EB; }
+.iv-borde { fill: none; stroke: #424243; stroke-width: 2.3; }
+.iv-linea { stroke: #424243; stroke-opacity: .32; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 16 15; }
+.iv-piso path { fill: none; stroke: #444445; stroke-opacity: .3; stroke-width: 3.6; stroke-linecap: round; }
+/* cielo: nubes y pájaros apenas marcados */
+.iv-nube path { fill: #FFFFFF; stroke: #424243; stroke-opacity: .16; stroke-width: 2.2; stroke-linejoin: round; }
+.iv-nube { animation: iv-nube var(--d, 20s) ease-in-out calc(var(--n) * -5s) infinite alternate; }
+@keyframes iv-nube { from { translate: -14px 0; } to { translate: 14px 0; } }
+.iv-pajaros path { fill: none; stroke: #424243; stroke-opacity: .28; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .iv-rotulo { font: 600 9px var(--fuente-texto); letter-spacing: .14em; fill: rgba(58, 58, 58, .6); }
 .iv-rotulo.centro { text-anchor: middle; }
-.iv-porton rect { fill: #EFE8DC; stroke: var(--gris); stroke-width: 1.6; }
-.iv-porton path { stroke: rgba(58, 58, 58, .3); stroke-width: 1.2; }
-.iv-puertita { fill: #EFE8DC; stroke: var(--gris); stroke-width: 1.6; }
-.iv-cartel { fill: var(--gris); }
-.iv-cartel-txt { font: 700 22px var(--fuente-titulo); letter-spacing: .14em; fill: var(--blanco); text-anchor: middle; }
-.iv-vidrio { fill: url(#iv-vidrio); stroke: var(--gris); stroke-width: 1.6; }
-.iv-montante { stroke: rgba(58, 58, 58, .55); stroke-width: 1.6; fill: none; }
-.iv-puerta { fill: rgba(58, 58, 58, .18); stroke: var(--gris); stroke-width: 1.6; }
-.iv-auto { fill: rgba(58, 58, 58, .4); }
 /* bultos */
 .iv-caja { opacity: 0; }
-.iv-caja rect { fill: #EADBC2; stroke: var(--gris); stroke-width: 1.6; }
-.iv-caja .cinta { stroke: var(--rojo); stroke-width: 3.5; fill: none; }
 .iv-alerta, .iv-ok { opacity: 0; transition: opacity .3s ease; }
 .iv-alerta circle { fill: var(--rojo); stroke: #fff; stroke-width: 2; }
 .iv-alerta text { font: 700 12px var(--fuente-titulo); fill: #fff; text-anchor: middle; }
@@ -124,17 +118,7 @@
 .iv-ok path { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 /* camión */
 .iv-sombra { fill: rgba(58, 58, 58, .18); }
-.iv-carga { fill: var(--blanco); stroke: var(--gris); stroke-width: 2; }
-.iv-cabina { fill: var(--rojo); stroke: #C93419; stroke-width: 1.5; stroke-linejoin: round; }
-.iv-ventana { fill: #DCE7EC; }
-.iv-chasis { fill: var(--gris); }
-.iv-goma { fill: var(--gris); }
-.iv-llanta { fill: #CFC8BD; }
-.iv-rayos { stroke: var(--gris); stroke-width: 1.6; }
-.iv-giro { transform-box: fill-box; transform-origin: center; }
-.andando .iv-giro { animation: iv-rodar .45s linear infinite; }
-@keyframes iv-rodar { to { rotate: 360deg; } }
-.andando .iv-carga, .andando .iv-cabina, .andando .iv-carroceria { animation: iv-traqueteo .3s ease-in-out infinite alternate; }
+.andando .iv-carroceria { animation: iv-traqueteo .3s ease-in-out infinite alternate; }
 /* Quién actúa (inversa.js → actor()): brillo suave detrás del concesionario (azul), del depósito o del
    camión (rojo, CARGO). Aparece con un fundido y "respira" despacio mientras dura la acción. */
 .iv-brillo { opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity .7s ease; pointer-events: none; }
@@ -331,7 +315,7 @@
 .iv-dato.visible { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
-  .andando .iv-giro, .andando .iv-carga, .andando .iv-cabina { animation: none; }
+  .andando .iv-carroceria { animation: none; }
 }
 
 /* ---------- Quién usa el celular (concesionario o chofer) ---------- */

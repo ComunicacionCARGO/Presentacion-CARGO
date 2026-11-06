@@ -40,9 +40,11 @@
   // =========================================================
   // ARMADO
   // =========================================================
+  // Caja: el dibujo de la persona (caja.svg, 42,8 × 42,8) al 0,654 → 28 × 28, apoyada en y 0
   const caja = (clase, extra) =>
-    `<g class="iv-caja ${clase}"><rect x="-14" y="-26" width="28" height="26" rx="2.5"/>` +
-    '<path class="cinta" d="M-14 -16.5h28M-3 -26v9.5"/>' + (extra || '') + '</g>';
+    `<g class="iv-caja ${clase}"><g transform="translate(-14 -28) scale(.654)" stroke="#424243" stroke-width="5" stroke-miterlimit="10">` +
+    '<rect x="2.5" y="2.5" width="37.8" height="37.8" rx="4.6" fill="#FFEDCC"/>' +
+    '<path d="M21.4 2.5V16.61M2.5 16.61H40.3" fill="none"/></g>' + (extra || '') + '</g>';
   // Camión: el dibujo de la persona (camion.svg, 132 × 76) en línea para poder animar la carrocería.
   // Origen: donde las ruedas tocan la calle; mira hacia +x.
   const CAMION =
@@ -55,6 +57,8 @@
     '<path fill="#EF4529" stroke="#424243" stroke-width="5" d="M129.48,58.93h-37.62V17.56h19.57c7.05,7.05,11,11,18.04,18.04v23.32Z"/>' +
     '<path fill="#85D5F8" d="M118.75,34.24h-20.72v-10.55h10.17c4.17,4.18,7.26,7.27,10.55,10.55Z"/></g>' +
     '<g fill="#E4E8EB" stroke="#424243" stroke-width="5"><circle cx="18.24" cy="63.14" r="10.21"/><circle cx="41.85" cy="63.14" r="10.21"/><circle cx="110.67" cy="63.14" r="10.21"/></g></g>';
+  // Nubes del cielo: [x, y, escala, segundos de ida y vuelta]
+  const NUBES = [[58, 128, 1.1, 22], [262, 62, .7, 19], [432, 150, .8, 17], [596, 82, 1.25, 26]];
   const ESCENA =
     '<svg class="iv-svg" viewBox="0 0 720 430" aria-hidden="true"><defs>' +
     // brillos de quién actúa: rojo para CARGO (depósito y camión), azul para el concesionario
@@ -67,9 +71,17 @@
     // satélite (se enciende en el regreso)
     '<g class="iv-sat" transform="translate(360 52)"><g class="iv-sat-cuerpo"><rect x="-30" y="-5" width="18" height="10" rx="1.5"/><rect x="12" y="-5" width="18" height="10" rx="1.5"/>' +
     '<rect x="-8" y="-8" width="16" height="16" rx="3"/></g><path class="iv-ondas o1" d="M-10 18a14 14 0 0 0 20 0"/><path class="iv-ondas o2" d="M-17 26a24 24 0 0 0 34 0"/><path class="iv-ondas o3" d="M-24 34a34 34 0 0 0 48 0"/></g>' +
-    // calle (debajo de las veredas de los dibujos)
-    '<rect class="iv-calle" x="0" y="369" width="720" height="32" rx="2"/>' +
-    '<line class="iv-linea" x1="10" y1="385" x2="710" y2="385"/>' +
+    // cielo: nubes planas con contorno suave (como los dibujos) que van y vienen despacio, y dos pájaros
+    NUBES.map(([x, y, s, d], i) => `<g transform="translate(${x} ${y}) scale(${s})"><g class="iv-nube" style="--d:${d}s;--n:${i}">` +
+      '<path d="M8 0H52A8 8 0 0 0 52 -16A12 12 0 0 0 32 -24A14 14 0 0 0 10 -16A8 8 0 0 0 8 0Z"/></g></g>').join('') +
+    '<g class="iv-pajaros"><path d="M300 92q5 -5 9 0q4 -5 9 0"/><path d="M326 104q4 -4 7 0q3 -4 7 0"/></g>' +
+    // vereda corrida (los dibujos traen la suya; esta une las dos) y calle con el mismo trazo de los dibujos
+    '<rect class="iv-vereda" x="0" y="357" width="720" height="13.5"/>' +
+    '<rect class="iv-calle" x="0" y="370.5" width="720" height="29"/>' +
+    '<path class="iv-borde" d="M0 357.2H720M0 370.5H720M0 399.5H720"/>' +
+    '<line class="iv-linea" x1="14" y1="385" x2="706" y2="385"/>' +
+    // rayas de piso debajo de la calle, como las que traen las ilustraciones
+    '<g class="iv-piso"><path d="M40 410H330M350 410H356M420 410H690M380 419H600M24 419H30M60 419H250"/></g>' +
     // depósito de CARGO (deposito.svg al 0,8: su vereda queda en y 356)
     '<g class="iv-cd" clip-path="url(#iv-sin-piso)"><image href="../../img/logistica-inversa/deposito.svg" x="0" y="226.3" width="270.3" height="161.06"/>' +
     `<text class="iv-rotulo centro" x="135" y="290">${esc(plano(I.centro).toUpperCase())}</text></g>` +
