@@ -128,6 +128,8 @@
 .iv-svg[data-actor="con"] .iv-brillo-con,
 .iv-svg[data-actor="cam"] .iv-brillo-cam { opacity: 1; animation: iv-respira 2.6s ease-in-out infinite; }
 @keyframes iv-respira { 50% { opacity: .62; scale: 1.05; } }
+/* fuera de pantalla no se anima nada que no se ve (nubes y brillos) */
+.sv-inv:not(.en-vista) .iv-nube, .sv-inv:not(.en-vista) .iv-brillo { animation-play-state: paused; }
 @keyframes iv-traqueteo { to { translate: 0 -1px; } }
 /* seguimiento satelital (en el regreso) */
 .iv-sat { opacity: 0; transition: opacity .5s ease; }
@@ -178,9 +180,6 @@
 .iv-relato.cambia > * { animation: mr-entrar .55s cubic-bezier(.2, .8, .2, 1) both; }
 .iv-relato.cambia > :nth-child(2) { animation-delay: .05s; }
 .iv-relato.cambia > :nth-child(3) { animation-delay: .1s; }
-.iv-resumen { display: flex; gap: 26px; margin-top: 12px; font-size: 13px; font-weight: 400; color: rgba(58, 58, 58, .7); }
-.iv-resumen > span { display: flex; align-items: baseline; gap: 7px; }
-.iv-resumen b { font: 700 22px/1 var(--fuente-titulo); color: var(--verde); }
 .iv-acciones { margin-top: auto; padding-top: 14px; min-height: 66px; display: flex; align-items: flex-end; }.iv-btn {
   display: inline-flex;
   align-items: center;
@@ -212,7 +211,7 @@
 .iv-pista svg { width: 22px; height: 22px; fill: var(--blanco); animation: iv-toca 1.6s ease-in-out infinite; }
 @keyframes iv-toca { 50% { translate: 3px 3px; scale: .92; } }
 
-/* ---------- Celular en la mano (mockup de la persona: mano.png, 1212 × 1297, fondo y pantalla transparentes) ----------
+/* ---------- Celular en la mano (mockup de la persona: mano.webp, 1212 × 1297, fondo y pantalla transparentes) ----------
    .cel-foto está en px de la foto y se achica a .6936 (así la app queda a 1:1). La pantalla hueca de la foto
    va de x 285 a 625 y de y 166 a 922: la app (.cel-marco, 240 × 529) va DETRÁS de la foto, 3 px más grande
    por lado, y el marco del teléfono (con su notch) la recorta. El brazo sale por el borde derecho de la
@@ -259,7 +258,6 @@
 .cel-tarj b { display: block; font-size: 13px; font-weight: 600; color: #333; }
 .cel-tarj small { display: block; margin-top: 3px; font-size: 10.5px; color: rgba(58, 58, 58, .6); }
 .cel-tarj small.rojo { color: var(--rojo); font-weight: 600; }
-.cel-tarj .cel-grande { margin: 2px 0 6px; font-size: 16px; font-weight: 400; }
 .cel-botones { display: flex; gap: 8px; margin-top: 4px; }
 .cel-btn { flex: 1; height: 40px; border: 0; border-radius: 8px; background: var(--rojo); font: 600 12px var(--fuente-texto); letter-spacing: .04em; text-transform: uppercase; color: #fff; cursor: pointer; transition: transform .2s ease, background .2s ease, opacity .2s ease; }
 .cel-btn:hover:not(:disabled) { transform: translateY(-1px); }

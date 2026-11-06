@@ -83,7 +83,6 @@
 .po-detalle blockquote, .po-detalle .po-dir li { opacity: 0; translate: 0 10px; transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
 .po-detalle.lista blockquote, .po-detalle.lista .po-dir li { opacity: 1; translate: 0 0; }
 .po-detalle.lista .po-dir li { transition-delay: calc(.12s + var(--i) * .05s); }
-.po-cert { position: absolute; left: 0; bottom: 4px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg2); --i: 4; }
 
 
 .ce-texto { margin-top: 12px; font-size: 20px; font-weight: 300; color: var(--fg2); --i: 1; }

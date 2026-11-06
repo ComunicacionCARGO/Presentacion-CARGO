@@ -51,6 +51,8 @@
   function prepararImagenes() {
     const tareas = [];
     document.querySelectorAll('img').forEach((img) => {
+      // las imágenes con loading="lazy" están lejos (más abajo en la diapositiva): no se esperan
+      if (img.loading === 'lazy') return;
       if (img.decode) tareas.push(img.decode().catch(() => {}));
     });
     document.querySelectorAll('.fondo').forEach((el) => {
