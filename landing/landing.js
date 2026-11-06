@@ -373,6 +373,7 @@
 
   addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch') return;
+    if (dedo && dedo.girando) return;                  // arrastrando el carrusel: no se levanta ninguna carta
     if (e.clientX === cx && e.clientY === cy) return;  // el mouse no se movió de verdad
     cx = e.clientX;
     cy = e.clientY;
@@ -422,50 +423,78 @@
 
   // En pantallas táctiles un toque abre la carta (antes el primer toque solo la levantaba y parecía
   // que no funcionaba); deslizar el dedo hacia un costado gira el carrusel una carta.
-  // El toque lo resuelve el propio carrusel (no el clic del navegador: como las cartas giran, el dedo
-  // podía apoyarse en una franja y levantarse en otra, y el clic se perdía). Al apoyar el dedo el
-  // carrusel se frena; arrastrando a los costados gira con el dedo y al soltar sigue hasta la carta
-  // siguiente en ese sentido.
-  let tactilHasta = 0;                          // después de un toque, el clic del navegador no cuenta
+  // ---------- Arrastrar el carrusel (dedo o mouse) ----------
+  // Arrastrando hacia un costado (con el dedo o con el clic apretado) el carrusel gira con el gesto:
+  // la carta de adelante acompaña al dedo/mouse a la par (GIRO_POR_PX). Al soltar sigue hasta la carta
+  // siguiente en ese sentido (o vuelve a la más cercana si apenas se movió).
+  // Con el dedo: al apoyarlo el carrusel se frena y un toque sin arrastrar abre la carta que estaba
+  // debajo (lo resuelve el carrusel: como las cartas giran, el clic del navegador a veces se perdía).
+  // Después de arrastrar, el clic que dispara el navegador al soltar no abre nada.
+  const GIRO_POR_PX = .15;                      // grados por px del escenario (radio 310 con perspectiva)
+  let sinClicHasta = 0;
   cartas.forEach((ca, i) => {
     ca.a.addEventListener('click', (e) => {
       e.preventDefault();
-      if (performance.now() < tactilHasta) return;
+      if (performance.now() < sinClicHasta) return;
       abrir(i);
     });
+    ca.a.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
   let dedo = null;
   const escalaPortada = () => Math.min(innerWidth / 1600, innerHeight / 900) || 1;
+  const giroActual = () => (objetivo === null ? giro : objetivo);
   document.addEventListener('pointerdown', (e) => {
-    if (e.pointerType !== 'touch' || !e.isPrimary || abriendo || !N) return;
-    dedo = { x: e.clientX, y: e.clientY, carta: cartaEn(e.target), giro0: objetivo === null ? giro : objetivo, girando: false };
-    activar(-1);
-    centrando = false;
-    pausaHasta = performance.now() + 6000;
-    objetivo = giro;                            // se frena donde está
+    if (!e.isPrimary || abriendo || !N) return;
+    const tactil = e.pointerType === 'touch';
+    if (!tactil && e.button !== 0) return;
+    dedo = { x: e.clientX, y: e.clientY, tactil, carta: cartaEn(e.target), giro0: giroActual(), girando: false };
+    if (tactil) {
+      activar(-1);
+      centrando = false;
+      pausaHasta = performance.now() + 6000;
+      objetivo = giro;                          // se frena donde está
+      dedo.giro0 = giro;
+    }
   });
-  document.addEventListener('pointermove', (e) => {
-    if (!dedo || e.pointerType !== 'touch') return;
+  addEventListener('pointermove', (e) => {
+    if (!dedo) return;
     const dx = e.clientX - dedo.x, dy = e.clientY - dedo.y;
-    if (!dedo.girando && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) dedo.girando = true;
-    if (dedo.girando) objetivo = dedo.giro0 - (dx / escalaPortada()) * .22;   // hacia la izquierda: la carta siguiente
-  });
-  document.addEventListener('pointerup', (e) => {
-    if (!dedo || e.pointerType !== 'touch') return;
-    const d = dedo; dedo = null;
-    tactilHasta = performance.now() + 450;
-    pausaHasta = performance.now() + 5000;
-    if (d.girando) {
-      const fin = objetivo === null ? giro : objetivo, movido = fin - d.giro0;
-      objetivo = (movido < 0 ? Math.floor(fin / paso) : Math.ceil(fin / paso)) * paso;
+    if (!dedo.girando) {
+      if (Math.abs(dx) < (dedo.tactil ? 10 : 6) || Math.abs(dx) < Math.abs(dy)) return;
+      dedo.girando = true;
+      activar(-1);
+      centrando = false;
+      ignorar = null;
+      dedo.giro0 = giro;
+      dedo.x = e.clientX;                       // arranca desde acá, sin salto
+      document.body.classList.add('arrastrando');
       return;
     }
-    // toque: abre la carta que estaba bajo el dedo (o la que quedó ahí al levantarlo)
+    pausaHasta = performance.now() + 5000;
+    objetivo = dedo.giro0 + (e.clientX - dedo.x) / escalaPortada() * GIRO_POR_PX;
+    giro = objetivo;                            // sin demora: acompaña al gesto
+  });
+  function soltarCarrusel(e) {
+    if (!dedo) return;
+    const d = dedo; dedo = null;
+    document.body.classList.remove('arrastrando');
+    if (d.girando) {
+      sinClicHasta = performance.now() + 450;
+      pausaHasta = performance.now() + 5000;
+      const fin = giroActual(), movido = fin - d.giro0;
+      objetivo = (Math.abs(movido) < paso * .12 ? Math.round(fin / paso)
+        : movido < 0 ? Math.floor(fin / paso) : Math.ceil(fin / paso)) * paso;
+      return;
+    }
+    if (!d.tactil || e.type !== 'pointerup') return;   // con el mouse, el clic común abre la carta
+    sinClicHasta = performance.now() + 450;
+    pausaHasta = performance.now() + 5000;
     const i = d.carta >= 0 ? d.carta : cartaEn(document.elementFromPoint(e.clientX, e.clientY));
     if (i >= 0) abrir(i);
-  });
-  document.addEventListener('pointercancel', () => { dedo = null; });
+  }
+  addEventListener('pointerup', soltarCarrusel);
+  addEventListener('pointercancel', soltarCarrusel);
 
   // ---------- Teclado ----------
   function enfocar(i) {

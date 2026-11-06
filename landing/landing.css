@@ -207,6 +207,8 @@ body.lista .operario { opacity: 1; translate: 0 0; }
   pointer-events: auto;
   cursor: pointer;
 }
+/* el carrusel se puede arrastrar con el mouse (landing.js): manito al arrastrar, y sin seleccionar texto */
+body.arrastrando, body.arrastrando * { cursor: grabbing !important; user-select: none; -webkit-user-select: none; }
 
 /* Contenido de la carta: se dibuja a resolución --f (2× o más) y se reduce,
    así la imagen y el texto se ven nítidos aunque la carta se agrande. */
