@@ -225,6 +225,10 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 }
 /* la flechita señala la palabra S.C.O.P.E.? (y 103 = centro de las letras: antetítulo de 46 + la mitad del título, medido) */
 .sc-der::before { content: ""; position: absolute; left: -24px; top: 103px; width: 26px; height: 52px; margin-top: -26px; background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+/* isologo de S.C.O.P.E. como trama sutil en la esquina de abajo a la derecha del recuadro (recortado por el borde) */
+.sc-trama { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; }
+.sc-trama img { position: absolute; right: -70px; bottom: -90px; width: 400px; height: auto; opacity: .07; filter: grayscale(1); }
+.sc-der > :not(.sc-trama) { position: relative; }
 .sc-etq { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
 .capitulo .sc-letras { margin-top: 8px; }
 .sc-letras li { display: flex; align-items: baseline; line-height: 1.04; cursor: default; }
@@ -251,30 +255,37 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 .ob-lista p { margin-top: 12px; font-size: 19px; font-weight: 300; line-height: 1.5; color: var(--fg2); }
 
 /* ----- Calidad 3: Pilares ----- */
-/* izquierda: título, isologo (la persona en la lupa, quieto) y nota; derecha: el templo */
-.pi-iso { position: absolute; left: 40px; top: 104px; width: 290px; height: auto; --i: 1; }
-.pi-nota { position: absolute; left: 0; bottom: 4px; width: 370px; font-size: 14px; font-style: italic; font-weight: 300; line-height: 1.5; color: var(--fg2); --i: 3; }
-.pi-panel { position: absolute; left: 420px; top: 0; width: 1052px; height: 590px; border-radius: 26px; background: var(--oscuro); --i: 1; }
-.templo { position: absolute; left: 26px; top: 16px; width: 1000px; height: 560px; }
-.tp-cuerpo { position: absolute; inset: 0; width: 1000px; height: 560px; fill: #fff; overflow: visible; filter: drop-shadow(0 18px 24px rgba(58, 58, 58, .12)); }
-.tp-logo { position: absolute; left: 345px; top: 22px; width: 310px; height: auto; }
+/* Templo centrado (1000 × 560) con los colores de la marca: frontón gris con el logo en crema y las
+   franjas (gris, rojo, rojo) debajo; columnas blancas con estrías, capiteles grises e íconos rojos;
+   base con escalón rojo y zócalo gris donde van los nombres. */
+.pi-nota { position: absolute; right: 0; bottom: 4px; width: 210px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.5; text-align: right; color: var(--fg2); --i: 3; }
+.templo { position: absolute; left: 236px; top: 14px; width: 1000px; height: 560px; --i: 1; }
+.tp-cuerpo { position: absolute; inset: 0; width: 1000px; height: 560px; overflow: visible; }
+.tp-gris { fill: var(--gris); }
+.tp-rojo { fill: var(--rojo); }
+.tp-blanco { fill: #fff; }
+.tp-piso { fill: rgba(58, 58, 58, .12); filter: blur(10px); }
+.tp-logo { position: absolute; left: 350px; top: 20px; width: 300px; height: auto; }
 .tp-columnas li { position: absolute; top: 210px; width: 100px; margin-left: -50px; display: flex; flex-direction: column; align-items: center; cursor: default; }
-.tp-capitel { display: block; width: 80px; height: 16px; border-radius: 8px; background: #fff; transition: background .3s ease; }
+.tp-capitel { display: block; width: 78px; height: 16px; border-radius: 4px; background: var(--gris); transition: background .3s ease; }
 .tp-fuste {
   display: grid;
   place-items: center;
   width: 58px;
   height: 198px;
-  background: linear-gradient(90deg, rgba(58, 58, 58, .05), transparent 30%, transparent 70%, rgba(58, 58, 58, .07)) #fff;
+  /* estrías suaves y sombra en los bordes, como una columna redonda */
+  background:
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(58, 58, 58, .06) 9px 10px),
+    linear-gradient(90deg, rgba(58, 58, 58, .14), transparent 28%, transparent 62%, rgba(58, 58, 58, .18)) #fff;
   transition: background .3s ease;
 }
-.tp-fuste svg { width: 66px; height: 66px; fill: var(--rojo); transition: fill .3s ease, scale .35s cubic-bezier(.3, 1.5, .5, 1); }
-.tp-columnas .tp-capitel, .tp-fuste { box-shadow: 0 14px 20px -14px rgba(58, 58, 58, .3); }
-/* nombre sobre la base */
-.tp-nombre { margin-top: 40px; width: 100px; min-height: 34px; display: flex; align-items: center; justify-content: center; font: 500 14px/1.15 var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: center; color: var(--fg2); transition: color .3s ease; }
-.tp-columnas li:hover .tp-capitel, .tp-columnas li:hover .tp-fuste { background: var(--rojo); }
+.tp-fuste svg { width: 62px; height: 62px; fill: var(--rojo); transition: fill .3s ease, scale .35s cubic-bezier(.3, 1.5, .5, 1); }
+/* nombre sobre el zócalo gris */
+.tp-nombre { margin-top: 52px; width: 100px; min-height: 34px; display: flex; align-items: center; justify-content: center; font: 500 14px/1.15 var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: center; color: rgba(255, 251, 243, .72); transition: color .3s ease; }
+.tp-columnas li:hover .tp-capitel { background: var(--rojo); }
+.tp-columnas li:hover .tp-fuste { background: linear-gradient(90deg, rgba(0, 0, 0, .12), transparent 28%, transparent 62%, rgba(0, 0, 0, .16)) var(--rojo); }
 .tp-columnas li:hover .tp-fuste svg { fill: var(--blanco); scale: 1.12; }
-.tp-columnas li:hover .tp-nombre { color: var(--rojo); }
+.tp-columnas li:hover .tp-nombre { color: var(--blanco); }
 
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }

@@ -228,6 +228,7 @@
               <div class="sc-version ent"><b>“${esc(S.version)}”</b><p>${formato(S.versionTexto)}</p></div>
             </div>
             <div class="sc-der ent">
+              <div class="sc-trama" aria-hidden="true"><img src="${ruta('img/scope/isologo-scope.svg')}" alt="" draggable="false"></div>
               <p class="sc-etq">¿Qué significa?</p>
               <ul class="sc-letras">${(S.significado || []).map((l, i) => `<li style="--i:${i}"><b>${esc(l.letra)}</b><span>${esc(l.resto)}</span></li>`).join('')}</ul>
               <p class="sc-sig">${formato(S.significadoTexto)}</p>
@@ -249,22 +250,26 @@
             const P = C.pilares || [], paso = 800 / Math.max(P.length, 1);
             return `<div class="s-pil">
             <h3 class="cap-h ent">${esc(C.pilaresTitulo)}</h3>
-            <img class="pi-iso ent" src="${ruta('img/scope/isologo-scope.svg')}" alt="Isologo de S.C.O.P.E." draggable="false">
             <p class="pi-nota ent">${formato(C.pilaresNota)}</p>
-            <div class="pi-panel ent">
-              <div class="templo">
-                <svg class="tp-cuerpo" viewBox="0 0 1000 560" aria-hidden="true">
-                  <path d="M270 92V70Q270 0 340 0H660Q730 0 730 70V92Z"/>
-                  <path d="M30 70H970V150A60 60 0 0 0 910 210H90A60 60 0 0 0 30 150Z"/>
-                  <path d="M60 440H940V470H60Z"/>
-                  <path d="M30 488Q30 470 48 470H952Q970 470 970 488V540H30Z"/>
-                </svg>
-                <img class="tp-logo" src="${ruta('img/scope/logo-scope.svg')}" alt="CARGO S.C.O.P.E." draggable="false">
-                <ul class="tp-columnas">${P.map((p, i) => `<li class="ent" style="--i:${i + 2}; left:${(100 + paso * (i + .5)).toFixed(1)}px">
-                  <i class="tp-capitel"></i><span class="tp-fuste">${icono(p.icono)}</span><i class="tp-capitel"></i>
-                  <span class="tp-nombre">${esc(p.nombre)}</span>
-                </li>`).join('')}</ul>
-              </div>
+            <div class="templo ent">
+              <svg class="tp-cuerpo" viewBox="0 0 1000 560" aria-hidden="true">
+                <ellipse class="tp-piso" cx="500" cy="548" rx="500" ry="16"/>
+                <!-- frontón gris con las franjas de la marca debajo (gris, rojo, rojo) -->
+                <path class="tp-gris" d="M270 92V70Q270 0 340 0H660Q730 0 730 70V92Z"/>
+                <path class="tp-gris" d="M30 70H970V150H30Z"/>
+                <path class="tp-rojo" d="M30 156H970V166H30Z"/>
+                <path class="tp-rojo" d="M30 172H970V182H30Z"/>
+                <path class="tp-blanco" d="M60 188H940V210H60Z"/>
+                <!-- base: escalón rojo y zócalo gris con los nombres -->
+                <path class="tp-blanco" d="M70 440H930V456H70Z"/>
+                <path class="tp-rojo" d="M50 462H950V472H50Z"/>
+                <path class="tp-gris" d="M30 492Q30 478 44 478H956Q970 478 970 492V540H30Z"/>
+              </svg>
+              <img class="tp-logo" src="${ruta('img/scope/logo-scope-crema.svg')}" alt="CARGO S.C.O.P.E." draggable="false">
+              <ul class="tp-columnas">${P.map((p, i) => `<li class="ent" style="--i:${i + 2}; left:${(100 + paso * (i + .5)).toFixed(1)}px">
+                <i class="tp-capitel"></i><span class="tp-fuste">${icono(p.icono)}</span><i class="tp-capitel"></i>
+                <span class="tp-nombre">${esc(p.nombre)}</span>
+              </li>`).join('')}</ul>
             </div>
           </div>`;
           }
