@@ -71,8 +71,8 @@
       }
     </style>
     <radialGradient id="Degradado_sin_nombre_92" data-name="Degradado sin nombre 92" cx="2063.88" cy="-53.49" fx="2063.88" fy="-53.49" r="2187.6" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFFBF3"/>
-      <stop offset=".99" stop-color="#FFFBF3"/>
+      <stop offset="0" stop-color="#3A3A3A"/>
+      <stop offset=".99" stop-color="#3A3A3A"/>
     </radialGradient>
     <radialGradient id="Degradado_sin_nombre_92-2" data-name="Degradado sin nombre 92" cx="2063.88" fx="2063.88" r="2187.6" xlink:href="#Degradado_sin_nombre_92"/>
     <radialGradient id="Degradado_sin_nombre_92-3" data-name="Degradado sin nombre 92" cx="2063.88" fx="2063.88" r="2187.6" xlink:href="#Degradado_sin_nombre_92"/>
@@ -83,8 +83,8 @@
     <radialGradient id="Degradado_sin_nombre_92-8" data-name="Degradado sin nombre 92" cx="2063.88" cy="-53.49" fx="2063.88" fy="-53.49" r="2187.6" xlink:href="#Degradado_sin_nombre_92"/>
     <radialGradient id="Degradado_sin_nombre_92-9" data-name="Degradado sin nombre 92" cx="2063.88" cy="-53.49" fx="2063.88" fy="-53.49" r="2187.6" xlink:href="#Degradado_sin_nombre_92"/>
     <radialGradient id="Degradado_sin_nombre_105" data-name="Degradado sin nombre 105" cx="2998.08" cy="217.29" fx="2998.08" fy="217.29" r="1145.41" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#e20a0d"/>
-      <stop offset="1" stop-color="#c60e27"/>
+      <stop offset="0" stop-color="#EF4529"/>
+      <stop offset="1" stop-color="#EF4529"/>
     </radialGradient>
     <radialGradient id="Degradado_sin_nombre_105-2" data-name="Degradado sin nombre 105" cy="217.29" fy="217.29" r="1145.41" xlink:href="#Degradado_sin_nombre_105"/>
     <radialGradient id="Degradado_sin_nombre_105-3" data-name="Degradado sin nombre 105" cx="2998.08" cy="217.29" fx="2998.08" fy="217.29" r="1145.41" xlink:href="#Degradado_sin_nombre_105"/>

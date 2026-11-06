@@ -246,32 +246,61 @@
         {
           pestana: 'Pilares',
           html: () => {
-            // Templo: frontón con el logo de S.C.O.P.E., una columna por pilar (entre x 100 y 900) y la base con los nombres
-            const P = C.pilares || [], paso = 800 / Math.max(P.length, 1);
+            // Templo copiado del diseño de la persona (medido sobre su imagen de 1171 × 631; todo en esas
+            // medidas y el conjunto se agranda 1,2 con CSS). Silueta blanca con resplandor rojo suave,
+            // logo gris y rojo en el frontón, una columna por pilar entre x 237 y 945 con su ícono en el
+            // centro (y 383) y el nombre, que aparece en la base al pasar el cursor.
+            const P = C.pilares || [], n = P.length;
+            const cx = (i) => n > 1 ? 237 + i * 708 / (n - 1) : 591;
+            const r = (x, y, w, h, rr) => `<rect x="${(x).toFixed(1)}" y="${y}" width="${w}" height="${h}" rx="${rr}"/>`;
+            const columna = (c) =>
+              r(c - 22, 288, 44, 190, 0) +           // fuste
+              r(c - 33, 277.5, 66, 11.5, 4) +        // capitel de arriba
+              r(c - 31, 298.5, 62, 9, 4.5) +         // anillo
+              r(c - 31, 458.5, 62, 9, 4.5) +         // anillo de abajo
+              r(c - 33, 477, 66, 11.5, 4);           // capitel de abajo
             return `<div class="s-pil">
             <h3 class="cap-h ent">${esc(C.pilaresTitulo)}</h3>
             <p class="pi-nota ent">${formato(C.pilaresNota)}</p>
             <div class="templo ent">
-              <svg class="tp-cuerpo" viewBox="0 0 1000 560" aria-hidden="true">
-                <ellipse class="tp-piso" cx="500" cy="548" rx="500" ry="16"/>
-                <!-- frontón gris con las franjas de la marca debajo (gris, rojo, rojo) -->
-                <path class="tp-gris" d="M270 92V70Q270 0 340 0H660Q730 0 730 70V92Z"/>
-                <path class="tp-gris" d="M30 70H970V150H30Z"/>
-                <path class="tp-rojo" d="M30 156H970V166H30Z"/>
-                <path class="tp-rojo" d="M30 172H970V182H30Z"/>
-                <path class="tp-blanco" d="M60 188H940V210H60Z"/>
-                <!-- base: escalón rojo y zócalo gris con los nombres -->
-                <path class="tp-blanco" d="M70 440H930V456H70Z"/>
-                <path class="tp-rojo" d="M50 462H950V472H50Z"/>
-                <path class="tp-gris" d="M30 492Q30 478 44 478H956Q970 478 970 492V540H30Z"/>
+              <svg class="tp-svg" viewBox="0 0 1171 631" aria-label="${esc(C.pilaresTitulo)}">
+                <defs>
+                  <!-- resplandor rojo suave (medido: ~10 % de rojo junto al borde, se apaga en ~30 px, corrido hacia abajo) -->
+                  <filter id="tp-resplandor" x="-10%" y="-20%" width="120%" height="150%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="16"/><feOffset dy="12" result="o"/>
+                    <feFlood flood-color="#EF4529" flood-opacity=".13"/><feComposite in2="o" operator="in"/>
+                  </filter>
+                  <g id="tp-cuerpo">
+                    <!-- frontón (esquinas de radio 62) y cornisa (chaflán a 45° y curva cóncava de radio 37) -->
+                    <path d="M212.5 162H314V165A62 62 0 0 1 376 103H806A62 62 0 0 1 868 165V162H969.5L1028 220.5V241A37 37 0 0 0 991 278H191A37 37 0 0 0 154 241V220.5Z"/>
+                    <!-- base (esquinas de arriba redondeadas, radio 32,5) -->
+                    <path d="M159 557.5V521.5A32.5 32.5 0 0 1 191.5 489H990.5A32.5 32.5 0 0 1 1023 521.5V557.5Z"/>
+                  </g>
+                </defs>
+                <g class="tp-brillo" filter="url(#tp-resplandor)"><use href="#tp-cuerpo"/>${P.map((p, i) => columna(cx(i))).join('')}</g>
+                <use class="tp-cuerpo" href="#tp-cuerpo"/>
+                <image class="tp-logo" href="${ruta('img/scope/logo-scope-gris.svg')}" x="462" y="139" width="307" height="116"/>
+                ${P.map((p, i) => `<g class="tp-col" style="--i:${i + 2}">
+                  <g class="tp-forma">${columna(cx(i))}</g>
+                  <svg class="tp-ico" x="${(cx(i) - 22.75).toFixed(1)}" y="360.75" width="45.5" height="45.5" viewBox="0 0 91.05 91.05"><g>${(ICONOS_SCOPE[p.icono] || '')}</g></svg>
+                  <text class="tp-nombre" x="${cx(i).toFixed(1)}" y="528">${esc(p.nombre)}</text>
+                </g>`).join('')}
               </svg>
-              <img class="tp-logo" src="${ruta('img/scope/logo-scope-crema.svg')}" alt="CARGO S.C.O.P.E." draggable="false">
-              <ul class="tp-columnas">${P.map((p, i) => `<li class="ent" style="--i:${i + 2}; left:${(100 + paso * (i + .5)).toFixed(1)}px">
-                <i class="tp-capitel"></i><span class="tp-fuste">${icono(p.icono)}</span><i class="tp-capitel"></i>
-                <span class="tp-nombre">${esc(p.nombre)}</span>
-              </li>`).join('')}</ul>
             </div>
           </div>`;
+          },
+          alMostrar: (el) => {
+            // cada ícono se centra por su dibujo (no por su caja), con 0,5 px por unidad como en el diseño
+            el.querySelectorAll('.tp-ico').forEach((s) => {
+              const bb = s.firstElementChild.getBBox();
+              if (!bb.width) return;
+              const cxi = +s.getAttribute('x') + 22.75;
+              s.setAttribute('viewBox', `${bb.x} ${bb.y} ${bb.width} ${bb.height}`);
+              s.setAttribute('width', (bb.width * .5).toFixed(2));
+              s.setAttribute('height', (bb.height * .5).toFixed(2));
+              s.setAttribute('x', (cxi - bb.width * .25).toFixed(2));
+              s.setAttribute('y', (383.5 - bb.height * .25).toFixed(2));
+            });
           }
         },
       ]
