@@ -6,7 +6,9 @@
    de la silueta, de crema claro a tostado), cara clara con brillo, borde
    fino, resplandor rojo y sombra. Con el mouse hay paralaje: el espesor se
    corre hacia el lado contrario, el brillo se desliza y todo se inclina un
-   poco. Al pasar por una columna, se levanta en rojo (como las provincias).
+   poco. Al entrar se arma: aparece la base, las columnas caen de a una y al
+   final cae el techo. Al pasar por una columna, se levanta en rojo (como las
+   provincias) y al soltarla el rojo se funde con el blanco mientras baja.
    mejora.js usa TEMPLO.html(...) y TEMPLO.activar(seccion).
    ========================================================= */
 (function () {
@@ -43,7 +45,9 @@
 
   function html({ pilares, iconos, ruta, esc, titulo }) {
     const P = pilares || [], n = P.length;
-    const silueta = '<use href="#tp-cuerpo"/>' + P.map((p, i) => `<use href="#tp-col-${i}"/>`).join('');
+    // cada pieza (techo, base, columnas) se define una vez y todas las capas la usan: al moverla
+    // en el armado (transform y opacidad en su definición) se mueven el espesor, la cara, el borde y el resplandor
+    const silueta = '<use href="#tp-base"/>' + P.map((p, i) => `<use href="#tp-col-${i}"/>`).join('') + '<use href="#tp-techo"/>';
     let lados = '';
     for (let k = CAPAS; k >= 1; k--) {
       const c = mezcla(LADOS[0], LADOS[1], k / CAPAS);
@@ -56,21 +60,18 @@
       <!-- detrás: resplandor rojo y sombra (pintados una vez; con el mouse solo se corren) -->
       <svg class="tp-halo" viewBox="0 0 1171 631" aria-hidden="true">
         <defs><filter id="tp-desenfoque" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation="15"/></filter></defs>
-        <g filter="url(#tp-desenfoque)" fill="#EF4529" opacity=".26" transform="translate(0 10)">
-          ${CUERPO.map((d) => `<path d="${d}"/>`).join('')}${P.map((p, i) => columna(centro(i, n))).join('')}
-        </g>
+        <g filter="url(#tp-desenfoque)" fill="#EF4529" opacity=".26" transform="translate(0 10)">${silueta}</g>
       </svg>
       <svg class="tp-sombra" viewBox="0 0 1171 631" aria-hidden="true">
         <defs><filter id="tp-desenfoque-2" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation="11"/></filter></defs>
-        <g filter="url(#tp-desenfoque-2)" fill="#8C2A14" opacity=".14" transform="translate(6 22)">
-          ${CUERPO.map((d) => `<path d="${d}"/>`).join('')}${P.map((p, i) => columna(centro(i, n))).join('')}
-        </g>
+        <g filter="url(#tp-desenfoque-2)" fill="#8C2A14" opacity=".14" transform="translate(6 22)">${silueta}</g>
       </svg>
       <!-- la pieza: espesor, cara, brillo, borde, logo, columnas que se levantan e íconos -->
       <svg class="tp-svg" viewBox="0 0 1171 631" aria-label="${esc(titulo)}">
         <defs>
-          <g id="tp-cuerpo">${CUERPO.map((d) => `<path d="${d}"/>`).join('')}</g>
-          ${P.map((p, i) => `<g id="tp-col-${i}">${columna(centro(i, n))}</g>`).join('')}
+          <g id="tp-techo" class="tp-pieza"><path d="${CUERPO[0]}"/></g>
+          <g id="tp-base" class="tp-pieza"><path d="${CUERPO[1]}"/></g>
+          ${P.map((p, i) => `<g id="tp-col-${i}" class="tp-pieza">${columna(centro(i, n))}</g>`).join('')}
           <clipPath id="tp-recorte">${silueta}</clipPath>
           <linearGradient id="tp-cara" gradientUnits="userSpaceOnUse" x1="0" y1="${CAJA.y}" x2="0" y2="${CAJA.y + CAJA.h}">
             <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FCF2E9"/>
@@ -84,10 +85,10 @@
         <g class="tp-cara" fill="url(#tp-cara)" stroke="url(#tp-cara)" ${SIN_COSTURA}>${silueta}</g>
         <rect class="tp-reflejo" x="${CAJA.x - 300}" y="${CAJA.y}" width="${CAJA.w + 600}" height="${CAJA.h}" fill="url(#tp-brillo)" clip-path="url(#tp-recorte)"/>
         <g class="tp-borde" fill="none" stroke="#E7D3C4" stroke-width=".75" stroke-linejoin="round">${silueta}</g>
-        <image class="tp-logo" href="${ruta('img/scope/logo-scope-gris.svg')}" x="462" y="139" width="307" height="116"/>
+        <g class="tp-logo-g"><image class="tp-logo" href="${ruta('img/scope/logo-scope-gris.svg')}" x="462" y="139" width="307" height="116"/></g>
         ${P.map((p, i) => `<g class="tp-col" data-i="${i}" style="--i:${i}">
           <g class="tp-alzado">${rojos.map((c) => `<use href="#tp-col-${i}" fill="${c}" stroke="${c}" ${SIN_COSTURA}/>`).join('')}<use class="tp-alzado-cara" href="#tp-col-${i}"/></g>
-          <g class="tp-ico-mov"><svg class="tp-ico" x="${(centro(i, n) - 22.75).toFixed(1)}" y="${ICONO_Y - 22.75}" width="45.5" height="45.5" viewBox="0 0 91.05 91.05"><g>${iconos[p.icono] || ''}</g></svg></g>
+          <g class="tp-caida"><g class="tp-ico-mov"><svg class="tp-ico" x="${(centro(i, n) - 22.75).toFixed(1)}" y="${ICONO_Y - 22.75}" width="45.5" height="45.5" viewBox="0 0 91.05 91.05"><g>${iconos[p.icono] || ''}</g></svg></g></g>
           <use class="tp-toque" href="#tp-col-${i}"/>
           <text class="tp-nombre" x="${centro(i, n).toFixed(1)}" y="528">${esc(p.nombre)}</text>
         </g>`).join('')}
@@ -123,25 +124,64 @@
       s.setAttribute('y', (ICONO_Y - bb.height * ICONO_ESCALA / 2).toFixed(2));
     });
 
+    // ---- Armado: la base aparece, las columnas caen de a una y al final cae el techo ----
+    const pieza = (id) => svg.querySelector('#' + id);
+    const base = pieza('tp-base'), techo = pieza('tp-techo'), logo = svg.querySelector('.tp-logo-g');
+    const colsPieza = cols.map((c, i) => ({ def: pieza('tp-col-' + i), ico: c.g.querySelector('.tp-caida') }));
+    const N = cols.length;
+    const ARMADO = {
+      base: { desde: 0, dura: .35, alto: 36 },
+      columna: (i) => ({ desde: .18 + i * .085, dura: .46, alto: 150 }),
+      techo: { desde: .18 + Math.max(N - 1, 0) * .085 + .4, dura: .58, alto: 190 }
+    };
+    const FIN = ARMADO.techo.desde + ARMADO.techo.dura;
+    // caída: acelera como si cayera (72 % del tiempo) y rebota apenas al apoyarse
+    function caida(t, alto) {
+      if (t <= 0) return { y: -alto, o: 0 };
+      if (t >= 1) return { y: 0, o: 1 };
+      const f = .72, o = Math.min(1, t / .3);
+      if (t < f) { const s = t / f; return { y: -alto * (1 - s * s), o }; }
+      const s = (t - f) / (1 - f);
+      return { y: -alto * .045 * Math.sin(Math.PI * s), o };
+    }
+    function ubicar(def, extra, paso, t) {
+      const { y, o } = caida((t - paso.desde) / paso.dura, paso.alto);
+      const tr = y ? `translate(0 ${y.toFixed(2)})` : '';
+      for (const el of [def, extra]) {
+        if (!el) continue;
+        if (tr) el.setAttribute('transform', tr); else el.removeAttribute('transform');
+        if (o < 1) el.setAttribute('opacity', o.toFixed(3)); else el.removeAttribute('opacity');
+      }
+    }
+    let armado = -1;                           // segundos desde que empezó (−1: todavía no)
+    function pintarArmado() {
+      const t = armado < 0 ? -1 : armado;
+      ubicar(base, null, ARMADO.base, t);
+      colsPieza.forEach((c, i) => ubicar(c.def, c.ico, ARMADO.columna(i), t));
+      ubicar(techo, logo, ARMADO.techo, t);
+    }
+
     // ---- Estado ----
     let mx = 0, my = 0, ox = 0, oy = 0;      // mouse (−1..1) y lo que se muestra (suavizado)
-    let sube = 0, subeMeta = 0;               // el espesor crece al entrar
     let bucle = null, ultimo = 0;
+    const suave = (x) => x * x * (3 - 2 * x);
 
     function pintar() {
       // dirección del espesor: hacia abajo y un poco a la derecha; el mouse la corre (paralaje)
-      const vx = (.28 - ox * .7) * ESPESOR * sube, vy = (.8 - oy * .5) * ESPESOR * sube;
+      const vx = (.28 - ox * .7) * ESPESOR, vy = (.8 - oy * .5) * ESPESOR;
       for (const c of capas) c.g.setAttribute('transform', `translate(${(vx * c.k / CAPAS).toFixed(2)} ${(vy * c.k / CAPAS).toFixed(2)})`);
       sombra.style.translate = `${(vx * .9).toFixed(1)}px ${(vy * .6).toFixed(1)}px`;
       halo.style.translate = `${(-ox * 6).toFixed(1)}px ${(-oy * 4).toFixed(1)}px`;
       reflejo.setAttribute('x', (CAJA.x - 300 + ox * 260).toFixed(1));
       templo.style.setProperty('--rx', (-oy * 3).toFixed(2) + 'deg');
       templo.style.setProperty('--ry', (ox * 4.5).toFixed(2) + 'deg');
-      // columnas levantadas: hacia el que mira (contrario al espesor)
+      // columnas levantadas: hacia el que mira (contrario al espesor). El rojo se funde con el
+      // blanco a medida que baja (opacidad según la altura), así no cambia de golpe al soltarla.
       const largo = Math.hypot(vx, vy) || 1, ux = -vx / largo, uy = -vy / largo;
       for (const c of cols) {
         if (c.alto < .001) { c.alzado.style.display = 'none'; c.ico.removeAttribute('transform'); continue; }
         c.alzado.style.display = '';
+        c.alzado.setAttribute('opacity', suave(Math.min(1, c.alto * 1.25)).toFixed(3));
         const a = ALZA * c.alto;
         c.rojos.forEach((u, k) => u.setAttribute('transform', `translate(${(ux * a * k / CAPAS_ALZA).toFixed(2)} ${(uy * a * k / CAPAS_ALZA).toFixed(2)})`));
         const t = `translate(${(ux * a).toFixed(2)} ${(uy * a).toFixed(2)})`;
@@ -156,10 +196,11 @@
       if (!seccion.isConnected) { bucle = null; return; }
       const k = 1 - Math.exp(-dt * 7);
       ox += (mx - ox) * k; oy += (my - oy) * k;
-      sube += (subeMeta - sube) * (1 - Math.exp(-dt * 3.2));
-      let quieto = Math.abs(mx - ox) < .002 && Math.abs(my - oy) < .002 && Math.abs(subeMeta - sube) < .002;
+      let quieto = Math.abs(mx - ox) < .002 && Math.abs(my - oy) < .002;
+      if (armado >= 0 && armado < FIN) { armado = Math.min(FIN, armado + dt); pintarArmado(); quieto = false; }
       for (const c of cols) {
-        c.alto += (c.meta - c.alto) * (1 - Math.exp(-dt * 11));
+        // sube rápido; al soltarla baja más despacio mientras el rojo se desvanece
+        c.alto += (c.meta - c.alto) * (1 - Math.exp(-dt * (c.meta ? 11 : 5)));
         if (Math.abs(c.meta - c.alto) > .002) quieto = false; else c.alto = c.meta;
       }
       pintar();
@@ -185,12 +226,13 @@
       toque.addEventListener('pointerleave', () => { c.meta = 0; c.g.classList.remove('alzada'); mover(); });
     });
 
-    // al entrar a la sección el espesor crece (la pieza "se levanta"); al salir vuelve a cero
+    // al entrar a la sección se arma el templo; al salir se desarma (para volver a verlo la próxima vez)
     new MutationObserver(() => {
       const visible = seccion.classList.contains('visible');
-      if (visible && subeMeta === 0) { sube = 0; subeMeta = 1; setTimeout(mover, 250); }
-      else if (!visible && subeMeta === 1) { subeMeta = 0; sube = 0; mx = my = ox = oy = 0; pintar(); }
+      if (visible && armado < 0) { armado = 0; pintarArmado(); setTimeout(mover, 200); }
+      else if (!visible && armado >= 0) { armado = -1; mx = my = ox = oy = 0; pintarArmado(); pintar(); }
     }).observe(seccion, { attributes: true, attributeFilter: ['class'] });
+    pintarArmado();
     pintar();
   }
 

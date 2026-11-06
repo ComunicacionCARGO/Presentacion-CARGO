@@ -278,10 +278,6 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 /* nombre: aparece en la base al pasar el cursor por la columna */
 .tp-nombre { font: 500 15px var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; text-anchor: middle; fill: var(--gris); opacity: 0; transition: opacity .3s ease; pointer-events: none; }
 .tp-col.alzada .tp-nombre { opacity: 1; }
-/* los íconos aparecen de a uno */
-.cap-sec .tp-ico-mov { opacity: 0; transition: opacity .5s ease; }
-.cap-sec.visible .tp-ico-mov { opacity: 1; transition-delay: calc(.45s + var(--i) * .07s); }
-
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }
 .ap-titulo { font-family: var(--fuente-titulo); font-weight: 700; font-size: 92px; line-height: .95; color: var(--rojo); }
