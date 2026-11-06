@@ -26,17 +26,17 @@
 /* ---------- Título ---------- */
 .iv-izq { position: absolute; left: 64px; top: 84px; width: 400px; }
 .iv-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.iv-titulo { margin-top: 2px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
-.iv-bajada { margin-top: 16px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .9); }
+.iv-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
+.iv-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .iv-bajada strong { color: var(--blanco); }
 
 /* ---------- Ficha del reclamo (TMS) ---------- */
 .iv-ticket {
   position: absolute;
   left: 64px;
-  top: 340px;
+  top: 364px;       /* 34 px debajo de la bajada, como en las demás secciones */
   width: 400px;
-  height: 500px;
+  height: 464px;    /* abajo en 828, como el relato */
   padding: 24px 26px 0;
   border-radius: 24px;
   background: var(--blanco);
@@ -62,7 +62,7 @@
 .iv-ticket.cerrado .tk-barra i { background: var(--verde); }
 .tk-eventos {
   position: relative;
-  height: 316px;
+  height: 280px;
   margin-top: 16px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent);
@@ -82,7 +82,8 @@
 .tk-pie { position: absolute; left: 26px; bottom: 16px; font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(58, 58, 58, .38); }
 
 /* ---------- Pasos ---------- */
-.iv-pasos { position: absolute; left: 500px; top: 96px; width: 1020px; display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 8px; }
+/* grilla de la sección: arriba en y 84 (como el título), borde derecho en 1536 y abajo en 828 */
+.iv-pasos { position: absolute; left: 500px; top: 84px; width: 1036px; display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 8px; }
 .iv-pasos li { position: relative; padding-top: 14px; font-size: 11.5px; line-height: 1.25; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 251, 243, .55); transition: color .4s ease; }
 .iv-pasos li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 2px; background: rgba(255, 251, 243, .22); transition: background .4s ease; }
 .iv-pasos b { margin-right: 6px; font-family: var(--fuente-titulo); font-weight: 500; letter-spacing: .04em; }
@@ -93,7 +94,7 @@
 
 /* ---------- Escena ---------- */
 /* la escena va en una tarjeta crema sobre el rojo */
-.iv-escena { position: absolute; left: 500px; top: 156px; width: 720px; height: 430px; border-radius: 24px; background: var(--blanco); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); }
+.iv-escena { position: absolute; left: 500px; top: 144px; width: 720px; height: 430px; border-radius: 24px; background: var(--blanco); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); }
 .iv-svg { position: absolute; inset: 0; width: 720px; height: 430px; overflow: visible; }
 /* suelo con el estilo de los dibujos de la persona: rellenos planos y trazo #424243 de 2,3 (su trazo al 0,8) */
 .iv-vereda { fill: #F9F1E4; }
@@ -164,7 +165,7 @@
 
 /* ---------- Relato del paso ---------- */
 /* columna de 612 a 840: el botón siempre queda abajo, alineado con el pie de la ficha */
-.iv-relato { position: absolute; left: 500px; top: 612px; width: 720px; height: 228px; display: flex; flex-direction: column; align-items: flex-start; }
+.iv-relato { position: absolute; left: 500px; top: 600px; width: 720px; height: 228px; display: flex; flex-direction: column; align-items: flex-start; }
 .iv-num:empty { display: none; }
 .iv-num { min-height: 18px; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(255, 251, 243, .7); }
 .iv-num b { font-family: var(--fuente-titulo); font-weight: 700; font-size: 15px; letter-spacing: .04em; color: var(--blanco); }
@@ -313,7 +314,7 @@
 /* ---------- Mails que llegan ---------- */
 /* los mails aparecen arriba a la derecha de la escena (en el cielo, debajo del día y la hora): abajo del
    celular ahora está la mano */
-.iv-mails { position: absolute; z-index: 5; left: 952px; top: 206px; width: 258px; display: flex; flex-direction: column; gap: 8px; }
+.iv-mails { position: absolute; z-index: 5; left: 952px; top: 194px; width: 258px; display: flex; flex-direction: column; gap: 8px; }
 .iv-mail { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #fff; box-shadow: 0 14px 28px -18px rgba(120, 40, 20, .55), inset 0 0 0 1px rgba(58, 58, 58, .06); font-size: 12px; line-height: 1.35; color: var(--gris); animation: iv-mail .6s cubic-bezier(.2, .8, .2, 1) both; transition: opacity .6s ease; }
 .iv-mail svg { flex: none; width: 22px; height: 22px; fill: var(--rojo); }
 .iv-mail.visto { opacity: .55; }

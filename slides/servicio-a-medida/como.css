@@ -86,7 +86,7 @@
 
 /* Columna izquierda */
 .mr-izq { position: absolute; left: 64px; top: 188px; width: 470px; }
-.mr-ante { font-size: 32px; font-weight: 300; line-height: 1; color: var(--gris); white-space: nowrap; }
+.mr-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); white-space: nowrap; }
 .mr-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
 .mr-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .86); }
 .mr-sub { margin-top: 24px; font-size: 11.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
@@ -158,9 +158,9 @@
 .mr-card {
   position: absolute;
   left: 690px;
-  top: 226px;
+  top: 188px;       /* arriba y abajo alineada con el bloque del título (188–612) */
   width: 610px;
-  height: 400px;
+  height: 424px;
   padding: 34px 40px;
   border: 1px solid rgba(255, 255, 255, .95);
   border-radius: 26px;
@@ -176,9 +176,9 @@
 .mr-paso { display: flex; align-items: baseline; gap: 8px; font-family: var(--fuente-titulo); }
 .mr-paso b { font-weight: 700; font-size: 58px; line-height: .9; color: var(--rojo); }
 .mr-paso span { font-weight: 500; font-size: 18px; letter-spacing: .06em; color: rgba(58, 58, 58, .4); }
-.mr-card-titulo { margin-top: 12px; font: 700 38px/1.05 var(--fuente-titulo); color: var(--gris); }
-.mr-card-texto { margin-top: 12px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .86); }
-.mr-dato { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
+.mr-card-titulo { margin-top: 16px; font: 700 38px/1.05 var(--fuente-titulo); color: var(--gris); }
+.mr-card-texto { margin-top: 14px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .86); }
+.mr-dato { display: flex; align-items: center; gap: 10px; margin-top: 20px; font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
 .mr-card-cont.cambia > * { animation: mr-entrar .55s cubic-bezier(.2, .8, .2, 1) both; }
 .mr-card-cont.cambia > :nth-child(2) { animation-delay: .04s; }
 .mr-card-cont.cambia > :nth-child(3) { animation-delay: .08s; }
@@ -205,8 +205,8 @@
 .sv-tms .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--rojo); }
 .tm-izq { position: absolute; left: 64px; top: 84px; width: 450px; }
 .tm-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--blanco); }
-.tm-titulo { margin-top: 4px; font: 700 74px/.95 var(--fuente-titulo); color: var(--blanco); white-space: nowrap; }
-.tm-bajada { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .88); }
+.tm-titulo { margin-top: 4px; font: 700 80px/.95 var(--fuente-titulo); color: var(--blanco); white-space: nowrap; }   /* 84 no entra antes del panel */
+.tm-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .tm-bajada strong { color: var(--blanco); }
 .tm-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 34px; }
 .tm-tab {
@@ -247,10 +247,10 @@
 /* Panel de la derecha */
 .tm-panel {
   position: absolute;
-  left: 580px;
-  top: 104px;
+  left: 596px;      /* borde derecho en 1536, como el resto de la diapositiva */
+  top: 84px;        /* arriba alineado con el título */
   width: 940px;
-  height: 730px;
+  height: 736px;    /* abajo en 820, como los tableros y las ventajas */
   border-radius: 28px;
   background: var(--blanco);
   color: var(--gris);

@@ -5,7 +5,8 @@
    ========================================================= */
 .sv-ven, .sv-bi { color: var(--blanco); }
 .sv-ven ul, .sv-bi ul { list-style: none; margin: 0; padding: 0; }
-.sv-ven h2, .sv-ven h3, .sv-ven p, .sv-bi h2, .sv-bi p { margin: 0; }
+/* sin especificidad (:where): si no, este reinicio le ganaba a los márgenes de cada clase y los textos quedaban pegados */
+:where(.sv-ven, .sv-bi) :where(h2, h3, p) { margin: 0; }
 .sv-ven strong, .sv-bi strong { font-weight: 600; }
 /* rojo plano, 2 px más arriba para pisarse con la sección anterior (sin rendija) */
 .sv-ven .sv-fondo, .sv-bi .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
@@ -16,10 +17,10 @@
 /* ---------- Ventajas y oportunidades ---------- */
 .vn-cab { position: absolute; left: 64px; top: 84px; width: 1100px; }
 .vn-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.vn-titulo { margin-top: 2px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
-.vn-bajada { margin-top: 16px; font-size: 18px; font-weight: 300; color: rgba(255, 251, 243, .9); }
+.vn-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
+.vn-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .vn-bajada strong { color: var(--blanco); }
-.vn-cols { position: absolute; left: 64px; top: 296px; width: 1472px; height: 524px; display: flex; gap: 14px; }
+.vn-cols { position: absolute; left: 64px; top: 284px; width: 1472px; height: 536px; display: flex; gap: 14px; }
 .vn-col {
   position: relative;
   flex: 1 1 0;
@@ -59,10 +60,10 @@
 /* ---------- Tableros de Business Intelligence ---------- */
 .bi-izq { position: absolute; left: 64px; top: 84px; width: 410px; }
 .bi-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.bi-titulo { margin-top: 4px; font: 700 62px/.98 var(--fuente-titulo); letter-spacing: .01em; }
-.bi-bajada { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .9); }
+.bi-titulo { margin-top: 4px; font: 700 70px/.95 var(--fuente-titulo); letter-spacing: .01em; }   /* dos renglones: 84 no entra */
+.bi-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .bi-bajada strong { color: var(--blanco); }
-.bi-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 36px; }
+.bi-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 34px; }
 .bi-tabs button {
   display: flex; align-items: center; gap: 14px;
   height: 64px; padding: 0 22px;
@@ -75,7 +76,7 @@
 .bi-tabs button:hover:not(.activo) { background: rgba(255, 251, 243, .2); translate: 4px 0; }
 .bi-tabs button.activo { background: var(--blanco); color: var(--gris); box-shadow: 0 20px 34px -18px rgba(100, 15, 0, .7); }
 .bi-tabs button.activo svg { fill: var(--rojo); }
-.bi-nota { margin-top: 22px; font-size: 13px; font-style: italic; font-weight: 300; color: rgba(255, 251, 243, .75); }
+.bi-nota { margin-top: 22px; padding-left: 4px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .75); }
 
 .bi-ventana { position: absolute; left: 520px; top: 84px; width: 1016px; height: 736px; border-radius: 20px; background: var(--blanco); color: var(--gris); box-shadow: 0 40px 70px -36px rgba(100, 15, 0, .75); overflow: hidden; }
 .bi-barra { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; background: var(--gris); color: var(--blanco); }
