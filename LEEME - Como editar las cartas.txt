@@ -288,12 +288,12 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       - cierre: textos del final, los beneficios y el botón "Simular otro
         reclamo".
     Los horarios, números y cantidades son de ejemplo: es una simulación.
-  • ventajas (pantalla "Ventajas y OPORTUNIDADES", después de la simulación):
+  • ventajas (pantalla "Ventajas y OPORTUNIDADES", después de los tableros):
       - antetitulo, titulo, bajada y botonTableros;
       - items: las seis columnas. Cada una tiene titulo, texto, icono (ruta,
         escudo, barras, arbol, ciclo o cabeza), una "lista" opcional de
         renglones y irATableros: true si lleva el botón que baja a los tableros.
-  • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE"):
+  • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE", después de la simulación):
       - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
       - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
         porcentaje: true si es un %) y los meses (mes, kg y otd);

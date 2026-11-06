@@ -9,7 +9,7 @@
 .sv-ven strong, .sv-bi strong { font-weight: 600; }
 /* rojo plano, 2 px más arriba para pisarse con la sección anterior (sin rendija) */
 .sv-ven .sv-fondo, .sv-bi .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
-.pista section.sv-bi { height: 991px; }   /* 900 + las franjas hacia el mapa (.iv-franjas, en inversa.css) */
+.pista section.sv-ven { height: 991px; }   /* va última: 900 + las franjas hacia el mapa (.iv-franjas, en inversa.css) */
 .sv-ven .ent, .sv-bi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
 .sv-ven.visible .ent, .sv-bi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
 

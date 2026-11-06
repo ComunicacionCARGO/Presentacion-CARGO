@@ -55,7 +55,7 @@
         <h3 class="vn-nombre">${txt(it.titulo)}</h3>
         <div class="vn-cuerpo"><p>${txt(it.texto)}</p>
           ${(it.lista || []).length ? `<ul class="vn-lista">${it.lista.map((l) => `<li>${txt(l)}</li>`).join('')}</ul>` : ''}
-          ${it.irATableros ? `<button type="button" class="vn-ir">${txt(V.botonTableros)}<svg viewBox="0 0 24 24"><path d="M11 5h2v11l4-4 1.4 1.4L12 19.8l-6.4-6.4L7 12l4 4z"/></svg></button>` : ''}
+          ${it.irATableros ? `<button type="button" class="vn-ir">${txt(V.botonTableros)}<svg viewBox="0 0 24 24"><path d="M11 19h2V8l4 4 1.4-1.4L12 4.2l-6.4 6.4L7 12l4-4z"/></svg></button>` : ''}
         </div>
         ${icono(it.icono, 'vn-fondo-ico')}
       </li>`).join('')}</ul>`);
