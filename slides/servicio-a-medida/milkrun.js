@@ -124,7 +124,8 @@
     const k = escala();
     const mitadAncho = Math.max(800, innerWidth / k / 2), mitadAlto = Math.max(450, innerHeight / k / 2);
     E = 800 + mitadAncho;
-    const izqX = 800 - mitadAncho, arriba = 450 - mitadAlto, ancho = 2 * mitadAncho, alto = 2 * mitadAlto;
+    // 6 px de más arriba y abajo: se pisa con el rojo de las secciones vecinas (sin rendija al escalar)
+    const izqX = 800 - mitadAncho, arriba = 450 - mitadAlto - 6, ancho = 2 * mitadAncho, alto = 2 * mitadAlto + 12;
     Object.assign(svg.style, { left: izqX + 'px', top: arriba + 'px', width: ancho + 'px', height: alto + 'px' });
     svg.setAttribute('viewBox', `${izqX} ${arriba} ${ancho} ${alto}`);
     const x0 = izqX - 300;

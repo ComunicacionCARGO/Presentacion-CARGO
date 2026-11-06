@@ -197,15 +197,17 @@
 .mr-medios p span.l { margin-left: 10px; background: var(--rojo); }
 
 /* =========================================================
-   NUESTRO TMS (fondo crema)
+   NUESTRO TMS (fondo rojo: sigue la franja roja con la que termina el Milk run;
+   el panel es crema)
    ========================================================= */
-.sv-tms { color: var(--gris); }
-.sv-tms .sv-fondo { background: radial-gradient(55% 70% at 66% 46%, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0) 70%), var(--blanco); }
+.sv-tms { color: var(--blanco); }
+/* rojo plano, 2 px más arriba para pisarse con el rojo del Milk run (sin rendija) */
+.sv-tms .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--rojo); }
 .tm-izq { position: absolute; left: 64px; top: 84px; width: 450px; }
-.tm-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); }
-.tm-titulo { margin-top: 4px; font: 700 74px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }
-.tm-bajada { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .82); }
-.tm-bajada strong { color: var(--gris); }
+.tm-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--blanco); }
+.tm-titulo { margin-top: 4px; font: 700 74px/.95 var(--fuente-titulo); color: var(--blanco); white-space: nowrap; }
+.tm-bajada { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .88); }
+.tm-bajada strong { color: var(--blanco); }
 .tm-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 34px; }
 .tm-tab {
   position: relative;
@@ -215,29 +217,31 @@
   gap: 16px;
   height: 78px;
   padding: 0 20px 0 22px;
-  border: 1px solid rgba(58, 58, 58, .12);
+  border: 1px solid rgba(255, 251, 243, .38);
   border-radius: 18px;
-  background: rgba(255, 255, 255, .45);
+  background: rgba(255, 251, 243, .1);
   font: inherit;
-  color: var(--gris);
+  color: var(--blanco);
   text-align: left;
   cursor: pointer;
   overflow: hidden;
   transition: background .3s ease, border-color .3s ease, transform .35s cubic-bezier(.2, .8, .2, 1);
 }
 .tm-tab::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 4px; border-radius: 0 3px 3px 0; background: var(--rojo); transform: scaleY(0); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-.tm-tab:hover { border-color: rgba(58, 58, 58, .28); transform: translateX(4px); }
-.tm-tab.activo { background: #fff; border-color: rgba(239, 69, 41, .35); box-shadow: 0 18px 34px -22px rgba(120, 40, 20, .5); }
+.tm-tab:hover { border-color: rgba(255, 251, 243, .75); transform: translateX(4px); }
+.tm-tab.activo { background: var(--blanco); border-color: var(--blanco); color: var(--gris); box-shadow: 0 18px 34px -20px rgba(110, 20, 0, .6); }
+.tm-tab.activo small { color: rgba(58, 58, 58, .62); }
 .tm-tab.activo::before { transform: scaleY(1); }
-.tm-tab svg { display: block; width: 30px; height: 30px; fill: var(--rojo); }
+.tm-tab svg { display: block; width: 30px; height: 30px; fill: var(--blanco); }
+.tm-tab.activo svg { fill: var(--rojo); }
 .tm-tab b { display: block; font: 700 22px/1.1 var(--fuente-titulo); letter-spacing: .02em; }
-.tm-tab small { display: block; margin-top: 4px; font-size: 13px; font-weight: 300; color: rgba(58, 58, 58, .62); }
-.tm-tab .tm-flecha { width: 22px; height: 22px; fill: rgba(58, 58, 58, .35); transition: transform .35s ease, fill .3s ease; }
+.tm-tab small { display: block; margin-top: 4px; font-size: 13px; font-weight: 300; color: rgba(255, 251, 243, .75); }
+.tm-tab .tm-flecha { width: 22px; height: 22px; fill: rgba(255, 251, 243, .6); transition: transform .35s ease, fill .3s ease; }
 .tm-tab.activo .tm-flecha { fill: var(--rojo); }
 .tm-tab.bajar .tm-flecha { transform: rotate(90deg); }
-.tm-tab.bajar:hover .tm-flecha { transform: rotate(90deg) translateX(4px); fill: var(--rojo); }
-.tm-desc { margin-top: 22px; min-height: 80px; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .82); }
-.tm-desc strong { color: var(--gris); }
+.tm-tab.bajar:hover .tm-flecha { transform: rotate(90deg) translateX(4px); fill: var(--blanco); }
+.tm-desc { margin-top: 22px; min-height: 80px; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
+.tm-desc strong { color: var(--blanco); }
 .tm-desc.cambia { animation: mr-entrar .5s cubic-bezier(.2, .8, .2, 1) both; }
 
 /* Panel de la derecha */
@@ -247,10 +251,10 @@
   top: 104px;
   width: 940px;
   height: 730px;
-  border: 1px solid rgba(255, 255, 255, .95);
   border-radius: 28px;
-  background: rgba(255, 255, 255, .62);
-  box-shadow: 0 40px 80px -46px rgba(120, 40, 20, .55), inset 0 1px 0 #fff;
+  background: var(--blanco);
+  color: var(--gris);
+  box-shadow: 0 44px 80px -40px rgba(100, 15, 0, .7), inset 0 1px 0 #fff;
   overflow: hidden;
 }
 .tm-panel::before {
@@ -348,6 +352,9 @@
 .tc-bulto.leido small { color: var(--rojo); }
 @keyframes tc-laser { 0% { left: -4%; opacity: 1; } 100% { left: 104%; opacity: 1; } }
 @keyframes tc-entra { from { opacity: 0; translate: -40px 0; } }
+/* el lector apuntado: una barrita roja se llena abajo hasta que se lee */
+.tc-bulto.apuntando { background-image: linear-gradient(var(--rojo), var(--rojo)); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 4px; animation: tc-apuntar .7s linear forwards; }
+@keyframes tc-apuntar { to { background-size: 100% 4px; } }
 .tc-vuela { position: absolute; z-index: 5; width: 12px; height: 12px; border-radius: 3px; background: var(--c); box-shadow: 0 0 0 3px #fff, 0 6px 14px rgba(120, 40, 20, .4); pointer-events: none; }
 .tc-ayuda { position: absolute; left: 32px; top: 678px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .6); }
 .tc-ayuda svg { width: 18px; height: 18px; fill: var(--rojo); }

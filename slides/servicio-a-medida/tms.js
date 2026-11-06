@@ -155,8 +155,10 @@
     b.el = crear('div', 'tc-bulto');
     b.el.style.setProperty('--c', TIPOS[tipo].color);
     b.el.innerHTML = `<b>ZS ${b.z}</b><small>${txt(TIPOS[tipo].nombre)}</small><u></u>`;
-    b.el.addEventListener('pointerenter', () => { usoCarga = ahora(); leer(b); });
-    b.el.addEventListener('click', () => { usoCarga = ahora(); leer(b); });
+    // Hay que dejar el lector un momento sobre el bulto (se ve cómo carga); con clic, se lee enseguida
+    b.el.addEventListener('pointerenter', () => { usoCarga = ahora(); apuntar(b); });
+    b.el.addEventListener('pointerleave', () => soltar(b));
+    b.el.addEventListener('click', () => { usoCarga = ahora(); soltar(b); leer(b); });
     b.el.addEventListener('lectura-auto', () => leer(b));   // el lector automático (no cuenta como uso)
     return b;
   }
@@ -173,8 +175,21 @@
   }
   for (let i = 0; i < ANCHO_COLA; i++) cola.appendChild(nuevoBulto().el);
 
+  const TIEMPO_APUNTAR = 700;            // ms con el lector encima para leer un bulto
+  let ocupado = false;                   // de a un bulto por vez
+  function apuntar(b) {
+    if (b.estado || ocupado) return;
+    b.el.classList.add('apuntando');
+    clearTimeout(b.reloj);
+    b.reloj = setTimeout(() => { b.el.classList.remove('apuntando'); usoCarga = ahora(); leer(b); }, TIEMPO_APUNTAR);
+  }
+  function soltar(b) {
+    clearTimeout(b.reloj);
+    b.el.classList.remove('apuntando');
+  }
   function leer(b) {
-    if (b.estado) return;
+    if (b.estado || ocupado) return;
+    ocupado = true;
     b.estado = 'leyendo';
     b.el.classList.add('leyendo');
     setTimeout(() => {
@@ -201,6 +216,7 @@
     flip(() => { b.el.remove(); cola.prepend(nuevoBulto().el); });
     anim.onfinish = () => {
       punto.remove();
+      ocupado = false;
       agregarEnZona(b.z, b.tipo, true);
       c.el.classList.add('llega');
       setTimeout(() => c.el.classList.remove('llega'), 450);
@@ -232,7 +248,7 @@
     const auto = enVista && pestana === 'carga' && ahora() - usoCarga > 3500;
     ayuda.classList.toggle('auto', auto);
     ayuda.querySelector('span').innerHTML = auto ? 'Lector automático · pasá el mouse por un bulto para leerlo vos' : ayudaTxt;
-    if (!auto) return;
+    if (!auto || ocupado) return;
     const libres = [...cola.children].reverse();
     for (const el of libres) {
       if (!el.classList.contains('leyendo')) { el.dispatchEvent(new Event('lectura-auto')); break; }

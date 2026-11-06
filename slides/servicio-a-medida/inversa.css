@@ -1,15 +1,21 @@
 /* =========================================================
    LOGÍSTICA INVERSA — simulación de un reclamo (inversa.js).
    Ficha del reclamo a la izquierda, escena y relato en el medio,
-   celular del chofer a la derecha. Medidas en px del escenario.
+   celular a la derecha. Fondo rojo (sigue el del TMS) y, abajo, las franjas
+   de la marca que pasan al crema del mapa. Medidas en px del escenario.
    ========================================================= */
-.sv-inv { color: var(--gris); }
-.sv-inv .sv-fondo {
-  background:
-    radial-gradient(40% 50% at 56% 46%, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 70%),
-    radial-gradient(30% 40% at 90% 20%, rgba(239, 69, 41, .07), rgba(239, 69, 41, 0) 70%),
-    var(--blanco);
-  box-shadow: inset 0 1px 0 rgba(58, 58, 58, .08);
+.sv-inv { color: var(--blanco); }
+.pista section.sv-inv { height: 991px; }   /* 900 + las franjas de abajo */
+/* rojo plano hasta y 900 (2 px más arriba para pisarse con el rojo del TMS, sin rendija) */
+.sv-inv .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
+/* Transición al mapa: hueco crema, franja roja, hueco, franja gris (34,6 y 10,8 como en toda la presentación) */
+.iv-franjas {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: 900px;
+  width: calc(100vw / var(--escala, 1));
+  height: 91px;
+  background: linear-gradient(to bottom, var(--blanco) 0 10.8px, var(--rojo) 10.8px 45.4px, var(--blanco) 45.4px 56.2px, var(--gris) 56.2px 90.8px, var(--blanco) 90.8px);
 }
 .sv-inv ol, .sv-inv ul { list-style: none; }
 .sv-inv strong { font-weight: 600; }
@@ -19,8 +25,9 @@
 /* ---------- Título ---------- */
 .iv-izq { position: absolute; left: 64px; top: 84px; width: 400px; }
 .iv-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.iv-titulo { margin-top: 2px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
-.iv-bajada { margin-top: 16px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .86); }
+.iv-titulo { margin-top: 2px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
+.iv-bajada { margin-top: 16px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .9); }
+.iv-bajada strong { color: var(--blanco); }
 
 /* ---------- Ficha del reclamo (TMS) ---------- */
 .iv-ticket {
@@ -30,12 +37,10 @@
   width: 400px;
   height: 500px;
   padding: 24px 26px 0;
-  border: 1px solid rgba(255, 255, 255, .95);
   border-radius: 24px;
-  background: rgba(255, 255, 255, .72);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 30px 60px -36px rgba(120, 40, 20, .5), inset 0 1px 0 #fff;
+  background: var(--blanco);
+  color: var(--gris);
+  box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7), inset 0 1px 0 #fff;
   overflow: hidden;
 }
 .iv-ticket::before { content: ""; position: absolute; left: 26px; top: 0; width: 40px; height: 4px; background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px); }
@@ -77,16 +82,17 @@
 
 /* ---------- Pasos ---------- */
 .iv-pasos { position: absolute; left: 500px; top: 96px; width: 1020px; display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 8px; }
-.iv-pasos li { position: relative; padding-top: 14px; font-size: 11.5px; line-height: 1.25; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(58, 58, 58, .4); transition: color .4s ease; }
-.iv-pasos li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 2px; background: rgba(58, 58, 58, .1); transition: background .4s ease; }
+.iv-pasos li { position: relative; padding-top: 14px; font-size: 11.5px; line-height: 1.25; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 251, 243, .55); transition: color .4s ease; }
+.iv-pasos li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 2px; background: rgba(255, 251, 243, .22); transition: background .4s ease; }
 .iv-pasos b { margin-right: 6px; font-family: var(--fuente-titulo); font-weight: 500; letter-spacing: .04em; }
-.iv-pasos li.hecho { color: rgba(58, 58, 58, .75); }
-.iv-pasos li.hecho::before { background: rgba(239, 69, 41, .45); }
-.iv-pasos li.activo { color: var(--rojo); }
-.iv-pasos li.activo::before { background: var(--rojo); box-shadow: 0 4px 12px -3px rgba(239, 69, 41, .7); }
+.iv-pasos li.hecho { color: rgba(255, 251, 243, .85); }
+.iv-pasos li.hecho::before { background: rgba(255, 251, 243, .6); }
+.iv-pasos li.activo { color: var(--blanco); }
+.iv-pasos li.activo::before { background: var(--blanco); box-shadow: 0 4px 12px -3px rgba(90, 15, 0, .6); }
 
 /* ---------- Escena ---------- */
-.iv-escena { position: absolute; left: 500px; top: 156px; width: 720px; height: 430px; }
+/* la escena va en una tarjeta crema sobre el rojo */
+.iv-escena { position: absolute; left: 500px; top: 156px; width: 720px; height: 430px; border-radius: 24px; background: var(--blanco); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); }
 .iv-svg { position: absolute; inset: 0; width: 720px; height: 430px; overflow: visible; }
 .iv-vereda { fill: #E9E1D3; }
 .iv-calle { fill: #D8D2C8; }
@@ -166,12 +172,13 @@
 
 /* ---------- Relato del paso ---------- */
 .iv-relato { position: absolute; left: 500px; top: 612px; width: 720px; height: 228px; }
-.iv-num { min-height: 18px; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
-.iv-num b { font-family: var(--fuente-titulo); font-weight: 700; font-size: 15px; letter-spacing: .04em; color: var(--rojo); }
+.iv-num { min-height: 18px; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(255, 251, 243, .7); }
+.iv-num b { font-family: var(--fuente-titulo); font-weight: 700; font-size: 15px; letter-spacing: .04em; color: var(--blanco); }
 .iv-check { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--verde); }
 .iv-check svg { width: 20px; height: 20px; fill: #fff; }
-.iv-rel-titulo { margin-top: 6px; font: 700 40px/1.05 var(--fuente-titulo); color: var(--gris); }
-.iv-rel-texto { margin-top: 8px; max-width: 640px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .86); }
+.iv-rel-titulo { margin-top: 6px; font: 700 40px/1.05 var(--fuente-titulo); color: var(--blanco); }
+.iv-rel-texto { margin-top: 8px; max-width: 640px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .9); }
+.iv-rel-texto strong { color: var(--blanco); }
 .iv-relato.cambia > * { animation: mr-entrar .55s cubic-bezier(.2, .8, .2, 1) both; }
 .iv-relato.cambia > :nth-child(2) { animation-delay: .05s; }
 .iv-relato.cambia > :nth-child(3) { animation-delay: .1s; }
@@ -187,27 +194,27 @@
   padding: 0 24px 0 28px;
   border: 0;
   border-radius: 999px;
-  background: var(--rojo);
+  background: var(--blanco);
   font: 500 17px var(--fuente-titulo);
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--blanco);
+  color: var(--rojo);
   cursor: pointer;
-  box-shadow: 0 16px 30px -14px rgba(200, 50, 20, .75), inset 0 -2px 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 16px 30px -14px rgba(100, 15, 0, .7), inset 0 -2px 0 rgba(0, 0, 0, .06);
   animation: iv-pop .45s cubic-bezier(.3, 1.4, .5, 1) both;
   transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s ease;
 }
 .iv-btn svg { width: 20px; height: 20px; fill: currentColor; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-.iv-btn:hover { transform: translateY(-2px); box-shadow: 0 20px 34px -14px rgba(200, 50, 20, .85), inset 0 -2px 0 rgba(0, 0, 0, .1); }
+.iv-btn:hover { transform: translateY(-2px); box-shadow: 0 20px 34px -14px rgba(100, 15, 0, .8), inset 0 -2px 0 rgba(0, 0, 0, .06); }
 .iv-btn:hover svg { transform: translateX(4px); }
-.iv-btn.siguiente { background: var(--gris); box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .5); }
+.iv-btn.siguiente { background: var(--gris); color: var(--blanco); box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .5); }
 .iv-btn.empezar { height: 58px; padding: 0 28px 0 32px; font-size: 19px; }
-.iv-btn.empezar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(239, 69, 41, .5); animation: iv-latir 2s ease-out infinite; }
+.iv-btn.empezar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(255, 251, 243, .5); animation: iv-latir 2s ease-out infinite; }
 .iv-btn.empezar { position: relative; }
-@keyframes iv-latir { to { box-shadow: 0 0 0 16px rgba(239, 69, 41, 0); } }
+@keyframes iv-latir { to { box-shadow: 0 0 0 16px rgba(255, 251, 243, 0); } }
 .iv-btn.otra svg { transform: scaleX(-1); }
-.iv-pista { display: inline-flex; align-items: center; gap: 10px; height: 52px; font-size: 15px; font-weight: 500; color: var(--rojo); animation: iv-pop .45s ease both; }
-.iv-pista svg { width: 22px; height: 22px; fill: var(--rojo); animation: iv-toca 1.6s ease-in-out infinite; }
+.iv-pista { display: inline-flex; align-items: center; gap: 10px; height: 52px; font-size: 15px; font-weight: 500; color: var(--blanco); animation: iv-pop .45s ease both; }
+.iv-pista svg { width: 22px; height: 22px; fill: var(--blanco); animation: iv-toca 1.6s ease-in-out infinite; }
 @keyframes iv-toca { 50% { translate: 3px 3px; scale: .92; } }
 
 /* ---------- Celular del chofer ---------- */
@@ -311,7 +318,7 @@
 .iv-mano.visible { opacity: 1; }
 .iv-mano svg { width: 40px; height: 40px; fill: var(--gris); stroke: #fff; stroke-width: 1.3; stroke-linejoin: round; filter: drop-shadow(0 6px 8px rgba(60, 30, 20, .35)); animation: tocar 2.2s ease-in-out infinite; }
 /* el dato que viaja del celular al TMS */
-.iv-dato { position: absolute; left: -9px; top: -9px; z-index: 6; width: 18px; height: 18px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 0 6px rgba(239, 69, 41, .2), 0 0 24px 6px rgba(239, 69, 41, .5); opacity: 0; pointer-events: none; }
+.iv-dato { position: absolute; left: -9px; top: -9px; z-index: 6; width: 18px; height: 18px; border-radius: 50%; background: var(--blanco); box-shadow: 0 0 0 6px rgba(255, 251, 243, .3), 0 0 24px 8px rgba(255, 251, 243, .55); opacity: 0; pointer-events: none; }
 .iv-dato.visible { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -321,7 +328,8 @@
 /* ---------- Quién usa el celular (concesionario o chofer) ---------- */
 .cel-quien { position: absolute; left: 50%; top: -30px; translate: -50% 0; z-index: 4; display: flex; align-items: center; gap: 7px; padding: 5px 13px; border-radius: 999px; background: var(--gris); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--blanco); white-space: nowrap; box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .5); }
 .cel-quien::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blanco); }
-.cel-quien.chofer { background: var(--rojo); }
+.cel-quien.chofer { background: var(--blanco); color: var(--rojo); }
+.cel-quien.chofer::before { background: var(--rojo); }
 .cel-quien.cambia { animation: iv-pop .5s cubic-bezier(.3, 1.5, .5, 1) both; }
 /* pantallas del concesionario */
 .cel-nueva { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 54px; margin: 4px 0 14px; border: 0; border-radius: 12px; background: var(--rojo); font: 600 13px var(--fuente-texto); letter-spacing: .04em; text-transform: uppercase; color: #fff; cursor: pointer; box-shadow: 0 10px 18px -10px rgba(200, 50, 20, .7); transition: transform .2s ease; }
@@ -348,7 +356,7 @@
 
 /* ---------- Beneficios (al cerrar el reclamo) ---------- */
 .iv-beneficios { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.iv-beneficios span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: rgba(76, 149, 108, .12); font-size: 13px; font-weight: 500; color: #33774F; animation: iv-pop .5s cubic-bezier(.3, 1.4, .5, 1) both; }
+.iv-beneficios span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--blanco); font-size: 13px; font-weight: 500; color: #33774F; animation: iv-pop .5s cubic-bezier(.3, 1.4, .5, 1) both; }
 .iv-beneficios span:nth-child(2) { animation-delay: .1s; }
 .iv-beneficios span:nth-child(3) { animation-delay: .2s; }
 .iv-beneficios span:nth-child(4) { animation-delay: .3s; }
