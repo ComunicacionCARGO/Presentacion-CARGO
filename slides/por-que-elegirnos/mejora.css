@@ -258,21 +258,29 @@ body.capitulo-abierto .volver, body.capitulo-abierto .sello { opacity: 0; pointe
 /* Templo copiado del diseño de la persona: el SVG está en las medidas de su imagen (1171 × 631) y se
    agranda 1,2; el templo (x 154–1028, y 103–557 de la imagen) queda centrado en el área (x 736). */
 .pi-nota { position: absolute; right: 0; bottom: 4px; width: 210px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.5; text-align: right; color: var(--fg2); --i: 3; }
-.templo { position: absolute; left: 26.8px; top: -115.6px; width: 1171px; height: 631px; transform: scale(1.2); transform-origin: 0 0; pointer-events: none; --i: 1; }
-.tp-svg { display: block; width: 1171px; height: 631px; overflow: visible; }
-.tp-cuerpo, .tp-forma { fill: #fff; }
-.tp-col { pointer-events: bounding-box; cursor: default; }
-.tp-forma { transition: fill .3s ease; }
-.tp-ico { fill: var(--rojo); overflow: visible; }
-.tp-ico g { transition: fill .3s ease; }
+/* Pieza de vidrio como los mapas (templo.js): resplandor y sombra detrás, espesor apilado, cara clara
+   con brillo que se desliza con el mouse; todo se inclina un poco hacia el cursor (--rx, --ry). */
+.templo {
+  /* agrandado 1,2 desde el centro del templo (591, 330): left y top ya lo compensan
+     (antes, con origen 0 0, era left 26,8 y top −115,6) */
+  position: absolute; left: 145px; top: -49.6px; width: 1171px; height: 631px;
+  transform: scale(1.2) perspective(1800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-origin: 591px 330px;
+  pointer-events: none;
+  --i: 1;
+}
+.tp-halo, .tp-sombra, .tp-svg { position: absolute; left: 0; top: 0; width: 1171px; height: 631px; overflow: visible; }
+.tp-halo, .tp-sombra { will-change: translate; }
+.tp-alzado-cara { fill: var(--rojo); }
+.tp-toque { fill: transparent; pointer-events: all; cursor: default; }
+.tp-ico { fill: var(--rojo); overflow: visible; transition: fill .3s ease; }
+.tp-col.alzada .tp-ico { fill: var(--blanco); }
 /* nombre: aparece en la base al pasar el cursor por la columna */
-.tp-nombre { font: 500 15px var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; text-anchor: middle; fill: var(--gris); opacity: 0; transition: opacity .3s ease; }
-.tp-col:hover .tp-forma { fill: var(--rojo); }
-.tp-col:hover .tp-ico { fill: var(--blanco); }
-.tp-col:hover .tp-nombre { opacity: 1; }
-/* las columnas entran de a una */
-.cap-sec .tp-col { opacity: 0; translate: 0 14px; transition: opacity .5s ease, translate .7s cubic-bezier(.2, .8, .2, 1); }
-.cap-sec.visible .tp-col { opacity: 1; translate: 0 0; transition-delay: calc(.2s + var(--i) * .06s); }
+.tp-nombre { font: 500 15px var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; text-anchor: middle; fill: var(--gris); opacity: 0; transition: opacity .3s ease; pointer-events: none; }
+.tp-col.alzada .tp-nombre { opacity: 1; }
+/* los íconos aparecen de a uno */
+.cap-sec .tp-ico-mov { opacity: 0; transition: opacity .5s ease; }
+.cap-sec.visible .tp-ico-mov { opacity: 1; transition-delay: calc(.45s + var(--i) * .07s); }
 
 /* ----- Capacitaciones 1: #Exp Aprende ----- */
 .ap-izq { position: absolute; left: 0; top: 16px; width: 560px; }
