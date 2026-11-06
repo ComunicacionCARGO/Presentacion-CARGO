@@ -314,6 +314,7 @@
   let frente = 0;         // carta más cercana al frente
   let objetivo = null;    // giro al que se dirige (teclado, rueda, cursor)
   let pausaHasta = 0;
+  let inercia = 0;        // giro suelto después de arrastrar (grados por segundo; 0 = nada)
   let abriendo = false;
   let listaDesde = 0;     // momento en que terminó de entrar la página
   let mx = 0, my = 0, px = 0, py = 0;
@@ -335,6 +336,7 @@
 
   // Lleva la carta i al frente del carrusel
   function centrar(i) {
+    inercia = 0;
     objetivo = giro + normalizar(i * paso - giro);
   }
 
@@ -397,6 +399,7 @@
   addEventListener('wheel', (e) => {
     e.preventDefault();
     if (abriendo || !N) return;
+    inercia = 0;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1);
     if (!d) return;
     activar(-1);
@@ -431,6 +434,9 @@
   // debajo (lo resuelve el carrusel: como las cartas giran, el clic del navegador a veces se perdía).
   // Después de arrastrar, el clic que dispara el navegador al soltar no abre nada.
   const GIRO_POR_PX = .15;                      // grados por px del escenario (radio 310 con perspectiva)
+  // Inercia al soltar (como el scroll de un celular): sigue girando con la velocidad del gesto, se frena
+  // sola (FRENO) y termina acomodada en una carta. Tope: INERCIA_MAX grados por segundo.
+  const INERCIA_MAX = 420, FRENO = 2.4;
   let sinClicHasta = 0;
   cartas.forEach((ca, i) => {
     ca.a.addEventListener('click', (e) => {
@@ -448,7 +454,8 @@
     if (!e.isPrimary || abriendo || !N) return;
     const tactil = e.pointerType === 'touch';
     if (!tactil && e.button !== 0) return;
-    dedo = { x: e.clientX, y: e.clientY, tactil, carta: cartaEn(e.target), giro0: giroActual(), girando: false };
+    inercia = 0;                                // si venía girando suelto, lo agarra
+    dedo = { x: e.clientX, y: e.clientY, tactil, carta: cartaEn(e.target), giro0: giroActual(), girando: false, v: 0, tv: performance.now() };
     if (tactil) {
       activar(-1);
       centrando = false;
@@ -471,9 +478,14 @@
       document.body.classList.add('arrastrando');
       return;
     }
-    pausaHasta = performance.now() + 5000;
+    const ahora = performance.now(), antes = giro;
+    pausaHasta = ahora + 5000;
     objetivo = dedo.giro0 + (e.clientX - dedo.x) / escalaPortada() * GIRO_POR_PX;
     giro = objetivo;                            // sin demora: acompaña al gesto
+    // velocidad del gesto (grados por segundo), suavizada
+    const dt = Math.max(1, ahora - dedo.tv);
+    dedo.v = dedo.v * .55 + ((giro - antes) / dt * 1000) * .45;
+    dedo.tv = ahora;
   });
   function soltarCarrusel(e) {
     if (!dedo) return;
@@ -482,6 +494,12 @@
     if (d.girando) {
       sinClicHasta = performance.now() + 450;
       pausaHasta = performance.now() + 5000;
+      // soltado con impulso (se movía hasta recién): sigue girando solo un ratito
+      if (performance.now() - d.tv < 90 && Math.abs(d.v) > 60) {
+        inercia = Math.max(-INERCIA_MAX, Math.min(INERCIA_MAX, d.v));
+        objetivo = null;
+        return;
+      }
       const fin = giroActual(), movido = fin - d.giro0;
       objetivo = (Math.abs(movido) < paso * .12 ? Math.round(fin / paso)
         : movido < 0 ? Math.floor(fin / paso) : Math.ceil(fin / paso)) * paso;
@@ -498,6 +516,7 @@
 
   // ---------- Teclado ----------
   function enfocar(i) {
+    inercia = 0;
     i = ((i % N) + N) % N;
     activar(-1);
     centrando = false;
@@ -772,7 +791,17 @@
     const dt = Math.min(.05, (t - ultimo) / 1000);
     ultimo = t;
 
-    if (objetivo !== null) {
+    if (inercia) {
+      // sigue con el impulso del gesto y se va frenando; ya despacio, se acomoda en la carta siguiente
+      giro += inercia * dt;
+      inercia *= Math.exp(-dt * FRENO);
+      vel = 0;
+      pausaHasta = Math.max(pausaHasta, t + 4000);
+      if (Math.abs(inercia) < 45) {
+        objetivo = (inercia > 0 ? Math.ceil(giro / paso) : Math.floor(giro / paso)) * paso;
+        inercia = 0;
+      }
+    } else if (objetivo !== null) {
       const d = objetivo - giro;
       giro += d * Math.min(1, dt * 5);
       vel = 0;
