@@ -288,6 +288,20 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       - cierre: textos del final, los beneficios y el botón "Simular otro
         reclamo".
     Los horarios, números y cantidades son de ejemplo: es una simulación.
+  • ventajas (pantalla "Ventajas y OPORTUNIDADES", después de la simulación):
+      - antetitulo, titulo, bajada y botonTableros;
+      - items: las seis columnas. Cada una tiene titulo, texto, icono (ruta,
+        escudo, barras, arbol, ciclo o cabeza), una "lista" opcional de
+        renglones y irATableros: true si lleva el botón que baja a los tableros.
+  • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE"):
+      - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
+      - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
+        porcentaje: true si es un %) y los meses (mes, kg y otd);
+      - inversa: textos de la pestaña y las provincias (corto, nombre,
+        enTiempo y demorado). El cumplimiento y el número del medidor se
+        calculan solos con las provincias.
+    OJO: los números de los tableros se leyeron de capturas; las provincias
+    son de ejemplo. Conviene reemplazarlos por los reales.
 MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 --------------------------------------------------------------
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:

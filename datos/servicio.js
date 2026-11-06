@@ -200,5 +200,101 @@ window.SERVICIO = {
       beneficios: ["Trazabilidad total", "Respuesta ágil", "Menos pérdidas", "Autogestión del concesionario"],
       boton: "Simular otro reclamo"
     }
+  },
+
+  // ---------- Ventajas y oportunidades del software de gestión (después de la simulación) ----------
+  // Seis columnas: al pasar el cursor (o tocar) se abre una y muestra su texto.
+  // icono: ruta, escudo, barras, arbol, ciclo, cabeza
+  // lista (opcional): renglones que van debajo del texto
+  // irATableros: true → la columna lleva un botón que baja a los tableros
+  ventajas: {
+    antetitulo: "Ventajas y",
+    titulo: "OPORTUNIDADES",
+    bajada: "Lo que nuestro **software de gestión** suma a la logística de {cliente}.",
+    botonTableros: "Ver los tableros",
+    items: [
+      { titulo: "Monitoreo en tiempo real", icono: "ruta",
+        texto: "Sistema de **tracking web** adaptado a las necesidades del cliente, que permite **visualizar en línea el estado de los envíos** con información detallada y actualizada." },
+      { titulo: "Transparencia y seguridad", icono: "escudo",
+        texto: "El cliente tiene **disponibilidad inmediata las 24 hs** para acceder a su **archivo en la web**. También puede ver:",
+        lista: ["Geoposicionamiento", "Fecha y hora de la transacción", "Participantes involucrados"] },
+      { titulo: "Trazabilidad", icono: "barras", irATableros: true,
+        texto: "Los **tableros de indicadores** permiten medir resultados, detectar desvíos, realizar seguimiento en tiempo real y aplicar correcciones rápidamente." },
+      { titulo: "Aporte a la sustentabilidad", icono: "arbol",
+        texto: "Gracias a la **digitalización**, reducimos considerablemente el **consumo de papel**." },
+      { titulo: "Eficiencia logística", icono: "ciclo",
+        texto: "La **automatización** y el **seguimiento en línea** optimizan los tiempos y procesos, reduciendo errores y costos operativos." },
+      { titulo: "Servicio customizado", icono: "cabeza",
+        texto: "El sistema está **customizado** para el servicio de **repuestos**, completamente **integrado** con las operaciones logísticas, con una **visualización personalizada** según los requerimientos de {cliente}." }
+    ]
+  },
+
+  // ---------- Tableros de Business Intelligence ----------
+  // OJO: los números se leyeron de capturas de los tableros (algunos se ven mal): verificarlos.
+  // Las provincias de "Logística inversa" son de EJEMPLO (la captura no se lee).
+  tableros: {
+    antetitulo: "Tableros de",
+    titulo: "BUSINESS INTELLIGENCE",
+    bajada: "Resumen de la situación de las entregas: desde un **paneo general** hasta el **desglose por provincias y concesionarios**.",
+    nota: "Valores de referencia de nuestros tableros",
+    actualizado: "Actualizado 22/07/2025 · 06:04",
+    entregas: {
+      pestana: "Entregas a concesionarios",
+      titulo: "Entregas a concesionarios",
+      indicadores: [
+        { nombre: "Cantidad ADD", valor: 114863 },
+        { nombre: "Cantidad ADD on time", valor: 108889 },
+        { nombre: "OTD", valor: 98.12, porcentaje: true }
+      ],
+      graficoTitulo: "OTD por mes",
+      // mes, kilos distribuidos y OTD (%) de cada mes
+      meses: [
+        { mes: "Enero", kg: 183862, otd: 95.08 },
+        { mes: "Febrero", kg: 234050, otd: 94.70 },
+        { mes: "Marzo", kg: 204188, otd: 95.23 },
+        { mes: "Abril", kg: 199154, otd: 95.28 },
+        { mes: "Mayo", kg: 282470, otd: 95.62 },
+        { mes: "Junio", kg: 220178, otd: 95.20 },
+        { mes: "Julio", kg: 98830, otd: 95.67 }
+      ]
+    },
+    inversa: {
+      pestana: "Logística inversa",
+      titulo: "Resultados de logística inversa",
+      cumplimiento: "Cumplimiento",
+      enTiempo: "En tiempo",
+      demorado: "Demorado",
+      solicitudes: "Solicitudes de retiro en tiempo",
+      graficoTitulo: "Estados por provincia",
+      todas: "Todas las provincias",
+      ayuda: "Tocá una barra para ver esa provincia",
+      // provincia (nombre corto y completo), retiros en tiempo y demorados — EJEMPLO
+      provincias: [
+        { corto: "BA", nombre: "Buenos Aires", enTiempo: 88, demorado: 1 },
+        { corto: "CABA", nombre: "Ciudad de Buenos Aires", enTiempo: 36, demorado: 1 },
+        { corto: "CBA", nombre: "Córdoba", enTiempo: 30, demorado: 0 },
+        { corto: "SF", nombre: "Santa Fe", enTiempo: 21, demorado: 1 },
+        { corto: "MZA", nombre: "Mendoza", enTiempo: 18, demorado: 0 },
+        { corto: "TUC", nombre: "Tucumán", enTiempo: 16, demorado: 1 },
+        { corto: "ER", nombre: "Entre Ríos", enTiempo: 13, demorado: 0 },
+        { corto: "NQN", nombre: "Neuquén", enTiempo: 11, demorado: 0 },
+        { corto: "SAL", nombre: "Salta", enTiempo: 10, demorado: 1 },
+        { corto: "CHA", nombre: "Chaco", enTiempo: 8, demorado: 0 },
+        { corto: "MIS", nombre: "Misiones", enTiempo: 7, demorado: 0 },
+        { corto: "COR", nombre: "Corrientes", enTiempo: 6, demorado: 0 },
+        { corto: "SJ", nombre: "San Juan", enTiempo: 6, demorado: 1 },
+        { corto: "RN", nombre: "Río Negro", enTiempo: 5, demorado: 0 },
+        { corto: "LP", nombre: "La Pampa", enTiempo: 4, demorado: 0 },
+        { corto: "SE", nombre: "Santiago del Estero", enTiempo: 4, demorado: 0 },
+        { corto: "JUJ", nombre: "Jujuy", enTiempo: 3, demorado: 0 },
+        { corto: "CHU", nombre: "Chubut", enTiempo: 3, demorado: 0 },
+        { corto: "SL", nombre: "San Luis", enTiempo: 3, demorado: 0 },
+        { corto: "CAT", nombre: "Catamarca", enTiempo: 2, demorado: 0 },
+        { corto: "FOR", nombre: "Formosa", enTiempo: 2, demorado: 0 },
+        { corto: "LR", nombre: "La Rioja", enTiempo: 2, demorado: 0 },
+        { corto: "SC", nombre: "Santa Cruz", enTiempo: 1, demorado: 0 },
+        { corto: "TDF", nombre: "Tierra del Fuego", enTiempo: 1, demorado: 0 }
+      ]
+    }
   }
 };

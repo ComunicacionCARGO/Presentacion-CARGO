@@ -5,10 +5,11 @@
    de la marca que pasan al crema del mapa. Medidas en px del escenario.
    ========================================================= */
 .sv-inv { color: var(--blanco); }
-.pista section.sv-inv { height: 991px; }   /* 900 + las franjas de abajo */
-/* rojo plano hasta y 900 (2 px más arriba para pisarse con el rojo del TMS, sin rendija) */
+.pista section.sv-inv { height: 900px; }
+/* rojo plano (2 px más arriba para pisarse con el rojo del TMS, sin rendija) */
 .sv-inv .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
-/* Transición al mapa: hueco crema, franja roja, hueco, franja gris (34,6 y 10,8 como en toda la presentación) */
+/* Transición al mapa: hueco crema, franja roja, hueco, franja gris (34,6 y 10,8 como en toda la presentación).
+   Va al final de la última sección roja (hoy, los tableros: .sv-bi) */
 .iv-franjas {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));

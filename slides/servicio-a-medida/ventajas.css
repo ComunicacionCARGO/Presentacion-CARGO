@@ -1,0 +1,156 @@
+/* =========================================================
+   VENTAJAS Y OPORTUNIDADES + TABLEROS DE BI (ventajas.js)
+   Siguen el rojo de la logística inversa; los tableros terminan en las
+   franjas que pasan al mapa. Medidas en px del escenario de 1600 × 900.
+   ========================================================= */
+.sv-ven, .sv-bi { color: var(--blanco); }
+.sv-ven ul, .sv-bi ul { list-style: none; margin: 0; padding: 0; }
+.sv-ven h2, .sv-ven h3, .sv-ven p, .sv-bi h2, .sv-bi p { margin: 0; }
+.sv-ven strong, .sv-bi strong { font-weight: 600; }
+/* rojo plano, 2 px más arriba para pisarse con la sección anterior (sin rendija) */
+.sv-ven .sv-fondo, .sv-bi .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
+.pista section.sv-bi { height: 991px; }   /* 900 + las franjas hacia el mapa (.iv-franjas, en inversa.css) */
+.sv-ven .ent, .sv-bi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-ven.visible .ent, .sv-bi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
+
+/* ---------- Ventajas y oportunidades ---------- */
+.vn-cab { position: absolute; left: 64px; top: 84px; width: 1100px; }
+.vn-ante { font-size: 36px; font-weight: 300; line-height: 1; }
+.vn-titulo { margin-top: 2px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
+.vn-bajada { margin-top: 16px; font-size: 18px; font-weight: 300; color: rgba(255, 251, 243, .9); }
+.vn-bajada strong { color: var(--blanco); }
+.vn-cols { position: absolute; left: 64px; top: 296px; width: 1472px; height: 524px; display: flex; gap: 14px; }
+.vn-col {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 26px 24px;
+  border-radius: 22px;
+  background: rgba(255, 251, 243, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .22);
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  transition: flex-grow .65s cubic-bezier(.2, .8, .2, 1), background .4s ease, box-shadow .4s ease, color .4s ease;
+}
+.vn-col:hover:not(.abierta) { background: rgba(255, 251, 243, .17); }
+.vn-col.abierta { flex-grow: 2.9; background: var(--blanco); color: var(--gris); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); cursor: default; }
+.vn-num { display: block; font: 500 15px var(--fuente-titulo); letter-spacing: .14em; opacity: .7; }
+.vn-col.abierta .vn-num { color: var(--rojo); opacity: 1; }
+.vn-ico { display: block; width: 46px; height: 46px; margin-top: 20px; fill: var(--blanco); transition: fill .4s ease, scale .5s cubic-bezier(.3, 1.5, .5, 1); }
+.vn-col.abierta .vn-ico { fill: var(--rojo); scale: 1.08; }
+.vn-nombre { position: relative; margin-top: 18px; font: 700 25px/1.08 var(--fuente-titulo); transition: color .4s ease; }
+.vn-col.abierta .vn-nombre { color: var(--rojo); font-size: 32px; }
+/* el texto tiene ancho fijo (no se reacomoda mientras la columna se abre) y aparece cuando ya se abrió */
+.vn-cuerpo { position: relative; width: 410px; margin-top: 18px; opacity: 0; translate: 0 10px; transition: opacity .25s ease, translate .25s ease; pointer-events: none; }
+.vn-col.abierta .vn-cuerpo { opacity: 1; translate: 0 0; transition: opacity .5s ease .3s, translate .6s cubic-bezier(.2, .8, .2, 1) .3s; pointer-events: auto; }
+.vn-cuerpo p { font-size: 18px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .85); }
+.vn-cuerpo strong { color: var(--gris); }
+.vn-lista { margin-top: 14px !important; }
+.vn-lista li { position: relative; padding-left: 20px; margin-top: 6px; font-size: 16px; font-weight: 600; }
+.vn-lista li::before { content: ""; position: absolute; left: 0; top: .45em; width: 9px; height: 9px; border-radius: 50%; background: var(--rojo); }
+.vn-ir { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; height: 46px; padding: 0 20px 0 22px; border: 0; border-radius: 999px; background: var(--rojo); font: 500 16px var(--fuente-titulo); letter-spacing: .1em; text-transform: uppercase; color: var(--blanco); cursor: pointer; transition: translate .3s ease; }
+.vn-ir svg { width: 18px; height: 18px; fill: currentColor; }
+.vn-ir:hover { translate: 0 -2px; }
+/* ícono grande de fondo, como en la diapositiva */
+.vn-fondo-ico { position: absolute; right: -34px; bottom: -34px; width: 230px; height: 230px; fill: var(--blanco); opacity: .1; transition: fill .4s ease, opacity .4s ease, rotate .8s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.vn-col.abierta .vn-fondo-ico { fill: var(--rojo); opacity: .09; rotate: -8deg; }
+
+/* ---------- Tableros de Business Intelligence ---------- */
+.bi-izq { position: absolute; left: 64px; top: 84px; width: 410px; }
+.bi-ante { font-size: 36px; font-weight: 300; line-height: 1; }
+.bi-titulo { margin-top: 4px; font: 700 62px/.98 var(--fuente-titulo); letter-spacing: .01em; }
+.bi-bajada { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .9); }
+.bi-bajada strong { color: var(--blanco); }
+.bi-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 36px; }
+.bi-tabs button {
+  display: flex; align-items: center; gap: 14px;
+  height: 64px; padding: 0 22px;
+  border: 0; border-radius: 16px;
+  background: rgba(255, 251, 243, .12); box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .25);
+  font: 500 19px var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: left; color: var(--blanco);
+  cursor: pointer; transition: background .3s ease, color .3s ease, translate .3s ease;
+}
+.bi-tabs button svg { flex: none; width: 24px; height: 24px; fill: currentColor; }
+.bi-tabs button:hover:not(.activo) { background: rgba(255, 251, 243, .2); translate: 4px 0; }
+.bi-tabs button.activo { background: var(--blanco); color: var(--gris); box-shadow: 0 20px 34px -18px rgba(100, 15, 0, .7); }
+.bi-tabs button.activo svg { fill: var(--rojo); }
+.bi-nota { margin-top: 22px; font-size: 13px; font-style: italic; font-weight: 300; color: rgba(255, 251, 243, .75); }
+
+.bi-ventana { position: absolute; left: 520px; top: 84px; width: 1016px; height: 736px; border-radius: 20px; background: var(--blanco); color: var(--gris); box-shadow: 0 40px 70px -36px rgba(100, 15, 0, .75); overflow: hidden; }
+.bi-barra { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; background: var(--gris); color: var(--blanco); }
+.bi-barra img { height: 30px; padding: 5px 10px; border-radius: 8px; background: var(--blanco); }
+.bi-vtitulo { font-size: 17px; font-weight: 600; letter-spacing: .02em; }
+.bi-barra span { margin-left: auto; font-size: 12px; opacity: .7; }
+.bi-cuerpo { position: absolute; left: 0; right: 0; top: 58px; bottom: 0; padding: 24px 30px; }
+.bi-cuerpo.entra { animation: bi-entra .5s cubic-bezier(.2, .8, .2, 1); }
+@keyframes bi-entra { from { opacity: 0; translate: 0 14px; } }
+
+.bi-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.bi-kpis.dos { grid-template-columns: 1fr 1fr; }
+.bi-kpi { position: relative; padding: 18px 22px; border-radius: 14px; background: #fff; box-shadow: 0 10px 24px -18px rgba(58, 58, 58, .45), inset 0 0 0 1px rgba(58, 58, 58, .06); animation: bi-entra .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * .08s); }
+.bi-kpi b { display: block; font: 700 46px/1 var(--fuente-titulo); letter-spacing: .01em; }
+.bi-kpi span { display: block; margin-top: 8px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+.bi-kpi.destacado b { color: var(--rojo); }
+.bi-graf { margin-top: 18px; padding: 16px 20px 10px; border-radius: 14px; background: #fff; box-shadow: 0 10px 24px -18px rgba(58, 58, 58, .45), inset 0 0 0 1px rgba(58, 58, 58, .06); }
+.bi-gtit { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rojo); }
+.bi-graf svg { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
+.bi-guias line { stroke: rgba(58, 58, 58, .1); stroke-width: 1; }
+.bi-guias text { font: 500 11px var(--fuente-texto); fill: rgba(58, 58, 58, .5); text-anchor: end; }
+
+/* OTD por mes */
+.bi-area { fill: rgba(239, 69, 41, .1); animation: bi-aparece .9s ease .4s both; }
+@keyframes bi-aparece { from { opacity: 0; } }
+.bi-trazo { fill: none; stroke: var(--rojo); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 1; animation: bi-traza 1.2s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes bi-traza { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.bi-punto { cursor: default; }
+.bi-punto rect { fill: transparent; }
+.bi-punto circle { fill: #fff; stroke: var(--rojo); stroke-width: 3; transform-box: fill-box; transform-origin: center; transition: scale .3s cubic-bezier(.3, 1.5, .5, 1), fill .3s ease; animation: bi-aparece .4s ease both; animation-delay: calc(.5s + var(--i) * .1s); }
+.bi-punto.activo circle { scale: 1.5; fill: var(--rojo); }
+.bi-mes { font: 500 13px var(--fuente-texto); fill: rgba(58, 58, 58, .7); text-anchor: middle; }
+.bi-val { font: 600 12px var(--fuente-texto); fill: var(--gris); text-anchor: middle; opacity: .75; transition: opacity .3s ease; animation: bi-aparece .4s ease both; animation-delay: calc(.6s + var(--i) * .1s); }
+.bi-punto.activo .bi-val { opacity: 1; }
+
+/* Logística inversa */
+.bi-inv { display: grid; grid-template-columns: 200px 1fr; gap: 22px; }
+.bi-lado { padding-top: 2px; }
+.bi-et { margin-top: 18px; margin-bottom: 8px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
+.bi-et:first-child { margin-top: 0; }
+.bi-prov, .bi-ley { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 12px; border: 0; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px rgba(58, 58, 58, .1); font: 500 14px var(--fuente-texto); text-align: left; color: var(--gris); cursor: pointer; transition: background .3s ease, color .3s ease, opacity .3s ease; }
+.bi-prov i { font-style: normal; font-size: 18px; line-height: 1; }
+.bi-prov.elegida { background: var(--rojo); color: var(--blanco); box-shadow: none; }
+.bi-ley { justify-content: flex-start; margin-bottom: 8px; opacity: .45; }
+.bi-ley.activo { opacity: 1; }
+.bi-ley i { width: 12px; height: 12px; border-radius: 3px; }
+.bi-ley.tiempo i, .bi-tip i.tiempo { background: var(--verde); }
+.bi-ley.demora i, .bi-tip i.demora { background: var(--ambar, #F4A127); }
+.bi-ayuda { margin-top: 22px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .6); }
+.bi-medidor { text-align: center; padding-top: 12px; }
+.bi-medidor svg { display: block; width: 170px; height: auto; margin: 0 auto; }
+.bi-m-fondo, .bi-m-valor { fill: none; stroke-width: 18; stroke-linecap: round; }
+.bi-m-fondo { stroke: #E4E8EB; }
+.bi-m-valor { stroke: var(--verde); stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.2s cubic-bezier(.2, .8, .2, 1); }
+.bi-medidor b { position: absolute; left: 0; right: 0; top: 66px; font-size: 32px; }
+.bi-medidor span { margin-top: 4px; }
+.bi-kpis.dos .destacado { display: flex; flex-direction: column; justify-content: center; }
+.bi-kpis.dos .destacado b { font-size: 60px; }
+.bi-zona { fill: transparent; cursor: pointer; }
+.bi-col.activo .bi-zona { fill: rgba(58, 58, 58, .05); }
+.bi-b-tiempo { fill: var(--verde); }
+.bi-b-demora { fill: #F4A127; }
+.bi-b-tiempo, .bi-b-demora { transform-box: fill-box; transform-origin: 50% 100%; animation: bi-crece .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.15s + var(--i) * .025s); transition: opacity .3s ease; pointer-events: none; }
+@keyframes bi-crece { from { scale: 1 0; } }
+.bi-b-demora { animation-name: bi-aparece; animation-delay: calc(.6s + var(--i) * .025s); }
+.bi-cnt { font: 600 11px var(--fuente-texto); fill: var(--gris); text-anchor: middle; pointer-events: none; animation: bi-aparece .4s ease both; animation-delay: calc(.7s + var(--i) * .025s); }
+.bi-pr { font: 500 9.5px var(--fuente-texto); fill: rgba(58, 58, 58, .6); text-anchor: middle; pointer-events: none; }
+.bi-col { transition: opacity .35s ease; }
+.bi-col.apagada { opacity: .22; }
+.bi-barras.sin-tiempo .bi-b-tiempo, .bi-barras.sin-demora .bi-b-demora { opacity: .12; }
+
+/* globito con el detalle */
+.bi-tip { position: absolute; left: 0; top: 0; z-index: 5; display: flex; flex-direction: column; gap: 3px; padding: 9px 13px; border-radius: 10px; background: var(--gris); color: var(--blanco); font-size: 12.5px; white-space: nowrap; translate: -50% calc(-100% - 14px); opacity: 0; transition: opacity .2s ease; pointer-events: none; box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .5); }
+.bi-tip.visible { opacity: 1; }
+.bi-tip b { font: 600 13px var(--fuente-texto); }
+.bi-tip span { display: flex; align-items: center; gap: 6px; opacity: .9; }
+.bi-tip i { width: 9px; height: 9px; border-radius: 2px; }
+.bi-tip::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 12px; height: 12px; translate: -50% 0; rotate: 45deg; background: var(--gris); border-radius: 2px; }
