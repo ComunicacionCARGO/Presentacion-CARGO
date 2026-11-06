@@ -112,8 +112,11 @@
     `<div class="iv-insp"><p>Inspección</p><ul>${DESTINOS.map((d) => `<li><i></i>${t(d)}</li>`).join('')}</ul></div>` +
     '<div class="iv-analisis"></div></div>' +
     '<div class="iv-relato ent" style="--i:4"><p class="iv-num"></p><h3 class="iv-rel-titulo"></h3><p class="iv-rel-texto"></p><div class="iv-acciones"></div></div>' +
-    '<div class="iv-cel ent" style="--i:5"><p class="cel-quien"></p><div class="cel-marco"><div class="cel-barra"><span class="cel-hora">9:41</span><span class="cel-bat"><i></i></span></div>' +
-    `<div class="cel-cab"><span class="cel-menu"></span><b>${esc(I.app || '')}</b></div><div class="cel-cuerpo"></div><i class="cel-home"></i></div></div>` +
+    // celular en la mano (mockup de la persona, mano.png, con la pantalla hueca): la app va detrás y el marco la recorta
+    '<div class="iv-cel ent" style="--i:5"><div class="cel-foto">' +
+    '<div class="cel-marco"><div class="cel-barra"><span class="cel-hora">9:41</span><span class="cel-bat"><i></i></span></div>' +
+    `<div class="cel-cab"><span class="cel-menu"></span><b>${esc(I.app || '')}</b><p class="cel-quien"></p></div><div class="cel-cuerpo"></div></div>` +
+    '<img class="cel-mano" src="../../img/logistica-inversa/mano.png" alt="" draggable="false"></div></div>' +
     '<div class="iv-mails"></div>' +
     `<div class="iv-mano">${ICONO_MANO}</div><i class="iv-dato"></i>`);
 
