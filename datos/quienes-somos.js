@@ -79,7 +79,8 @@ window.QUIENES_SOMOS = {
       foto: "",
       dibujo: "contenedor",
       hitos: [
-        { anio: "2025", texto: "En diciembre, Grupo CARGO cumple **45 años** de trayectoria." }
+        { anio: "2025", texto: "En diciembre, Grupo CARGO cumple **45 años** de trayectoria." },
+        { anio: "2026", texto: "Sumamos **dos nuevos clientes**: abrimos un nuevo **depósito de consumo masivo** dedicado a golosinas e ingresamos al rubro de **línea blanca.**" }
       ]
     }
   ],
