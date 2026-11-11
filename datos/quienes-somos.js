@@ -21,6 +21,9 @@ window.QUIENES_SOMOS = {
 
   /* Cada año de la línea de tiempo es un bloque { ... }.
      anio:   el año que aparece en la línea.
+     ilustracion: dibujo propio del año (lápiz sobre fondo blanco), guardado
+             en la carpeta img/linea-de-tiempo. Se muestra tal cual y el
+             blanco se funde con el fondo. Si está, se usa en lugar de foto y dibujo.
      foto:   imagen del año, guardada en la carpeta img/linea-de-tiempo
              (por ejemplo "img/linea-de-tiempo/1980.jpg"). Se muestra
              automáticamente con estilo de grabado en blanco y negro.
@@ -40,6 +43,7 @@ window.QUIENES_SOMOS = {
   lineaDeTiempo: [
     {
       anio: "1980",
+      ilustracion: "img/linea-de-tiempo/1980-nacimiento-cargo.jpg",
       foto: "",
       dibujo: "camion-clasico",
       hitos: [
@@ -48,6 +52,7 @@ window.QUIENES_SOMOS = {
     },
     {
       anio: "1990",
+      ilustracion: "img/linea-de-tiempo/1990-llegada-a-brasil.jpg",
       foto: "",
       dibujo: "fabrica",
       hitos: [
@@ -58,6 +63,7 @@ window.QUIENES_SOMOS = {
     },
     {
       anio: "2000",
+      ilustracion: "img/linea-de-tiempo/2000-alimentos-y-bebidas.jpg",
       foto: "",
       dibujo: "alimentos",
       hitos: [
@@ -68,6 +74,7 @@ window.QUIENES_SOMOS = {
     },
     {
       anio: "2010",
+      ilustracion: "img/linea-de-tiempo/2010-planta-automotriz.jpg",
       foto: "",
       dibujo: "autoelevador",
       hitos: [
@@ -76,6 +83,7 @@ window.QUIENES_SOMOS = {
     },
     {
       anio: "2020",
+      ilustracion: "img/linea-de-tiempo/2020-georgalos.jpg",
       foto: "",
       dibujo: "contenedor",
       hitos: [

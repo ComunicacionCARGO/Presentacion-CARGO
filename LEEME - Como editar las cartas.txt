@@ -103,6 +103,12 @@ Línea de tiempo:
   • segundosPorAnio: si nadie toca la línea, pasa sola al año siguiente
     cada esa cantidad de segundos (del último vuelve al primero). Mover el
     mouse sobre ella o hacer clic reinicia la cuenta. 0 = no pasa sola.
+  • Las ilustraciones de cada año (dibujos a lápiz sobre fondo blanco) van en
+    la carpeta img\linea-de-tiempo y se escriben así:
+      ilustracion: "img/linea-de-tiempo/1980-nacimiento-cargo.jpg"
+    El blanco se funde solo con el fondo y el bloque rojo (modo multiplicar).
+    Conviene que no tengan blanco de sobra alrededor del dibujo. Si un año
+    tiene ilustracion, no se usan foto ni dibujo.
   • Las fotos van en la carpeta img\linea-de-tiempo y se escriben así:
       foto: "img/linea-de-tiempo/1980.jpg"
     Se muestran automáticamente como grabado en blanco y negro.

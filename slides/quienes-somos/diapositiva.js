@@ -152,6 +152,17 @@
       svg.innerHTML = window.GRABADOS[nombre];
       hitoFoto.appendChild(svg);
     };
+    if (a.ilustracion) {
+      // dibujo ya hecho (lápiz sobre blanco): se mezcla con el fondo en modo multiplicar
+      hitoFoto.classList.add('con-ilustracion');
+      const img = crear('img', 'ilustracion', hitoFoto);
+      img.alt = a.anio;
+      img.decoding = 'async';
+      img.src = '../../' + a.ilustracion;
+      img.onerror = () => { img.remove(); hitoFoto.classList.remove('con-ilustracion'); dibujo(); };
+      return;
+    }
+    hitoFoto.classList.remove('con-ilustracion');
     if (a.foto) {
       const img = crear('img', 'foto-grabada', hitoFoto);
       img.alt = a.anio;
