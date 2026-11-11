@@ -1,7 +1,7 @@
 /* =========================================================
    SERVICIO A MEDIDA — "¿Cómo lo hacemos?"
-   (diapositiva slides/servicio-a-medida: Milk run, Nuestro TMS y
-   Logística inversa, antes del mapa de distribución)
+   (diapositiva slides/servicio-a-medida: Nuestro TMS, Logística inversa,
+   Tableros y Ventajas, antes del mapa de distribución)
 
    Cómo editar:
    - Cambiá solo lo que está entre comillas.
@@ -20,43 +20,11 @@ window.SERVICIO = {
     sello: "Pensado para {cliente}",
     bajada: "Tres herramientas que trabajan juntas para que cada pieza esté **donde tiene que estar, cuando tiene que estar**.",
     partes: [
-      { titulo: "Milk run", texto: "Recolectamos en cada proveedor y abastecemos la planta en su ventana horaria." },
       { titulo: "Nuestro TMS", texto: "Gestión de carga e interfases con los sistemas de {cliente}." },
-      { titulo: "Logística inversa", texto: "Simulá un reclamo y mirá cómo lo resolvemos." }
+      { titulo: "Logística inversa", texto: "Simulá un reclamo y mirá cómo lo resolvemos." },
+      { titulo: "Tableros de BI", texto: "Indicadores de entregas y devoluciones, siempre a la vista." }
     ],
     ayuda: "Bajá para empezar"
-  },
-
-  // ---------- Milk run (se recorre con el scroll) ----------
-  milkRun: {
-    antetitulo: "Abastecimiento de planta",
-    titulo: "MILK RUN",
-    bajada: "Un circuito programado con la producción de {cliente}: el mismo camión lleva los embalajes vacíos, recorre varios proveedores y vuelve a planta con las piezas.",
-    incluyeTitulo: "El servicio incluye",
-    incluye: [
-      "Flota dedicada",
-      "Coordinación del servicio",
-      "Ruteo y planificación",
-      "Documentación de cada viaje",
-      "Gestión de embalajes vacíos",
-      "Seguimiento en línea",
-      "Monitoreo 24 × 7",
-      "Tablero de KPI"
-    ],
-    planta: "Planta {cliente}",
-    proveedores: ["Proveedor A", "Proveedor B", "Proveedor C"],
-    // Un paso por parada del circuito (son 6: el dibujo está pensado para esa cantidad)
-    pasos: [
-      { titulo: "Playa de vacíos", texto: "Los **embalajes vacíos** (racks y cajones) esperan en la playa de la planta.", dato: "Gestión de medios vacíos" },
-      { titulo: "Carga de medios", texto: "El camión se posiciona y carga los vacíos que va a dejar en cada proveedor.", dato: "Carga optimizada en 3D" },
-      { titulo: "Hoja de ruta", texto: "Con los volúmenes que los proveedores confirman por web **hasta las 15 h**, el TMS genera el día anterior la **hoja de ruta** y los remitos de embalajes.", dato: "TMS + ruteo optimizado" },
-      { titulo: "En viaje", texto: "Cada unidad tiene **seguimiento satelital**: el Centro de Monitoreo ve en línea cuándo entra y sale de cada proveedor.", dato: "Monitoreo 24 × 7" },
-      { titulo: "Proveedores", texto: "En cada proveedor descarga los vacíos y carga los **embalajes llenos**, según las tarjetas Kanban. Cada movimiento se confirma con handheld.", dato: "Kanban + handheld" },
-      { titulo: "Vuelta a planta", texto: "Las piezas llegan a la planta en su **ventana horaria** y la hoja de ruta se conforma en la web.", dato: "Tablero de KPI en línea" }
-    ],
-    vacios: "Vacíos",
-    llenos: "Llenos",
-    ayuda: "Bajá para recorrer el circuito"
   },
 
   // ---------- Nuestro TMS ----------

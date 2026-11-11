@@ -1,6 +1,6 @@
 /* =========================================================
    ¿CÓMO LO HACEMOS? — pantalla de entrada y funciones comunes
-   para milkrun.js, tms.js e inversa.js (window.SV).
+   para tms.js, inversa.js y ventajas.js (window.SV).
    Textos en datos/servicio.js (window.SERVICIO).
    ========================================================= */
 (function () {
@@ -29,9 +29,9 @@
   const escala = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--escala')) || 1;
 
   const ICONOS = {
-    milk: '<svg viewBox="0 0 24 24"><path d="M12 2.5a9.5 9.5 0 0 1 9.4 8h-2.6A7 7 0 0 0 6 8.2l2.3 1.3L2.5 12 2 5.6l1.9 1.1A9.5 9.5 0 0 1 12 2.5zM2.6 13.5h2.6A7 7 0 0 0 18 15.8l-2.3-1.3 5.8-2.5.5 6.4-1.9-1.1A9.5 9.5 0 0 1 2.6 13.5z"/><path d="M8 10h5v4.5H8zM13.6 11.4h1.7l1.2 1.4v1.7h-2.9z"/></svg>',
     tms: '<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 3.5h20v13.5H2zM4 5.5V15h16V5.5z"/><path d="M8 19h8v2H8zM5.8 9.6l1.2-1.2 1.3 1.3 2.8-2.8 1.2 1.2-4 4zM13 8h5v1.8h-5zM6 12.6h12v1.8H6z"/></svg>',
-    inversa: '<svg viewBox="0 0 24 24"><path d="M9.5 3.5 3 9l6.5 5.5V11H16a3.5 3.5 0 0 1 0 7h-4.5v2.6H16A6.1 6.1 0 0 0 16 8.4H9.5z"/></svg>'
+    inversa: '<svg viewBox="0 0 24 24"><path d="M9.5 3.5 3 9l6.5 5.5V11H16a3.5 3.5 0 0 1 0 7h-4.5v2.6H16A6.1 6.1 0 0 0 16 8.4H9.5z"/></svg>',
+    tableros: '<svg viewBox="0 0 24 24"><path d="M3 19.5h18v2H3zM4.5 12h3.6v6H4.5zM10.2 7.5h3.6V18h-3.6zM15.9 3h3.6v15h-3.6z"/></svg>'
   };
 
   window.SV = { S, cliente, $, esc, txt, crear, irA, escala, ICONOS };
@@ -40,8 +40,8 @@
   const C = S.como || {};
   const intro = $('.sv-intro');
   if (!intro) return;
-  const destinos = ['.sv-milk', '.sv-tms', '.sv-inv'];
-  const iconos = [ICONOS.milk, ICONOS.tms, ICONOS.inversa];
+  const destinos = ['.sv-tms', '.sv-inv', '.sv-bi'];
+  const iconos = [ICONOS.tms, ICONOS.inversa, ICONOS.tableros];
   intro.innerHTML = '<div class="sv-fondo"></div>' +
     `<div class="in-titulo ent" style="--i:0"><p class="in-sello"><i class="franjitas"></i>${txt(C.sello)}</p>` +
     `<span>${txt(C.antetitulo)}</span><b>${txt(C.titulo)}</b></div>` +

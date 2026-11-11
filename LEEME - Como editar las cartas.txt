@@ -258,16 +258,14 @@ Se edita en  datos\clientes.js  (con el Bloc de notas).
     blanco (se ven sobre el fondo rojo). Para cambiar uno, guardalo con el
     mismo nombre de archivo; para agregar uno, copiá un renglón con su coma.
   • El tamaño de cada logo se ajusta solo para que todos se vean parejos.
-¿CÓMO LO HACEMOS? ("Servicio a medida": Milk run, TMS y Logística inversa)
+¿CÓMO LO HACEMOS? ("Servicio a medida": TMS, Logística inversa, Tableros y Ventajas)
 --------------------------------------------------------------------------
 Se edita en  datos\servicio.js  (con el Bloc de notas).
   • cliente: el nombre del cliente ("FORD"). En los textos, donde dice {cliente}
     aparece ese nombre: si cambia el cliente, se cambia solo ahí.
-  • como: la pantalla de entrada (título, frase y las tres tarjetas).
-  • milkRun: título, texto, la lista "El servicio incluye", el nombre de la
-    planta y de los proveedores, y los 6 pasos del circuito (titulo, texto y
-    dato). El circuito está dibujado para 6 pasos: cambiá los textos, no la
-    cantidad.
+  • como: la pantalla de entrada (título, frase y las tres tarjetas, que
+    llevan en orden a Nuestro TMS, Logística inversa y Tableros: cambiá los
+    textos, no el orden).
   • tms: título y las dos demos.
       carga:      textos de la planchada y los indicadores (nombre y número
                   inicial; después cambian solos con la demo).

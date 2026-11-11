@@ -1,11 +1,10 @@
 /* =========================================================
-   ¿CÓMO LO HACEMOS? — entrada, Milk run y Nuestro TMS
-   (como.js, milkrun.js, tms.js; textos en datos/servicio.js).
+   ¿CÓMO LO HACEMOS? — entrada y Nuestro TMS
+   (como.js, tms.js; textos en datos/servicio.js).
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
-.pista section.sv-milk { height: 2500px; }   /* milkrun.js la ajusta: 900 + RECORRIDO */
-.sv-intro ul, .sv-milk ul, .sv-tms ul { list-style: none; }
-.sv-intro strong, .sv-milk strong, .sv-tms strong { font-weight: 600; }
+.sv-intro ul, .sv-tms ul { list-style: none; }
+.sv-intro strong, .sv-tms strong { font-weight: 600; }
 
 /* Fondo propio de cada sección, a todo el ancho de la ventana */
 .sv-fondo {
@@ -17,12 +16,12 @@
 }
 
 /* Entrada al aparecer (.visible): de abajo y de a uno */
-.sv-intro .ent, .sv-milk .ent, .sv-tms .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
-.sv-intro.visible .ent, .sv-milk.visible .ent, .sv-tms.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
+.sv-intro .ent, .sv-tms .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-intro.visible .ent, .sv-tms.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
 
 /* =========================================================
-   ENTRADA: ¿Cómo lo HACEMOS? — fondo rojo de la marca (abajo sigue en las
-   franjas del Milk run, por eso es rojo plano: sin costura)
+   ENTRADA: ¿Cómo lo HACEMOS? — fondo rojo plano de la marca (abajo sigue
+   el rojo del TMS, sin costura)
    ========================================================= */
 .sv-intro { color: var(--blanco); }
 .sv-intro .sv-fondo { top: calc(450px - 50vh / var(--escala, 1)); height: calc(450px + 50vh / var(--escala, 1)); background: var(--rojo); }
@@ -75,133 +74,14 @@
 .in-ayuda i { width: 12px; height: 12px; border-right: 2px solid var(--blanco); border-bottom: 2px solid var(--blanco); rotate: 45deg; animation: in-bajar 1.6s ease-in-out infinite; }
 @keyframes in-bajar { 50% { translate: 0 6px; } }
 
-/* =========================================================
-   MILK RUN — el rojo de la entrada sigue en las franjas (rojo, rojo, gris)
-   que cruzan arriba, bajan por el costado derecho y vuelven por abajo;
-   el camión va por la franja roja del medio (milkrun.js las dibuja hasta
-   los bordes de la ventana).
-   ========================================================= */
-.sv-milk .sv-fondo { background: var(--blanco); }
-.mr-fijo { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; will-change: translate; }
-
-/* Columna izquierda */
-.mr-izq { position: absolute; left: 64px; top: 188px; width: 470px; }
-.mr-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); white-space: nowrap; }
-.mr-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
-.mr-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .86); }
-.mr-sub { margin-top: 24px; font-size: 11.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
-.mr-incluye { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 12px; }
-.mr-incluye li { position: relative; padding-left: 20px; font-size: 14px; line-height: 1.35; color: rgba(58, 58, 58, .86); }
-.mr-incluye li::before { content: ""; position: absolute; left: 2px; top: .3em; width: 9px; height: 5px; border-left: 2px solid var(--rojo); border-bottom: 2px solid var(--rojo); rotate: -45deg; }
-.mr-progreso { margin-top: 30px; }
-.mr-progreso p { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
-.mr-rayas { --avance: 0; position: relative; display: flex; gap: 6px; margin-top: 12px; }
-.mr-rayas button { flex: 1; height: 20px; padding: 0; border: 0; background: none; cursor: pointer; }
-.mr-rayas button i { display: block; height: 4px; border-radius: 2px; background: rgba(58, 58, 58, .14); transition: background .3s ease, height .3s ease; }
-.mr-rayas button:hover i { background: rgba(58, 58, 58, .35); }
-.mr-rayas button.activa i { height: 6px; background: var(--rojo); }
-
-/* Franjas, marcas del camino y camión */
-.mr-svg { position: absolute; overflow: hidden; pointer-events: none; }
-.mr-f { fill: none; stroke-width: 34.6; }
-.mr-f.r { stroke: var(--rojo); }
-.mr-f.g { stroke: var(--gris); }
-/* línea punteada de ruta sobre la franja roja; lo recorrido queda en línea continua */
-.mr-marca { fill: none; stroke: var(--blanco); stroke-width: 2; stroke-dasharray: 10 12; opacity: .5; }
-.mr-hecho { fill: none; stroke: var(--blanco); stroke-width: 3; stroke-linecap: round; opacity: .95; }
-.mr-sombra { fill: rgba(90, 15, 0, .3); transform: translate(3px, 5px); }
-.mr-caja { fill: var(--blanco); stroke: var(--gris); stroke-width: 1.6; }
-.mr-cabina { fill: var(--gris); }
-.mr-vidrio { fill: #DCE7EC; opacity: .8; }
-.mr-slot { fill: transparent; stroke: transparent; stroke-width: 1.2; transition: fill .4s ease, stroke .4s ease; }
-.mr-slot.vacio { stroke: rgba(58, 58, 58, .55); stroke-dasharray: 2.2 1.6; }
-.mr-slot.lleno { fill: var(--rojo); stroke: var(--rojo); }
-.mr-camion-cuerpo { opacity: 0; transition: opacity .8s ease .4s; }
-.sv-milk.visible .mr-camion-cuerpo { opacity: 1; }
-
-/* Paradas: círculos blancos sobre la franja roja, con su nombre del lado de adentro */
-.mr-nodos { position: absolute; inset: 0; pointer-events: none; }
-.mr-nodo, .mr-prov { position: absolute; width: 0; height: 0; padding: 0; border: 0; background: none; font: inherit; color: var(--gris); }
-.mr-nodo { pointer-events: auto; cursor: pointer; }
-.mr-circulo {
-  position: absolute;
-  left: -23px;
-  top: -23px;
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--blanco);
-  box-shadow: 0 0 0 3px var(--rojo), 0 10px 20px -10px rgba(90, 15, 0, .6);
-  transition: background .4s ease, transform .5s cubic-bezier(.3, 1.4, .5, 1), box-shadow .4s ease;
-}
-.mr-circulo svg { width: 22px; height: 22px; fill: rgba(58, 58, 58, .4); transition: fill .4s ease; }
-.mr-nodo:hover .mr-circulo { transform: scale(1.08); }
-.mr-nodo.pasada .mr-circulo svg { fill: var(--rojo); }
-.mr-nodo.activa .mr-circulo { background: var(--gris); transform: scale(1.18); box-shadow: 0 0 0 3px var(--blanco), 0 0 0 9px rgba(255, 251, 243, .35), 0 14px 26px -10px rgba(90, 15, 0, .7); }
-.mr-nodo.activa .mr-circulo svg { fill: var(--blanco); }
-.mr-prov .mr-circulo { left: -16px; top: -16px; width: 32px; height: 32px; }
-.mr-prov .mr-circulo svg { width: 15px; height: 15px; }
-.mr-prov.pasada .mr-circulo svg { fill: var(--rojo); }
-.mr-etq { position: absolute; white-space: nowrap; font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1.3; color: rgba(58, 58, 58, .55); transition: color .3s ease; }
-.mr-etq b { margin-right: 6px; font-family: var(--fuente-titulo); font-weight: 500; letter-spacing: .04em; color: var(--rojo); }
-.mr-etq em { display: block; font-style: normal; font-family: var(--fuente-titulo); font-weight: 700; font-size: 15px; letter-spacing: .06em; color: var(--rojo); }
-.mr-nodo.activa .mr-etq, .mr-nodo.pasada .mr-etq, .mr-prov.pasada .mr-etq { color: var(--gris); }
-/* los nombres van del lado de adentro de las franjas (pasando la gris) */
-.etq-abajo .mr-etq { left: 0; top: 72px; translate: -50% 0; text-align: center; }
-.etq-arriba .mr-etq { left: 0; bottom: 72px; translate: -50% 0; text-align: center; }
-.etq-izq .mr-etq { right: 72px; top: 0; translate: 0 -50%; text-align: right; }
-.mr-nodo, .mr-prov { opacity: 0; transition: opacity .6s ease; }
-.sv-milk.visible .mr-nodo, .sv-milk.visible .mr-prov { opacity: 1; transition-delay: .5s; }
-/* Tarjeta del paso, en el centro del circuito */
-.mr-card {
-  position: absolute;
-  left: 690px;
-  top: 188px;       /* arriba y abajo alineada con el bloque del título (188–612) */
-  width: 610px;
-  height: 424px;
-  padding: 34px 40px;
-  border: 1px solid rgba(255, 255, 255, .95);
-  border-radius: 26px;
-  background: rgba(255, 255, 255, .7);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 34px 60px -38px rgba(120, 40, 20, .55), inset 0 1px 0 #fff;
-  opacity: 0;
-  translate: 0 20px;
-  transition: opacity .8s ease .3s, translate 1s cubic-bezier(.2, .8, .2, 1) .3s;
-}
-.sv-milk.visible .mr-card { opacity: 1; translate: 0 0; }
-.mr-paso { display: flex; align-items: baseline; gap: 8px; font-family: var(--fuente-titulo); }
-.mr-paso b { font-weight: 700; font-size: 58px; line-height: .9; color: var(--rojo); }
-.mr-paso span { font-weight: 500; font-size: 18px; letter-spacing: .06em; color: rgba(58, 58, 58, .4); }
-.mr-card-titulo { margin-top: 16px; font: 700 38px/1.05 var(--fuente-titulo); color: var(--gris); }
-.mr-card-texto { margin-top: 14px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .86); }
-.mr-dato { display: flex; align-items: center; gap: 10px; margin-top: 20px; font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); }
-.mr-card-cont.cambia > * { animation: mr-entrar .55s cubic-bezier(.2, .8, .2, 1) both; }
-.mr-card-cont.cambia > :nth-child(2) { animation-delay: .04s; }
-.mr-card-cont.cambia > :nth-child(3) { animation-delay: .08s; }
-.mr-card-cont.cambia > :nth-child(4) { animation-delay: .12s; }
+/* Animación de entrada de los textos que cambian (la usan el TMS y la logística inversa) */
 @keyframes mr-entrar { from { opacity: 0; translate: 0 10px; } }
-/* Embalajes que lleva el camión */
-.mr-medios { position: absolute; left: 40px; right: 40px; bottom: 26px; display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(58, 58, 58, .1); }
-.mr-medios-slots { display: grid; grid-template-columns: repeat(6, 26px); gap: 6px; }
-.mr-medios-slots i { height: 20px; border-radius: 4px; border: 1.5px solid transparent; transition: background .4s ease, border-color .4s ease; }
-.mr-medios-slots i:not(.vacio):not(.lleno) { border: 1.5px dashed rgba(58, 58, 58, .14); }
-.mr-medios-slots i.vacio { border: 1.5px dashed rgba(58, 58, 58, .6); }
-.mr-medios-slots i.lleno { background: var(--rojo); border-color: var(--rojo); }
-.mr-medios p { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 400; color: rgba(58, 58, 58, .65); }
-.mr-medios p span { width: 13px; height: 10px; border-radius: 2px; }
-.mr-medios p span.v { border: 1.5px dashed rgba(58, 58, 58, .6); }
-.mr-medios p span.l { margin-left: 10px; background: var(--rojo); }
 
 /* =========================================================
-   NUESTRO TMS (fondo rojo: sigue la franja roja con la que termina el Milk run;
-   el panel es crema)
+   NUESTRO TMS (fondo rojo: sigue el rojo de la entrada; el panel es crema)
    ========================================================= */
 .sv-tms { color: var(--blanco); }
-/* rojo plano, 2 px más arriba para pisarse con el rojo del Milk run (sin rendija) */
+/* rojo plano, 2 px más arriba para pisarse con el rojo de la entrada (sin rendija) */
 .sv-tms .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--rojo); }
 .tm-izq { position: absolute; left: 64px; top: 84px; width: 450px; }
 .tm-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--blanco); }
