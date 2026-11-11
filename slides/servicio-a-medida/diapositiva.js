@@ -524,6 +524,12 @@
     }
     $('.detalle').classList.toggle('con-provincia', !!k);
   }
+  // Un clic fuera del mapa (en el fondo, no en una provincia, base, punto ni en el panel) deselecciona
+  seccion.addEventListener('click', (e) => {
+    if (!estado.sel || estado.auto || (window.FLUJOGRAMA && FLUJOGRAMA.abierto)) return;
+    if (e.target.closest('.toque, .base svg, .punto, .panel, .flujo-capa')) return;
+    seleccionar(null);
+  });
   // Esc: primero deselecciona; si no hay nada elegido, vuelve a la portada (base.js)
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && estado.sel) { e.stopImmediatePropagation(); e.preventDefault(); seleccionar(null); }
