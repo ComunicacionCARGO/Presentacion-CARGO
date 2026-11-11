@@ -307,13 +307,13 @@ body.lista .indicador-scroll.oculto { opacity: 0; transition-delay: 0s; }
    así el blanco desaparece en el crema y en el bloque rojo y quedan solo los trazos.
    El fondo crema va en la caja porque las animaciones del año aíslan la mezcla. */
 .hito-foto.con-ilustracion { left: 20px; top: 8px; width: 420px; height: 258px; background: var(--blanco); }
+.hito-foto.con-ilustracion .grabado-fondo { display: none; }   /* sin el bloque rojo (pedido de la persona) */
 .ilustracion {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: 30% 50%;   /* las angostas quedan un poco a la izquierda: el bloque rojo tapa menos */
   mix-blend-mode: multiply;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);

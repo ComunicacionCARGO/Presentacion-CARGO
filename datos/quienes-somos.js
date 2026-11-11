@@ -63,7 +63,7 @@ window.QUIENES_SOMOS = {
     },
     {
       anio: "2000",
-      ilustracion: "img/linea-de-tiempo/2000-alimentos-y-bebidas.jpg",
+      ilustracion: "img/linea-de-tiempo/2000-deposito.jpg",
       foto: "",
       dibujo: "alimentos",
       hitos: [

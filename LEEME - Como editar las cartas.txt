@@ -106,8 +106,9 @@ Línea de tiempo:
   • Las ilustraciones de cada año (dibujos a lápiz sobre fondo blanco) van en
     la carpeta img\linea-de-tiempo y se escriben así:
       ilustracion: "img/linea-de-tiempo/1980-nacimiento-cargo.jpg"
-    El blanco se funde solo con el fondo y el bloque rojo (modo multiplicar).
-    Conviene que no tengan blanco de sobra alrededor del dibujo. Si un año
+    El blanco se funde solo con el fondo crema (modo multiplicar).
+    Conviene que no tengan blanco de sobra alrededor del dibujo y que los
+    bordes se esfumen a blanco (si no, se ve el recuadro). Si un año
     tiene ilustracion, no se usan foto ni dibujo.
   • Las fotos van en la carpeta img\linea-de-tiempo y se escriben así:
       foto: "img/linea-de-tiempo/1980.jpg"
