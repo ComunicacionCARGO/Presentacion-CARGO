@@ -460,10 +460,10 @@
 }
 .vp-cerrar span { margin-left: 6px; }
 .vp-cerrar:hover { color: var(--rojo); border-color: var(--rojo); background: #fff; }
-.vp-numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(58, 58, 58, .1); }
-.vp-numeros b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 34px; line-height: 1; color: var(--rojo); }
+.vp-numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(58, 58, 58, .1); }
+.vp-numeros b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 30px; line-height: 1; color: var(--rojo); }
 .vp-numeros span { display: block; margin-top: 4px; font-size: 12px; font-weight: 300; color: rgba(58, 58, 58, .7); }
-.vp-sub { margin: 14px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+.vp-sub { margin: 12px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
 .vp-bases { list-style: none; display: flex; flex-direction: column; gap: 4px; }
 .vp-bases li { font-size: 13px; }
 .vp-bases b { font-weight: 600; margin-right: 8px; }
@@ -483,9 +483,148 @@
   white-space: nowrap;
 }
 .vp-pills li.redespacho { --c: var(--ambar); }
+.vp-pills li.mas { border-style: dashed; background: transparent; color: rgba(58, 58, 58, .6); }
 .vp-pills li i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent); }
 .vp-pills li small { font-weight: 300; color: rgba(58, 58, 58, .55); }
 .vp-vacio { margin-top: 18px; font-size: 14px; font-weight: 300; font-style: italic; line-height: 1.5; color: rgba(58, 58, 58, .7); }
+/* Botón que abre el flujograma de la provincia (flujograma.js) */
+.vp-flujo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 16px 9px 11px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--rojo);
+  box-shadow: 0 14px 26px -16px rgba(150, 30, 10, .8);
+  font: inherit;
+  color: var(--blanco);
+  text-align: left;
+  cursor: pointer;
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease, background-color .25s ease;
+}
+.vp-flujo:hover { transform: translateY(-2px); background: #E23B20; box-shadow: 0 18px 30px -16px rgba(150, 30, 10, .9); }
+.vp-flujo .vf-ico { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: rgba(255, 251, 243, .16); }
+.vp-flujo .vf-ico svg { width: 22px; height: 22px; fill: var(--blanco); }
+.vp-flujo b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 18px; letter-spacing: .02em; line-height: 1.05; }
+.vp-flujo small { display: block; margin-top: 2px; font-size: 12px; font-weight: 300; color: rgba(255, 251, 243, .85); }
+.vp-flujo .vf-ir { margin-left: auto; font-size: 22px; transition: translate .3s ease; }
+.vp-flujo:hover .vf-ir { translate: 4px 0; }
+
+/* ---------- Flujograma (flujograma.js): tarjeta sobre el mapa ---------- */
+.flujo-capa { position: absolute; inset: 0; z-index: 20; visibility: hidden; pointer-events: none; }
+.flujo-capa.abierta { visibility: visible; pointer-events: auto; }
+.fl-velo {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: 0;
+  width: calc(100vw / var(--escala, 1));
+  height: 100%;
+  background: rgba(244, 236, 226, .62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.flujo-capa.abierta .fl-velo { opacity: 1; }
+.fl-tarjeta {
+  position: absolute;
+  left: 160px;
+  top: 64px;
+  width: 1280px;
+  height: 772px;
+  padding: 38px 48px 0;
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 28px;
+  background: linear-gradient(170deg, #FFFDF9, #FBF4EA);
+  box-shadow: 0 40px 80px -40px rgba(90, 30, 10, .55), 0 0 0 1px rgba(58, 58, 58, .05);
+  opacity: 0;
+  transform: translateY(24px) scale(.98);
+  transition: opacity .4s ease, transform .55s cubic-bezier(.2, .8, .2, 1);
+}
+.flujo-capa.abierta .fl-tarjeta { opacity: 1; transform: none; }
+.fl-cerrar {
+  position: absolute;
+  right: 40px;
+  top: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 9px 16px;
+  border: 1px solid rgba(58, 58, 58, .16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .8);
+  font: 600 12px var(--fuente-texto);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gris);
+  cursor: pointer;
+  transition: color .25s ease, border-color .25s ease;
+}
+.fl-cerrar span { padding: 1px 5px; border: 1px solid rgba(58, 58, 58, .25); border-radius: 3px; font-size: 10px; letter-spacing: .06em; }
+.fl-cerrar svg { width: 16px; height: 16px; fill: currentColor; }
+.fl-cerrar:hover { color: var(--rojo); border-color: var(--rojo); }
+.fl-ante { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--rojo); }
+.fl-titulo { margin-top: 10px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 40px; line-height: 1; color: var(--gris); }
+.fl-titulo b { color: var(--rojo); }
+.fl-bajada { margin-top: 10px; width: 820px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .82); }
+.fl-tabs { display: flex; gap: 10px; margin-top: 20px; }
+.fl-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1.5px solid rgba(58, 58, 58, .16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .7);
+  font: 600 13px var(--fuente-texto);
+  letter-spacing: .04em;
+  color: var(--gris);
+  cursor: pointer;
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+}
+.fl-tabs button span { font-family: var(--fuente-titulo); font-weight: 500; color: var(--rojo); }
+.fl-tabs button:hover { border-color: var(--rojo); }
+.fl-tabs button.activo { background: var(--gris); border-color: var(--gris); color: var(--blanco); }
+.fl-tabs button.activo span { color: #FF9C84; }
+.fl-tabs.una button { pointer-events: none; }
+.fl-esquema { --letra: 15px; position: relative; width: 1184px; height: 440px; margin-top: 16px; }
+.fl-lineas { position: absolute; inset: 0; width: 1184px; height: 440px; overflow: visible; }
+.fl-flecha, .fl-tronco { fill: none; stroke: var(--gris); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.fl-flecha { marker-end: url(#fl-punta); }
+.fl-lineas marker path { fill: var(--gris); }
+.fl-fila { transition: opacity .35s ease; }
+.fl-fila.apagada { opacity: .2; }
+.fl-nodo { --c: var(--rojo); position: absolute; width: var(--s); height: var(--s); transform: translate(-50%, -50%); }
+.fl-nodo.redesp { --c: var(--ambar); }
+.fl-nodo > svg { display: block; width: 100%; height: 100%; fill: var(--c); filter: drop-shadow(0 6px 8px color-mix(in srgb, var(--c) 30%, transparent)); }
+.fl-nodo.camion > svg { transform: scale(.92); }
+.fl-etq { position: absolute; left: calc(100% + 11px); top: 50%; width: 170px; transform: translateY(-50%); line-height: 1.15; color: var(--gris); }
+.fl-nodo.fin .fl-etq { width: 300px; }
+.fl-etq b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: calc(var(--letra) * 1.12); letter-spacing: .01em; }
+.fl-etq small { display: block; margin-top: 1px; font-size: calc(var(--letra) * .82); font-weight: 300; color: rgba(58, 58, 58, .72); }
+.fl-etq em { display: block; margin-top: 2px; font-style: normal; font-size: calc(var(--letra) * .78); font-weight: 400; color: rgba(58, 58, 58, .6); }
+.fl-etq.abajo { left: 50%; top: calc(100% + 8px); width: 170px; transform: translateX(-50%); text-align: center; }
+.fl-etq.abajo b { font-size: 22px; }
+.fl-etq.abajo small { font-size: 13px; }
+.fl-fila.activa .fin .fl-etq b { color: var(--rojo); }
+.fl-fila.activa .fin.redesp .fl-etq b { color: #D9860E; }
+/* entrada: las filas aparecen de a una y las flechas se dibujan */
+.fl-esquema.entra .fl-fila, .fl-esquema.entra .origen { animation: fl-aparece .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.08s + var(--i, 0) * .06s); }
+.fl-esquema.entra .fl-flecha, .fl-esquema.entra .fl-tronco { stroke-dasharray: 1; animation: fl-trazo .7s ease-out both; animation-delay: calc(.12s + var(--i, 0) * .06s); }
+@keyframes fl-aparece { from { opacity: 0; translate: -10px 0; } }
+@keyframes fl-trazo { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.fl-pie { position: absolute; left: 48px; right: 48px; bottom: 26px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 14px; border-top: 1px solid rgba(58, 58, 58, .1); }
+.fl-ley { display: flex; gap: 20px; font-size: 12.5px; font-weight: 500; color: rgba(58, 58, 58, .8); }
+.fl-ley span { display: flex; align-items: center; gap: 8px; }
+.fl-ley i { width: 12px; height: 12px; border-radius: 3px; }
+.fl-ley i.propio { background: var(--rojo); }
+.fl-ley i.redesp { background: var(--ambar); }
+.fl-ley i.resalte { width: 24px; height: 2.5px; border-radius: 2px; background: var(--gris); box-shadow: 30px 0 0 rgba(58, 58, 58, .2); margin-right: 30px; }
+.fl-nota { font-size: 12px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .6); text-align: right; }
+body.flujo-abierto .indice { opacity: 0; pointer-events: none; }
 
 .panel-ayuda { margin-top: 14px; font-size: 12.5px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .55); }
 .panel-ayuda.recorriendo { display: flex; align-items: center; gap: 8px; font-style: normal; color: var(--rojo); }

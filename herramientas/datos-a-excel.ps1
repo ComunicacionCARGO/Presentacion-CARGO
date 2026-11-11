@@ -20,7 +20,7 @@ $hojas = New-Object System.Collections.Generic.List[object]
 $instr = @(
   (Txt 'MAPA DE DISTRIBUCI#ON #- C#OMO EDITAR'),
   '',
-  (Txt '1. Cambi#a los datos en las hojas de este archivo: Bases, Destinos, Entre bases, Regiones, Provincias y Textos.'),
+  (Txt '1. Cambi#a los datos en las hojas de este archivo: Bases, Destinos, Entre bases, Flujos, Regiones, Provincias y Textos.'),
   (Txt '2. Guard#a el Excel (Ctrl+G) y cerralo.'),
   (Txt '3. Hac#e doble clic en #<Actualizar mapa de distribucion.bat#> (est#a en esta misma carpeta). Se abre una ventana que avisa si encontr#o alg#un problema.'),
   (Txt '4. Recarg#a la presentaci#on (F5) para ver los cambios.'),
@@ -32,6 +32,16 @@ $instr = @(
   (Txt '#* Tipo: #<Propio#> (red propia, se ve en rojo) o #<Redespacho#> (con redespachantes, se ve en naranja).'),
   (Txt '#* Para agregar una fila, escrib#ila debajo de la #ultima. Para quitarla, borr#a la fila entera.'),
   (Txt '#* Los colores de las regiones van en formato #RRGGBB (por ejemplo #759AAB).'),
+  '',
+  'FLUJOGRAMAS (hoja Flujos)',
+  (Txt '#* Cada fila es una flecha del flujograma, de izquierda a derecha: Sale desde (una base) #- Pasa por #- Llega a.'),
+  (Txt '#* Esquema: el nombre del flujograma. Las filas con el mismo esquema se dibujan juntas, en ese orden (si se deja vac#io, sigue el de arriba).'),
+  (Txt '#* Pasa por: vac#io (va directo), el nombre de una base (por ejemplo Rosario) o la palabra Redespachante.'),
+  (Txt '#* Llega a: lo que se lee al final de la flecha (por ejemplo #<Salta, Tucum#an, Jujuy#>), el nombre de una base o la palabra Redespachante.'),
+  (Txt '#* Provincias: a qu#e provincias atiende esa flecha, separadas por comas. Al tocar una provincia en el mapa se ven los flujogramas donde aparece.'),
+  (Txt '#* Al actualizar, la ventana avisa si alg#un destino de la hoja Destinos no aparece en ning#un flujo (as#i el mapa y los flujogramas quedan iguales).'),
+  (Txt '#* Centro (hoja Bases): el nombre del centro que se ve en el flujograma (por ejemplo CD Plaza Log#istica).'),
+  '',
   (Txt '#* No cambies el nombre de las hojas ni el orden de las columnas.')
 )
 $hojas.Add(@{ nombre = 'Instrucciones'; columnas = @(@{ t = ''; ancho = 120 }); filas = @($instr | ForEach-Object { ,@($_) }); estilo = 'instrucciones' })
@@ -41,11 +51,14 @@ $filas = @(
   ,@('antetitulo', $d['textos']['antetitulo'], (Txt 'L#inea chica sobre el t#itulo'))
   ,@('titulo', $d['textos']['titulo'], (Txt 'T#itulo grande del panel'))
   ,@('bajada', $d['textos']['bajada'], (Txt 'Texto debajo del t#itulo'))
+  ,@('flujoTitulo', $d['textos']['flujoTitulo'], (Txt 'L#inea chica arriba de los flujogramas'))
+  ,@('flujoBajada', $d['textos']['flujoBajada'], (Txt 'Texto debajo del t#itulo de los flujogramas'))
+  ,@('flujoNota', $d['textos']['flujoNota'], (Txt 'Nota al pie de los flujogramas'))
 )
 $hojas.Add(@{ nombre = 'Textos'; columnas = @(@{ t = 'Campo'; ancho = 14 }, @{ t = 'Texto'; ancho = 90 }, @{ t = (Txt 'D#onde aparece'); ancho = 34 }); filas = $filas })
 
-$filas = @($d['bases'] | ForEach-Object { ,@($_['nombre'], $_['provincia'], [double]$_['lat'], [double]$_['lon'], $_['detalle']) })
-$hojas.Add(@{ nombre = 'Bases'; columnas = @(@{ t = 'Nombre'; ancho = 22 }, @{ t = 'Provincia'; ancho = 22 }, @{ t = 'Latitud'; ancho = 12 }, @{ t = 'Longitud'; ancho = 12 }, @{ t = 'Detalle'; ancho = 50 })
+$filas = @($d['bases'] | ForEach-Object { ,@($_['nombre'], $_['provincia'], [double]$_['lat'], [double]$_['lon'], $_['detalle'], [string]$_['centro']) })
+$hojas.Add(@{ nombre = 'Bases'; columnas = @(@{ t = 'Nombre'; ancho = 22 }, @{ t = 'Provincia'; ancho = 22 }, @{ t = 'Latitud'; ancho = 12 }, @{ t = 'Longitud'; ancho = 12 }, @{ t = 'Detalle'; ancho = 50 }, @{ t = 'Centro'; ancho = 26 })
   filas = $filas; validar = @(@{ r = 'B2:B200'; f = 'Provincias!$A$2:$A$40' }) })
 
 $filas = @($d['destinos'] | ForEach-Object { $tipo = if ($_['tipo'] -eq 'propio') { 'Propio' } else { 'Redespacho' }; ,@($_['ciudad'], $_['provincia'], [double]$_['lat'], [double]$_['lon'], $_['desde'], $tipo) })
@@ -56,6 +69,11 @@ $si = Txt 'S#i'
 $filas = @($d['entreBases'] | ForEach-Object { $iv = if ($_['idaYVuelta']) { $si } else { 'No' }; ,@($_['desde'], $_['hasta'], $iv) })
 $hojas.Add(@{ nombre = 'Entre bases'; columnas = @(@{ t = 'Desde'; ancho = 22 }, @{ t = 'Hasta'; ancho = 22 }, @{ t = 'Ida y vuelta'; ancho = 14 })
   filas = $filas; validar = @(@{ r = 'A2:B200'; f = 'Bases!$A$2:$A$100' }, @{ r = 'C2:C200'; f = ('"' + $si + ',No"') }) })
+
+$filas = @()
+if ($d.ContainsKey('flujos')) { $filas = @($d['flujos'] | ForEach-Object { ,@([string]$_['esquema'], [string]$_['desde'], [string]$_['pasaPor'], [string]$_['llegaA'], ((@($_['provincias']) | ForEach-Object { [string]$_ }) -join ', ')) }) }
+$hojas.Add(@{ nombre = 'Flujos'; columnas = @(@{ t = 'Esquema'; ancho = 34 }, @{ t = 'Sale desde'; ancho = 18 }, @{ t = 'Pasa por'; ancho = 18 }, @{ t = 'Llega a'; ancho = 46 }, @{ t = 'Provincias'; ancho = 52 })
+  filas = $filas; validar = @(@{ r = 'B2:B300'; f = 'Bases!$A$2:$A$100' }) })
 
 $filas = @($d['regiones'] | ForEach-Object { ,@($_['nombre'], [double]$_['desde'], [double]$_['hasta'], $_['color']) })
 $hojas.Add(@{ nombre = 'Regiones'; columnas = @(@{ t = (Txt 'Regi#on'); ancho = 18 }, @{ t = 'Lead time desde (h)'; ancho = 20 }, @{ t = 'Lead time hasta (h)'; ancho = 20 }, @{ t = 'Color'; ancho = 12 }); filas = $filas })
@@ -86,7 +104,7 @@ function HojaXml($h) {
       $v = $f[$i]; $ref = (ColLetra $i) + $fila
       if ($v -is [double]) { [void]$sb.Append('<c r="' + $ref + '" s="3"><v>' + (JsonNum $v) + '</v></c>') }
       else {
-        $s = if ($instr) { if ($fila -eq 1 -or $v -eq 'CONSEJOS') { 4 } else { 2 } } else { 0 }
+        $s = if ($instr) { if ($fila -eq 1 -or $v -eq 'CONSEJOS' -or ([string]$v).StartsWith('FLUJOGRAMAS')) { 4 } else { 2 } } else { 0 }
         [void]$sb.Append('<c r="' + $ref + '" s="' + $s + '" t="inlineStr"><is><t xml:space="preserve">' + (XmlEsc ([string]$v)) + '</t></is></c>')
       }
     }

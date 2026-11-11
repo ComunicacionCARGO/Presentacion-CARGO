@@ -305,13 +305,32 @@ MAPA DE DISTRIBUCIÓN ("Servicio a medida") — SE EDITA EN EXCEL
 Los puntos, rutas, zonas y textos del mapa NO se editan en el Bloc de notas:
 se cambian en el Excel  datos\distribucion.xlsx .
   1. Abrí datos\distribucion.xlsx y cambiá lo que necesites. Hojas:
-       • Bases:       centros propios (nombre, provincia, latitud, longitud, detalle).
+       • Bases:       centros propios (nombre, provincia, latitud, longitud, detalle
+                      y "Centro": el nombre que se ve en el flujograma, por
+                      ejemplo CD Plaza Logística).
        • Destinos:    ciudades a las que se llega. "Sale desde" es la base de
                       origen y "Tipo" es Propio (rojo) o Redespacho (naranja).
        • Entre bases: rutas propias entre bases ("Ida y vuelta": Sí o No).
+       • Flujos:      los flujogramas. Cada fila es una flecha, de izquierda a
+                      derecha, igual que en el dibujo:
+                        Esquema    = nombre del flujograma (las filas con el
+                                     mismo nombre se dibujan juntas, en orden);
+                        Sale desde = una base;
+                        Pasa por   = vacío (va directo), otra base (Rosario,
+                                     Córdoba…) o la palabra Redespachante;
+                        Llega a    = lo que se lee al final ("Salta, Tucumán,
+                                     Jujuy"), una base o Redespachante;
+                        Provincias = a qué provincias atiende, con comas.
+                      Al tocar una provincia en el mapa aparece el botón "Ver
+                      el flujograma" (o se vuelve a tocar la provincia) y se
+                      ven los esquemas donde está, con sus flechas resaltadas.
        • Regiones:    nombre, lead time desde/hasta (en horas) y color (#RRGGBB).
        • Provincias:  a qué región pertenece cada provincia.
-       • Textos:      título, bajada y demás textos del panel.
+       • Textos:      título, bajada y demás textos del panel (flujoTitulo,
+                      flujoBajada y flujoNota son los del flujograma).
+     Cuando lleguen los flujogramas definitivos: cambiá las filas de Flujos y
+     después los Destinos para que coincidan. Al actualizar, la ventana avisa
+     qué destino del mapa no aparece en ningún flujo.
   2. Guardá el Excel y cerralo.
   3. Hacé doble clic en  datos\Actualizar mapa de distribucion.bat .
      Se abre una ventana que dice cuántos puntos leyó y avisa si encontró

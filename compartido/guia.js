@@ -58,7 +58,7 @@
   const lista = () => document.body.classList.contains('lista');
   const d = () => window.desplazamiento;
   const moviendo = () => { const s = d(); return !!s && Math.abs(s.y - s.destino) > 1.5; };
-  const bloqueado = () => !!document.querySelector('.tarjeta-capa.abierta');
+  const bloqueado = () => !!document.querySelector('.tarjeta-capa.abierta, .flujo-capa.abierta');
 
   // =========================================================
   // PISTAS (la mano que toca)

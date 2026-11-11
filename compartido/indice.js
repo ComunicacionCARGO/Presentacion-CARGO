@@ -70,7 +70,7 @@
   // Av Pág / Re Pág: a la sección siguiente o anterior (no con un tema o una tarjeta abiertos)
   addEventListener('keydown', (e) => {
     if (e.key !== 'PageDown' && e.key !== 'PageUp') return;
-    if (document.body.classList.contains('capitulo-abierto') || document.querySelector('.tarjeta-capa.abierta')) return;
+    if (document.body.classList.contains('capitulo-abierto') || document.querySelector('.tarjeta-capa.abierta, .flujo-capa.abierta')) return;
     e.stopImmediatePropagation();
     e.preventDefault();
     const y = actual(), ys = marcadas.map(yDe);

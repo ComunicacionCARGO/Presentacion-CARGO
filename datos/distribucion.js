@@ -11,12 +11,15 @@ window.DISTRIBUCION = {
     "sello": "Servicio a medida",
     "antetitulo": "Red de distribución",
     "titulo": "Llegamos a todo el país",
-    "bajada": "Una red propia que une nuestros centros logísticos y una red de redespachantes que extiende la cobertura a cada región, con tiempos de entrega definidos."
+    "bajada": "Una red propia que une nuestros centros logísticos y una red de redespachantes que extiende la cobertura a cada región, con tiempos de entrega definidos.",
+    "flujoTitulo": "Esquema de servicio",
+    "flujoBajada": "El servicio logístico LTL contempla consolidación, transporte y distribución de repuestos y accesorios para todo el territorio nacional.",
+    "flujoNota": "*Se consideró tal servicio logístico teniendo en cuenta que las cargas estarán identificadas por destino."
   },
   "bases": [
-    { "nombre": "Córdoba", "provincia": "Córdoba", "lat": -31.4135, "lon": -64.1811, "detalle": "Administración central y centro logístico" },
-    { "nombre": "Rosario", "provincia": "Santa Fe", "lat": -32.9468, "lon": -60.6393, "detalle": "Centro logístico" },
-    { "nombre": "Buenos Aires", "provincia": "Buenos Aires", "lat": -34.4553, "lon": -58.6522, "detalle": "Centros logísticos Pacheco y Benavídez" }
+    { "nombre": "Córdoba", "provincia": "Córdoba", "lat": -31.4135, "lon": -64.1811, "detalle": "Administración central y centro logístico", "centro": "CD P&A" },
+    { "nombre": "Rosario", "provincia": "Santa Fe", "lat": -32.9468, "lon": -60.6393, "detalle": "Centro logístico", "centro": "CD Cargo Rosario" },
+    { "nombre": "Buenos Aires", "provincia": "Buenos Aires", "lat": -34.4553, "lon": -58.6522, "detalle": "Centros logísticos Pacheco y Benavídez", "centro": "CD Plaza Logística" }
   ],
   "entreBases": [
     { "desde": "Córdoba", "hasta": "Rosario", "idaYVuelta": false },
@@ -25,27 +28,24 @@ window.DISTRIBUCION = {
   ],
   "destinos": [
     { "ciudad": "Jesús María", "provincia": "Córdoba", "lat": -30.9815, "lon": -64.0943, "desde": "Córdoba", "tipo": "propio" },
+    { "ciudad": "Río Cuarto", "provincia": "Córdoba", "lat": -33.1307, "lon": -64.3499, "desde": "Córdoba", "tipo": "propio" },
     { "ciudad": "Rafaela", "provincia": "Santa Fe", "lat": -31.2503, "lon": -61.4867, "desde": "Rosario", "tipo": "propio" },
     { "ciudad": "Paraná", "provincia": "Entre Ríos", "lat": -31.7319, "lon": -60.5238, "desde": "Rosario", "tipo": "propio" },
     { "ciudad": "La Plata", "provincia": "Buenos Aires", "lat": -34.9205, "lon": -57.9536, "desde": "Buenos Aires", "tipo": "propio" },
     { "ciudad": "San Salvador de Jujuy", "provincia": "Jujuy", "lat": -24.1858, "lon": -65.2995, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "Salta", "provincia": "Salta", "lat": -24.7829, "lon": -65.4232, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Formosa", "provincia": "Formosa", "lat": -26.1775, "lon": -58.1781, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Pcia. Roque Sáenz Peña", "provincia": "Chaco", "lat": -26.7852, "lon": -60.4388, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "San Miguel de Tucumán", "provincia": "Tucumán", "lat": -26.8083, "lon": -65.2176, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "Santiago del Estero", "provincia": "Santiago del Estero", "lat": -27.7951, "lon": -64.2615, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Corrientes", "provincia": "Corrientes", "lat": -27.4692, "lon": -58.8306, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Catamarca", "provincia": "Catamarca", "lat": -28.4696, "lon": -65.7852, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "La Rioja", "provincia": "La Rioja", "lat": -29.4131, "lon": -66.8558, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "San Juan", "provincia": "San Juan", "lat": -31.5375, "lon": -68.5364, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "Mendoza", "provincia": "Mendoza", "lat": -32.8895, "lon": -68.8458, "desde": "Córdoba", "tipo": "redespacho" },
     { "ciudad": "San Luis", "provincia": "San Luis", "lat": -33.3017, "lon": -66.3378, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Río Cuarto", "provincia": "Córdoba", "lat": -33.1307, "lon": -64.3499, "desde": "Córdoba", "tipo": "redespacho" },
-    { "ciudad": "Posadas", "provincia": "Misiones", "lat": -27.3671, "lon": -55.8961, "desde": "Buenos Aires", "tipo": "redespacho" },
+    { "ciudad": "Interior de Santa Fe", "provincia": "Santa Fe", "lat": -33.7456, "lon": -61.9688, "desde": "Córdoba", "tipo": "redespacho" },
+    { "ciudad": "Interior de Entre Ríos", "provincia": "Entre Ríos", "lat": -31.3929, "lon": -58.0209, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "Mar del Plata", "provincia": "Buenos Aires", "lat": -38.0055, "lon": -57.5426, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "Bahía Blanca", "provincia": "Buenos Aires", "lat": -38.7196, "lon": -62.2724, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "Santa Rosa", "provincia": "La Pampa", "lat": -36.6167, "lon": -64.2833, "desde": "Buenos Aires", "tipo": "redespacho" },
-    { "ciudad": "Neuquén", "provincia": "Neuquén", "lat": -38.9516, "lon": -68.0591, "desde": "Buenos Aires", "tipo": "redespacho" },
+    { "ciudad": "Pcia. Roque Sáenz Peña", "provincia": "Chaco", "lat": -26.7852, "lon": -60.4388, "desde": "Buenos Aires", "tipo": "redespacho" },
+    { "ciudad": "Corrientes", "provincia": "Corrientes", "lat": -27.4692, "lon": -58.8306, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "Viedma", "provincia": "Río Negro", "lat": -40.8135, "lon": -62.9967, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "San Carlos de Bariloche", "provincia": "Río Negro", "lat": -41.1335, "lon": -71.3103, "desde": "Buenos Aires", "tipo": "redespacho" },
     { "ciudad": "Trelew", "provincia": "Chubut", "lat": -43.2489, "lon": -65.3051, "desde": "Buenos Aires", "tipo": "redespacho" },
@@ -84,5 +84,23 @@ window.DISTRIBUCION = {
     { "nombre": "Chubut", "region": "Patagonia" },
     { "nombre": "Santa Cruz", "region": "Patagonia" },
     { "nombre": "Tierra del Fuego", "region": "Patagonia" }
+  ],
+  "flujos": [
+    { "esquema": "Desde Bs. As. · Plaza Logística", "desde": "Buenos Aires", "pasaPor": "", "llegaA": "AMBA, GBA, CABA, Int. Bs. As.", "provincias": ["Buenos Aires"] },
+    { "esquema": "Desde Bs. As. · Plaza Logística", "desde": "Buenos Aires", "pasaPor": "Rosario", "llegaA": "Santa Fe, Int. Santa Fe, Int. Entre Ríos", "provincias": ["Santa Fe", "Entre Ríos"] },
+    { "esquema": "Desde Bs. As. · Plaza Logística", "desde": "Buenos Aires", "pasaPor": "Córdoba", "llegaA": "Córdoba", "provincias": ["Córdoba"] },
+    { "esquema": "Desde Bs. As. · Plaza Logística", "desde": "Buenos Aires", "pasaPor": "Córdoba", "llegaA": "Redespachante", "provincias": ["Salta", "Tucumán", "Santiago del Estero", "Jujuy"] },
+    { "esquema": "Desde Bs. As. · Plaza Logística", "desde": "Buenos Aires", "pasaPor": "Córdoba", "llegaA": "Redespachante", "provincias": ["Mendoza", "San Juan", "San Luis", "Santa Fe"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "Entre Ríos, Interior Bs. As.", "provincias": ["Entre Ríos", "Buenos Aires"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "Int. Bs. As.", "provincias": ["Buenos Aires"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "La Pampa", "provincias": ["La Pampa"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "Chaco, Corrientes", "provincias": ["Chaco", "Corrientes"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "Río Negro, Santa Cruz, Tierra del Fuego", "provincias": ["Río Negro", "Santa Cruz", "Tierra del Fuego"] },
+    { "esquema": "Redespachantes desde Bs. As.", "desde": "Buenos Aires", "pasaPor": "Redespachante", "llegaA": "Chubut", "provincias": ["Chubut"] },
+    { "esquema": "Desde Córdoba · CD P&A", "desde": "Córdoba", "pasaPor": "", "llegaA": "Córdoba, Int. Córdoba", "provincias": ["Córdoba"] },
+    { "esquema": "Desde Córdoba · CD P&A", "desde": "Córdoba", "pasaPor": "Rosario", "llegaA": "Santa Fe, Int. Santa Fe, Int. Entre Ríos", "provincias": ["Santa Fe", "Entre Ríos"] },
+    { "esquema": "Desde Córdoba · CD P&A", "desde": "Córdoba", "pasaPor": "", "llegaA": "Buenos Aires", "provincias": ["Buenos Aires"] },
+    { "esquema": "Desde Córdoba · CD P&A", "desde": "Córdoba", "pasaPor": "Redespachante", "llegaA": "Salta, Tucumán, Sgo. del Estero, Jujuy", "provincias": ["Salta", "Tucumán", "Santiago del Estero", "Jujuy"] },
+    { "esquema": "Desde Córdoba · CD P&A", "desde": "Córdoba", "pasaPor": "Redespachante", "llegaA": "Mendoza, San Juan, San Luis, Int. Santa Fe", "provincias": ["Mendoza", "San Juan", "San Luis", "Santa Fe"] }
   ]
 };

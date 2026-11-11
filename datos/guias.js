@@ -38,6 +38,7 @@ window.GUIAS = {
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },
   ventajas:            { texto: "**Pasá el mouse** por cada ventaja",               tactil: "**Tocá** cada ventaja" },
   mapaProvincias:      { texto: "**Hacé clic** en una provincia para ver sus rutas", tactil: "**Tocá** una provincia para ver sus rutas" },
+  mapaFlujograma:      { texto: "**Hacé clic** para ver el flujograma de la provincia", tactil: "**Tocá** para ver el flujograma de la provincia" },
 
   // ---------- ¿Por qué elegirnos? ----------
   mejoraLados:         { texto: "**Hacé clic** en un lado para entrar",             tactil: "**Tocá** un lado para entrar" },

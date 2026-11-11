@@ -74,7 +74,9 @@ function Columna($titulos, [string[]]$claves, [int]$porDefecto) {
   }
   return $porDefecto
 }
-function Celda($fila, [int]$i) { if ($i -lt $fila.Count) { return [string]$fila[$i] } else { return '' } }
+function Celda($fila, [int]$i) { if ($i -ge 0 -and $i -lt $fila.Count) { return [string]$fila[$i] } else { return '' } }
+# Hoja que puede no estar (libros viejos): devuelve $null
+function HojaOpcional([string]$nombre) { try { return ,(Hoja $nombre) } catch { return $null } }
 function Numero([string]$s, [string]$que) {
   $s = $s.Trim().Replace(' ', '')
   if ($s -match '^-?\d+,\d+$') { $s = $s.Replace(',', '.') }
@@ -97,9 +99,10 @@ $d = @{}
 
 # Textos
 $f = Hoja 'Textos'
-$d.textos = @{ sello = ''; antetitulo = ''; titulo = ''; bajada = '' }
+$d.textos = @{ sello = ''; antetitulo = ''; titulo = ''; bajada = ''; flujoTitulo = ''; flujoBajada = ''; flujoNota = '' }
+$claveDe = @{}; foreach ($k in @($d.textos.Keys)) { $claveDe[(Normal $k)] = $k }
 $cc = Columna $f[0] @('campo') 0; $ct = Columna $f[0] @('texto') 1
-for ($i = 1; $i -lt $f.Count; $i++) { $k = Normal (Celda $f[$i] $cc); if ($d.textos.ContainsKey($k)) { $d.textos[$k] = Celda $f[$i] $ct } }
+for ($i = 1; $i -lt $f.Count; $i++) { $k = Normal (Celda $f[$i] $cc); if ($claveDe.ContainsKey($k)) { $d.textos[$claveDe[$k]] = Celda $f[$i] $ct } }
 
 # Provincias y regiones
 $f = Hoja 'Regiones'
@@ -130,7 +133,7 @@ function RevisarProvincia([string]$p, [string]$que) {
 
 # Bases
 $f = Hoja 'Bases'
-$cn = Columna $f[0] @('nombre') 0; $cp = Columna $f[0] @('provincia') 1; $cla = Columna $f[0] @('lat') 2; $clo = Columna $f[0] @('lon') 3; $cde = Columna $f[0] @('detalle') 4
+$cn = Columna $f[0] @('nombre') 0; $cp = Columna $f[0] @('provincia') 1; $cla = Columna $f[0] @('lat') 2; $clo = Columna $f[0] @('lon') 3; $cde = Columna $f[0] @('detalle') 4; $cce = Columna $f[0] @('centro') -1
 $d.bases = New-Object System.Collections.Generic.List[object]
 for ($i = 1; $i -lt $f.Count; $i++) {
   if (Vacia $f[$i]) { continue }
@@ -138,7 +141,7 @@ for ($i = 1; $i -lt $f.Count; $i++) {
   $c = Coordenadas (Numero (Celda $f[$i] $cla) "la base '$n'") (Numero (Celda $f[$i] $clo) "la base '$n'") "la base '$n'"
   if (-not $c) { continue }
   RevisarProvincia (Celda $f[$i] $cp) "la base '$n'"
-  $d.bases.Add(@{ nombre = $n; provincia = Celda $f[$i] $cp; lat = $c[0]; lon = $c[1]; detalle = Celda $f[$i] $cde })
+  $d.bases.Add(@{ nombre = $n; provincia = Celda $f[$i] $cp; lat = $c[0]; lon = $c[1]; detalle = Celda $f[$i] $cde; centro = Celda $f[$i] $cce })
 }
 $basesNorm = @($d.bases | ForEach-Object { Normal $_.nombre })
 
@@ -170,6 +173,40 @@ for ($i = 1; $i -lt $f.Count; $i++) {
   $d.destinos.Add(@{ ciudad = $n; provincia = Celda $f[$i] $cp; lat = $c[0]; lon = $c[1]; desde = $desde; tipo = $tipo })
 }
 
+# Flujos (los flujogramas). Cada fila es una flecha: Sale desde (base) -> Pasa por (nada, una
+# base o "Redespachante") -> Llega a (un texto, una base o "Redespachante"), y a que provincias atiende.
+$d.flujos = New-Object System.Collections.Generic.List[object]
+$f = HojaOpcional 'Flujos'
+if ($f) {
+  $ce = Columna $f[0] @('esquema') 0; $cs = Columna $f[0] @('sale', 'desde') 1; $cpp = Columna $f[0] @('pasa') 2; $cl = Columna $f[0] @('llega') 3; $cpr = Columna $f[0] @('provincia') 4
+  $esquema = ''
+  for ($i = 1; $i -lt $f.Count; $i++) {
+    if (Vacia $f[$i]) { continue }
+    $e = Celda $f[$i] $ce; if ($e) { $esquema = $e }     # si se deja vacio, sigue el esquema de arriba
+    $de = Celda $f[$i] $cs; $pp = Celda $f[$i] $cpp; $ll = Celda $f[$i] $cl
+    $fila = "la fila $($i + 1) de Flujos"
+    if ($basesNorm -notcontains (Normal $de)) { $avisos.Add("En $fila, 'Sale desde' tiene que ser una base de la hoja Bases ('$de'). Se omite."); continue }
+    if ($pp -and -not (Normal $pp).StartsWith('redesp') -and $basesNorm -notcontains (Normal $pp)) { $avisos.Add("En $fila, 'Pasa por' tiene que quedar vacio, ser una base o decir Redespachante ('$pp')."); }
+    if (-not $ll) { $avisos.Add("En $fila falta 'Llega a'. Se omite."); continue }
+    $provs = @(([string](Celda $f[$i] $cpr)) -split '[,;/]' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    foreach ($p in $provs) { RevisarProvincia $p $fila }
+    $d.flujos.Add(@{ esquema = $esquema; desde = $de; pasaPor = $pp; llegaA = $ll; provincias = $provs })
+  }
+}
+# Revision: cada destino del mapa deberia estar en algun flujo (misma base y mismo tipo)
+if ($d.flujos.Count) {
+  foreach ($x in $d.destinos) {
+    $ok = $false
+    foreach ($fl in $d.flujos) {
+      $redesp = (Normal $fl.pasaPor).StartsWith('redesp') -or (Normal $fl.llegaA).StartsWith('redesp')
+      $ultima = if ($fl.pasaPor -and -not (Normal $fl.pasaPor).StartsWith('redesp')) { $fl.pasaPor } else { $fl.desde }
+      $atiende = @($fl.provincias | ForEach-Object { Normal $_ }) -contains (Normal $x.provincia)
+      if ($atiende -and (Normal $ultima) -eq (Normal $x.desde) -and ($redesp -eq ($x.tipo -eq 'redespacho'))) { $ok = $true; break }
+    }
+    if (-not $ok) { $avisos.Add("El destino '$($x.ciudad)' ($($x.provincia), $($x.tipo) desde $($x.desde)) no aparece en ningun flujo de la hoja Flujos.") }
+  }
+}
+
 $zip.Dispose(); $fs.Dispose()
 
 EscribirDatosJs $d ([IO.Path]::GetFullPath($Datos))
@@ -179,6 +216,7 @@ $prop = @($d.destinos | Where-Object { $_.tipo -eq 'propio' }).Count
 "  $($d.bases.Count) bases, $($d.entreBases.Count) conexiones entre bases"
 "  $prop destinos propios, $($d.destinos.Count - $prop) destinos con redespacho"
 "  $($d.regiones.Count) regiones, $($d.provincias.Count) provincias"
+"  $($d.flujos.Count) flechas en los flujogramas"
 if ($avisos.Count) {
   ''
   'ATENCION, revisa esto en el Excel:'

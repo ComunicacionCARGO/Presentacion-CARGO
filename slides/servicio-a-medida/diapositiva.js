@@ -414,6 +414,11 @@
       `<div><b>${basesAqui.length}</b><span>${basesAqui.length === 1 ? 'base propia' : 'bases propias'}</span></div>` +
       `<div><b>${salen.length}</b><span>${salen.length === 1 ? 'destino sale' : 'destinos salen'} de acá</span></div>` +
       `<div><b>${destinos.filter((d) => d.cod === k).length}</b><span>${destinos.filter((d) => d.cod === k).length === 1 ? 'punto de entrega' : 'puntos de entrega'}</span></div></div>`;
+    // el flujograma de la provincia (flujograma.js, hoja Flujos del Excel)
+    if (window.FLUJOGRAMA && FLUJOGRAMA.hay(k)) {
+      html += '<button type="button" class="vp-flujo"><span class="vf-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h5v6H2zM17 3h5v5h-5zM17 16h5v5h-5zM7 11h3.2V5.5H17v1.6h-5.2v4.1H17v1.6h-5.2v4.1H17v1.6h-6.8V12.6H7z"/></svg></span>' +
+        `<span><b>Ver el flujograma</b><small>Cómo llegan los repuestos y accesorios a ${esc(nombre)}</small></span><span class="vf-ir" aria-hidden="true">→</span></button>`;
+    }
     if (basesAqui.length) {
       html += `<p class="vp-sub">Bases en ${esc(nombre)}</p><ul class="vp-bases">` +
         basesAqui.map((b) => `<li><b>${esc(b.nombre)}</b><span>${esc(b.detalle)}</span></li>`).join('') + '</ul>';
@@ -466,7 +471,11 @@
     el.addEventListener('pointerleave', () => {
       if (hover === k) { hover = null; resalte.classList.remove('visible'); ocultarEtiqueta(); }
     });
-    el.addEventListener('click', () => seleccionar(estado.sel === k ? null : k));
+    // un clic elige la provincia; otro clic sobre la provincia elegida abre su flujograma
+    el.addEventListener('click', () => {
+      if (estado.sel === k && !estado.auto && window.FLUJOGRAMA && FLUJOGRAMA.hay(k)) FLUJOGRAMA.abrir(k);
+      else seleccionar(estado.sel === k ? null : k);
+    });
   });
 
   // Elegir una provincia: sube en rojo y quedan solo sus rutas
@@ -497,6 +506,21 @@
     if (k) {
       vistaProv.innerHTML = vistaDeProvincia(k);
       $('.vp-cerrar', vistaProv).addEventListener('click', () => seleccionar(null));
+      const vf = $('.vp-flujo', vistaProv);
+      if (vf) vf.addEventListener('click', () => FLUJOGRAMA.abrir(k));
+      // si no entra todo, la última lista se acorta y termina en "+N más" (el detalle está en el flujograma)
+      const listas = vistaProv.querySelectorAll('.vp-pills');
+      const ultima = listas[listas.length - 1];
+      if (ultima) {
+        const items = [...ultima.children];
+        let ocultos = 0, mas = null;
+        while (vistaProv.scrollHeight > vistaProv.clientHeight + 1 && items.length - ocultos > 1) {
+          items[items.length - 1 - ocultos].style.display = 'none';
+          ocultos++;
+          if (!mas) { mas = crear('li', 'mas', ultima); }
+          mas.textContent = `+${ocultos} más`;
+        }
+      }
     }
     $('.detalle').classList.toggle('con-provincia', !!k);
   }
@@ -523,6 +547,11 @@
     lado: 'abajo', espera: 2.4, activa: () => !estado.sel && !recorriendo
   });
   function ocultarInvitacion() { /* la guía se va sola cuando se usa el mapa */ }
+  // con una provincia elegida, la mano señala el botón del flujograma (hasta que se abre uno)
+  if (window.GUIA) GUIA.pista({
+    id: 'servicio-flujograma', texto: 'mapaFlujograma', objetivo: () => $('.vp-flujo', vistaProv), punto: [.12, .5],
+    zona: '.vp-flujo', lado: 'abajo', espera: 1.4, activa: () => !!estado.sel && !estado.auto
+  });
 
   // Recorrido automático por las provincias con bases (y una pausa mostrando todo el país)
   const ayuda = $('.panel-ayuda');
@@ -536,7 +565,7 @@
     relojParada = setTimeout(avanzarRecorrido, SEGUNDOS_POR_PROVINCIA * 1000);
   }
   function iniciarRecorrido() {
-    if (recorriendo || estado.sel || !paradas.length || !enPantalla) return;
+    if (recorriendo || estado.sel || !paradas.length || !enPantalla || (window.FLUJOGRAMA && FLUJOGRAMA.abierto)) return;
     recorriendo = true;
     ocultarInvitacion();
     ayuda.classList.add('recorriendo');

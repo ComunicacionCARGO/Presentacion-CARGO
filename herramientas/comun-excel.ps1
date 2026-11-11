@@ -69,7 +69,7 @@ function EscribirDatosJs($d, [string]$salida) {
   & $l '   ===================================================================== */'
   & $l 'window.DISTRIBUCION = {'
   & $l '  "textos": {'
-  $claves = @('sello', 'antetitulo', 'titulo', 'bajada')
+  $claves = @('sello', 'antetitulo', 'titulo', 'bajada', 'flujoTitulo', 'flujoBajada', 'flujoNota')
   for ($i = 0; $i -lt $claves.Count; $i++) {
     $coma = if ($i -lt $claves.Count - 1) { ',' } else { '' }
     & $l ('    "' + $claves[$i] + '": ' + (JsonTxt $d.textos[$claves[$i]]) + $coma)
@@ -78,7 +78,7 @@ function EscribirDatosJs($d, [string]$salida) {
   & $l '  "bases": ['
   for ($i = 0; $i -lt $d.bases.Count; $i++) {
     $b = $d.bases[$i]; $coma = if ($i -lt $d.bases.Count - 1) { ',' } else { '' }
-    & $l ('    { "nombre": ' + (JsonTxt $b.nombre) + ', "provincia": ' + (JsonTxt $b.provincia) + ', "lat": ' + (JsonNum $b.lat) + ', "lon": ' + (JsonNum $b.lon) + ', "detalle": ' + (JsonTxt $b.detalle) + ' }' + $coma)
+    & $l ('    { "nombre": ' + (JsonTxt $b.nombre) + ', "provincia": ' + (JsonTxt $b.provincia) + ', "lat": ' + (JsonNum $b.lat) + ', "lon": ' + (JsonNum $b.lon) + ', "detalle": ' + (JsonTxt $b.detalle) + ', "centro": ' + (JsonTxt $b.centro) + ' }' + $coma)
   }
   & $l '  ],'
   & $l '  "entreBases": ['
@@ -104,6 +104,16 @@ function EscribirDatosJs($d, [string]$salida) {
   for ($i = 0; $i -lt $d.provincias.Count; $i++) {
     $p = $d.provincias[$i]; $coma = if ($i -lt $d.provincias.Count - 1) { ',' } else { '' }
     & $l ('    { "nombre": ' + (JsonTxt $p.nombre) + ', "region": ' + (JsonTxt $p.region) + ' }' + $coma)
+  }
+  & $l '  ],'
+  # Flujogramas: cada fila es una flecha del esquema (sale de una base, pasa por otra o por un
+  # redespachante y llega a un destino); "provincias" dice a que provincias atiende esa flecha.
+  & $l '  "flujos": ['
+  $fl = $d.flujos; $nf = 0; if ($null -ne $fl) { $nf = $fl.Count }
+  for ($i = 0; $i -lt $nf; $i++) {
+    $e = $fl[$i]; $coma = if ($i -lt $nf - 1) { ',' } else { '' }
+    $provs = (@($e.provincias) | Where-Object { $_ } | ForEach-Object { JsonTxt $_ }) -join ', '
+    & $l ('    { "esquema": ' + (JsonTxt $e.esquema) + ', "desde": ' + (JsonTxt $e.desde) + ', "pasaPor": ' + (JsonTxt $e.pasaPor) + ', "llegaA": ' + (JsonTxt $e.llegaA) + ', "provincias": [' + $provs + '] }' + $coma)
   }
   & $l '  ]'
   & $l '};'
