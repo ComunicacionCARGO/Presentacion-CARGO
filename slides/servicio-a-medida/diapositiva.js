@@ -512,33 +512,17 @@
   // 3) si nadie toca nada por un rato, el mapa recorre solo las provincias con bases.
   // =========================================================
   const SEGUNDOS_SIN_USO = 15, SEGUNDOS_POR_PROVINCIA = 5;
-  const invitacion = crear('div', 'mapa-invitacion', seccion,
-    '<i class="mi-onda"></i>' +
-    '<svg class="mi-mano" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V4.6a1.6 1.6 0 0 1 3.2 0v5.6h.4V8.7a1.6 1.6 0 0 1 3.2 0v1.6h.4V9.5a1.6 1.6 0 0 1 3.2 0v5.4c0 3.8-2.6 6.8-6.4 6.8h-1.1c-1.9 0-3.6-.9-4.6-2.5l-3-4.6a1.5 1.5 0 0 1 2.4-1.8L9 14.4z"/></svg>' +
-    '<p class="mi-texto"><b>Tocá una provincia</b><span>para ver qué sale y qué llega</span></p>');
-  let invitacionUsada = false;
-  function mostrarInvitacion() {
-    if (invitacionUsada || estado.sel) return;
-    // Sobre la base con más rutas (o el centro del mapa si no hay bases)
-    const cuenta = (b) => rutas.filter((r) => r.origen === b).length;
-    const b = bases.slice().sort((p, q) => cuenta(q) - cuenta(p))[0];
-    const s = seccion.getBoundingClientRect(), k = s.width / 1600 || 1;
-    let x = 460, y = 450;
-    if (b) {
-      const r = b.el.querySelector('svg').getBoundingClientRect();
-      // un poco al sudoeste del ícono, dentro de la provincia y lejos de los nombres vecinos
-      x = (r.left + r.width / 2 - s.left) / k - 42;
-      y = (r.bottom - s.top) / k + 34;
-    }
-    invitacion.style.transform = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px)`;
-    invitacion.classList.add('visible');
-  }
-  function ocultarInvitacion() {
-    invitacionUsada = true;
-    invitacion.classList.remove('visible');
-  }
-  toques.addEventListener('pointerover', ocultarInvitacion);
-  contCapas.addEventListener('click', ocultarInvitacion);
+  // La mano es la guía común (compartido/guia.js): señala la provincia de la base con más rutas
+  // (un poco al sudoeste del ícono, dentro de la provincia) hasta que se hace clic en una provincia.
+  const cuentaRutas = (b) => rutas.filter((r) => r.origen === b).length;
+  const basePrincipal = bases.slice().sort((p, q) => cuentaRutas(q) - cuentaRutas(p))[0];
+  if (window.GUIA && basePrincipal) GUIA.pista({
+    id: 'servicio-mapa', texto: 'mapaProvincias',
+    objetivo: () => basePrincipal.el.querySelector('svg'), punto: [.5, 1], corrimiento: [-42, 34],
+    zona: '.seccion-distribucion .toque, .seccion-distribucion .base svg, .seccion-distribucion .punto',
+    lado: 'abajo', espera: 2.4, activa: () => !estado.sel && !recorriendo
+  });
+  function ocultarInvitacion() { /* la guía se va sola cuando se usa el mapa */ }
 
   // Recorrido automático por las provincias con bases (y una pausa mostrando todo el país)
   const ayuda = $('.panel-ayuda');
@@ -585,7 +569,6 @@
     if (!en[0].isIntersecting) return;
     obs.disconnect();
     seccion.classList.add('visible');
-    setTimeout(mostrarInvitacion, 2800);          // cuando el mapa ya se acomodó
     relojSinUso = setTimeout(iniciarRecorrido, SEGUNDOS_SIN_USO * 1000);
   }, { threshold: .3 }).observe(seccion);
 

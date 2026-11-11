@@ -229,6 +229,8 @@
 
   btnAnt.addEventListener('click', () => seleccionar(actual - 1));
   btnSig.addEventListener('click', () => seleccionar(actual + 1));
+  // Guía (compartido/guia.js): la mano señala el año siguiente, hasta que se elige uno
+  if (window.GUIA) GUIA.pista({ id: 'quienes-anios', texto: 'lineaDeTiempo', objetivo: () => anios[(actual + 1) % n], zona: '.anio, .punto, .linea-botones button', lado: 'arriba' });
 
   // Flechas ← → cuando la línea de tiempo está en pantalla
   addEventListener('keydown', (e) => {
@@ -554,6 +556,8 @@
     });
     el.addEventListener('click', () => levantar(k, !p.activo));   // pantallas táctiles
   });
+  // Guía (compartido/guia.js): la mano señala Argentina, hasta que se pasa por un país
+  if (window.GUIA) GUIA.pista({ id: 'quienes-mapa', texto: 'mapaPaises', objetivo: () => plano.querySelector('.toque[data-pais="AR"]'), punto: [.4, .32], zona: '.toque', tipo: 'pasar', lado: 'izq', espera: 2 });
 
   // Aparece al entrar en pantalla
   new IntersectionObserver((en, obs) => {

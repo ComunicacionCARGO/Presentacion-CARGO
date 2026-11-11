@@ -84,6 +84,8 @@
   }
   botones.forEach((b) => b.addEventListener('click', () => mostrar(+b.dataset.i)));
   mostrar(0);
+  // Guía (compartido/guia.js): la mano señala la segunda política, hasta que se elige una
+  if (window.GUIA && botones[1]) GUIA.pista({ id: 'quienes-politicas', texto: 'politicas', objetivo: botones[1], zona: '.po-tabs button', lado: 'abajo', espera: 1.6 });
 
   // =========================================================
   // TRANSICIÓN DE ANILLOS (la que antes abría "¿Por qué elegirnos?")

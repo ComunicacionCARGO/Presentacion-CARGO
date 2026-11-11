@@ -234,6 +234,9 @@
       if (e.pointerType === 'touch' && !e.target.closest('.tp-toque')) { cols.forEach(bajar); mover(); }
     });
 
+    // Guía (compartido/guia.js): cuando el templo ya se armó, la mano señala un pilar hasta que se pasa por uno
+    if (window.GUIA && cols[2]) GUIA.pista({ id: 'elegirnos-pilares', texto: 'pilares', objetivo: () => cols[2].g.querySelector('.tp-toque'), punto: [.5, .66], zona: '.tp-toque', tipo: 'pasar', lado: 'abajo', espera: 2.8, activa: () => seccion.isConnected && seccion.classList.contains('actual') });
+
     // al entrar a la sección se arma el templo; al salir se desarma (para volver a verlo la próxima vez)
     new MutationObserver(() => {
       const visible = seccion.classList.contains('visible');

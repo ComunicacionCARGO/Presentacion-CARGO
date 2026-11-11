@@ -61,6 +61,8 @@
     texto.textContent = rubro ? `${D.contadorRubro || 'en'} ${rubro}` : D.contadorTexto;
   }
   botones.forEach((b) => b.addEventListener('click', () => elegir(b.dataset.r)));
+  // Guía (compartido/guia.js): la mano señala el segundo rubro hasta que se elige uno
+  if (window.GUIA && botones[1]) GUIA.pista({ id: 'elegirnos-rubros', texto: 'clientesRubros', objetivo: botones[1], zona: '.cli-rubros button', lado: 'abajo', espera: 2 });
 
   // ---------- Entrada con el scroll (la sección empieza en su "top" dentro del tramo) ----------
   const TOP = raiz.offsetTop;

@@ -23,8 +23,8 @@ window.SERVICIO = {
       { titulo: "Nuestro TMS", texto: "Gestión de carga e interfases con los sistemas de {cliente}." },
       { titulo: "Logística inversa", texto: "Simulá un reclamo y mirá cómo lo resolvemos." },
       { titulo: "Tableros de BI", texto: "Indicadores de entregas y devoluciones, siempre a la vista." }
-    ],
-    ayuda: "Bajá para empezar"
+    ]
+    // el cartel "Bajá para seguir" está en datos/guias.js
   },
 
   // ---------- Nuestro TMS ----------

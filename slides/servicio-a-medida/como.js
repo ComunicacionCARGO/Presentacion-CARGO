@@ -50,9 +50,10 @@
       `<button type="button" class="in-parte ent" style="--i:${i + 2}" data-i="${i}">` +
       `<span class="in-num">${String(i + 1).padStart(2, '0')}</span><span class="in-ico">${iconos[i] || ''}</span>` +
       `<b>${txt(p.titulo)}</b><span class="in-texto">${txt(p.texto)}</span>` +
-      '<span class="in-ir" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 11h11l-4-4 1.4-1.4L19.8 12l-6.4 6.4L12 17l4-4H5z"/></svg></span></button>').join('') + '</div>' +
-    `<p class="in-ayuda indicador-scroll"><span>${txt(C.ayuda)}</span><i></i></p>`;
+      '<span class="in-ir" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 11h11l-4-4 1.4-1.4L19.8 12l-6.4 6.4L12 17l4-4H5z"/></svg></span></button>').join('') + '</div>';
   intro.querySelectorAll('.in-parte').forEach((b) => b.addEventListener('click', () => irA($(destinos[+b.dataset.i]))));
+  // el cartel "Bajá para seguir" lo pone compartido/guia.js; la mano señala las tarjetas
+  if (window.GUIA) GUIA.pista({ id: 'servicio-partes', texto: 'entradaPartes', objetivo: () => intro.querySelector('.in-parte .in-ir'), zona: '.in-parte', lado: 'abajo', espera: 2.6 });
 
   const mostrar = () => intro.classList.add('visible');
   if (document.body.classList.contains('lista')) mostrar();

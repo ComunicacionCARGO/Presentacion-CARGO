@@ -100,6 +100,11 @@
   const cola = vCarga.querySelector('.tc-cola');
   const ayuda = vCarga.querySelector('.tc-ayuda');
   const ayudaTxt = ayuda.querySelector('span').innerHTML;
+  // Guía (compartido/guia.js): primero la mano señala un bulto de la cola y después la pestaña de interfases
+  if (window.GUIA) {
+    GUIA.pista({ id: 'servicio-lector', texto: 'tmsLector', objetivo: () => cola.querySelector('.tc-bulto:not(.leido):not(.leyendo)'), zona: '.tc-bulto', tipo: 'pasar', lado: 'arriba', espera: 1.6, activa: () => vCarga.classList.contains('activa') });
+    GUIA.pista({ id: 'servicio-interfases', texto: 'tmsInterfases', objetivo: () => izq.querySelector('.tm-tab[data-k="inter"]'), punto: [.85, .5], zona: '.tm-tab', lado: 'der', espera: 2.5 });
+  }
   const celdas = {};
   vCarga.querySelectorAll('.tc-celda').forEach((el) => { celdas[el.dataset.z] = { el, bultos: el.querySelector('.tc-bultos'), n: 0, ocupada: false }; });
   const indEls = [...vCarga.querySelectorAll('.tc-ind b')];

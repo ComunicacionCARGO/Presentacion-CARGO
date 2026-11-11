@@ -324,6 +324,22 @@ edites a mano. Si el Excel se rompe, se puede volver a crear desde los datos
 actuales (pedíselo a Claude).
 
 
+CARTELES DE AYUDA ("Bajá para seguir" y las manos que señalan qué tocar)
+--------------------------------------------------------------------------
+Se editan en  datos\guias.js  (con el Bloc de notas).
+  • scroll: el cartel de abajo que invita a bajar. Aparece al entrar a una
+    diapositiva larga y cada vez que alguien se queda quieto
+    segundosSinBajar segundos (6). Con un clic baja a la sección siguiente.
+  • Los demás son los carteles con una mano roja que aparecen sobre cada cosa
+    que se puede tocar (portada, línea de tiempo, mapas, tableros, palancas,
+    rubros…). Cada uno se va solo cuando la persona lo usa por primera vez y
+    no vuelve a aparecer en esa visita.
+  • Cada cartel tiene dos textos: texto (computadora, con mouse) y tactil
+    (celular o tablet). **texto** se ve en negrita y en rojo.
+  Para volver a ver todos los carteles: cerrá la pestaña y abrí la
+  presentación de nuevo.
+
+
 SI ALGO DEJA DE FUNCIONAR
 -------------------------
 Casi siempre es una coma o unas comillas que se borraron.

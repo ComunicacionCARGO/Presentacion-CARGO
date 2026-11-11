@@ -77,6 +77,8 @@
     const ir = seccion.querySelector('.vn-ir');
     if (ir) ir.addEventListener('click', (e) => { e.stopPropagation(); irA(document.querySelector('.sv-bi')); });
     abrir(0);
+    // Guía (compartido/guia.js): la mano señala la columna siguiente, hasta que se pasa por una
+    if (window.GUIA && cols.length > 1) GUIA.pista({ id: 'servicio-ventajas', texto: 'ventajas', objetivo: () => cols[(activa + 1) % cols.length], punto: [.5, .45], zona: '.vn-col', tipo: 'pasar', lado: 'abajo', espera: 1.8 });
     // si nadie toca nada, se abren solas de a una
     setInterval(() => {
       if (!enVista || performance.now() - uso < 9000 || !cols.length) return;
@@ -244,6 +246,13 @@
       (t === 'inversa' ? vistaInversa : vistaEntregas)();
     }
     tabs.forEach((b) => b.addEventListener('click', () => elegir(b.dataset.t)));
+    // Guía (compartido/guia.js): los meses del gráfico, la pestaña de logística inversa y sus barras
+    if (window.GUIA) {
+      const medio = (sel) => { const l = cuerpo.querySelectorAll(sel); return l[Math.floor(l.length / 2)]; };
+      GUIA.pista({ id: 'servicio-bi-puntos', texto: 'tablerosPuntos', objetivo: () => medio('.bi-punto circle'), zona: '.bi-punto', tipo: 'pasar', lado: 'arriba', espera: 2.4, activa: () => actual === 'entregas' });
+      GUIA.pista({ id: 'servicio-bi-pestana', texto: 'tablerosPestana', objetivo: () => tabs[1], punto: [.5, .7], zona: '.bi-tabs button', lado: 'abajo', espera: 1.5 });
+      GUIA.pista({ id: 'servicio-bi-barras', texto: 'tablerosBarras', objetivo: () => medio('.bi-col .bi-b-tiempo'), punto: [.5, .3], zona: '.bi-col', lado: 'arriba', espera: 1.5, activa: () => actual === 'inversa' });
+    }
     // la primera vez que se ve, arranca la pestaña de entregas (así los números cuentan en pantalla)
     observar(seccion, (v) => {
       enVista = v;

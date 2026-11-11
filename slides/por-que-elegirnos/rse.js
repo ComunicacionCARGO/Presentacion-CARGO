@@ -138,6 +138,8 @@
     b.addEventListener('pointerenter', () => mostrar(i));
   });
   raiz.querySelector('.rse-tablero').addEventListener('pointerleave', () => mostrar(fijada));
+  // Guía (compartido/guia.js): la mano señala la primera palanca hasta que se activa alguna
+  if (window.GUIA && botones[0]) GUIA.pista({ id: 'elegirnos-palancas', texto: 'palancas', objetivo: botones[0], punto: [.5, .55], zona: '.rse-palanca', lado: 'abajo', espera: 2 });
   actualizarLectura();
   mostrar('inicio');
 

@@ -174,6 +174,8 @@
   elegir.addEventListener('pointerleave', () => resaltar(-1));
   elegir.addEventListener('click', (e) => elegirTema(ladoEn(e)));
   dibujarDivision();
+  // Guía (compartido/guia.js): la mano señala el botón del lado claro, hasta que se elige un lado
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-lados', texto: 'mejoraLados', objetivo: () => $('.mc-m-boton', bloques[0]), punto: [.7, .55], zona: '.mc-elegir', lado: 'abajo', espera: 1.6 });
 
   function elegirTema(k) {
     if (eligiendo >= 0 || !OP[k]) return;
@@ -390,7 +392,9 @@
   capitulo.querySelectorAll('.cap-flecha').forEach((f) => f.addEventListener('click', () => irSeccion(actual + +f.dataset.dir)));
   $('.cap-cerrar', capitulo).addEventListener('click', cerrarCapitulo);
   // rueda, ↑ ↓, Av Pág… (las manda diapositiva.js)
-  document.addEventListener('capitulo-paso', (e) => irSeccion(actual + e.detail));
+  document.addEventListener('capitulo-paso', (e) => { irSeccion(actual + e.detail); if (window.GUIA) GUIA.usar('elegirnos-tema'); });
+  // Guía (compartido/guia.js): dentro de un tema, la mano señala la segunda pestaña hasta que se recorre
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tema', texto: 'temaSecciones', objetivo: () => tabs.querySelectorAll('button')[1], zona: '.cap-tabs button, .cap-flecha', lado: 'abajo', espera: 2.2, activa: () => !!tema });
   // Esc cierra el tema antes de volver a la portada; ← → recorren
   addEventListener('keydown', (e) => {
     if (!tema) return;

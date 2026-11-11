@@ -162,6 +162,8 @@
     b.addEventListener('pointerleave', () => resaltar(n, false));
     b.addEventListener('click', () => abrir(k));
   });
+  // Guía (compartido/guia.js): la mano señala el área del centro, hasta que se abre alguna
+  if (window.GUIA) GUIA.pista({ id: 'quienes-estructura', texto: 'estructura', objetivo: () => contBurbujas.querySelector('.nivel-0 .b-disco') || contBurbujas.querySelector('.b-disco'), zona: '.burbuja', lado: 'der', espera: 2 });
   // Cada camino con su degradé: transparente en las puntas y con su opacidad en el medio
   const defs = document.createElementNS(NS, 'defs');
   gCaminos.parentNode.insertBefore(defs, gCaminos);

@@ -860,4 +860,7 @@
     requestAnimationFrame(cuadro);
   }
   requestAnimationFrame(cuadro);
+
+  // Guía (compartido/guia.js): una mano invita a tocar la carta de adelante, hasta que se toca una
+  if (window.GUIA) GUIA.pista({ id: 'portada-cartas', texto: 'portadaCartas', puntoEscenario: () => ({ x: 800, y: 790 }), zona: '.tira', espera: 2.4, activa: () => !abriendo });
 })();

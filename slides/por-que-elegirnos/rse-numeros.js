@@ -145,6 +145,9 @@
     col.addEventListener('pointerenter', () => { cajaFardos.classList.add('enfocado'); col.classList.add('foco'); });
     col.addEventListener('pointerleave', () => { cajaFardos.classList.remove('enfocado'); col.classList.remove('foco'); });
   });
+  // Guía (compartido/guia.js): la mano señala un mes del reciclaje hasta que se pasa por uno
+  const colsFardos = cajaFardos.querySelectorAll('.nu-col');
+  if (window.GUIA && colsFardos.length) GUIA.pista({ id: 'elegirnos-reciclaje', texto: 'reciclaje', objetivo: () => colsFardos[Math.floor(colsFardos.length * .6)], punto: [.5, .6], zona: '.nu-col', tipo: 'pasar', lado: 'arriba', espera: 3.5 });
 
   // ---------- Contadores ----------
   function contar() {

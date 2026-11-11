@@ -110,6 +110,7 @@
     ir(y, inmediato) { objetivo = limitar(y); if (inmediato) actual = objetivo; },
     get y() { return actual; },
     get destino() { return objetivo; },   // adonde va (y es donde está ahora)
+    get max() { return Math.min(max, limite); },   // hasta dónde se puede bajar
     // tope del recorrido si la diapositiva usa menos que el alto de la pista (¿Por qué elegirnos?)
     set limite(v) { limite = v; objetivo = limitar(objetivo); }
   };
