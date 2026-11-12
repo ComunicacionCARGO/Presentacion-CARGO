@@ -1,0 +1,67 @@
+/* =========================================================
+   PORTADA DE SERVICIO A MEDIDA — el camión en la ruta, en tres capas
+   (portada.js; textos e imágenes en datos/servicio.js → portada).
+   La sección queda quieta mientras la entrada (¿Cómo lo HACEMOS?) sube
+   por encima, encabezada por las franjas de la marca (.in-franjas, como.css).
+   Medidas en px del escenario, tomadas del diseño de la persona.
+   ========================================================= */
+.pista section.sv-portada { z-index: 0; height: 991px; }   /* 900 + las franjas de la entrada (91), que así arrancan fuera de la pantalla */
+.pista section.sv-intro { z-index: 1; }
+.sv-portada.lejos { visibility: hidden; }
+
+.pt-quieto { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; will-change: transform; }
+
+/* La escena va al ancho de la ventana más 30 px de sobra por lado (para el parallax),
+   con la proporción de la foto (1679 × 938) y apoyada abajo: así en 16:9 y 16:10 la foto
+   queda igual respecto del título. Si la ventana es más alta, arriba sigue el azul del
+   cielo y abajo el gris de la ruta. Las tres capas tienen el mismo tamaño: encajan entre sí. */
+.pt-escena {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1) - 30px);
+  bottom: -30px;
+  width: calc(100vw / var(--escala, 1) + 60px);
+  aspect-ratio: 1679 / 938;
+}
+.pt-capa { position: absolute; inset: 0; will-change: transform; }
+.pt-capa img { display: block; width: 100%; height: 100%; }
+/* arriba: el mismo cielo reflejado (portada.js pone --cielo), y más arriba el azul del borde */
+.pt-cielo::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 100%; background: var(--cielo) center top / 100% auto no-repeat, #39587A; transform: scaleY(-1); }
+.pt-campo::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 2px); height: 800px; background: #A3928A; }
+
+/* el camión "anda": un traqueteo muy leve */
+.pt-camion img { animation: pt-motor .19s ease-in-out infinite alternate; }
+@keyframes pt-motor { from { translate: 0 0; } to { translate: 0 -.8px; } }
+.sv-portada.lejos .pt-camion img { animation-play-state: paused; }
+
+/* título y logo se desvanecen juntos al bajar (portada.js), antes de que vuelva el sello */
+.pt-sale { position: absolute; inset: 0; pointer-events: none; will-change: opacity; }
+
+/* Título: "Tu solución" Inter Light Italic 88 (glifo en x 641, base 382) y
+   "EN CAMINO" Oswald Bold 192 (glifo de x 647 a 1508, base 566) */
+.pt-titulo {
+  position: absolute;
+  left: 631.5px;
+  top: 305.5px;
+  margin: 0;
+  font-weight: inherit;
+  line-height: 1;
+  color: var(--blanco);
+  white-space: nowrap;
+  text-shadow: 0 6px 42px rgba(20, 45, 70, .32), 0 2px 8px rgba(20, 45, 70, .12);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.pt-titulo span { display: block; font-size: 88.5px; font-weight: 300; font-style: italic; letter-spacing: .005em; }
+.pt-titulo b { display: block; margin: -0.5px 0 0 6px; font: 700 192px/1 var(--fuente-titulo); letter-spacing: .0065em; }
+/* entrada al abrirse la cortina */
+.pt-titulo span, .pt-titulo b, .pt-logo { opacity: 0; translate: 0 26px; transition: opacity .9s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1); }
+.sv-portada.visible .pt-titulo span { opacity: 1; translate: 0 0; transition-delay: .15s; }
+.sv-portada.visible .pt-titulo b { opacity: 1; translate: 0 0; transition-delay: .3s; }
+.sv-portada.visible .pt-logo { opacity: 1; translate: 0 0; transition-delay: .5s; }
+
+/* Logo de la marca en blanco, arriba a la derecha (x 1454–1562, y 41–95) */
+.pt-logo { position: absolute; left: 1454px; top: 41px; width: 108.5px; filter: brightness(0) invert(1) drop-shadow(0 2px 10px rgba(20, 45, 70, .25)); pointer-events: none; }
+
+/* En la portada el sello de arriba a la derecha deja lugar al logo */
+.sello { transition: opacity .4s ease; }
+body.en-portada .sello { opacity: 0; pointer-events: none; }

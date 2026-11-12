@@ -24,7 +24,18 @@
    el rojo del TMS, sin costura)
    ========================================================= */
 .sv-intro { color: var(--blanco); }
-.sv-intro .sv-fondo { top: calc(450px - 50vh / var(--escala, 1)); height: calc(450px + 50vh / var(--escala, 1)); background: var(--rojo); }
+.sv-intro .sv-fondo { top: 0; height: calc(450px + 50vh / var(--escala, 1)); background: var(--rojo); }
+/* Franjas de la marca que encabezan la entrada cuando sube por encima de la portada:
+   gris, hueco crema, rojo, hueco crema y el rojo de la sección (34,6 / 10,8, como las de Clientes) */
+.in-franjas {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  top: -90.8px;
+  height: 91.8px;
+  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px);
+  box-shadow: 0 -22px 46px -12px rgba(15, 30, 45, .35);
+}
 .sv-intro .franjitas { background: linear-gradient(90deg, var(--blanco) 0 5px, transparent 5px 6.5px, var(--blanco) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }
 .in-titulo { position: absolute; left: 120px; top: 150px; line-height: 1; white-space: nowrap; }
 .in-sello { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; font-size: 13px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--blanco); }

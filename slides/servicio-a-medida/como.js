@@ -42,7 +42,7 @@
   if (!intro) return;
   const destinos = ['.sv-tms', '.sv-inv', '.sv-bi'];
   const iconos = [ICONOS.tms, ICONOS.inversa, ICONOS.tableros];
-  intro.innerHTML = '<div class="sv-fondo"></div>' +
+  intro.innerHTML = '<div class="sv-fondo"></div><div class="in-franjas"></div>' +
     `<div class="in-titulo ent" style="--i:0"><p class="in-sello"><i class="franjitas"></i>${txt(C.sello)}</p>` +
     `<span>${txt(C.antetitulo)}</span><b>${txt(C.titulo)}</b></div>` +
     `<p class="in-bajada ent" style="--i:1">${txt(C.bajada)}</p>` +
@@ -55,7 +55,12 @@
   // el cartel "Bajá para seguir" lo pone compartido/guia.js; la mano señala las tarjetas
   if (window.GUIA) GUIA.pista({ id: 'servicio-partes', texto: 'entradaPartes', objetivo: () => intro.querySelector('.in-parte .in-ir'), zona: '.in-parte', lado: 'abajo', espera: 2.6 });
 
+  // aparece cuando sube por encima de la portada (o enseguida si no hay portada)
   const mostrar = () => intro.classList.add('visible');
-  if (document.body.classList.contains('lista')) mostrar();
-  else document.addEventListener('pagina-lista', mostrar);
+  const yIntro = () => intro.offsetTop;
+  const revisar = (y) => { if (y > yIntro() - 520) mostrar(); };
+  document.addEventListener('desplazamiento', (e) => revisar(e.detail.y));
+  const alAbrir = () => revisar(window.desplazamiento ? window.desplazamiento.y : 0);
+  if (document.body.classList.contains('lista')) alAbrir();
+  else document.addEventListener('pagina-lista', alAbrir);
 })();

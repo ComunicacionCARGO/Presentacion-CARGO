@@ -13,6 +13,17 @@ window.SERVICIO = {
 
   cliente: "FORD",
 
+  // ---------- Portada (la foto en capas del camión en la ruta) ----------
+  portada: {
+    antetitulo: "Tu operación",
+    titulo: "EN RUTA",
+    // Las tres capas, de atrás para adelante (imágenes de prueba hasta que lleguen los videos).
+    // El cielo queda quieto, el campo se mueve un poco y el camión es lo que más se mueve.
+    cielo: "img/portada-servicio/cielo.jpg",
+    campo: "img/portada-servicio/campo.webp",
+    camion: "img/portada-servicio/camion.webp"
+  },
+
   // ---------- Pantalla de entrada ----------
   como: {
     antetitulo: "¿Cómo lo",

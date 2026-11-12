@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..700;1,100..700&family=Oswald:wght@500;700&display=swap">
   <link rel="stylesheet" href="../../compartido/base.css">
   <link rel="stylesheet" href="estilo.css">
+  <link rel="stylesheet" href="portada.css">
   <link rel="stylesheet" href="como.css">
   <link rel="stylesheet" href="inversa.css">
   <link rel="stylesheet" href="ventajas.css">
@@ -23,6 +24,22 @@
 
     <!-- Pista: las secciones se recorren con el scroll (textos en datos/servicio.js) -->
     <div class="pista">
+
+      <!-- Portada: el camión en la ruta, en tres capas con parallax (portada.js; al bajar,
+           la entrada sube por encima con las franjas de la marca) -->
+      <section class="sv-portada" data-indice="Inicio">
+        <div class="pt-quieto">
+          <div class="pt-escena">
+            <div class="pt-capa pt-cielo"><img alt="" decoding="async"></div>
+            <div class="pt-capa pt-campo"><img alt="" decoding="async"></div>
+            <div class="pt-capa pt-camion"><img alt="" decoding="async"></div>
+          </div>
+          <div class="pt-sale">
+            <h1 class="pt-titulo"><span></span><b></b></h1>
+            <img class="pt-logo" src="../../img/marca/logo-cargo.svg" alt="CARGO">
+          </div>
+        </div>
+      </section>
 
       <!-- ¿Cómo lo hacemos? (entrada con las tres partes) -->
       <section class="sv-intro" data-indice="¿Cómo lo hacemos?" data-indice-tono="rojo"></section>
@@ -94,6 +111,7 @@
   <script src="mapa-argentina.js"></script>
   <script src="flujograma.js"></script>
   <script src="diapositiva.js"></script>
+  <script src="portada.js"></script>
   <script src="como.js"></script>
   <script src="tms.js"></script>
   <script src="inversa.js"></script>
