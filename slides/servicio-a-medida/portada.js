@@ -28,7 +28,7 @@
     { el: $('.pt-camion'), mx: 22, my: 8, sy: .2 },
     { el: $('.pt-titulo'), mx: 16, my: 8, sy: .45 }
   ].filter((c) => c.el);
-  const quieto = $('.pt-quieto'), sale = $('.pt-sale');
+  const quieto = $('.pt-quieto'), sale = [$('.pt-titulo'), $('.pt-logo')];
 
   let y = window.desplazamiento ? window.desplazamiento.y : 0;
   let mx = 0, my = 0, tx = 0, ty = 0, corriendo = false;
@@ -37,7 +37,9 @@
     CAPAS.forEach((c) => {
       c.el.style.transform = `translate3d(${(-mx * c.mx).toFixed(2)}px, ${(-my * c.my - y * c.sy).toFixed(2)}px, 0)`;
     });
-    sale.style.opacity = Math.max(0, Math.min(1, 1 - (y - 80) / 300)).toFixed(3);   // en 0 a los 380 px
+    const op = Math.max(0, Math.min(1, 1 - (y - 80) / 300)).toFixed(3);   // en 0 a los 380 px
+    // arriba de todo no se toca la opacidad (la maneja la entrada con .visible)
+    sale.forEach((el) => { el.style.opacity = y > 80 ? op : ''; });
   }
   function cuadro() {
     mx += (tx - mx) * .07;

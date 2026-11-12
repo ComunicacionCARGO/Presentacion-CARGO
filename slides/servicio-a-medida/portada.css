@@ -33,8 +33,15 @@
 @keyframes pt-motor { from { translate: 0 0; } to { translate: 0 -.8px; } }
 .sv-portada.lejos .pt-camion img { animation-play-state: paused; }
 
-/* título y logo se desvanecen juntos al bajar (portada.js), antes de que vuelva el sello */
-.pt-sale { position: absolute; inset: 0; pointer-events: none; will-change: opacity; }
+/* Orden de adelante hacia atrás: logo, camión, campo, TÍTULO, cielo (pedido de la persona:
+   el título va detrás del paisaje y delante del cielo). .pt-escena no arma grupo (sin z-index
+   ni opacidad), así las capas y el título se intercalan. Título y logo se desvanecen al bajar
+   (portada.js), antes de que vuelva el sello. */
+.pt-cielo { z-index: 0; }
+.pt-titulo { z-index: 1; }
+.pt-campo { z-index: 2; }
+.pt-camion { z-index: 3; }
+.pt-logo { z-index: 4; }
 
 /* Título: "Tu solución" Inter Light Italic 88 (glifo en x 641, base 382) y
    "EN CAMINO" Oswald Bold 192 (glifo de x 647 a 1508, base 566) */
