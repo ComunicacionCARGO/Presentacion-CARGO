@@ -271,7 +271,7 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
   • cliente: el nombre del cliente ("FORD"). En los textos, donde dice {cliente}
     aparece ese nombre: si cambia el cliente, se cambia solo ahí.
   • portada: la primera pantalla, el camión en la ruta.
-      antetitulo / titulo: las dos líneas del título ("Tu operación" / "EN RUTA").
+      antetitulo / titulo: las dos líneas del título ("Nosotros" / "LLEGAMOS").
       cielo, campo: las dos capas de atrás (están en img\portada-servicio).
       Tienen que medir exactamente lo mismo y encajar entre sí; el campo, con
       fondo transparente.

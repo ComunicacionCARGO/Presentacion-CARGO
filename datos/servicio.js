@@ -15,8 +15,8 @@ window.SERVICIO = {
 
   // ---------- Portada (la foto en capas del camión en la ruta) ----------
   portada: {
-    antetitulo: "Tu operación",
-    titulo: "EN RUTA",
+    antetitulo: "Nosotros",
+    titulo: "LLEGAMOS",
     // Las tres capas, de atrás para adelante. El cielo casi no se mueve, el campo un poco
     // y el camión es lo que más se mueve (solo arriba y abajo).
     cielo: "img/portada-servicio/cielo.jpg",
