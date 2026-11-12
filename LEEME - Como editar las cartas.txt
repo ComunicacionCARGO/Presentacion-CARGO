@@ -272,11 +272,17 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     aparece ese nombre: si cambia el cliente, se cambia solo ahí.
   • portada: la primera pantalla, el camión en la ruta.
       antetitulo / titulo: las dos líneas del título ("Tu operación" / "EN RUTA").
-      cielo, campo, camion: las tres capas de la foto, de atrás para adelante
-      (están en img\portada-servicio). Tienen que medir exactamente lo mismo
-      y encajar entre sí; el campo y el camión, con fondo transparente.
-      Al mover el mouse cada capa se corre distinto (el cielo casi nada, el
-      camión lo que más) y al bajar la siguiente pantalla sube por encima.
+      cielo, campo: las dos capas de atrás (están en img\portada-servicio).
+      Tienen que medir exactamente lo mismo y encajar entre sí; el campo, con
+      fondo transparente.
+      camion: el camión andando, una secuencia de cuadros en
+      img\portada-servicio\camion (cuántos cuadros y cuántos por segundo).
+      Si cambia la animación hay que volver a preparar los cuadros: pedíselo
+      a quien mantiene la presentación (la carpeta original "Secuencia Camion"
+      queda en la compu y no se sube a internet).
+      Al mover el mouse cada capa se corre distinto, solo arriba y abajo (el
+      cielo casi nada, el camión lo que más), y al bajar la siguiente pantalla
+      sube por encima.
   • como: la pantalla de entrada (título, frase y las tres tarjetas, que
     llevan en orden a Nuestro TMS, Logística inversa y Tableros: cambiá los
     textos, no el orden).

@@ -23,15 +23,20 @@
   aspect-ratio: 1679 / 938;
 }
 .pt-capa { position: absolute; inset: 0; will-change: transform; }
-.pt-capa img { display: block; width: 100%; height: 100%; }
+.pt-cielo > img, .pt-campo > img { display: block; width: 100%; height: 100%; }
 /* arriba: el mismo cielo reflejado (portada.js pone --cielo), y más arriba el azul del borde */
 .pt-cielo::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 100%; background: var(--cielo) center top / 100% auto no-repeat, #39587A; transform: scaleY(-1); }
 .pt-campo::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 2px); height: 800px; background: #A3928A; }
 
-/* el camión "anda": un traqueteo muy leve */
-.pt-camion img { animation: pt-motor .19s ease-in-out infinite alternate; }
-@keyframes pt-motor { from { translate: 0 0; } to { translate: 0 -.8px; } }
-.sv-portada.lejos .pt-camion img { animation-play-state: paused; }
+/* Camión: secuencia de cuadros del render (1920 × 1080, el mismo encuadre que la foto
+   llevada a 1920 de ancho), centrada en la escena. Hasta que cargan todos se ve el
+   primer cuadro (las dos partes como imágenes); después dibuja el lienzo. */
+.pt-comp { position: absolute; left: 0; top: 50%; width: 100%; aspect-ratio: 16 / 9; translate: 0 -50%; }
+.pt-comp img, .pt-lienzo { position: absolute; display: block; }
+.pt-c { left: 0; top: 2.5926%; width: 38.5417%; }           /* x 0–740, y 28–1080 */
+.pt-r { left: 38.5417%; top: 88.8889%; width: 61.4583%; }    /* x 740–1920, y 960–1080 */
+.pt-lienzo { inset: 0; width: 100%; height: 100%; }
+.pt-comp.en-marcha img { visibility: hidden; }
 
 /* Orden de adelante hacia atrás: logo, camión, campo, TÍTULO, cielo (pedido de la persona:
    el título va detrás del paisaje y delante del cielo). .pt-escena no arma grupo (sin z-index

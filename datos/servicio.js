@@ -17,11 +17,12 @@ window.SERVICIO = {
   portada: {
     antetitulo: "Tu operación",
     titulo: "EN RUTA",
-    // Las tres capas, de atrás para adelante (imágenes de prueba hasta que lleguen los videos).
-    // El cielo queda quieto, el campo se mueve un poco y el camión es lo que más se mueve.
+    // Las tres capas, de atrás para adelante. El cielo casi no se mueve, el campo un poco
+    // y el camión es lo que más se mueve (solo arriba y abajo).
     cielo: "img/portada-servicio/cielo.jpg",
     campo: "img/portada-servicio/campo.webp",
-    camion: "img/portada-servicio/camion.webp"
+    // el camión andando: secuencia de cuadros (carpeta, cantidad y cuadros por segundo)
+    camion: { carpeta: "img/portada-servicio/camion/", cuadros: 121, porSegundo: 24 }
   },
 
   // ---------- Pantalla de entrada ----------
