@@ -1,0 +1,153 @@
+/* =========================================================
+   CENTROS LOGÍSTICOS (cn-) y UBICACIÓN ESTRATÉGICA (ub-), después del mapa
+   de distribución. Fondo crema como el mapa. centros.js; textos en
+   datos/servicio.js → centros y ubicacion.
+   ========================================================= */
+.sv-cen, .sv-ubi { color: var(--gris); }
+.sv-cen button, .sv-ubi button { font: inherit; border: 0; cursor: pointer; }
+.sv-cen svg, .sv-ubi svg { display: block; }
+.sv-cen .ent, .sv-ubi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-cen.visible .ent, .sv-ubi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .09s); }
+
+/* ---------- Centros logísticos ---------- */
+.cn-cab { position: absolute; left: 64px; top: 84px; width: 900px; }
+.cn-ante, .ub-ante { font-size: 36px; font-weight: 300; line-height: 1; }
+.cn-titulo, .ub-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }
+.cn-bajada { margin-top: 20px; width: 640px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
+.cn-bajada strong, .ub-bajada strong { font-weight: 600; color: var(--gris); }
+.cn-total { position: absolute; right: 64px; top: 96px; display: flex; align-items: flex-end; gap: 10px; }
+.cn-total > b { font: 700 132px/.8 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.cn-total > span { display: flex; flex-direction: column; padding-bottom: 4px; font: 700 34px/1 var(--fuente-titulo); }
+.cn-total small { margin-top: 6px; width: 150px; font-family: var(--fuente-texto); font-size: 14px; font-weight: 300; line-height: 1.3; color: rgba(58, 58, 58, .75); }
+.cn-lista { position: absolute; left: 64px; top: 296px; display: grid; grid-template-columns: repeat(4, 353px); gap: 20px; }
+.cn-tarjeta {
+  position: relative; display: flex; flex-direction: column; height: 524px; padding: 30px 26px 26px;
+  border: 1px solid rgba(58, 58, 58, .1); border-radius: 24px; background: #fff;
+  box-shadow: 0 30px 50px -36px rgba(120, 40, 20, .45);
+  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), transform .45s cubic-bezier(.2, .8, .2, 1), border-color .3s ease, box-shadow .45s ease;
+}
+.cn-tarjeta::before { content: ""; position: absolute; left: 28px; top: -1px; width: 40px; height: 4px; background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px); }
+.cn-tarjeta:hover { transform: translateY(-6px); border-color: rgba(239, 69, 41, .45); box-shadow: 0 38px 60px -34px rgba(120, 40, 20, .55); }
+.cn-nombre { display: flex; align-items: center; gap: 14px; }
+.cn-nombre svg { flex: none; width: 54px; height: 54px; fill: var(--rojo); }
+.cn-nombre small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+.cn-nombre b { display: block; margin-top: 2px; font: 700 32px/1 var(--fuente-titulo); letter-spacing: .01em; }
+.cn-m2 { display: flex; align-items: baseline; gap: 6px; margin-top: 26px; }
+.cn-m2 b { font: 700 66px/1 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; }
+.cn-m2 span { font: 700 28px/1 var(--fuente-titulo); }
+.cn-barra { display: block; height: 6px; margin-top: 12px; border-radius: 3px; background: rgba(58, 58, 58, .09); overflow: hidden; }
+.cn-barra i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--rojo); transition: width 1.4s cubic-bezier(.2, .8, .2, 1) .5s; }
+.sv-cen.visible .cn-barra i { width: var(--p); }
+.cn-tarjeta ul { display: grid; gap: 14px; margin-top: 24px; list-style: none; }
+.cn-tarjeta li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; font-size: 14.5px; font-weight: 300; line-height: 1.42; color: rgba(58, 58, 58, .82); }
+.cn-tarjeta li svg { width: 24px; height: 24px; fill: var(--rojo); }
+.cn-tarjeta li strong { font-weight: 600; color: var(--gris); }
+.cn-ver { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; height: 42px; margin-top: auto; padding: 0 18px; border-radius: 999px; background: var(--rojo); color: #fff; font-family: var(--fuente-titulo) !important; font-size: 16px !important; letter-spacing: .04em; box-shadow: 0 14px 24px -14px rgba(160, 40, 20, .8); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.cn-ver svg { width: 18px; height: 18px; fill: #fff; transform: rotate(90deg); }
+.cn-ver:hover { transform: translateY(-2px); }
+
+/* ---------- Ubicación estratégica ---------- */
+.ub-cab { position: absolute; left: 64px; top: 84px; z-index: 2; width: 440px; }
+.ub-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
+.ub-opciones { position: absolute; left: 64px; top: 372px; z-index: 2; display: flex; flex-direction: column; gap: 14px; width: 440px; }
+.ub-op {
+  position: relative; display: grid; grid-template-columns: 52px 1fr auto auto; align-items: center; gap: 14px;
+  height: 104px; padding: 0 22px 0 18px; border-radius: 20px; overflow: hidden;
+  border: 1px solid rgba(58, 58, 58, .12) !important; background: #fff; color: var(--gris); text-align: left;
+  box-shadow: 0 18px 30px -24px rgba(120, 40, 20, .45);
+  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), background .3s ease, color .3s ease, border-color .3s ease, transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.ub-op:hover { border-color: rgba(239, 69, 41, .5) !important; transform: translateX(4px); }
+.ub-op-ico { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: rgba(239, 69, 41, .1); transition: background .3s ease; }
+.ub-op-ico svg { width: 28px; height: 28px; fill: var(--rojo); }
+.ub-op-txt b { display: block; font: 700 19px/1.1 var(--fuente-titulo); letter-spacing: .02em; }
+.ub-op-txt small { display: block; margin-top: 4px; font-size: 12px; font-weight: 300; line-height: 1.3; color: rgba(58, 58, 58, .62); }
+.ub-op-num { text-align: right; }
+.ub-op-num b { display: block; font: 700 40px/1 var(--fuente-titulo); color: var(--rojo); }
+.ub-op-num small { display: block; margin-top: 2px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
+.ub-op.activo { background: var(--rojo); border-color: var(--rojo) !important; color: #fff; }
+.ub-op.activo .ub-op-ico { background: #fff; }
+.ub-op.activo small, .ub-op.activo .ub-op-num b { color: #fff; }
+.ub-op-tiempo { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: rgba(255, 255, 255, .7); }
+.ub-op.auto .ub-op-tiempo { animation: ub-tiempo 6s linear forwards; }
+@keyframes ub-tiempo { to { width: 100%; } }
+.ub-nota { position: absolute; left: 64px; top: 620px; z-index: 2; width: 440px; font-size: 13px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .6); }
+
+/* escenario del mapa: a la derecha, sin recuadro (los bordes del dibujo se esfuman) */
+.ub-escena { position: absolute; left: 470px; top: -20px; z-index: 1; width: 1180px; height: 940px; perspective: 1700px; perspective-origin: 50% 32%; pointer-events: none; }
+.ub-escena .ub-plano, .ub-escena .ub-mini { pointer-events: auto; }
+/* el país (zoom de entrada): crece hacia la zona y se desvanece */
+.ub-argentina { position: absolute; opacity: 0; transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .9s ease; filter: drop-shadow(0 18px 24px rgba(120, 40, 20, .18)); }
+.ub-argentina path { fill: #fff; stroke: rgba(58, 58, 58, .16); stroke-width: 1.2; stroke-linejoin: round; }
+.ub-argentina circle { fill: var(--rojo); }
+.sv-ubi.visible .ub-argentina { opacity: 1; }
+.sv-ubi.zoom .ub-argentina { opacity: 0; transform: scale(16); transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .7s ease .75s; }
+/* el plano de la zona, inclinado como el mapa de distribución */
+.ub-plano {
+  position: absolute; left: 50%; top: 50%; width: 1300px; height: 820px; margin: -410px 0 0 -650px;
+  transform-style: preserve-3d;
+  transform: translate(-50px, 60px) rotateX(42deg) rotateZ(-6deg) scale(.4); opacity: 0;
+  transition: transform 1.7s cubic-bezier(.4, 0, .2, 1), opacity .9s ease;
+}
+.sv-ubi.zoom .ub-plano { transform: translate(-50px, 60px) rotateX(42deg) rotateZ(-6deg) scale(1); opacity: 1; transition-delay: .55s, .75s; }
+.ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 96%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 96%); }
+.ub-dibujo path, .ub-dibujo polygon { stroke-linecap: round; stroke-linejoin: round; }
+.ub-suelo { fill: #F3ECE2; }
+.ub-verde { fill: rgba(76, 149, 108, .2); }
+.ub-industria { fill: rgba(58, 58, 58, .055); stroke: rgba(58, 58, 58, .08); stroke-width: 2; }
+.ub-calle { fill: none; stroke: rgba(58, 58, 58, .12); stroke-width: 1.5; }
+.ub-avenida-borde { fill: none; stroke: rgba(58, 58, 58, .16); stroke-width: 8; }
+.ub-avenida { fill: none; stroke: #FFFDF8; stroke-width: 5.5; }
+.ub-ruta-borde { fill: none; stroke: rgba(58, 58, 58, .22); stroke-width: 26; }
+.ub-ruta-nac { fill: none; stroke: #fff; stroke-width: 21; }
+.ub-ruta-medio { fill: none; stroke: rgba(58, 58, 58, .3); stroke-width: 1.6; stroke-dasharray: 12 10; }
+.ub-pulso { fill: none; stroke: var(--rojo); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.sv-ubi.en-vista .ub-pulso { animation: ub-pulso 2.4s ease-out var(--d, 0s) infinite; }
+@keyframes ub-pulso { 0% { opacity: .55; transform: scale(.6); } 100% { opacity: 0; transform: scale(3.2); } }
+/* recorridos: gris tenue el que no está elegido; el elegido se dibuja en rojo y fluye */
+.ub-rec path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ub-rec-sombra { stroke: transparent; stroke-width: 24; transition: stroke .4s ease; }
+.ub-rec-base { stroke: rgba(58, 58, 58, .22); stroke-width: 6; transition: stroke .4s ease, stroke-width .4s ease; }
+.ub-rec-flujo { stroke: transparent; stroke-width: 2.6; stroke-dasharray: 2 16; }
+.ub-rec.activo .ub-rec-sombra { stroke: rgba(239, 69, 41, .2); }
+.ub-rec.activo .ub-rec-base { stroke: var(--rojo); stroke-width: 9; }
+.ub-rec.activo .ub-rec-flujo { stroke: #fff; animation: ub-flujo 1.1s linear infinite; }
+.ub-rec.activo.dibuja .ub-rec-base, .ub-rec.activo.dibuja .ub-rec-sombra { stroke-dasharray: var(--largo); animation: ub-dibujar 1.1s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes ub-dibujar { from { stroke-dashoffset: var(--largo); } to { stroke-dashoffset: 0; } }
+@keyframes ub-flujo { to { stroke-dashoffset: -18; } }
+.sv-ubi:not(.en-vista) .ub-rec-flujo { animation-play-state: paused; }
+/* lo que está parado sobre el plano (contra-rotado, como las bases del mapa de distribución) */
+.ub-lugar, .ub-dist, .ub-camion { position: absolute; transform-origin: 50% 100%; }
+.ub-lugar { display: flex; flex-direction: column; align-items: center; gap: 8px; transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg); cursor: default; }
+.ub-lugar.centro { cursor: pointer; }
+.ub-lugar::after { content: ""; width: 4px; height: 16px; margin-top: -8px; border-radius: 2px; background: currentColor; color: var(--rojo); }
+.ub-lugar.destino::after { color: var(--gris); }
+.ub-pin { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--rojo); border: 4px solid #fff; box-shadow: 0 14px 22px -10px rgba(120, 40, 20, .6); transition: transform .4s cubic-bezier(.3, 1.5, .5, 1); }
+.ub-pin svg { width: 28px; height: 28px; fill: #fff; }
+.ub-lugar.destino .ub-pin { width: 64px; height: 64px; background: var(--gris); }
+.ub-lugar.destino .ub-pin svg { width: 32px; height: 32px; }
+.ub-etq { padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: 0 10px 20px -12px rgba(0, 0, 0, .35); font-size: 14px; font-weight: 600; white-space: nowrap; transition: color .3s ease, background .3s ease; }
+.ub-lugar.destino .ub-etq { background: var(--gris); color: #fff; font-size: 15px; }
+.ub-lugar.centro.activo .ub-pin { transform: scale(1.15); }
+.ub-lugar.centro.activo .ub-etq { color: var(--rojo); }
+.ub-lugar.centro:not(.activo) { opacity: .7; }
+.ub-dist { padding: 8px 16px; border-radius: 12px; background: var(--rojo); color: #fff; font-size: 15px; white-space: nowrap; box-shadow: 0 14px 24px -12px rgba(160, 40, 20, .7); transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(.6); opacity: 0; transition: opacity .4s ease, transform .5s cubic-bezier(.3, 1.5, .5, 1); }
+.ub-dist b { font-family: var(--fuente-titulo); font-size: 20px; letter-spacing: .02em; }
+.ub-dist.visible { opacity: 1; transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(1); transition-delay: .9s; }
+.ub-camion { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; box-shadow: 0 10px 18px -8px rgba(0, 0, 0, .45); transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg); opacity: 0; transition: opacity .3s ease; }
+.sv-ubi[data-sel] .ub-camion { opacity: 1; }
+.ub-camion svg { width: 26px; height: 26px; fill: var(--rojo); }
+.ub-camion.izq svg { transform: scaleX(-1); }
+.ub-camion.llego { opacity: 0; }
+.ub-escudo { position: absolute; display: flex; align-items: center; gap: 6px; transform: translate(-30%, -50%); }
+.ub-escudo b { display: grid; place-items: center; width: 30px; height: 34px; border-radius: 6px 6px 14px 14px; background: var(--gris); color: #fff; font: 700 17px/1 var(--fuente-titulo); }
+.ub-escudo small { font-size: 13px; font-weight: 600; letter-spacing: .06em; color: rgba(58, 58, 58, .6); }
+/* mapita de referencia: dónde queda la zona */
+.ub-mini { position: absolute; left: -406px; top: 690px;   /* debajo de la columna de texto (x 64 del escenario) */ display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 16px; background: rgba(255, 255, 255, .92); box-shadow: 0 16px 30px -20px rgba(120, 40, 20, .5); opacity: 0; translate: 0 10px; transition: opacity .6s ease 1.9s, translate .8s cubic-bezier(.2, .8, .2, 1) 1.9s; }
+.sv-ubi.zoom .ub-mini { opacity: 1; translate: 0 0; }
+.ub-mini-arg { width: 44px; height: 92px; }
+.ub-mini-arg path { fill: #EFE6DA; stroke: rgba(58, 58, 58, .25); stroke-width: 3; }
+.ub-mini-arg circle { fill: var(--rojo); r: 30; }
+.ub-mini span { width: 120px; font-size: 12px; font-weight: 600; line-height: 1.3; color: rgba(58, 58, 58, .7); }

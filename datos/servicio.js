@@ -358,5 +358,37 @@ window.SERVICIO = {
         { corto: "TDF", nombre: "Tierra del Fuego", enTiempo: 1, demorado: 0 }
       ]
     }
+  },
+
+  // ---------- Centros logísticos (después del mapa de distribución) ----------
+  centros: {
+    antetitulo: "Centros logísticos /",
+    titulo: "CROSSDOCKING",
+    bajada: "Almacenamiento y crossdocking en los puntos clave de la red, con **entrega al cliente en 24 hs**.",
+    totalTexto: "de depósito en 4 centros",
+    botonUbicacion: "Ver la ubicación",
+    // Cada centro: nombre, metros cuadrados (número, sin puntos), dirección, servicios y entrega.
+    // ubicacion: "benavidez" o "plaza" si tiene el botón que baja al mapa de Ubicación estratégica ("" si no)
+    lista: [
+      { nombre: "Córdoba", m2: 4000, direccion: "Rosa Ferreyra de Roca 2862, Córdoba Capital", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
+      { nombre: "Rosario", m2: 1800, direccion: "Vélez Sársfield 6501-6599, Rosario, Santa Fe", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
+      { nombre: "Benavídez", m2: 5680, direccion: "V. Tedín 111, Benavídez, Provincia de Buenos Aires", servicios: "Almacenamiento multicliente, carga paletizada y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "benavidez" },
+      { nombre: "Plaza Logística", m2: 17000, direccion: "Av. J. D. Perón 4000, Pacheco, Buenos Aires", servicios: "Almacenamiento, crossdocking, carga paletizada y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "plaza" }
+    ]
+  },
+
+  // ---------- Ubicación estratégica: mapa de la zona de Pacheco ----------
+  ubicacion: {
+    antetitulo: "Ubicación",
+    titulo: "ESTRATÉGICA",
+    bajada: "Nuestros centros de Buenos Aires están **a minutos del depósito de repuestos de {cliente}**.",
+    destino: "Depósito de repuestos {cliente}",
+    zona: "General Pacheco · Buenos Aires",
+    // los dos centros (km y minutos por calle hasta el depósito)
+    centros: [
+      { k: "benavidez", nombre: "Centro Logístico Benavídez", km: "3,3", minutos: 9 },
+      { k: "plaza", nombre: "Centro Logístico Plaza Logística", km: "1,1", minutos: 4 }
+    ],
+    nota: "Distancia y tiempo por calle hasta el depósito de repuestos."
   }
 };

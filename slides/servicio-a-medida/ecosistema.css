@@ -32,7 +32,10 @@
   box-shadow: 0 26px 44px -26px rgba(120, 40, 20, .55), 0 0 0 1px rgba(58, 58, 58, .08);
   font-size: 11px; color: #333; rotate: -.8deg;
   transition: rotate .6s cubic-bezier(.2, .8, .2, 1);
+  -webkit-user-select: none; user-select: none;   /* al firmar no se selecciona texto */
 }
+/* nada de lo que está encima del cuadro de firma atrapa el mouse (el sello invisible lo tapaba) */
+.td-firma > span, .td-firma em, .td-firma-pie, .td-sello, .td-pdf { pointer-events: none; }
 .td-papel.firmado { rotate: 0deg; }
 .td-pcab { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; padding-bottom: 10px; border-bottom: 1.5px solid #333; }
 .td-pcab img { display: block; width: 100px; }

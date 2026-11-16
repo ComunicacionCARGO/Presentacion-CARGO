@@ -300,6 +300,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   de qué fuente viene, del 1 al 4, y coordenadas). De ejemplo.
       interfases: nombres de los sistemas del dibujo y las 4 interfases
                   (título, texto y "paquete", lo que viaja por la línea).
+  • centros: pantalla "Centros logísticos / CROSSDOCKING" (después del mapa de
+    distribución). En lista, cada centro tiene nombre, m2 (el número sin
+    puntos: 17000), direccion, servicios, entrega y ubicacion ("benavidez" o
+    "plaza" si lleva el botón que baja al mapa de abajo; "" si no). El total de
+    m² arriba a la derecha se suma solo.
+  • ubicacion: pantalla "Ubicación ESTRATÉGICA" (el mapa de la zona de Pacheco).
+    Textos, el nombre del depósito del cliente y los dos centros con sus km y
+    minutos hasta el depósito. El dibujo del mapa (calles, recorridos) no se
+    edita acá: es un esquema hecho a partir de las capturas de Google Maps.
   • experiencia: pantalla "Experiencia de USUARIO" (después del ecosistema).
       calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
                   evento que se pueden elegir.
