@@ -1,61 +1,42 @@
 /* =========================================================
    EXPERIENCIA DE USUARIO (experiencia.js; textos en datos/servicio.js → experiencia).
-   Sección crema como la entrada y el ecosistema (la suite tecnológica):
-   encabezado con la grilla común (x 64, y 84) y dos tarjetas blancas de x 64
-   a 1536, de y 290 a 820. Mide 991: abajo, las franjas de la marca (gris,
-   hueco, rojo, hueco) y la tercera franja es el rojo de la logística inversa.
+   Quinta pestaña del panel de ¿Cómo lo hacemos? (940 × 736): dos tarjetas
+   blancas lado a lado (No calidad y Customer service).
    ========================================================= */
-.pista section.sv-exp { height: 991px; }
-.sv-exp { color: var(--gris); }
-.sv-exp .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--blanco); }
-.ex-franjas {
-  position: absolute;
-  left: calc(800px - 50vw / var(--escala, 1));
-  width: calc(100vw / var(--escala, 1));
-  top: 900px;
-  height: 93px;
-  /* franjas de 34,6 y huecos de 10,8: gris, rojo y la tercera se vuelve el fondo rojo de la sección */
-  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px);
-}
-.sv-exp button { font: inherit; border: 0; cursor: pointer; }
-.sv-exp svg { display: block; }
-.sv-exp .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
-.sv-exp.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .1s); }
-
-.ex-cab { position: absolute; left: 64px; top: 84px; width: 1472px; }
-.ex-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.ex-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }
-.ex-bajada { position: absolute; left: 560px; top: 76px; width: 620px; font-size: 19px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .8); }
-.ex-bajada strong { font-weight: 600; color: var(--gris); }
+.tm-vista.ex { color: var(--gris); }
+.tm-vista.ex button { font: inherit; border: 0; cursor: pointer; }
+.tm-vista.ex svg { display: block; }
 
 .ex-tarjeta {
-  position: absolute; top: 290px; width: 726px; height: 530px;
-  border-radius: 28px; background: #fff; color: var(--gris);
-  box-shadow: 0 44px 80px -46px rgba(120, 40, 20, .45), 0 0 0 1px rgba(58, 58, 58, .1);
+  position: absolute; top: 28px; bottom: 28px; width: 428px;
+  border-radius: 24px; background: #fff; color: var(--gris);
+  box-shadow: 0 30px 60px -40px rgba(120, 40, 20, .45), 0 0 0 1px rgba(58, 58, 58, .1);
   overflow: hidden;
 }
-.ex-calidad { left: 64px; }
-.ex-asistente { left: 810px; }
+.ex-calidad { left: 32px; }
+.ex-asistente { right: 32px; }
+.tm-vista.ex.activa .ex-tarjeta { animation: mr-entrar .6s cubic-bezier(.2, .8, .2, 1) both; }
+.tm-vista.ex.activa .ex-asistente { animation-delay: .1s; }
 .ex-tarjeta::after {   /* franjitas de la marca arriba a la izquierda, sobre la foto */
-  content: ""; position: absolute; left: 32px; top: 0; z-index: 2; width: 40px; height: 4px;
+  content: ""; position: absolute; left: 28px; top: 0; z-index: 2; width: 40px; height: 4px;
   background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px);
 }
 /* foto de arriba con una esquina en chaflán (como el recorte de la diapositiva) */
-.ex-foto { position: relative; height: 146px; overflow: hidden; background: #ddd; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 34px) 100%, 0 100%); }
+.ex-foto { position: relative; height: 130px; overflow: hidden; background: #ddd; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%); }
 .ex-foto img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .8, .2, 1); }
 .ex-calidad .ex-foto img { object-position: 50% 45%; }
 .ex-asistente .ex-foto img { object-position: 50% 28%; }
 .ex-tarjeta:hover .ex-foto img { transform: scale(1.04); }
 .ex-foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(58, 58, 58, .45), transparent 55%); pointer-events: none; }
-.ex-txt { padding: 18px 28px 0; }
+.ex-txt { padding: 16px 24px 0; }
 .ex-t1 { font-size: 22px; font-weight: 300; line-height: 1; }
-.ex-t1 b { font: 700 34px/1 var(--fuente-titulo); letter-spacing: .02em; color: var(--rojo); }
-.ex-t2 { margin-top: 6px; font-size: 14.5px; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .78); }
+.ex-t1 b { font: 700 32px/1 var(--fuente-titulo); letter-spacing: .02em; color: var(--rojo); }
+.ex-t2 { margin-top: 6px; font-size: 14px; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .78); }
 .ex-t2 strong { font-weight: 600; color: var(--gris); }
 .nc-rot { margin-bottom: 7px; font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
 
-/* ---------- No calidad ---------- */
-.nc-app { position: absolute; left: 28px; right: 28px; top: 258px; bottom: 26px; display: grid; grid-template-columns: 340px 1fr; gap: 18px; }
+/* ---------- No calidad: formulario arriba y sistema de siniestros abajo ---------- */
+.nc-app { position: absolute; left: 24px; right: 24px; top: 240px; bottom: 22px; display: grid; grid-template-rows: auto 1fr; gap: 12px; }
 .nc-form, .nc-sistema { padding: 14px 14px 14px 16px; border-radius: 18px; background: var(--blanco); border: 1px solid rgba(58, 58, 58, .1); box-shadow: 0 14px 26px -22px rgba(120, 40, 20, .45); }
 .nc-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
 .nc-chips button { height: 28px; padding: 0 9px; border-radius: 999px; background: rgba(58, 58, 58, .06); color: var(--gris); font-size: 12px; font-weight: 500; transition: background .25s ease, color .25s ease, transform .25s ease; }
@@ -71,7 +52,7 @@
 .nc-registrar svg { width: 16px; height: 16px; fill: #fff; }
 .nc-registrar:disabled { opacity: .35; cursor: default; }
 .nc-registrar.hecho { transform: scale(.94); }
-.nc-tabla { display: flex; flex-direction: column; gap: 6px; max-height: 182px; overflow: hidden; }
+.nc-tabla { display: flex; flex-direction: column; gap: 6px; max-height: 184px; overflow: hidden; }
 .nc-fila { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border-radius: 10px; background: rgba(58, 58, 58, .04); font-size: 12.5px; }
 .nc-fila > b { font-weight: 600; font-variant-numeric: tabular-nums; }
 .nc-fila span { min-width: 0; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -85,12 +66,12 @@
 @keyframes nc-entra { from { opacity: 0; translate: 0 -12px; background: rgba(239, 69, 41, .18); } }
 
 /* ---------- Asistente (TICO) ---------- */
-.ch-bot { position: absolute; left: 24px; bottom: 16px; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 7px 16px 7px 8px; border-radius: 999px; background: rgba(255, 251, 243, .9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--gris); box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .5); }
+.ch-bot { position: absolute; left: 20px; bottom: 14px; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 7px 16px 7px 8px; border-radius: 999px; background: rgba(255, 251, 243, .9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--gris); box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .5); }
 .ch-bot svg { width: 34px; height: 34px; padding: 6px; border-radius: 50%; background: var(--rojo); fill: #fff; }
 .ch-bot b { display: block; font: 700 16px/1 var(--fuente-titulo); letter-spacing: .08em; }
 .ch-bot small { display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 11.5px; color: rgba(58, 58, 58, .7); }
 .ch-bot small i { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 3px rgba(76, 149, 108, .2); }
-.ch-app { position: absolute; left: 28px; right: 28px; top: 258px; bottom: 26px; display: flex; flex-direction: column; gap: 10px; }
+.ch-app { position: absolute; left: 24px; right: 24px; top: 240px; bottom: 22px; display: flex; flex-direction: column; gap: 10px; }
 .ch-mensajes { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 12px 14px; border-radius: 18px; background: #F3EEE6; overflow: hidden; }
 /* los mensajes viejos se desvanecen arriba */
 .ch-mensajes > * { flex: none; }
@@ -103,8 +84,8 @@
 .ch-msj.escribiendo i:nth-child(2) { animation-delay: .15s; }
 .ch-msj.escribiendo i:nth-child(3) { animation-delay: .3s; }
 @keyframes ch-punto { 30% { translate: 0 -4px; background: var(--rojo); } }
-.ch-preguntas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.ch-preguntas button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 6px 12px; border-radius: 14px; background: #fff; border: 1px solid rgba(239, 69, 41, .35) !important; color: var(--gris); font-size: 12px; font-weight: 500; line-height: 1.3; text-align: left; transition: background .25s ease, border-color .25s ease, color .25s ease; }
+.ch-preguntas { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.ch-preguntas button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; padding: 6px 14px; border-radius: 14px; background: #fff; border: 1px solid rgba(239, 69, 41, .35) !important; color: var(--gris); font-size: 12px; font-weight: 500; line-height: 1.3; text-align: left; transition: background .25s ease, border-color .25s ease, color .25s ease; }
 .ch-preguntas button svg { flex: none; width: 16px; height: 16px; fill: var(--rojo); }
 .ch-preguntas button:hover { border-color: var(--rojo) !important; background: rgba(239, 69, 41, .06); }
 .ch-preguntas button.activo { background: var(--rojo); border-color: var(--rojo) !important; color: #fff; }

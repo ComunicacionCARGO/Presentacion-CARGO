@@ -1,5 +1,6 @@
 /* =========================================================
-   EXPERIENCIA DE USUARIO — dos tarjetas (fotos de la diapositiva de la persona):
+   EXPERIENCIA DE USUARIO — quinta pestaña de ¿Cómo lo hacemos? (tms.js): dos
+   tarjetas (fotos de la diapositiva de la persona):
    - Aplicativo NO CALIDAD: se elige la instancia del proceso y el tipo de
      evento, se registra y aparece en el "Sistema de siniestros" (Abierto →
      En análisis).
@@ -10,13 +11,15 @@
    ========================================================= */
 (function () {
   const SV = window.SV;
-  const seccion = document.querySelector('.sv-exp');
-  if (!SV || !seccion) return;
+  // va en la quinta pestaña del ecosistema (tms.js deja la vista en SV.tms.vistas)
+  const seccion = SV && SV.tms && SV.tms.vistas.experiencia;
+  if (!seccion) return;
   const { S, txt, crear, esc } = SV;
   const E = S.experiencia || {};
   const C = E.calidad || {}, A = E.asistente || {};
   const ahora = () => performance.now();
-  let enVista = false;
+  // solo se usa sola con la pestaña abierta y la sección en pantalla
+  const enVista = () => SV.tms.enVista && SV.tms.pestana === 'experiencia';
 
   const ICO = {
     foto: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M8.5 3h7l1.6 2.5H22V21H2V5.5h4.9zM12 8.5a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4z"/></svg>',
@@ -27,11 +30,8 @@
   };
 
   seccion.insertAdjacentHTML('beforeend',
-    '<div class="ex-franjas"></div>' +
-    `<div class="ex-cab ent" style="--i:0"><p class="ex-ante">${txt(E.antetitulo)}</p><h2 class="ex-titulo">${txt(E.titulo)}</h2>` +
-    `<p class="ex-bajada">${txt(E.bajada)}</p></div>` +
     // ---- No calidad ----
-    '<article class="ex-tarjeta ex-calidad ent" style="--i:1">' +
+    '<article class="ex-tarjeta ex-calidad">' +
     '<div class="ex-foto"><img src="../../img/ecosistema/no-calidad.webp" alt="" decoding="async"></div>' +
     `<div class="ex-txt"><p class="ex-t1">${C.titulo ? txt(C.titulo) + ' ' : ''}<b>${txt(C.tituloGrande)}</b></p><p class="ex-t2">${txt(C.texto)}</p></div>` +
     '<div class="nc-app">' +
@@ -43,7 +43,7 @@
     `<div class="nc-sistema"><p class="nc-rot">${txt(C.sistema)}</p><div class="nc-tabla"></div></div>` +
     '</div></article>' +
     // ---- Asistente ----
-    '<article class="ex-tarjeta ex-asistente ent" style="--i:2">' +
+    '<article class="ex-tarjeta ex-asistente">' +
     '<div class="ex-foto"><img src="../../img/ecosistema/robot.webp" alt="" decoding="async">' +
     `<p class="ch-bot">${ICO.bot}<span><b>${txt(A.nombre)}</b><small><i></i>${txt(A.estado)}</small></span></p></div>` +
     `<div class="ex-txt"><p class="ex-t1">${A.titulo ? txt(A.titulo) + ' ' : ''}<b>${txt(A.tituloGrande)}</b></p><p class="ex-t2">${txt(A.texto)}</p></div>` +
@@ -96,7 +96,7 @@
     // solo, si nadie lo usa: elige instancia, tipo y registra
     const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
     setInterval(async () => {
-      if (!enVista || auto || ahora() - uso < 7000) return;
+      if (!enVista() || auto || ahora() - uso < 7000) return;
       auto = true;
       try {
         inst[Math.floor(Math.random() * inst.length)].click(); await esperar(700);
@@ -141,15 +141,10 @@
     }
     botones.forEach((b, i) => b.addEventListener('click', () => preguntar(i)));
     setInterval(() => {
-      if (!enVista || ocupado || ahora() - uso < 6500) return;
+      if (!enVista() || ocupado || ahora() - uso < 6500) return;
       uso = ahora() - 1500;
       preguntar(proxima, true);
     }, 1000);
   })();
 
-  new IntersectionObserver((en) => {
-    enVista = en[0].isIntersecting;
-    seccion.classList.toggle('en-vista', enVista);
-    if (enVista) seccion.classList.add('visible');
-  }, { threshold: .35 }).observe(seccion);
 })();

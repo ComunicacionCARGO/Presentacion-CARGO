@@ -133,7 +133,68 @@
   document.addEventListener('desplazamiento', (e) => alDesplazar(e.detail.y));
   alDesplazar(y);
 
-  const mostrar = () => sec.classList.add('visible');
+  // ---------- Intro: tarjeta que pasa sola por los párrafos ----------
+  // Cada párrafo se queda según su largo (tiempo de lectura); las rayitas de arriba se
+  // llenan y con un clic se va a ese paso. El último paso es la pregunta con el botón
+  // que baja a "¿Cómo lo hacemos?". El tiempo solo corre con la portada a la vista.
+  const I = P.intro || {};
+  const caja = $('.pt-intro');
+  const PARRAFOS = (I.parrafos || []).filter(Boolean);
+  let introActiva = false;
+  if (caja && (PARRAFOS.length || I.pregunta)) {
+    const cliente = (window.SERVICIO || {}).cliente || '';
+    const esc = (t) => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const txt = (t) => esc(String(t || '').replace(/\{cliente\}/g, cliente)).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const pasos = PARRAFOS.length + 1;
+    caja.innerHTML =
+      `<div class="pt-i-cab"><p class="pt-i-rotulo"><i class="franjitas"></i>${txt(I.rotulo)}</p>` +
+      `<div class="pt-i-rayas">${Array.from({ length: pasos }, (_, k) => `<button type="button" data-k="${k}" aria-label="Paso ${k + 1}"><i></i></button>`).join('')}</div></div>` +
+      '<div class="pt-i-pasos">' +
+      PARRAFOS.map((p, k) => `<p class="pt-i-paso" data-k="${k}">${txt(p)}</p>`).join('') +
+      `<div class="pt-i-paso pt-i-final" data-k="${PARRAFOS.length}"><h2>${txt(I.pregunta)}</h2>` +
+      `<div class="pt-i-pie"><p>${txt(I.invitacion)}</p>` +
+      `<button type="button" class="pt-i-boton">${txt(I.boton)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg></button></div></div>` +
+      '</div>';
+    const elPasos = [...caja.querySelectorAll('.pt-i-paso')];
+    const rayas = [...caja.querySelectorAll('.pt-i-rayas button')];
+    // segundos de cada paso: según el largo del texto (unas 22 letras por segundo, entre 6 y 11 s)
+    const dur = PARRAFOS.map((p) => Math.max(6, Math.min(11, String(p).length / 22)));
+    let paso = -1, transcurrido = 0, ultimo = 0;
+    function ir(k) {
+      paso = k; transcurrido = 0;
+      elPasos.forEach((el, j) => el.classList.toggle('activo', j === k));
+      rayas.forEach((b, j) => {
+        b.classList.toggle('hecha', j < k);
+        b.classList.toggle('actual', j === k);
+        b.firstChild.style.width = j < k ? '100%' : '0%';
+      });
+    }
+    rayas.forEach((b, j) => b.addEventListener('click', () => ir(j)));
+    caja.querySelector('.pt-i-boton').addEventListener('click', () => {
+      const sig = document.querySelector('.sv-tms');
+      if (window.desplazamiento && sig) window.desplazamiento.ir(sig.offsetTop);
+    });
+    // reloj: avanza solo con la portada a la vista y la pestaña visible
+    function reloj(t) {
+      requestAnimationFrame(reloj);
+      const dt = ultimo ? Math.min(.1, (t - ultimo) / 1000) : 0;
+      ultimo = t;
+      if (!introActiva || paso < 0 || paso >= PARRAFOS.length || y > 300 || document.hidden) return;
+      transcurrido += dt;
+      const p = Math.min(1, transcurrido / dur[paso]);
+      rayas[paso].firstChild.style.width = (p * 100).toFixed(1) + '%';
+      if (p >= 1) ir(paso + 1);
+    }
+    requestAnimationFrame(reloj);
+    // la tarjeta se va con el título al bajar
+    sale.push(caja);
+  }
+
+  const mostrar = () => {
+    sec.classList.add('visible');
+    // la intro aparece después del título
+    if (caja && caja.children.length && !introActiva) setTimeout(() => { introActiva = true; caja.classList.add('lista'); if (caja.querySelector('.pt-i-paso.activo') === null) caja.querySelector('.pt-i-rayas button').click(); }, 1300);
+  };
   if (document.body.classList.contains('lista')) mostrar();
   else document.addEventListener('pagina-lista', mostrar);
 })();

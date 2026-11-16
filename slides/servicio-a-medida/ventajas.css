@@ -1,66 +1,28 @@
 /* =========================================================
-   VENTAJAS Y OPORTUNIDADES + TABLEROS DE BI (ventajas.js)
-   Siguen el rojo de la logística inversa; los tableros terminan en las
-   franjas que pasan al mapa. Medidas en px del escenario de 1600 × 900.
+   TABLEROS DE BI + VENTAJAS Y OPORTUNIDADES (ventajas.js)
+   Una sola pantalla roja con tres pestañas, después de la logística inversa;
+   abajo, las franjas que pasan al mapa. Medidas en px del escenario de 1600 × 900.
    ========================================================= */
-.sv-ven, .sv-bi { color: var(--blanco); }
-.sv-ven ul, .sv-bi ul { list-style: none; margin: 0; padding: 0; }
+.sv-bi { color: var(--blanco); }
+.sv-bi ul { list-style: none; margin: 0; padding: 0; }
 /* sin especificidad (:where): si no, este reinicio le ganaba a los márgenes de cada clase y los textos quedaban pegados */
-:where(.sv-ven, .sv-bi) :where(h2, h3, p) { margin: 0; }
-.sv-ven strong, .sv-bi strong { font-weight: 600; }
+:where(.sv-bi) :where(h2, h3, p) { margin: 0; }
+.sv-bi strong { font-weight: 600; }
 /* rojo plano, 2 px más arriba para pisarse con la sección anterior (sin rendija) */
-.sv-ven .sv-fondo, .sv-bi .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
-.pista section.sv-ven { height: 991px; }   /* va última: 900 + las franjas hacia el mapa (.iv-franjas, en inversa.css) */
-.sv-ven .ent, .sv-bi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
-.sv-ven.visible .ent, .sv-bi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
+.sv-bi .sv-fondo { top: -2px; height: 902px; background: var(--rojo); }
+.pista section.sv-bi { height: 991px; }   /* 900 + las franjas hacia el mapa (.iv-franjas, en inversa.css) */
+.sv-bi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-bi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
 
-/* ---------- Ventajas y oportunidades ---------- */
-.vn-cab { position: absolute; left: 64px; top: 84px; width: 1100px; }
-.vn-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.vn-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); letter-spacing: .01em; }
-.vn-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
-.vn-bajada strong { color: var(--blanco); }
-.vn-cols { position: absolute; left: 64px; top: 284px; width: 1472px; height: 536px; display: flex; gap: 14px; }
-.vn-col {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 26px 24px;
-  border-radius: 22px;
-  background: rgba(255, 251, 243, .1);
-  box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .22);
-  overflow: hidden;
-  cursor: pointer;
-  outline: none;
-  transition: flex-grow .65s cubic-bezier(.2, .8, .2, 1), background .4s ease, box-shadow .4s ease, color .4s ease;
-}
-.vn-col:hover:not(.abierta) { background: rgba(255, 251, 243, .17); }
-.vn-col.abierta { flex-grow: 2.9; background: var(--blanco); color: var(--gris); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); cursor: default; }
-.vn-num { display: block; font: 500 15px var(--fuente-titulo); letter-spacing: .14em; opacity: .7; }
-.vn-col.abierta .vn-num { color: var(--rojo); opacity: 1; }
-.vn-ico { display: block; width: 46px; height: 46px; margin-top: 20px; fill: var(--blanco); transition: fill .4s ease, scale .5s cubic-bezier(.3, 1.5, .5, 1); }
-.vn-col.abierta .vn-ico { fill: var(--rojo); scale: 1.08; }
-.vn-nombre { position: relative; margin-top: 18px; font: 700 25px/1.08 var(--fuente-titulo); transition: color .4s ease; }
-.vn-col.abierta .vn-nombre { color: var(--rojo); font-size: 32px; }
-/* el texto tiene ancho fijo (no se reacomoda mientras la columna se abre) y aparece cuando ya se abrió */
-.vn-cuerpo { position: relative; width: 410px; margin-top: 18px; opacity: 0; translate: 0 10px; transition: opacity .25s ease, translate .25s ease; pointer-events: none; }
-.vn-col.abierta .vn-cuerpo { opacity: 1; translate: 0 0; transition: opacity .5s ease .3s, translate .6s cubic-bezier(.2, .8, .2, 1) .3s; pointer-events: auto; }
-.vn-cuerpo p { font-size: 18px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .85); }
-.vn-cuerpo strong { color: var(--gris); }
-.vn-lista { margin-top: 14px !important; }
-.vn-lista li { position: relative; padding-left: 20px; margin-top: 6px; font-size: 16px; font-weight: 600; }
-.vn-lista li::before { content: ""; position: absolute; left: 0; top: .45em; width: 9px; height: 9px; border-radius: 50%; background: var(--rojo); }
-.vn-ir { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; height: 46px; padding: 0 20px 0 22px; border: 0; border-radius: 999px; background: var(--rojo); font: 500 16px var(--fuente-titulo); letter-spacing: .1em; text-transform: uppercase; color: var(--blanco); cursor: pointer; transition: translate .3s ease; }
-.vn-ir svg { width: 18px; height: 18px; fill: currentColor; }
-.vn-ir:hover { translate: 0 -2px; }
-/* ícono grande de fondo, como en la diapositiva */
-.vn-fondo-ico { position: absolute; right: -34px; bottom: -34px; width: 230px; height: 230px; fill: var(--blanco); opacity: .1; transition: fill .4s ease, opacity .4s ease, rotate .8s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
-.vn-col.abierta .vn-fondo-ico { fill: var(--rojo); opacity: .09; rotate: -8deg; }
-
-/* ---------- Tableros de Business Intelligence ---------- */
+/* ---------- Columna izquierda: encabezado (cambia con la pestaña), pestañas y nota ---------- */
 .bi-izq { position: absolute; left: 64px; top: 84px; width: 410px; }
+/* los dos encabezados ocupan el mismo lugar: se ve el de la pestaña elegida */
+.bi-cabs { position: relative; height: 290px; }
+.bi-cab { position: absolute; left: 0; top: 0; width: 100%; opacity: 0; translate: 0 12px; transition: opacity .35s ease, translate .5s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.bi-cab.actual { opacity: 1; translate: 0 0; transition-delay: .12s; pointer-events: auto; }
 .bi-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.bi-titulo { margin-top: 4px; font: 700 70px/.95 var(--fuente-titulo); letter-spacing: .01em; }   /* dos renglones: 84 no entra */
+.bi-titulo { margin-top: 4px; font: 700 70px/.95 var(--fuente-titulo); letter-spacing: .01em; white-space: nowrap; overflow: hidden; }   /* dos renglones: 84 no entra */
+.bi-cab-t .bi-titulo { white-space: normal; }
 .bi-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .bi-bajada strong { color: var(--blanco); }
 .bi-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 34px; }
@@ -76,9 +38,60 @@
 .bi-tabs button:hover:not(.activo) { background: rgba(255, 251, 243, .2); translate: 4px 0; }
 .bi-tabs button.activo { background: var(--blanco); color: var(--gris); box-shadow: 0 20px 34px -18px rgba(100, 15, 0, .7); }
 .bi-tabs button.activo svg { fill: var(--rojo); }
-.bi-nota { margin-top: 22px; padding-left: 4px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .75); }
+.bi-nota { margin-top: 22px; padding-left: 4px; font-size: 13px; font-style: italic; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .75); transition: opacity .35s ease; }
+.sv-bi[data-t="ventajas"] .bi-nota { opacity: 0; }
 
-.bi-ventana { position: absolute; left: 520px; top: 84px; width: 1016px; height: 736px; border-radius: 20px; background: var(--blanco); color: var(--gris); box-shadow: 0 40px 70px -36px rgba(100, 15, 0, .75); overflow: hidden; }
+/* ---------- Lado derecho: la ventana del tablero o las columnas de ventajas ---------- */
+.bi-area { position: absolute; left: 520px; top: 84px; width: 1016px; height: 736px; }
+.bi-ventana { position: absolute; inset: 0; border-radius: 20px; background: var(--blanco); color: var(--gris); box-shadow: 0 40px 70px -36px rgba(100, 15, 0, .75); overflow: hidden; transition: opacity .35s ease, translate .5s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+.sv-bi[data-t="ventajas"] .bi-ventana { opacity: 0; translate: 0 16px; visibility: hidden; transition: opacity .3s ease, translate .4s ease, visibility 0s .4s; }
+
+/* Ventajas: seis columnas; las cerradas muestran el nombre parado y la abierta, su texto */
+.vn-cols { position: absolute; inset: 0; display: flex; gap: 12px; visibility: hidden; pointer-events: none; }
+.sv-bi[data-t="ventajas"] .vn-cols { visibility: visible; pointer-events: auto; }
+.vn-col {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 30px 32px;
+  border-radius: 20px;
+  background: rgba(255, 251, 243, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .22);
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  opacity: 0; translate: 0 20px;
+  transition: flex-grow .65s cubic-bezier(.2, .8, .2, 1), background .4s ease, box-shadow .4s ease, color .4s ease, opacity .3s ease, translate .3s ease;
+}
+.sv-bi[data-t="ventajas"] .vn-col { opacity: 1; translate: 0 0; transition: flex-grow .65s cubic-bezier(.2, .8, .2, 1), background .4s ease, box-shadow .4s ease, color .4s ease, opacity .6s ease calc(.15s + var(--i) * .06s), translate .8s cubic-bezier(.2, .8, .2, 1) calc(.15s + var(--i) * .06s); }
+.vn-col:hover:not(.abierta) { background: rgba(255, 251, 243, .17); }
+.vn-col.abierta { flex-grow: 6.5;   /* con el relleno de 32 + 32: la abierta mide ~387 y las cerradas ~114 */ background: var(--blanco); color: var(--gris); box-shadow: 0 34px 60px -34px rgba(100, 15, 0, .7); cursor: default; }
+.vn-num { display: block; font: 500 15px var(--fuente-titulo); letter-spacing: .14em; opacity: .7; }
+.vn-col.abierta .vn-num { color: var(--rojo); opacity: 1; }
+.vn-ico { display: block; width: 46px; height: 46px; margin-top: 20px; fill: var(--blanco); transition: fill .4s ease, scale .5s cubic-bezier(.3, 1.5, .5, 1); }
+.vn-col.abierta .vn-ico { fill: var(--rojo); scale: 1.08; }
+/* nombre parado (columna cerrada): se lee de abajo hacia arriba */
+.vn-vert { position: absolute; left: 0; right: 0; bottom: 34px; display: flex; justify-content: center; transition: opacity .3s ease .25s; pointer-events: none; }
+.vn-vert span { writing-mode: vertical-rl; rotate: 180deg; font: 700 27px/1 var(--fuente-titulo); letter-spacing: .01em; white-space: nowrap; }
+.vn-col.abierta .vn-vert { opacity: 0; transition: opacity .15s ease; }
+/* nombre y texto de la columna abierta: ancho fijo (no se reacomodan mientras se abre) y aparecen cuando ya se abrió */
+.vn-nombre, .vn-cuerpo { position: relative; width: 322px; opacity: 0; translate: 0 10px; transition: opacity .2s ease, translate .25s ease; pointer-events: none; }
+.vn-nombre { margin-top: 22px; font: 700 34px/1.05 var(--fuente-titulo); color: var(--rojo); }
+.vn-cuerpo { margin-top: 18px; }
+.vn-col.abierta .vn-nombre, .vn-col.abierta .vn-cuerpo { opacity: 1; translate: 0 0; transition: opacity .5s ease .3s, translate .6s cubic-bezier(.2, .8, .2, 1) .3s; pointer-events: auto; }
+.vn-cuerpo p { font-size: 18px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .85); }
+.vn-cuerpo strong { color: var(--gris); }
+.vn-lista { margin-top: 14px !important; }
+.vn-lista li { position: relative; padding-left: 20px; margin-top: 6px; font-size: 16px; font-weight: 600; }
+.vn-lista li::before { content: ""; position: absolute; left: 0; top: .45em; width: 9px; height: 9px; border-radius: 50%; background: var(--rojo); }
+.vn-ir { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; height: 46px; padding: 0 20px 0 22px; border: 0; border-radius: 999px; background: var(--rojo); font: 500 16px var(--fuente-titulo); letter-spacing: .1em; text-transform: uppercase; color: var(--blanco); cursor: pointer; transition: translate .3s ease; }
+.vn-ir svg { width: 18px; height: 18px; fill: currentColor; }
+.vn-ir:hover { translate: 2px 0; }
+/* ícono grande de fondo, como en la diapositiva */
+.vn-fondo-ico { position: absolute; right: -40px; bottom: -40px; width: 260px; height: 260px; fill: var(--blanco); opacity: 0; transition: fill .4s ease, opacity .4s ease, rotate .8s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.vn-col.abierta .vn-fondo-ico { fill: var(--rojo); opacity: .09; rotate: -8deg; }
+
+/* ---------- Ventana del tablero ---------- */
 .bi-barra { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; background: var(--gris); color: var(--blanco); }
 /* logo de la marca en blanco, sin fondo (el SVG pasado a blanco con filtro) */
 .bi-barra img { height: 22px; width: auto; filter: brightness(0) invert(1); }

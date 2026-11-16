@@ -1,5 +1,9 @@
 /* =========================================================
-   ECOSISTEMA TECNOLÓGICO — nuestro TMS en 4 pestañas:
+   ¿CÓMO LO HACEMOS? — el ecosistema tecnológico en 5 pestañas
+   (una sola pantalla: a la izquierda el título "¿Cómo lo HACEMOS?", la
+   bajada y las pestañas; a la derecha, el panel de cada una). Arriba de la
+   sección van las tres franjas de la marca (sube por encima de la portada)
+   y abajo dos (la tercera es el rojo de la logística inversa).
    - Gestión de cargas: la planchada (zonas de stage y zstage como en el
      diseño). El cursor es un lector: al pasarlo por un bulto que llega, se
      lee y vuela a su zona; los indicadores cambian. Cuando una zona se llena,
@@ -9,7 +13,8 @@
    - Customizing e interfases: el TMS en el centro, conectado con el ERP del
      cliente, el warehouse, los redespachantes y la App; cada interfase
      enciende sus recorridos (se pasan solas si nadie toca nada).
-   Textos en datos/servicio.js → tms.
+   - Experiencia de usuario: experiencia.js (No calidad y Customer service).
+   Textos en datos/servicio.js → como (título), tms y experiencia.
    ========================================================= */
 (function () {
   const SV = window.SV;
@@ -18,6 +23,7 @@
   const { S, txt, crear, escala } = SV;
   const T = S.tms || {};
   const TC = T.carga || {}, TI = T.interfases || {}, TD = T.despachos || {}, TK = T.tracking || {};
+  const CO = S.como || {}, EX = S.experiencia || {};
   const NS = 'http://www.w3.org/2000/svg';
   const ahora = () => performance.now();
 
@@ -42,18 +48,23 @@
   // =========================================================
   // COLUMNA IZQUIERDA: título y pestañas
   // =========================================================
-  // las 4 pestañas (los íconos son los de las tarjetas de la entrada, en como.js)
+  // las 5 pestañas (íconos en como.js)
   const PESTANAS = [
     { k: 'carga', d: TC, svg: SV.ICONOS.cargas },
     { k: 'despachos', d: TD, svg: SV.ICONOS.despachos },
     { k: 'tracking', d: TK, svg: SV.ICONOS.digital },
-    { k: 'inter', d: TI, svg: SV.ICONOS.custom }
+    { k: 'inter', d: TI, svg: SV.ICONOS.custom },
+    { k: 'experiencia', d: EX, svg: SV.ICONOS.usuario }
   ];
+  // franjas de la marca: tres arriba (sube por encima de la portada) y dos abajo
+  crear('div', 'in-franjas', seccion);
+  crear('div', 'ex-franjas', seccion);
   const izq = crear('div', 'tm-izq', seccion,
-    `<p class="tm-ante ent" style="--i:0">${txt(T.antetitulo)}</p><h2 class="tm-titulo ent" style="--i:1">${txt(T.titulo)}</h2>` +
-    `<p class="tm-bajada ent" style="--i:2">${txt(T.bajada)}</p>` +
+    `<div class="tm-cab ent" style="--i:0"><p class="tm-ante"><span>${txt(CO.antetitulo)}</span>` +
+    `<span class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</span></p><h2 class="tm-titulo">${txt(CO.titulo)}</h2></div>` +
+    `<p class="tm-bajada ent" style="--i:1">${txt(CO.bajada)}</p>` +
     '<div class="tm-tabs" role="tablist">' + PESTANAS.map((p, i) =>
-      `<button type="button" class="tm-tab ent" style="--i:${i + 3}" data-k="${p.k}">` +
+      `<button type="button" class="tm-tab ent" style="--i:${i + 2}" data-k="${p.k}">` +
       `${p.svg}<span><b>${txt(p.d.titulo)}</b><small>${txt(p.d.resumen)}</small></span>` +
       `<svg class="tm-flecha" viewBox="0 0 24 24" aria-hidden="true">${ICONOS.flecha}</svg></button>`).join('') + '</div>' +
     '<p class="tm-desc ent" style="--i:7"></p>');
@@ -65,7 +76,8 @@
     carga: vCarga,
     despachos: crear('div', 'tm-vista td', panel),
     tracking: crear('div', 'tm-vista tw', panel),
-    inter: crear('div', 'tm-vista ti', panel)
+    inter: crear('div', 'tm-vista ti', panel),
+    experiencia: crear('div', 'tm-vista ex', panel)
   };
   const vInter = vistas.inter;
   const alElegir = {};   // ecosistema.js anota acá qué hacer al abrir sus pestañas
@@ -82,7 +94,7 @@
     if (alElegir[k]) alElegir[k]();
   }
   izq.querySelectorAll('.tm-tab').forEach((b) => b.addEventListener('click', () => elegir(b.dataset.k)));
-  // para ecosistema.js y para las tarjetas de la entrada (como.js)
+  // para ecosistema.js y experiencia.js
   SV.tms = { vistas, alElegir, elegir, get pestana() { return pestana; }, get enVista() { return enVista; } };
   SV.elegirPestana = elegir;
 

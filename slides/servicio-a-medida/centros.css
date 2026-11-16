@@ -1,77 +1,67 @@
 /* =========================================================
-   CENTROS LOGÍSTICOS (cn-) y UBICACIÓN ESTRATÉGICA (ub-), después del mapa
-   de distribución. Fondo crema como el mapa. centros.js; textos en
-   datos/servicio.js → centros y ubicacion.
+   CENTROS LOGÍSTICOS y su UBICACIÓN ESTRATÉGICA (ub-): una sola pantalla
+   después del mapa de distribución. Fondo crema como el mapa. centros.js;
+   textos en datos/servicio.js → centros y ubicacion.
    ========================================================= */
-.sv-cen, .sv-ubi { color: var(--gris); }
-.sv-cen button, .sv-ubi button { font: inherit; border: 0; cursor: pointer; }
-.sv-cen svg, .sv-ubi svg { display: block; }
-.sv-cen .ent, .sv-ubi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
-.sv-cen.visible .ent, .sv-ubi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .09s); }
+.sv-ubi { color: var(--gris); }
+.sv-ubi button { font: inherit; border: 0; cursor: pointer; }
+.sv-ubi svg { display: block; }
+.sv-ubi .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-ubi.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .09s); }
 
-/* ---------- Centros logísticos ---------- */
-.cn-cab { position: absolute; left: 64px; top: 84px; width: 900px; }
-.cn-ante, .ub-ante { font-size: 36px; font-weight: 300; line-height: 1; }
-.cn-titulo, .ub-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }
-.cn-bajada { margin-top: 20px; width: 640px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
-.cn-bajada strong, .ub-bajada strong { font-weight: 600; color: var(--gris); }
-.cn-total { position: absolute; right: 64px; top: 96px; display: flex; align-items: flex-end; gap: 10px; }
-.cn-total > b { font: 700 132px/.8 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
-.cn-total > span { display: flex; flex-direction: column; padding-bottom: 4px; font: 700 34px/1 var(--fuente-titulo); }
-.cn-total small { margin-top: 6px; width: 150px; font-family: var(--fuente-texto); font-size: 14px; font-weight: 300; line-height: 1.3; color: rgba(58, 58, 58, .75); }
-.cn-lista { position: absolute; left: 64px; top: 296px; display: grid; grid-template-columns: repeat(4, 353px); gap: 20px; }
-.cn-tarjeta {
-  position: relative; display: flex; flex-direction: column; height: 524px; padding: 30px 26px 26px;
-  border: 1px solid rgba(58, 58, 58, .1); border-radius: 24px; background: #fff;
-  box-shadow: 0 30px 50px -36px rgba(120, 40, 20, .45);
-  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), transform .45s cubic-bezier(.2, .8, .2, 1), border-color .3s ease, box-shadow .45s ease;
+/* ---------- Columna izquierda: encabezado, total y lista de centros (x 64 a 504) ---------- */
+.ub-izq { position: absolute; left: 64px; top: 84px; z-index: 2; width: 440px; }
+.ub-ante { font-size: 36px; font-weight: 300; line-height: 1; }
+.ub-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; overflow: hidden; }
+.ub-bajada { margin-top: 18px; font-size: 16px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .8); }
+.ub-bajada strong { font-weight: 600; color: var(--gris); }
+/* total de m² (se suma solo) */
+.ub-total { display: flex; align-items: baseline; gap: 8px; margin-top: 16px; }
+.ub-total > b { font: 700 50px/.9 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; }
+.ub-total > span { font: 700 24px/1 var(--fuente-titulo); }
+.ub-total small { margin-left: 6px; font-size: 14px; font-weight: 300; line-height: 1.3; color: rgba(58, 58, 58, .75); }
+/* lista: cada centro en una fila; la elegida se despliega */
+.ub-lista { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; }
+.ub-c {
+  position: relative; display: block; width: 100%; padding: 9px 18px 11px; overflow: hidden;
+  border: 1px solid rgba(58, 58, 58, .1) !important; border-radius: 16px; background: #fff; color: var(--gris); text-align: left;
+  box-shadow: 0 16px 28px -24px rgba(120, 40, 20, .45);
+  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), background .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
-.cn-tarjeta::before { content: ""; position: absolute; left: 28px; top: -1px; width: 40px; height: 4px; background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px); }
-.cn-tarjeta:hover { transform: translateY(-6px); border-color: rgba(239, 69, 41, .45); box-shadow: 0 38px 60px -34px rgba(120, 40, 20, .55); }
-.cn-nombre { display: flex; align-items: center; gap: 14px; }
-.cn-nombre svg { flex: none; width: 54px; height: 54px; fill: var(--rojo); }
-.cn-nombre small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
-.cn-nombre b { display: block; margin-top: 2px; font: 700 32px/1 var(--fuente-titulo); letter-spacing: .01em; }
-.cn-m2 { display: flex; align-items: baseline; gap: 6px; margin-top: 26px; }
-.cn-m2 b { font: 700 66px/1 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; }
-.cn-m2 span { font: 700 28px/1 var(--fuente-titulo); }
-.cn-barra { display: block; height: 6px; margin-top: 12px; border-radius: 3px; background: rgba(58, 58, 58, .09); overflow: hidden; }
-.cn-barra i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--rojo); transition: width 1.4s cubic-bezier(.2, .8, .2, 1) .5s; }
-.sv-cen.visible .cn-barra i { width: var(--p); }
-.cn-tarjeta ul { display: grid; gap: 14px; margin-top: 24px; list-style: none; }
-.cn-tarjeta li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; font-size: 14.5px; font-weight: 300; line-height: 1.42; color: rgba(58, 58, 58, .82); }
-.cn-tarjeta li svg { width: 24px; height: 24px; fill: var(--rojo); }
-.cn-tarjeta li strong { font-weight: 600; color: var(--gris); }
-.cn-ver { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; height: 42px; margin-top: auto; padding: 0 18px; border-radius: 999px; background: var(--rojo); color: #fff; font-family: var(--fuente-titulo) !important; font-size: 16px !important; letter-spacing: .04em; box-shadow: 0 14px 24px -14px rgba(160, 40, 20, .8); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-.cn-ver svg { width: 18px; height: 18px; fill: #fff; transform: rotate(90deg); }
-.cn-ver:hover { transform: translateY(-2px); }
-
-/* ---------- Ubicación estratégica ---------- */
-.ub-cab { position: absolute; left: 64px; top: 84px; z-index: 2; width: 440px; }
-.ub-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
-.ub-opciones { position: absolute; left: 64px; top: 372px; z-index: 2; display: flex; flex-direction: column; gap: 14px; width: 440px; }
-.ub-op {
-  position: relative; display: grid; grid-template-columns: 52px 1fr auto auto; align-items: center; gap: 14px;
-  height: 104px; padding: 0 22px 0 18px; border-radius: 20px; overflow: hidden;
-  border: 1px solid rgba(58, 58, 58, .12) !important; background: #fff; color: var(--gris); text-align: left;
-  box-shadow: 0 18px 30px -24px rgba(120, 40, 20, .45);
-  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), background .3s ease, color .3s ease, border-color .3s ease, transform .35s cubic-bezier(.2, .8, .2, 1);
-}
-.ub-op:hover { border-color: rgba(239, 69, 41, .5) !important; transform: translateX(4px); }
-.ub-op-ico { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: rgba(239, 69, 41, .1); transition: background .3s ease; }
-.ub-op-ico svg { width: 28px; height: 28px; fill: var(--rojo); }
-.ub-op-txt b { display: block; font: 700 19px/1.1 var(--fuente-titulo); letter-spacing: .02em; }
-.ub-op-txt small { display: block; margin-top: 4px; font-size: 12px; font-weight: 300; line-height: 1.3; color: rgba(58, 58, 58, .62); }
-.ub-op-num { text-align: right; }
-.ub-op-num b { display: block; font: 700 40px/1 var(--fuente-titulo); color: var(--rojo); }
-.ub-op-num small { display: block; margin-top: 2px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(58, 58, 58, .55); }
-.ub-op.activo { background: var(--rojo); border-color: var(--rojo) !important; color: #fff; }
-.ub-op.activo .ub-op-ico { background: #fff; }
-.ub-op.activo small, .ub-op.activo .ub-op-num b { color: #fff; }
-.ub-op-tiempo { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: rgba(255, 255, 255, .7); }
-.ub-op.auto .ub-op-tiempo { animation: ub-tiempo 6s linear forwards; }
+.ub-c::before { content: ""; position: absolute; left: 20px; top: -1px; width: 40px; height: 4px; background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px); transition: opacity .3s ease; }
+.ub-c:not(.abierta):hover { border-color: rgba(239, 69, 41, .45) !important; }
+.ub-c-cab { display: flex; align-items: center; gap: 12px; }
+.ub-c-cab > svg { flex: none; width: 34px; height: 34px; fill: var(--rojo); transition: fill .35s ease; }
+.ub-c-nom { flex: 1; min-width: 0; }
+.ub-c-nom small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .55); transition: color .35s ease; }
+.ub-c-nom b { display: block; margin-top: 1px; font: 700 22px/1.05 var(--fuente-titulo); letter-spacing: .01em; }
+.ub-c-m2 { display: flex; align-items: baseline; gap: 4px; }
+.ub-c-m2 b { font: 700 30px/1 var(--fuente-titulo); color: var(--rojo); font-variant-numeric: tabular-nums; transition: color .35s ease; }
+.ub-c-m2 small { font: 700 16px/1 var(--fuente-titulo); }
+/* barra comparada con el centro más grande */
+.ub-c-barra { display: block; height: 4px; margin-top: 8px; border-radius: 2px; background: rgba(58, 58, 58, .09); overflow: hidden; }
+.ub-c-barra i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--rojo); transition: width 1.4s cubic-bezier(.2, .8, .2, 1) .5s, background .35s ease; }
+.sv-ubi.visible .ub-c-barra i { width: var(--p); }
+/* detalle (se despliega con la fila elegida) */
+.ub-c-det { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s cubic-bezier(.2, .8, .2, 1); }
+.ub-c-det > span { min-height: 0; overflow: hidden; }
+.ub-c-det ul { display: grid; gap: 5px; margin: 0; padding: 10px 0 0; list-style: none; opacity: 0; transition: opacity .25s ease; }
+.ub-c-det li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; font-size: 13.5px; font-weight: 300; line-height: 1.38; }
+.ub-c-det li svg { width: 18px; height: 18px; fill: currentColor; }
+.ub-c-det li strong { font-weight: 600; }
+.ub-c-dist b { font-family: var(--fuente-titulo); font-size: 16px; font-weight: 700; letter-spacing: .02em; }
+.ub-c.abierta { background: var(--rojo); border-color: var(--rojo) !important; color: #fff; box-shadow: 0 22px 36px -22px rgba(160, 40, 20, .8); }
+.ub-c.abierta::before { opacity: 0; }
+.ub-c.abierta .ub-c-cab > svg, .ub-c.abierta .ub-c-m2 b { fill: #fff; color: #fff; }
+.ub-c.abierta .ub-c-nom small { color: rgba(255, 255, 255, .75); }
+.ub-c.abierta .ub-c-barra { background: rgba(255, 255, 255, .25); }
+.ub-c.abierta .ub-c-barra i { background: #fff; }
+.ub-c.abierta .ub-c-det { grid-template-rows: 1fr; }
+.ub-c.abierta .ub-c-det ul { opacity: 1; transition: opacity .4s ease .2s; }
+/* barrita de tiempo cuando el mapa alterna solo */
+.ub-c-tiempo { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: rgba(255, 255, 255, .7); }
+.ub-c.auto .ub-c-tiempo { animation: ub-tiempo 6s linear forwards; }
 @keyframes ub-tiempo { to { width: 100%; } }
-.ub-nota { position: absolute; left: 64px; top: 620px; z-index: 2; width: 440px; font-size: 13px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .6); }
 
 /* escenario del mapa: a la derecha, sin recuadro (los bordes del dibujo se esfuman) */
 /* el esfumado de los bordes va en la escena (en pantalla), así la cámara puede correr el plano sin que se vean sus bordes */
@@ -172,8 +162,8 @@
 /* atribución de los datos del mapa (la pide la licencia de OpenStreetMap) */
 .ub-osm { position: absolute; right: 70px; bottom: 34px; font-size: 11px; color: rgba(58, 58, 58, .5); }
 /* mapita de referencia (solo la silueta flotando, con el texto al lado) y el logo de CARGO
-   a color completando la columna (x 64 a 504) */
-.ub-mini { position: absolute; left: 64px; top: 660px; z-index: 2; width: 440px; display: flex; align-items: center; gap: 14px; opacity: 0; translate: 0 10px; transition: opacity .6s ease .6s, translate .8s cubic-bezier(.2, .8, .2, 1) .6s; }
+   a color, abajo a la derecha sobre el borde esfumado del mapa (la columna izquierda la ocupa la lista de centros) */
+.ub-mini { position: absolute; right: 64px; bottom: 64px; z-index: 2; width: 440px; display: flex; align-items: center; gap: 14px; opacity: 0; translate: 0 10px; transition: opacity .6s ease .6s, translate .8s cubic-bezier(.2, .8, .2, 1) .6s; }
 .sv-ubi.zoom .ub-mini { opacity: 1; translate: 0 0; }
 /* solo la silueta (sin las líneas de las provincias): el borde lo da una sombra finita */
 .ub-mini-arg { flex: none; width: 57px; height: 120px; overflow: visible; filter: drop-shadow(0 0 .7px rgba(58, 58, 58, .45)) drop-shadow(0 12px 14px rgba(120, 40, 20, .22)); animation: ub-flota 5s ease-in-out infinite; }
@@ -183,4 +173,4 @@
 .ub-mini-arg circle { fill: var(--rojo); r: 26; }
 .ub-mini span { width: 160px; font-size: 16px; font-weight: 600; line-height: 1.35; color: rgba(58, 58, 58, .75); }
 /* el logo va primero (a la izquierda) y el mapita con su texto a la derecha */
-.ub-logo { order: -1; display: block; width: 150px; height: auto; margin-right: auto; }
+.ub-logo { order: -1; display: block; width: 130px; height: auto; margin-right: auto; }

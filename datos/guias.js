@@ -30,12 +30,12 @@ window.GUIAS = {
   politicas:           { texto: "**Hacé clic** en cada política",                   tactil: "**Tocá** cada política" },
 
   // ---------- Servicio a medida ----------
-  entradaPartes:       { texto: "**Hacé clic** para ir directo a cada parte",       tactil: "**Tocá** para ir directo a cada parte" },
   tmsLector:           { texto: "**Pasá el mouse** por un bulto para leerlo",       tactil: "**Tocá** un bulto para leerlo" },
   tmsPestanas:         { texto: "**Hacé clic** para ver otra parte del TMS",        tactil: "**Tocá** para ver otra parte del TMS" },
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
   tablerosPuntos:      { texto: "**Pasá el mouse** por los meses",                  tactil: "**Tocá** un mes para ver el detalle" },
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },
+  tablerosVentajas:    { texto: "**Hacé clic** para ver las ventajas",              tactil: "**Tocá** para ver las ventajas" },
   ventajas:            { texto: "**Pasá el mouse** por cada ventaja",               tactil: "**Tocá** cada ventaja" },
   mapaProvincias:      { texto: "**Hacé clic** en una provincia para ver sus rutas", tactil: "**Tocá** una provincia para ver sus rutas" },
   mapaFlujograma:      { texto: "**Hacé clic** para ver el flujograma de la provincia", tactil: "**Tocá** para ver el flujograma de la provincia" },

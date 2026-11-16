@@ -1,11 +1,14 @@
 /* =========================================================
-   CENTROS LOGÍSTICOS y UBICACIÓN ESTRATÉGICA (después del mapa de distribución)
-   - Centros: 4 tarjetas (m² que cuentan, barra comparada con el más grande,
-     dirección, servicios y entrega); las de Buenos Aires bajan al mapa.
-   - Ubicación: mapa de calles inclinado como el de distribución y con los bordes
-     esfumados: las rutas de cada centro hasta el depósito de repuestos del cliente
-     (con un camión que las recorre); la cámara centra la ruta elegida. Se alternan
-     solos si nadie toca nada.
+   CENTROS LOGÍSTICOS y su UBICACIÓN ESTRATÉGICA (una sola pantalla, .sv-ubi,
+   después del mapa de distribución)
+   - Izquierda: encabezado, total de m² y los 4 centros en una lista; el elegido
+     se despliega (dirección, servicios, entrega y, los de Buenos Aires, la
+     distancia hasta el depósito del cliente). m² que cuentan y barra comparada
+     con el más grande.
+   - Derecha: mapa de calles inclinado como el de distribución y con los bordes
+     esfumados: las rutas de cada centro de Buenos Aires hasta el depósito de
+     repuestos del cliente (con un camión que las recorre); la cámara centra la
+     ruta elegida. Se alternan solos si nadie toca nada.
    Textos en datos/servicio.js → centros y ubicacion.
    El mapa de la zona usa calles reales (mapa-pacheco.js: OpenStreetMap) y los
    recorridos por calle de OSRM, con las coordenadas que pasó la persona.
@@ -27,57 +30,17 @@
   const fmt = (n) => Math.round(n).toLocaleString('es-AR');
 
   // =========================================================
-  // CENTROS LOGÍSTICOS
-  // =========================================================
-  (function centros() {
-    const sec = document.querySelector('.sv-cen');
-    if (!sec) return;
-    const C = S.centros || {};
-    const L = (C.lista || []).slice(0, 4);
-    const total = L.reduce((a, c) => a + (+c.m2 || 0), 0);
-    const max = Math.max(1, ...L.map((c) => +c.m2 || 0));
-    sec.insertAdjacentHTML('beforeend',
-      `<div class="cn-cab ent" style="--i:0"><p class="cn-ante">${txt(C.antetitulo)}</p><h2 class="cn-titulo">${txt(C.titulo)}</h2><p class="cn-bajada">${txt(C.bajada)}</p></div>` +
-      `<div class="cn-total ent" style="--i:1"><b data-n="${total}">0</b><span>m²<small>${txt(C.totalTexto)}</small></span></div>` +
-      '<div class="cn-lista">' + L.map((c, i) =>
-        `<article class="cn-tarjeta ent" style="--i:${i + 2}">` +
-        `<p class="cn-nombre">${ICO.deposito}<span><small>Centro logístico</small><b>${txt(c.nombre)}</b></span></p>` +
-        `<p class="cn-m2"><b data-n="${+c.m2 || 0}">0</b><span>m²</span></p>` +
-        `<i class="cn-barra"><i style="--p:${((+c.m2 || 0) / max * 100).toFixed(1)}%"></i></i>` +
-        `<ul><li>${ICO.pin}<span>${txt(c.direccion)}</span></li><li>${ICO.crece}<span>${txt(c.servicios)}</span></li><li>${ICO.reloj}<span>${txt(c.entrega)}</span></li></ul>` +
-        (c.ubicacion ? `<button type="button" class="cn-ver" data-u="${esc(c.ubicacion)}">${txt(C.botonUbicacion)}${ICO.flecha}</button>` : '') +
-        '</article>').join('') + '</div>');
-    // los números cuentan la primera vez que se ve la sección
-    function contar() {
-      sec.querySelectorAll('[data-n]').forEach((el, k) => {
-        const fin = +el.dataset.n, t0 = performance.now() + k * 90, dur = 1300;
-        (function paso(t) {
-          const p = Math.max(0, Math.min(1, (t - t0) / dur));
-          el.textContent = fmt(fin * (1 - Math.pow(1 - p, 3)));
-          if (p < 1) requestAnimationFrame(paso);
-        })(performance.now());
-      });
-    }
-    sec.querySelectorAll('.cn-ver').forEach((b) => b.addEventListener('click', () => {
-      if (window.UBICACION) window.UBICACION.elegir(b.dataset.u);
-      SV.irA(document.querySelector('.sv-ubi'));
-    }));
-    new IntersectionObserver((en, obs) => {
-      if (!en[0].isIntersecting) return;
-      obs.disconnect();
-      sec.classList.add('visible');
-      setTimeout(contar, 350);
-    }, { threshold: .3 }).observe(sec);
-  })();
-
-  // =========================================================
   // UBICACIÓN ESTRATÉGICA
   // =========================================================
   (function ubicacion() {
     const sec = document.querySelector('.sv-ubi');
     if (!sec) return;
     const U = S.ubicacion || {};
-    const CEN = (U.centros || []).slice(0, 2);
+    const CEN = (U.centros || []).slice(0, 2);      // los centros con ruta en el mapa
+    const CL = S.centros || {};
+    const LISTA = (CL.lista || []).slice(0, 5);     // todos los centros (columna de la izquierda)
+    const totalM2 = LISTA.reduce((a, c) => a + (+c.m2 || 0), 0);
+    const maxM2 = Math.max(1, ...LISTA.map((c) => +c.m2 || 0));
 
     // ---- Plano de la zona con calles reales (mapa-pacheco.js: OpenStreetMap + recorridos de OSRM) ----
     // Todo viene en metros al este (x) y al norte (y) del depósito del cliente.
@@ -117,13 +80,22 @@
     const argSVG = (clase) => `<svg class="${clase}" viewBox="0 0 ${AW.toFixed(0)} ${AH.toFixed(0)}" aria-hidden="true"><path d="${argD}"/><circle cx="${zx.toFixed(1)}" cy="${zy.toFixed(1)}" r="9"/></svg>`;
 
     sec.insertAdjacentHTML('beforeend',
-      `<div class="ub-cab ent" style="--i:0"><p class="ub-ante">${txt(U.antetitulo)}</p><h2 class="ub-titulo">${txt(U.titulo)}</h2><p class="ub-bajada">${txt(U.bajada)}</p></div>` +
-      '<div class="ub-opciones">' + CEN.map((c, i) =>
-        `<button type="button" class="ub-op ent" style="--i:${i + 1}" data-k="${esc(c.k)}">` +
-        `<span class="ub-op-ico">${ICO.deposito}</span><span class="ub-op-txt"><b>${txt(c.nombre)}</b><small>hasta el ${txt(U.destino)}</small></span>` +
-        `<span class="ub-op-num"><b>${esc(c.km)}</b><small>km</small></span><span class="ub-op-num"><b>${+c.minutos || 0}</b><small>min</small></span>` +
-        '<i class="ub-op-tiempo"></i></button>').join('') + '</div>' +
-      `<p class="ub-nota ent" style="--i:3">${txt(U.nota)}</p>` +
+      '<div class="ub-izq">' +
+      `<div class="ub-cab ent" style="--i:0"><p class="ub-ante">${txt(CL.antetitulo)}</p><h2 class="ub-titulo">${txt(CL.titulo)}</h2>` +
+      `<p class="ub-bajada">${txt(CL.bajada)} ${txt(U.bajada)}</p></div>` +
+      `<p class="ub-total ent" style="--i:1"><b data-n="${totalM2}">0</b><span>m²</span><small>${txt(CL.totalTexto)}</small></p>` +
+      '<div class="ub-lista">' + LISTA.map((c, i) => {
+        const r = CEN.find((cc) => cc.k === c.ubicacion);
+        return `<button type="button" class="ub-c ent" style="--i:${i + 2}" data-i="${i}"${r ? ` data-k="${esc(r.k)}"` : ''}>` +
+          `<span class="ub-c-cab">${ICO.deposito}<span class="ub-c-nom"><small>Centro logístico</small><b>${txt(c.nombre)}</b></span>` +
+          `<span class="ub-c-m2"><b data-n="${+c.m2 || 0}">0</b><small>m²</small></span></span>` +
+          `<i class="ub-c-barra"><i style="--p:${((+c.m2 || 0) / maxM2 * 100).toFixed(1)}%"></i></i>` +
+          '<span class="ub-c-det"><span><ul>' +
+          (r ? `<li class="ub-c-dist">${ICO.camion}<span><b>${esc(r.km)} km · ${+r.minutos || 0} min</b> hasta el ${txt(U.destino)}</span></li>` : '') +
+          `<li>${ICO.pin}<span>${txt(c.direccion)}</span></li><li>${ICO.crece}<span>${txt(c.servicios)}</span></li><li>${ICO.reloj}<span>${txt(c.entrega)}</span></li>` +
+          '</ul></span></span>' +
+          (r ? '<i class="ub-c-tiempo"></i>' : '') + '</button>';
+      }).join('') + '</div></div>' +
       // escenario del mapa
       '<div class="ub-escena">' +
       '<div class="ub-plano">' +
@@ -150,14 +122,37 @@
       '</div>' +
       '</div>' +
       `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span><img class="ub-logo" src="../../img/marca/logo-cargo.svg" alt="CARGO"></div>` +
-      '<p class="ub-osm">Mapa © colaboradores de OpenStreetMap</p>');
+      `<p class="ub-osm">${U.nota ? txt(U.nota) + ' · ' : ''}Mapa © colaboradores de OpenStreetMap</p>`);
+
+    // el título grande se achica si no entra en la columna (CROSSDOCKING es largo)
+    function ajustarTitulo() {
+      const h = sec.querySelector('.ub-titulo');
+      h.style.fontSize = '';
+      let t = parseFloat(getComputedStyle(h).fontSize);
+      while (h.scrollWidth > h.clientWidth + 1 && t > 40) { t -= 2; h.style.fontSize = t + 'px'; }
+    }
+    ajustarTitulo();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarTitulo);
+    // los m² cuentan la primera vez que se ve la sección
+    function contar() {
+      sec.querySelectorAll('[data-n]').forEach((el, k) => {
+        const fin = +el.dataset.n, t0 = performance.now() + k * 90, dur = 1300;
+        (function paso(t) {
+          const p = Math.max(0, Math.min(1, (t - t0) / dur));
+          el.textContent = fmt(fin * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) requestAnimationFrame(paso);
+        })(performance.now());
+      });
+    }
+    // centros de la lista: el elegido se despliega (los de Buenos Aires, además, muestran su ruta)
+    const filas = [...sec.querySelectorAll('.ub-c')];
+    function desplegar(i) { filas.forEach((f, k) => f.classList.toggle('abierta', k === i)); }
 
     const plano = sec.querySelector('.ub-plano');
     Object.assign(plano.style, { width: PW + 'px', height: PH + 'px', marginLeft: -PW / 2 + 'px', marginTop: -PH / 2 + 'px' });
     const camion = sec.querySelector('.ub-camion');
-    const recs = {}, ops = {}, dists = {};
+    const recs = {}, dists = {};
     sec.querySelectorAll('.ub-rec').forEach((g) => { const p = g.querySelector('.ub-rec-base'); recs[g.dataset.k] = { g, p, largo: p.getTotalLength() }; });
-    sec.querySelectorAll('.ub-op').forEach((b) => { ops[b.dataset.k] = b; });
     // alternativas de cada centro (se ven con ese centro elegido)
     const alts = [...sec.querySelectorAll('.ub-alt')];
     // etiqueta de distancia en la mitad de cada recorrido (las alternativas, en la mitad de la suya)
@@ -201,17 +196,22 @@
         r.g.style.setProperty('--largo', r.largo.toFixed(0));
         if (kk === k) { r.g.classList.remove('dibuja'); void r.g.getBoundingClientRect(); r.g.classList.add('dibuja'); }
       });
-      Object.entries(ops).forEach(([kk, b]) => {
-        b.classList.toggle('activo', kk === k);
-        b.classList.remove('auto');
-        if (kk === k && auto) { void b.offsetWidth; b.classList.add('auto'); }
+      // en la lista se despliega ese centro (con la barrita de tiempo si fue solo)
+      filas.forEach((f, i) => {
+        f.classList.remove('auto');
+        if (f.dataset.k === k) { desplegar(i); if (auto) { void f.offsetWidth; f.classList.add('auto'); } }
       });
       Object.entries(dists).forEach(([kk, el]) => el.classList.toggle('visible', kk === k));
       sec.querySelectorAll('.ub-lugar.centro').forEach((el) => el.classList.toggle('activo', el.dataset.k === k));
       t0 = performance.now() + 500;
     }
     // con clic (al pasar el cursor no: con el scroll las tarjetas pasan solas por debajo del mouse)
-    Object.values(ops).forEach((b) => b.addEventListener('click', () => elegir(b.dataset.k)));
+    filas.forEach((f, i) => f.addEventListener('click', () => {
+      if (f.dataset.k) { elegir(f.dataset.k); return; }
+      uso = performance.now();
+      filas.forEach((g) => g.classList.remove('auto'));
+      desplegar(i);
+    }));
     sec.querySelectorAll('.ub-lugar.centro').forEach((el) => el.addEventListener('click', () => elegir(el.dataset.k)));
     window.UBICACION = { elegir };
 
@@ -242,6 +242,7 @@
       if (enVista && !zoomHecho) {
         zoomHecho = true;
         sec.classList.add('visible');
+        setTimeout(contar, 350);
         // el mapa aparece con un fundido, ya centrado en la primera ruta (sin zoom de entrada:
         // a la persona no le gustó cómo se veía el país agrandado, pixelado)
         const primero = actual || (CEN[0] && CEN[0].k);

@@ -1,7 +1,8 @@
 /* =========================================================
-   SERVICIO A MEDIDA — "¿Cómo lo hacemos?"
-   (diapositiva slides/servicio-a-medida: Nuestro TMS, Logística inversa,
-   Tableros y Ventajas, antes del mapa de distribución)
+   SERVICIO A MEDIDA (diapositiva slides/servicio-a-medida)
+   Portada con la intro, ¿Cómo lo hacemos? (5 pestañas), Logística inversa,
+   Tableros y Ventajas, y después del mapa de distribución los Centros
+   logísticos con su ubicación.
 
    Cómo editar:
    - Cambiá solo lo que está entre comillas.
@@ -22,31 +23,35 @@ window.SERVICIO = {
     cielo: "img/portada-servicio/cielo.jpg",
     campo: "img/portada-servicio/campo.webp",
     // el camión andando: secuencia de cuadros (carpeta, cantidad y cuadros por segundo)
-    camion: { carpeta: "img/portada-servicio/camion/", cuadros: 121, porSegundo: 24 }
+    camion: { carpeta: "img/portada-servicio/camion/", cuadros: 121, porSegundo: 24 },
+    // Intro: tarjeta sobre la foto que pasa sola por los párrafos (uno por vez, con
+    // rayitas que se llenan arriba) y termina en la pregunta, la invitación y el botón,
+    // que baja a "¿Cómo lo hacemos?". Se pueden agregar o sacar párrafos.
+    intro: {
+      rotulo: "Nuestra propuesta",
+      parrafos: [
+        "Nos ocupamos de gestionar y coordinar la distribución de **repuestos y accesorios** hacia la **red de concesionarios oficiales {cliente}**, asegurando que cada entrega llegue donde se necesita.",
+        "Nuestro objetivo es claro: garantizar, a través de un servicio diseñado y alineado a los estándares y necesidades de {cliente}, la **continuidad, eficiencia y una experiencia de calidad** para sus clientes."
+      ],
+      pregunta: "¿Están listos para conocer cómo lo haríamos?",
+      invitacion: "Los invitamos a recorrer nuestra experiencia interactiva y descubrir nuestra propuesta para {cliente}.",
+      boton: "Empezar el recorrido"
+    }
   },
 
-  // ---------- Pantalla de entrada ----------
+  // ---------- ¿Cómo lo hacemos? (título de la pantalla del ecosistema) ----------
   como: {
     antetitulo: "¿Cómo lo",
     titulo: "HACEMOS?",
     sello: "Pensado para {cliente}",
-    bajada: "Un **ecosistema tecnológico** propio: esto es lo que nuestro TMS puede hacer por la operación de {cliente}.",
-    // Las 4 partes del ecosistema. Cada tarjeta abre su pestaña más abajo
-    // (en este orden: cargas, despachos, digitalización e interfases; cambiá los textos, no el orden).
-    partes: [
-      { titulo: "Gestión de cargas y consolidación", texto: "Consolidación de bultos por ruta mediante **staging**, para optimizar el ruteo y la ocupación de la bodega." },
-      { titulo: "Gestión de despachos", texto: "Asignación de viajes, emisión de documentación y control operativo de las salidas." },
-      { titulo: "Digitalización y tracking", texto: "Conformado **e-POD móvil**, portal del cliente y seguimiento en línea de cada pedido." },
-      { titulo: "Customizing e interfases", texto: "Adaptamos el TMS a sus procesos e intercambiamos información con su ERP y los redespachantes." }
-    ]
+    bajada: "Un **ecosistema tecnológico** propio: esto es lo que nuestro TMS puede hacer por la operación de {cliente}."
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
 
-  // ---------- Ecosistema tecnológico: nuestro TMS en 4 pestañas ----------
+  // ---------- El ecosistema tecnológico en 5 pestañas ----------
+  // Cada pestaña: titulo y resumen (en el botón) y texto (debajo de las pestañas).
+  // Las cuatro primeras van acá; la quinta es "experiencia" (más abajo).
   tms: {
-    antetitulo: "Ecosistema",
-    titulo: "TECNOLÓGICO",
-    bajada: "¿Qué puede hacer nuestro TMS por la operación de **{cliente}**?",
     carga: {
       titulo: "Gestión de cargas",
       resumen: "Consolidación por ruta con staging",
@@ -137,11 +142,12 @@ window.SERVICIO = {
     }
   },
 
-  // ---------- Experiencia de usuario (las preguntas y los registros son de ejemplo) ----------
+  // ---------- Experiencia de usuario: quinta pestaña del ecosistema ----------
+  // (las preguntas y los registros son de ejemplo)
   experiencia: {
-    antetitulo: "Experiencia de",
-    titulo: "USUARIO",
-    bajada: "Herramientas para que la red de concesionarios nos tenga **siempre a mano**.",
+    titulo: "Experiencia de usuario",
+    resumen: "No calidad y customer service",
+    texto: "Herramientas para que la red de concesionarios nos tenga **siempre a mano**.",
     calidad: {
       titulo: "",
       tituloGrande: "NO CALIDAD",
@@ -268,8 +274,10 @@ window.SERVICIO = {
   // Seis columnas: al pasar el cursor (o tocar) se abre una y muestra su texto.
   // icono: ruta, escudo, barras, arbol, ciclo, cabeza
   // lista (opcional): renglones que van debajo del texto
-  // irATableros: true → la columna lleva un botón que baja a los tableros
+  // irATableros: true → la columna lleva un botón que vuelve a la pestaña de los tableros
+  // Es la tercera pestaña de la pantalla de los tableros (pestana = su nombre en el botón).
   ventajas: {
+    pestana: "Ventajas y oportunidades",
     antetitulo: "Ventajas y",
     titulo: "OPORTUNIDADES",
     bajada: "Lo que nuestro **software de gestión** suma a la logística de {cliente}.",
@@ -361,14 +369,15 @@ window.SERVICIO = {
   },
 
   // ---------- Centros logísticos (después del mapa de distribución) ----------
+  // Comparten pantalla con el mapa de Ubicación estratégica: a la izquierda va este
+  // encabezado, el total de m² y la lista de centros (el elegido se despliega).
   centros: {
     antetitulo: "Centros logísticos /",
     titulo: "CROSSDOCKING",
     bajada: "Almacenamiento y crossdocking en los puntos clave de la red, con **entrega al cliente en 24 hs**.",
     totalTexto: "de depósito en 4 centros",
-    botonUbicacion: "Ver la ubicación",
     // Cada centro: nombre, metros cuadrados (número, sin puntos), dirección, servicios y entrega.
-    // ubicacion: "benavidez" o "plaza" si tiene el botón que baja al mapa de Ubicación estratégica ("" si no)
+    // ubicacion: "benavidez" o "plaza" si al elegirlo el mapa muestra su ruta ("" si no)
     lista: [
       { nombre: "Córdoba", m2: 4000, direccion: "Rosa Ferreyra de Roca 2862, Córdoba Capital", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
       { nombre: "Rosario", m2: 1800, direccion: "Vélez Sársfield 6501-6599, Rosario, Santa Fe", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
@@ -377,10 +386,9 @@ window.SERVICIO = {
     ]
   },
 
-  // ---------- Ubicación estratégica: mapa de la zona de Pacheco ----------
+  // ---------- Ubicación estratégica: mapa de la zona de Pacheco (al lado de la lista de centros) ----------
+  // bajada: se suma a la de los centros. nota: va abajo a la derecha, junto a la atribución del mapa.
   ubicacion: {
-    antetitulo: "Ubicación",
-    titulo: "ESTRATÉGICA",
     bajada: "Nuestros centros de Buenos Aires están **a minutos del depósito de repuestos de {cliente}**.",
     destino: "Depósito de repuestos {cliente}",
     pinDestino: "img/ubicacion/pin-cliente.svg",   // el pin del depósito (con el logo del cliente)

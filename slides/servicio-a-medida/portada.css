@@ -6,7 +6,7 @@
    Medidas en px del escenario, tomadas del diseño de la persona.
    ========================================================= */
 .pista section.sv-portada { z-index: 0; height: 1036px; }   /* 900 + las tres franjas de la entrada (136), que así arrancan fuera de la pantalla */
-.pista section.sv-intro { z-index: 1; }
+.pista section.sv-tms { z-index: 1; }   /* ¿Cómo lo hacemos? sube por encima de la portada quieta */
 .sv-portada.lejos { visibility: hidden; }
 
 .pt-quieto { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; will-change: transform; }
@@ -73,6 +73,43 @@
 
 /* Logo de la marca en blanco, arriba a la derecha (x 1454–1562, y 41–95) */
 .pt-logo { position: absolute; left: 1454px; top: 41px; width: 108.5px; filter: brightness(0) invert(1) drop-shadow(0 2px 10px rgba(20, 45, 70, .25)); pointer-events: none; }
+
+/* ---------- Intro (portada.js; textos en portada.intro) ----------
+   Tarjeta crema sobre la foto, debajo del título y alineada con él (x 647 a 1536,
+   y 612 a 834); el camión queda a la izquierda. Sin desenfoque de fondo: detrás se
+   mueve la ruta del render y el navegador tendría que recalcularlo en cada cuadro. */
+.pt-intro {
+  position: absolute; left: 647px; top: 612px; z-index: 5;
+  width: 889px; height: 222px; padding: 22px 30px 24px;
+  border-radius: 24px;
+  background: rgba(255, 251, 243, .93);
+  box-shadow: 0 30px 60px -30px rgba(20, 45, 70, .55), inset 0 0 0 1px rgba(255, 255, 255, .7);
+  color: var(--gris);
+  opacity: 0; translate: 0 26px; visibility: hidden;
+  transition: opacity .9s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1), visibility 0s 1.1s;
+}
+.pt-intro.lista { opacity: 1; translate: 0 0; visibility: visible; transition: opacity .9s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1); }
+.pt-intro .franjitas { background: linear-gradient(90deg, var(--rojo) 0 5px, transparent 5px 6.5px, var(--rojo) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }
+.pt-i-cab { display: flex; align-items: center; justify-content: space-between; }
+.pt-i-rotulo { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
+/* rayitas de los pasos: se llenan con el tiempo; con un clic se va a ese paso */
+.pt-i-rayas { display: flex; gap: 6px; }
+.pt-i-rayas button { width: 44px; height: 14px; padding: 5px 0; border: 0; background: none; cursor: pointer; }
+.pt-i-rayas button::before { content: ""; display: block; height: 4px; border-radius: 2px; background: rgba(58, 58, 58, .16); }
+.pt-i-rayas button i { display: block; width: 0; height: 4px; margin-top: -4px; border-radius: 2px; background: var(--rojo); }
+.pt-i-rayas button:hover::before { background: rgba(58, 58, 58, .3); }
+/* los pasos ocupan el mismo lugar: se ve uno por vez */
+.pt-i-pasos { position: relative; height: 138px; margin-top: 16px; }
+.pt-i-paso { position: absolute; inset: 0; margin: 0; opacity: 0; translate: 0 12px; transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.pt-i-paso.activo { opacity: 1; translate: 0 0; transition-delay: .2s; pointer-events: auto; }
+p.pt-i-paso { font-size: 23px; font-weight: 300; line-height: 1.5; }
+.pt-i-paso strong { font-weight: 600; color: var(--gris); }
+.pt-i-final h2 { margin: 0; font: 700 40px/1.05 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
+.pt-i-pie { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-top: 16px; }
+.pt-i-pie p { margin: 0; max-width: 470px; font-size: 18px; font-weight: 300; line-height: 1.5; }
+.pt-i-boton { flex: none; display: inline-flex; align-items: center; gap: 12px; height: 54px; padding: 0 22px 0 26px; border: 0; border-radius: 999px; background: var(--rojo); color: #fff; font: 500 18px var(--fuente-titulo); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; box-shadow: 0 16px 28px -16px rgba(160, 40, 20, .8); transition: translate .3s ease, box-shadow .3s ease; }
+.pt-i-boton svg { width: 20px; height: 20px; fill: currentColor; }
+.pt-i-boton:hover { translate: 0 2px; box-shadow: 0 10px 20px -12px rgba(160, 40, 20, .8); }
 
 /* En la portada el sello de arriba a la derecha deja lugar al logo */
 .sello { transition: opacity .4s ease; }

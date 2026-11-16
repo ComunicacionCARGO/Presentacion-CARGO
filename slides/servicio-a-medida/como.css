@@ -1,10 +1,10 @@
 /* =========================================================
-   ¿CÓMO LO HACEMOS? — entrada y Nuestro TMS
-   (como.js, tms.js; textos en datos/servicio.js).
+   ¿CÓMO LO HACEMOS? — el ecosistema tecnológico en 5 pestañas
+   (tms.js; textos en datos/servicio.js).
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
-.sv-intro ul, .sv-tms ul { list-style: none; }
-.sv-intro strong, .sv-tms strong { font-weight: 600; }
+.sv-tms ul { list-style: none; }
+.sv-tms strong { font-weight: 600; }
 
 /* Fondo propio de cada sección, a todo el ancho de la ventana */
 .sv-fondo {
@@ -16,19 +16,15 @@
 }
 
 /* Entrada al aparecer (.visible): de abajo y de a uno */
-.sv-intro .ent, .sv-tms .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
-.sv-intro.visible .ent, .sv-tms.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
+.sv-tms .ent { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.sv-tms.visible .ent { opacity: 1; translate: 0 0; transition-delay: calc(.1s + var(--i, 0) * .08s); }
 
 /* =========================================================
-   ENTRADA: ¿Cómo lo HACEMOS? — fondo crema con letras grises y rojas
-   (pedido de la persona: la suite tecnológica —entrada, ecosistema y
-   experiencia de usuario— va en crema, separada de la logística inversa, en rojo)
+   Franjas de la marca de ¿Cómo lo hacemos? (pedido de la persona)
    ========================================================= */
-.sv-intro { color: var(--gris); }
-.sv-intro .sv-fondo { top: 0; height: calc(450px + 50vh / var(--escala, 1)); background: var(--blanco); }
-/* Franjas de la marca que encabezan la entrada cuando sube por encima de la portada:
-   las tres (gris, rojo y rojo, de 34,6 con huecos crema de 10,8, pedido de la persona)
-   y después el crema de la sección. La portada mide 900 + estas 136,2 (portada.css). */
+/* Arriba: encabezan la sección cuando sube por encima de la portada: las tres
+   (gris, rojo y rojo, de 34,6 con huecos crema de 10,8) y después el crema.
+   La portada mide 900 + estas 136,2 (portada.css). */
 .in-franjas {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
@@ -40,52 +36,18 @@
      así no ensucia el crema después de la última franja */
   box-shadow: 0 -28px 40px -12px rgba(15, 30, 45, .35);
 }
-.sv-intro .franjitas { background: linear-gradient(90deg, var(--rojo) 0 5px, transparent 5px 6.5px, var(--rojo) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }
-.in-titulo { position: absolute; left: 64px; top: 120px; line-height: 1; white-space: nowrap; }
-.in-sello { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; font-size: 13px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
-.in-titulo > span { display: block; margin-left: 4px; font-weight: 300; font-size: 74px; letter-spacing: -.01em; }
-.in-titulo > b { display: block; margin-top: 4px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 142px; line-height: .9; letter-spacing: -.005em; color: var(--rojo); }
-.in-bajada { position: absolute; left: 860px; top: 262px; width: 600px; font-size: 22px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .8); }
-.in-bajada strong { font-weight: 600; color: var(--gris); }
-/* las 4 partes del ecosistema: de x 64 a 1536, abajo en 820 */
-.in-partes { position: absolute; left: 64px; top: 470px; display: grid; grid-template-columns: repeat(4, 353px); gap: 20px; }
-/* tarjetas blancas con el ícono grande en rojo */
-.in-parte {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  height: 350px;
-  padding: 34px 28px 24px;
-  overflow: hidden;
-  border: 1px solid rgba(58, 58, 58, .1);
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 30px 50px -36px rgba(120, 40, 20, .45);
-  font: inherit;
-  color: var(--gris);
-  text-align: left;
-  cursor: pointer;
-  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s ease, border-color .3s ease;
-}
-.in-parte::before {   /* franjitas de la marca arriba a la izquierda */
-  content: "";
+/* Abajo (la sección mide 991): gris, hueco, rojo, hueco y la tercera franja se vuelve
+   el fondo rojo de la logística inversa */
+.ex-franjas {
   position: absolute;
-  left: 30px;
-  top: -1px;
-  width: 40px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px);
+  left: calc(800px - 50vw / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  top: 900px;
+  height: 93px;
+  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px);
 }
-.in-parte:hover { transform: translateY(-6px); border-color: rgba(239, 69, 41, .5); box-shadow: 0 38px 60px -34px rgba(120, 40, 20, .55); }
-.in-ico svg { display: block; width: 76px; height: 76px; fill: var(--rojo); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
-.in-parte:hover .in-ico svg { transform: scale(1.08); }
-.in-parte b { margin-top: 24px; font: 700 30px/1.02 var(--fuente-titulo); letter-spacing: .01em; }
-.in-texto { margin-top: 12px; width: 290px; font-size: 15px; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .78); }
-.in-texto strong { font-weight: 600; color: var(--gris); }
-.in-ir { position: absolute; right: 26px; bottom: 24px; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--rojo); transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
-.in-ir svg { width: 22px; height: 22px; fill: #fff; transform: rotate(90deg); }
-.in-parte:hover .in-ir { transform: translateY(4px); }
+.sv-tms .franjitas { background: linear-gradient(90deg, var(--rojo) 0 5px, transparent 5px 6.5px, var(--rojo) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }
+
 
 /* Animación de entrada de los textos que cambian (la usan el TMS y la logística inversa) */
 @keyframes mr-entrar { from { opacity: 0; translate: 0 10px; } }
@@ -96,19 +58,22 @@
 .sv-tms { color: var(--gris); }
 /* crema plano, 2 px más arriba para pisarse con la entrada (sin rendija) */
 .sv-tms .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--blanco); }
+.pista section.sv-tms { height: 991px; }   /* 900 + las dos franjas de abajo (.ex-franjas) */
 .tm-izq { position: absolute; left: 64px; top: 84px; width: 450px; }
-.tm-ante { font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); }
-.tm-titulo { margin-top: 4px; font: 700 80px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }   /* 84 no entra antes del panel */
-.tm-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
+/* título "¿Cómo lo HACEMOS?" con el sello "Pensado para FORD" a la derecha del antetítulo */
+.tm-ante { display: flex; align-items: center; justify-content: space-between; font-size: 36px; font-weight: 300; line-height: 1; color: var(--gris); }
+.tm-sello { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
+.tm-titulo { margin-top: 4px; font: 700 84px/.95 var(--fuente-titulo); color: var(--rojo); white-space: nowrap; }
+.tm-bajada { margin-top: 16px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
 .tm-bajada strong { font-weight: 600; color: var(--gris); }
-.tm-tabs { display: flex; flex-direction: column; gap: 10px; margin-top: 34px; }
+.tm-tabs { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
 .tm-tab {
   position: relative;
   display: grid;
   grid-template-columns: 34px 1fr 28px;
   align-items: center;
   gap: 16px;
-  height: 70px;
+  height: 60px;
   padding: 0 20px 0 22px;
   border: 1px solid rgba(58, 58, 58, .12);
   border-radius: 18px;
@@ -131,7 +96,7 @@
 .tm-tab small { display: block; margin-top: 4px; font-size: 13px; font-weight: 300; color: rgba(58, 58, 58, .62); }
 .tm-tab .tm-flecha { width: 22px; height: 22px; fill: rgba(58, 58, 58, .4); transition: transform .35s ease, fill .3s ease; }
 .tm-tab.activo .tm-flecha { fill: #fff; }
-.tm-desc { margin-top: 22px; min-height: 80px; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
+.tm-desc { margin-top: 18px; min-height: 80px; font-size: 15.5px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .8); }
 .tm-desc strong { font-weight: 600; color: var(--gris); }
 .tm-desc.cambia { animation: mr-entrar .5s cubic-bezier(.2, .8, .2, 1) both; }
 

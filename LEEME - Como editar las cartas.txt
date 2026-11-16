@@ -265,7 +265,7 @@ Se edita en  datos\clientes.js  (con el Bloc de notas).
     blanco (se ven sobre el fondo rojo). Para cambiar uno, guardalo con el
     mismo nombre de archivo; para agregar uno, copiá un renglón con su coma.
   • El tamaño de cada logo se ajusta solo para que todos se vean parejos.
-¿CÓMO LO HACEMOS? ("Servicio a medida": ecosistema tecnológico, experiencia de usuario, logística inversa, tableros y ventajas)
+SERVICIO A MEDIDA (portada con la intro, ¿Cómo lo hacemos?, logística inversa, tableros y ventajas, centros logísticos)
 --------------------------------------------------------------------------
 Se edita en  datos\servicio.js  (con el Bloc de notas).
   • cliente: el nombre del cliente ("FORD"). En los textos, donde dice {cliente}
@@ -283,12 +283,16 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       Al mover el mouse cada capa se corre distinto, solo arriba y abajo (el
       cielo casi nada, el camión lo que más), y al bajar la siguiente pantalla
       sube por encima.
-  • como: la pantalla de entrada "¿Cómo lo HACEMOS?" (título, frase y las 4
-    tarjetas del ecosistema, cada una con titulo y texto; el ícono va solo).
-    Cada tarjeta abre su pestaña en "Ecosistema TECNOLÓGICO", en este orden:
-    cargas, despachos, digitalización e interfases (cambiá los textos, no el
-    orden).
-  • tms: "Ecosistema TECNOLÓGICO", el TMS en 4 pestañas. Cada pestaña tiene
+      intro: la tarjeta de presentación que aparece sobre la foto. Pasa sola
+      por los párrafos (uno por vez; cada uno se queda más o menos según lo
+      largo que sea) y termina en la pregunta, la invitación y el botón que baja
+      a "¿Cómo lo hacemos?". rotulo es la palabra chica de arriba; en parrafos
+      se pueden agregar o sacar renglones (cada uno entre comillas, con su
+      coma). Conviene que cada párrafo no pase de unas 3 líneas.
+  • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,
+    sello "Pensado para..." y la frase de abajo). En esa misma pantalla están
+    las 5 pestañas del ecosistema: las 4 de "tms" y la de "experiencia".
+  • tms: las primeras 4 pestañas del ecosistema. Cada pestaña tiene
     titulo, resumen (la línea chica de la pestaña) y texto (el de abajo).
       carga:      textos de la planchada y los indicadores (nombre y número
                   inicial; después cambian solos con la demo).
@@ -301,19 +305,23 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       interfases: nombres de los sistemas del dibujo y las 4 interfases
                   (título, texto y "paquete", lo que viaja por la línea).
   • centros: pantalla "Centros logísticos / CROSSDOCKING" (después del mapa de
-    distribución). En lista, cada centro tiene nombre, m2 (el número sin
-    puntos: 17000), direccion, servicios, entrega y ubicacion ("benavidez" o
-    "plaza" si lleva el botón que baja al mapa de abajo; "" si no). El total de
-    m² arriba a la derecha se suma solo.
-  • ubicacion: pantalla "Ubicación ESTRATÉGICA" (el mapa de la zona de Pacheco).
-    Textos, el nombre del depósito del cliente, pinDestino (el pin con el logo
+    distribución; comparte la pantalla con el mapa de la zona de Pacheco).
+    A la izquierda van el título, la frase, el total de m² (se suma solo) y la
+    lista de centros: el que se elige se despliega con sus datos. En lista,
+    cada centro tiene nombre, m2 (el número sin puntos: 17000), direccion,
+    servicios, entrega y ubicacion ("benavidez" o "plaza" si al elegirlo el
+    mapa muestra su ruta; "" si no).
+  • ubicacion: el mapa de la zona de Pacheco, a la derecha de la lista de centros.
+    bajada (se suma a la frase de los centros), nota (va abajo a la derecha,
+    junto a la aclaración del mapa), el nombre del depósito del cliente, pinDestino (el pin con el logo
     del cliente, en img\ubicacion\pin-cliente.svg) y los dos centros con sus km y
     minutos hasta el depósito (Benavídez además tiene "alternativas": los km y
     minutos de las otras dos rutas, por El Salvador y por Sarmiento). El mapa usa calles reales (OpenStreetMap) y los
     recorridos reales por calle, guardados en
     slides\servicio-a-medida\mapa-pacheco.js: ese archivo no se edita a mano;
     si cambia un centro de lugar, hay que volver a generarlo.
-  • experiencia: pantalla "Experiencia de USUARIO" (después del ecosistema).
+  • experiencia: la quinta pestaña del ecosistema, "Experiencia de usuario"
+    (titulo, resumen y texto de la pestaña, como las demás).
       calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
                   evento que se pueden elegir.
       asistente:  tarjeta CUSTOMER SERVICE: nombre del asistente (TICO),
@@ -337,12 +345,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       - cierre: textos del final, los beneficios y el botón "Simular otro
         reclamo".
     Los horarios, números y cantidades son de ejemplo: es una simulación.
-  • ventajas (pantalla "Ventajas y OPORTUNIDADES", después de los tableros):
-      - antetitulo, titulo, bajada y botonTableros;
+  • ventajas (tercera pestaña de la pantalla de los tableros, "Ventajas y
+    oportunidades"):
+      - pestana (el nombre en el botón), antetitulo, titulo, bajada (el título
+        de la izquierda cambia a este al elegir la pestaña) y botonTableros;
       - items: las seis columnas. Cada una tiene titulo, texto, icono (ruta,
         escudo, barras, arbol, ciclo o cabeza), una "lista" opcional de
-        renglones y irATableros: true si lleva el botón que baja a los tableros.
-  • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE", después de la simulación):
+        renglones y irATableros: true si lleva el botón que vuelve a los tableros.
+  • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE", después de la
+    simulación; tiene tres pestañas: entregas, logística inversa y ventajas):
       - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
       - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
         porcentaje: true si es un %) y los meses (mes, kg y otd);
