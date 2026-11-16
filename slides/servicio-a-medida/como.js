@@ -54,9 +54,7 @@
     `<p class="in-bajada ent" style="--i:1">${txt(C.bajada)}</p>` +
     '<div class="in-partes">' + (C.partes || []).slice(0, 4).map((p, i) =>
       `<button type="button" class="in-parte ent" style="--i:${i + 2}" data-i="${i}">` +
-      (p.foto ? `<span class="in-foto"><img src="../../${SV.esc(p.foto)}" alt="" decoding="async"></span>` : '') +
-      `<span class="in-num">${String(i + 1).padStart(2, '0')}</span>` +
-      `<span class="in-cabeza"><span class="in-ico">${iconos[i] || ''}</span><b>${txt(p.titulo)}</b></span><span class="in-texto">${txt(p.texto)}</span>` +
+      `<span class="in-ico">${iconos[i] || ''}</span><b>${txt(p.titulo)}</b><span class="in-texto">${txt(p.texto)}</span>` +
       '<span class="in-ir" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 11h11l-4-4 1.4-1.4L19.8 12l-6.4 6.4L12 17l4-4H5z"/></svg></span></button>').join('') + '</div>';
   intro.querySelectorAll('.in-parte').forEach((b) => b.addEventListener('click', () => {
     if (SV.elegirPestana) SV.elegirPestana(pestanas[+b.dataset.i]);

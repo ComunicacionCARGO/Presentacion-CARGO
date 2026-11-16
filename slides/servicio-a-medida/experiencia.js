@@ -27,12 +27,13 @@
   };
 
   seccion.insertAdjacentHTML('beforeend',
+    '<div class="ex-franjas"></div>' +
     `<div class="ex-cab ent" style="--i:0"><p class="ex-ante">${txt(E.antetitulo)}</p><h2 class="ex-titulo">${txt(E.titulo)}</h2>` +
     `<p class="ex-bajada">${txt(E.bajada)}</p></div>` +
     // ---- No calidad ----
     '<article class="ex-tarjeta ex-calidad ent" style="--i:1">' +
     '<div class="ex-foto"><img src="../../img/ecosistema/no-calidad.webp" alt="" decoding="async"></div>' +
-    `<div class="ex-txt"><p class="ex-t1">${txt(C.titulo)} <b>${txt(C.tituloGrande)}</b></p><p class="ex-t2">${txt(C.texto)}</p></div>` +
+    `<div class="ex-txt"><p class="ex-t1">${C.titulo ? txt(C.titulo) + ' ' : ''}<b>${txt(C.tituloGrande)}</b></p><p class="ex-t2">${txt(C.texto)}</p></div>` +
     '<div class="nc-app">' +
     '<div class="nc-form">' +
     '<p class="nc-rot">Instancia</p><div class="nc-chips nc-inst">' + (C.instancias || []).map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('') + '</div>' +
@@ -45,7 +46,7 @@
     '<article class="ex-tarjeta ex-asistente ent" style="--i:2">' +
     '<div class="ex-foto"><img src="../../img/ecosistema/robot.webp" alt="" decoding="async">' +
     `<p class="ch-bot">${ICO.bot}<span><b>${txt(A.nombre)}</b><small><i></i>${txt(A.estado)}</small></span></p></div>` +
-    `<div class="ex-txt"><p class="ex-t1">${txt(A.titulo)} <b>${txt(A.tituloGrande)}</b></p><p class="ex-t2">${txt(A.texto)}</p></div>` +
+    `<div class="ex-txt"><p class="ex-t1">${A.titulo ? txt(A.titulo) + ' ' : ''}<b>${txt(A.tituloGrande)}</b></p><p class="ex-t2">${txt(A.texto)}</p></div>` +
     '<div class="ch-app"><div class="ch-mensajes"></div>' +
     '<div class="ch-preguntas">' + (A.preguntas || []).slice(0, 3).map((p, i) => `<button type="button" data-i="${i}">${txt(p.pregunta)}${ICO.enviar}</button>`).join('') + '</div>' +
     '</div></article>');

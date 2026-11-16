@@ -284,11 +284,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       cielo casi nada, el camión lo que más), y al bajar la siguiente pantalla
       sube por encima.
   • como: la pantalla de entrada "¿Cómo lo HACEMOS?" (título, frase y las 4
-    tarjetas del ecosistema, cada una con titulo, texto y foto). Cada tarjeta
-    abre su pestaña en "Ecosistema TECNOLÓGICO", en este orden: cargas,
-    despachos, digitalización e interfases (cambiá los textos, no el orden).
-    Las fotos están en img\ecosistema (salieron de la diapositiva: si tenés
-    las originales en mejor calidad, guardalas con el mismo nombre).
+    tarjetas del ecosistema, cada una con titulo y texto; el ícono va solo).
+    Cada tarjeta abre su pestaña en "Ecosistema TECNOLÓGICO", en este orden:
+    cargas, despachos, digitalización e interfases (cambiá los textos, no el
+    orden).
   • tms: "Ecosistema TECNOLÓGICO", el TMS en 4 pestañas. Cada pestaña tiene
     titulo, resumen (la línea chica de la pestaña) y texto (el de abajo).
       carga:      textos de la planchada y los indicadores (nombre y número
@@ -302,10 +301,12 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       interfases: nombres de los sistemas del dibujo y las 4 interfases
                   (título, texto y "paquete", lo que viaja por la línea).
   • experiencia: pantalla "Experiencia de USUARIO" (después del ecosistema).
-      calidad:    Aplicativo NO CALIDAD: instancias del proceso y tipos de
+      calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
                   evento que se pueden elegir.
-      asistente:  Customer service ARTIFICIAL: nombre del asistente (TICO),
+      asistente:  tarjeta CUSTOMER SERVICE: nombre del asistente (TICO),
                   saludo y las 3 preguntas que se pueden tocar con su respuesta.
+      En cada tarjeta, titulo es una palabra chica opcional antes del título
+      grande (tituloGrande); si queda vacía (""), solo se ve el grande.
     Las fotos de las dos tarjetas están en img\ecosistema (no-calidad.webp y
     robot.webp). Los registros y respuestas son de ejemplo.
   • inversa: la simulación del reclamo (el concesionario pide la devolución

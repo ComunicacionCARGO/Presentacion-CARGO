@@ -33,12 +33,11 @@ window.SERVICIO = {
     bajada: "Un **ecosistema tecnológico** propio: esto es lo que nuestro TMS puede hacer por la operación de {cliente}.",
     // Las 4 partes del ecosistema. Cada tarjeta abre su pestaña más abajo
     // (en este orden: cargas, despachos, digitalización e interfases; cambiá los textos, no el orden).
-    // foto: imagen de la tarjeta, en la carpeta img/ecosistema
     partes: [
-      { titulo: "Gestión de cargas y consolidación", texto: "Consolidación de bultos por ruta mediante **staging**, para optimizar el ruteo y la ocupación de la bodega.", foto: "img/ecosistema/foto-cargas.webp" },
-      { titulo: "Gestión de despachos", texto: "Asignación de viajes, emisión de documentación y control operativo de las salidas.", foto: "img/ecosistema/foto-despachos.webp" },
-      { titulo: "Digitalización y tracking", texto: "Conformado **e-POD móvil**, portal del cliente y seguimiento en línea de cada pedido.", foto: "img/ecosistema/foto-tracking.webp" },
-      { titulo: "Customizing e interfases", texto: "Adaptamos el TMS a sus procesos e intercambiamos información con su ERP y los redespachantes.", foto: "img/ecosistema/foto-interfases.webp" }
+      { titulo: "Gestión de cargas y consolidación", texto: "Consolidación de bultos por ruta mediante **staging**, para optimizar el ruteo y la ocupación de la bodega." },
+      { titulo: "Gestión de despachos", texto: "Asignación de viajes, emisión de documentación y control operativo de las salidas." },
+      { titulo: "Digitalización y tracking", texto: "Conformado **e-POD móvil**, portal del cliente y seguimiento en línea de cada pedido." },
+      { titulo: "Customizing e interfases", texto: "Adaptamos el TMS a sus procesos e intercambiamos información con su ERP y los redespachantes." }
     ]
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
@@ -144,7 +143,7 @@ window.SERVICIO = {
     titulo: "USUARIO",
     bajada: "Herramientas para que la red de concesionarios nos tenga **siempre a mano**.",
     calidad: {
-      titulo: "Aplicativo",
+      titulo: "",
       tituloGrande: "NO CALIDAD",
       texto: "Registro de **no calidad** en todas las instancias del proceso.",
       instancias: ["Recepción", "Depósito", "Transporte", "Entrega"],
@@ -153,9 +152,9 @@ window.SERVICIO = {
       sistema: "Sistema de siniestros"
     },
     asistente: {
-      titulo: "Customer service",
-      tituloGrande: "ARTIFICIAL",
-      texto: "Atención **24 hs** a la red sobre envíos, consultas de procesos y más.",
+      titulo: "",
+      tituloGrande: "CUSTOMER SERVICE",
+      texto: "Atención **24 hs** a la red sobre envíos, consultas de procesos y más, **asistido por bot**.",
       nombre: "TICO",
       estado: "Asistente CARGO · en línea 24 hs",
       saludo: "¡Hola! Soy TICO. ¿En qué te ayudo?",
