@@ -286,7 +286,9 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       intro: la tarjeta de presentación que aparece sobre la foto. Pasa sola
       por los párrafos (uno por vez; cada uno se queda más o menos según lo
       largo que sea) y termina en la pregunta, la invitación y el botón que baja
-      a "¿Cómo lo hacemos?". rotulo es la palabra chica de arriba; en parrafos
+      a "¿Cómo lo hacemos?". Arriba a la derecha tiene una flecha para volver
+      y el botón "Siguiente" (su texto es botonSiguiente); si alguien los usa,
+      deja de pasar sola. rotulo es la palabra chica de arriba; en parrafos
       se pueden agregar o sacar renglones (cada uno entre comillas, con su
       coma). Conviene que cada párrafo no pase de unas 3 líneas.
   • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,

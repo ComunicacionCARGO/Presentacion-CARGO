@@ -35,6 +35,7 @@ window.SERVICIO = {
       ],
       pregunta: "¿Están listos para conocer cómo lo haríamos?",
       invitacion: "Los invitamos a recorrer nuestra experiencia interactiva y descubrir nuestra propuesta para {cliente}.",
+      botonSiguiente: "Siguiente",   // el botón para pasar al párrafo siguiente
       boton: "Empezar el recorrido"
     }
   },

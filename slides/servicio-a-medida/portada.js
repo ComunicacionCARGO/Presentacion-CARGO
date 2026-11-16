@@ -148,7 +148,11 @@
     const pasos = PARRAFOS.length + 1;
     caja.innerHTML =
       `<div class="pt-i-cab"><p class="pt-i-rotulo"><i class="franjitas"></i>${txt(I.rotulo)}</p>` +
-      `<div class="pt-i-rayas">${Array.from({ length: pasos }, (_, k) => `<button type="button" data-k="${k}" aria-label="Paso ${k + 1}"><i></i></button>`).join('')}</div></div>` +
+      '<div class="pt-i-nav">' +
+      '<button type="button" class="pt-i-ant" aria-label="Anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>' +
+      `<div class="pt-i-rayas">${Array.from({ length: pasos }, (_, k) => `<button type="button" data-k="${k}" aria-label="Paso ${k + 1}"><i></i></button>`).join('')}</div>` +
+      `<button type="button" class="pt-i-sig">${txt(I.botonSiguiente || 'Siguiente')}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 5.6 11.6 7l4 4H4v2h11.6l-4 4 1.4 1.4 6.4-6.4z"/></svg></button>` +
+      '</div></div>' +
       '<div class="pt-i-pasos">' +
       PARRAFOS.map((p, k) => `<p class="pt-i-paso" data-k="${k}">${txt(p)}</p>`).join('') +
       `<div class="pt-i-paso pt-i-final" data-k="${PARRAFOS.length}"><h2>${txt(I.pregunta)}</h2>` +
@@ -159,17 +163,28 @@
     const rayas = [...caja.querySelectorAll('.pt-i-rayas button')];
     // segundos de cada paso: según el largo del texto (unas 22 letras por segundo, entre 6 y 11 s)
     const dur = PARRAFOS.map((p) => Math.max(6, Math.min(11, String(p).length / 22)));
-    let paso = -1, transcurrido = 0, ultimo = 0;
+    let paso = -1, transcurrido = 0, ultimo = 0, manual = false;
+    const bAnt = caja.querySelector('.pt-i-ant'), bSig = caja.querySelector('.pt-i-sig');
     function ir(k) {
+      k = Math.max(0, Math.min(pasos - 1, k));
       paso = k; transcurrido = 0;
       elPasos.forEach((el, j) => el.classList.toggle('activo', j === k));
       rayas.forEach((b, j) => {
         b.classList.toggle('hecha', j < k);
         b.classList.toggle('actual', j === k);
-        b.firstChild.style.width = j < k ? '100%' : '0%';
+        // si la persona maneja los pasos, la rayita actual queda llena (ya no corre el tiempo)
+        b.firstChild.style.width = j < k || (manual && j === k) ? '100%' : '0%';
       });
+      bAnt.disabled = k === 0;
+      caja.classList.toggle('final', k === pasos - 1);
     }
-    rayas.forEach((b, j) => b.addEventListener('click', () => ir(j)));
+    // con las flechas, el botón o las rayitas manda la persona: deja de pasar solo
+    const irManual = (k) => { manual = true; ir(k); };
+    rayas.forEach((b, j) => b.addEventListener('click', (e) => { if (e.isTrusted) irManual(j); else ir(j); }));
+    bAnt.addEventListener('click', () => irManual(paso - 1));
+    bSig.addEventListener('click', () => irManual(paso + 1));
+    // Guía (compartido/guia.js): la mano señala "Siguiente" hasta que se usa la navegación
+    if (window.GUIA) GUIA.pista({ id: 'servicio-intro', texto: 'introSiguiente', objetivo: () => bSig, punto: [.5, .6], zona: '.pt-i-nav button', lado: 'arriba', espera: 2.5, activa: () => introActiva && paso >= 0 && paso < pasos - 1 && y < 80 });
     caja.querySelector('.pt-i-boton').addEventListener('click', () => {
       const sig = document.querySelector('.sv-tms');
       if (window.desplazamiento && sig) window.desplazamiento.ir(sig.offsetTop);
@@ -179,7 +194,7 @@
       requestAnimationFrame(reloj);
       const dt = ultimo ? Math.min(.1, (t - ultimo) / 1000) : 0;
       ultimo = t;
-      if (!introActiva || paso < 0 || paso >= PARRAFOS.length || y > 300 || document.hidden) return;
+      if (!introActiva || manual || paso < 0 || paso >= PARRAFOS.length || y > 300 || document.hidden) return;
       transcurrido += dt;
       const p = Math.min(1, transcurrido / dur[paso]);
       rayas[paso].firstChild.style.width = (p * 100).toFixed(1) + '%';
@@ -193,7 +208,7 @@
   const mostrar = () => {
     sec.classList.add('visible');
     // la intro aparece después del título
-    if (caja && caja.children.length && !introActiva) setTimeout(() => { introActiva = true; caja.classList.add('lista'); if (caja.querySelector('.pt-i-paso.activo') === null) caja.querySelector('.pt-i-rayas button').click(); }, 1300);
+    if (caja && caja.children.length && !introActiva) setTimeout(() => { introActiva = true; caja.classList.add('lista'); if (caja.querySelector('.pt-i-paso.activo') === null) caja.querySelector('.pt-i-rayas button').dispatchEvent(new MouseEvent('click')); }, 1300);
   };
   if (document.body.classList.contains('lista')) mostrar();
   else document.addEventListener('pagina-lista', mostrar);

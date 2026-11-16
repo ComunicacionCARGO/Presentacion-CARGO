@@ -30,6 +30,7 @@ window.GUIAS = {
   politicas:           { texto: "**Hacé clic** en cada política",                   tactil: "**Tocá** cada política" },
 
   // ---------- Servicio a medida ----------
+  introSiguiente:      { texto: "**Hacé clic** para seguir leyendo",                tactil: "**Tocá** para seguir leyendo" },
   tmsLector:           { texto: "**Pasá el mouse** por un bulto para leerlo",       tactil: "**Tocá** un bulto para leerlo" },
   tmsPestanas:         { texto: "**Hacé clic** para ver otra parte del TMS",        tactil: "**Tocá** para ver otra parte del TMS" },
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
