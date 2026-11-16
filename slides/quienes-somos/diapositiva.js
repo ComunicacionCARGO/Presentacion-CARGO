@@ -324,6 +324,9 @@
   Object.entries(window.MAPA_SUDAMERICA || {}).forEach(([k, anillos]) => {
     GEO[k] = anillos.filter((r) => !r.every(([lon, lat]) => lon < -77.5 && lat < -30));
   });
+  // Islas Malvinas (compartido/malvinas.js): en el rojo suave de Argentina, fijas (no se levantan ni se eligen)
+  const MALV = (window.MALVINAS || {}).simple;
+  if (MALV && MALV.length) GEO.FK = MALV;
   const PAISES = ['BR', 'AR'];                       // los que se levantan (AR queda arriba en el borde común)
   const NOMBRES = { AR: 'Argentina', BR: 'Brasil' };
 
@@ -440,15 +443,16 @@
     '<defs>' +
     TODOS.map((k) => `<path id="mb-${k}" d="${DIBUJO[k]}"/>`).join('') +
     CARA.replace('{id}', 'mb-cara') + BRILLO('mb-brillo') +
+    '<linearGradient id="mb-malv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FAD0C1"/><stop offset="1" stop-color="#F3A38B"/></linearGradient>' +
     `<clipPath id="mb-recorte">${TODOS.map((k) => `<use href="#mb-${k}"/>`).join('')}</clipPath>` +
     '<filter id="mb-halo" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="16"/></filter>' +
     '<filter id="mb-sombra" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="12"/></filter>' +
     '</defs>' +
     `<g filter="url(#mb-halo)" opacity=".32" transform="translate(0 8)">${todosUse('fill="#EF4529"')}</g>` +
     `<g filter="url(#mb-sombra)" opacity=".16" transform="translate(6 26)">${todosUse('fill="#8C2A14"')}</g>` +
-    TODOS.filter((k) => !PAISES.includes(k)).map((k) => extrusion('mb-' + k, LADOS.base)).join('') +
-    PAISES.map((k) => extrusion('mb-' + k, LADOS.suave)).join('') +
-    TODOS.map((k) => `<use href="#mb-${k}" fill="url(#mb-cara)" stroke="url(#mb-cara)" ${SIN_COSTURA}/>`).join('') +
+    TODOS.filter((k) => !PAISES.includes(k) && k !== 'FK').map((k) => extrusion('mb-' + k, LADOS.base)).join('') +
+    PAISES.concat(GEO.FK ? ['FK'] : []).map((k) => extrusion('mb-' + k, LADOS.suave)).join('') +
+    TODOS.map((k) => `<use href="#mb-${k}" fill="url(#${k === 'FK' ? 'mb-malv' : 'mb-cara'})" stroke="url(#${k === 'FK' ? 'mb-malv' : 'mb-cara'})" ${SIN_COSTURA}/>`).join('') +
     `<rect width="${W}" height="${H}" fill="url(#mb-brillo)" clip-path="url(#mb-recorte)" opacity=".55"/>`
   );
   siluetas('toques-base', PAISES);   // mantiene el país levantado si el cursor pasa por su base

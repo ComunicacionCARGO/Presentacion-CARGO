@@ -155,19 +155,24 @@
     '<stop offset=".2" stop-color="#fff" stop-opacity="0"/><stop offset=".34" stop-color="#fff" stop-opacity=".75"/>' +
     '<stop offset=".48" stop-color="#fff" stop-opacity="0"/></linearGradient>';
 
-  // 1. Base: halo rojo, sombra, espesor y cara de vidrio de cada provincia (blancos apenas distintos)
+  // 1. Base: halo rojo, sombra, espesor y cara de vidrio de cada provincia (blancos apenas distintos).
+  //    Las Malvinas (compartido/malvinas.js) van en esta capa fija, con el mismo vidrio, pero no
+  //    son una provincia: no tienen zona ni se pueden elegir.
   const BLANCOS = ['#FFFFFF', '#FFF8F0', '#FCF1E7', '#FFFCF7', '#FDF5EC'];
-  const todos = (attrs) => PROVS.map((k) => `<use href="#b-${k}" ${attrs}/>`).join('');
+  const MALV = (window.MALVINAS || {}).detalle || [];
+  const FIJAS = MALV.length ? [...PROVS, 'malvinas'] : PROVS;
+  const dibujoFijo = (k) => (k === 'malvinas' ? trazo(MALV) : DIBUJO[k]);
+  const todos = (attrs) => FIJAS.map((k) => `<use href="#b-${k}" ${attrs}/>`).join('');
   lienzoDesdeSvg('mapa-base',
-    '<defs>' + PROVS.map((k) => `<path id="b-${k}" d="${DIBUJO[k]}"/>`).join('') + BRILLO('b-brillo') +
+    '<defs>' + FIJAS.map((k) => `<path id="b-${k}" d="${dibujoFijo(k)}"/>`).join('') + BRILLO('b-brillo') +
     `<clipPath id="b-recorte">${todos('')}</clipPath>` +
     '<filter id="b-halo" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="15"/></filter>' +
     '<filter id="b-sombra" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="11"/></filter>' +
     '</defs>' +
     `<g filter="url(#b-halo)" opacity=".34" transform="translate(0 8)">${todos('fill="#EF4529"')}</g>` +
     `<g filter="url(#b-sombra)" opacity=".15" transform="translate(6 24)">${todos('fill="#8C2A14"')}</g>` +
-    PROVS.map((k) => extrusion('b-' + k, LADOS.base)).join('') +
-    PROVS.map((k, i) => { const c = BLANCOS[i % BLANCOS.length]; return `<use href="#b-${k}" fill="${c}" stroke="${c}" ${SIN_COSTURA}/>`; }).join('') +
+    FIJAS.map((k) => extrusion('b-' + k, LADOS.base)).join('') +
+    FIJAS.map((k, i) => { const c = BLANCOS[i % BLANCOS.length]; return `<use href="#b-${k}" fill="${c}" stroke="${c}" ${SIN_COSTURA}/>`; }).join('') +
     `<g fill="none" stroke="#E7D3C4" stroke-width=".75" stroke-linejoin="round">${todos('')}</g>` +
     `<rect width="${W}" height="${H}" fill="url(#b-brillo)" clip-path="url(#b-recorte)" opacity=".5"/>`
   );

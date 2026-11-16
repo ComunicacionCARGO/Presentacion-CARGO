@@ -68,12 +68,13 @@
     const RUTAS = { benavidez: (MP.rutas || {}).benavidez, plaza: (MP.rutas || {}).plaza };
     const ALTERNATIVAS = ((MP.rutas || {}).alternativas) || {};   // rutas alternativas por centro (como en Google)
 
-    // ---- Argentina (el mapita de referencia, abajo a la izquierda) ----
+    // ---- Argentina con las Malvinas (el mapita de referencia, abajo a la derecha) ----
     const GEO = window.MAPA_ARGENTINA || {};
+    const MALV = (window.MALVINAS || {}).detalle || [];
     const ZONA = [-58.6873, -34.4325];            // el depósito del cliente en General Pacheco (lon, lat)
     const COSL = Math.cos(36 * Math.PI / 180);
     const ARG = (lon, lat) => [(lon + 74) * COSL * 22, (-21 - lat) * 22];
-    const argD = Object.values(GEO).map((p) => (p.anillos || []).map((a) =>
+    const argD = [...Object.values(GEO), { anillos: MALV }].map((p) => (p.anillos || []).map((a) =>
       'M' + a.map(([lo, la]) => ARG(lo, la).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z').join('')).join('');
     const AW = 20.5 * COSL * 22, AH = 35 * 22;     // tamaño del dibujo del país
     const [zx, zy] = ARG(ZONA[0], ZONA[1]);
@@ -121,7 +122,7 @@
       `<span class="ub-camion">${ICO.camion}</span>` +
       '</div>' +
       '</div>' +
-      `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span><img class="ub-logo" src="../../img/marca/logo-cargo.svg" alt="CARGO"></div>` +
+      `<div class="ub-mini"><span>${txt(U.zona)}</span>${argSVG('ub-mini-arg')}</div>` +
       `<p class="ub-osm">${U.nota ? txt(U.nota) + ' · ' : ''}Mapa © colaboradores de OpenStreetMap</p>`);
 
     // el título grande se achica si no entra en la columna (CROSSDOCKING es largo)
