@@ -212,7 +212,18 @@
     const esc = (t) => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const txt = (t) => esc(String(t || '').replace(/\{cliente\}/g, cliente)).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const pasos = PARRAFOS.length + 1;
-    caja.innerHTML =
+    // ícono grande de fondo de cada paso (intro.iconos, en el mismo orden que los párrafos)
+    const ICONOS_INTRO = {
+      // caja con dos flechas que la rodean (gestión y coordinación)
+      gestion: '<svg viewBox="0 0 100 100"><path transform="translate(50 51) scale(1.22) translate(-50 -51)" d="M50 30 68 39 50 48 32 39z M32 43 48 51 48 72 32 63z M52 51 68 43 68 63 52 72z"/><path d="M90.87 37.79 91.93 25.63 79.81 32.63z M9.13 64.21 20.19 69.37 8.07 76.37z"/><path d="M10.5 36.6A42 42 0 0 1 86.37 30 M89.47 65.36A42 42 0 0 1 13.63 72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>',
+      // diana con flecha (la de Objetivos de S.C.O.P.E., Objetivo.svg de la persona)
+      objetivo: '<svg viewBox="0 0 180.17 180.16"><path d="M78.7,180.16C35.3,180.16,0,144.86,0,101.47S35.3,22.79,78.7,22.79c20.95,0,40.65,8.14,55.5,22.92.78.71,1.27,1.73,1.27,2.87,0,2.14-1.72,3.88-3.86,3.88h-1.63l-1.14-1.14c-13.4-13.4-31.21-20.78-50.14-20.78C39.58,30.55,7.75,62.36,7.75,101.47s31.83,70.95,70.95,70.95,70.95-31.83,70.95-70.95c0-14-4.07-27.52-11.76-39.09-1.19-1.78-.7-4.19,1.08-5.37,1.78-1.19,4.18-.7,5.37,1.08,8.54,12.85,13.05,27.85,13.05,43.38,0,43.39-35.31,78.7-78.7,78.7Z"/><path d="M78.7,135.03c-18.51,0-33.56-15.06-33.56-33.56s15.06-33.56,33.56-33.56c8.93,0,17.36,3.48,23.73,9.8,1.52,1.51,1.53,3.96.03,5.48-1.51,1.52-3.96,1.53-5.48.03-4.92-4.87-11.41-7.56-18.28-7.56-14.23,0-25.81,11.58-25.81,25.81s11.58,25.81,25.81,25.81,25.81-11.58,25.81-25.81c0-3.04-.51-5.98-1.52-8.75-.73-2.01.3-4.24,2.31-4.97,2.01-.73,4.24.3,4.97,2.31,1.32,3.62,1.99,7.46,1.99,11.4,0,18.51-15.06,33.56-33.56,33.56Z"/><path d="M78.7,156.8c-30.5,0-55.31-24.82-55.31-55.33s24.81-55.31,55.31-55.31c14.79,0,28.68,5.76,39.11,16.21,1.51,1.52,1.51,3.97,0,5.48-1.52,1.51-3.97,1.51-5.48,0-8.96-8.98-20.9-13.93-33.62-13.93-26.22,0-47.56,21.33-47.56,47.56s21.33,47.58,47.56,47.58,47.56-21.34,47.56-47.58c0-7.66-1.78-14.99-5.3-21.76-.99-1.9-.25-4.24,1.65-5.23,1.9-.99,4.24-.24,5.23,1.65,4.04,7.78,6.17,16.54,6.17,25.33,0,30.51-24.81,55.33-55.31,55.33Z"/><path d="M78.7,105.35c-.99,0-1.98-.38-2.74-1.14-1.51-1.51-1.51-3.97,0-5.48L157.39,17.3c1.51-1.51,3.97-1.51,5.48,0,1.51,1.51,1.51,3.97,0,5.48l-81.44,81.43c-.76.76-1.75,1.14-2.74,1.14Z"/><path d="M176.29,24.96h-21.08V3.88c0-2.14,1.74-3.88,3.88-3.88s3.88,1.74,3.88,3.88v13.33h13.32c2.14,0,3.88,1.74,3.88,3.88s-1.74,3.88-3.88,3.88Z"/><path d="M164.91,36.35h-21.08V15.27c0-2.14,1.74-3.88,3.88-3.88s3.88,1.74,3.88,3.88v13.33h13.32c2.14,0,3.88,1.74,3.88,3.88s-1.74,3.88-3.88,3.88Z"/></svg>'
+    };
+    const iconos = (I.iconos || []).map((n, k) => {
+      const svg = ICONOS_INTRO[String(n || '').trim()];
+      return svg ? svg.replace('<svg ', `<svg class="pt-i-ico" data-k="${k}" aria-hidden="true" `) : '';
+    }).join('');
+    caja.innerHTML = iconos +
       `<div class="pt-i-cab"><p class="pt-i-rotulo"><i class="franjitas"></i>${txt(I.rotulo)}</p>` +
       '<div class="pt-i-nav">' +
       '<button type="button" class="pt-i-ant" aria-label="Anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>' +
@@ -227,6 +238,7 @@
       '</div>';
     const elPasos = [...caja.querySelectorAll('.pt-i-paso')];
     const rayas = [...caja.querySelectorAll('.pt-i-rayas button')];
+    const icos = [...caja.querySelectorAll('.pt-i-ico')];
     // segundos de cada paso: según el largo del texto (unas 22 letras por segundo, entre 6 y 11 s)
     const dur = PARRAFOS.map((p) => Math.max(6, Math.min(11, String(p).length / 22)));
     let paso = -1, transcurrido = 0, ultimo = 0, manual = false;
@@ -235,6 +247,7 @@
       k = Math.max(0, Math.min(pasos - 1, k));
       paso = k; transcurrido = 0;
       elPasos.forEach((el, j) => el.classList.toggle('activo', j === k));
+      icos.forEach((el) => el.classList.toggle('activo', +el.dataset.k === k));
       rayas.forEach((b, j) => {
         b.classList.toggle('hecha', j < k);
         b.classList.toggle('actual', j === k);

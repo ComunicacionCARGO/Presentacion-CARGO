@@ -302,6 +302,9 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       deja de pasar sola. rotulo es la palabra chica de arriba; en parrafos
       se pueden agregar o sacar renglones (cada uno entre comillas, con su
       coma). Conviene que cada párrafo no pase de unas 3 líneas.
+      iconos: el ícono grande y suave de la esquina de abajo a la izquierda de
+      cada párrafo, en el mismo orden: "gestion" (caja con flechas), "objetivo"
+      (diana) o "" (sin ícono).
   • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,
     sello "Pensado para..." y la frase de abajo). En esa misma pantalla están
     las 5 pestañas del ecosistema: las 4 de "tms" y la de "experiencia".

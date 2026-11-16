@@ -43,6 +43,9 @@ window.SERVICIO = {
         "Nos ocupamos de gestionar y coordinar la distribución de **repuestos y accesorios** hacia la **red de concesionarios oficiales {cliente}**, asegurando que cada entrega llegue donde se necesita.",
         "Nuestro objetivo es claro: garantizar, a través de un servicio diseñado y alineado a los estándares y necesidades de {cliente}, la **continuidad, eficiencia y una experiencia de calidad** para sus clientes."
       ],
+      // ícono grande y suave de la esquina de abajo a la izquierda, uno por párrafo y en el
+      // mismo orden: "gestion" (caja con flechas), "objetivo" (diana) o "" (sin ícono)
+      iconos: ["gestion", "objetivo"],
       pregunta: "¿Están listos para conocer cómo lo haríamos?",
       invitacion: "Los invitamos a recorrer nuestra experiencia interactiva y descubrir nuestra propuesta para {cliente}.",
       botonSiguiente: "Siguiente",   // el botón para pasar al párrafo siguiente
