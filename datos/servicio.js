@@ -30,24 +30,28 @@ window.SERVICIO = {
     antetitulo: "¿Cómo lo",
     titulo: "HACEMOS?",
     sello: "Pensado para {cliente}",
-    bajada: "Tres herramientas que trabajan juntas para que cada pieza esté **donde tiene que estar, cuando tiene que estar**.",
+    bajada: "Un **ecosistema tecnológico** propio: esto es lo que nuestro TMS puede hacer por la operación de {cliente}.",
+    // Las 4 partes del ecosistema. Cada tarjeta abre su pestaña más abajo
+    // (en este orden: cargas, despachos, digitalización e interfases; cambiá los textos, no el orden).
+    // foto: imagen de la tarjeta, en la carpeta img/ecosistema
     partes: [
-      { titulo: "Nuestro TMS", texto: "Gestión de carga e interfases con los sistemas de {cliente}." },
-      { titulo: "Logística inversa", texto: "Simulá un reclamo y mirá cómo lo resolvemos." },
-      { titulo: "Tableros de BI", texto: "Indicadores de entregas y devoluciones, siempre a la vista." }
+      { titulo: "Gestión de cargas y consolidación", texto: "Consolidación de bultos por ruta mediante **staging**, para optimizar el ruteo y la ocupación de la bodega.", foto: "img/ecosistema/foto-cargas.webp" },
+      { titulo: "Gestión de despachos", texto: "Asignación de viajes, emisión de documentación y control operativo de las salidas.", foto: "img/ecosistema/foto-despachos.webp" },
+      { titulo: "Digitalización y tracking", texto: "Conformado **e-POD móvil**, portal del cliente y seguimiento en línea de cada pedido.", foto: "img/ecosistema/foto-tracking.webp" },
+      { titulo: "Customizing e interfases", texto: "Adaptamos el TMS a sus procesos e intercambiamos información con su ERP y los redespachantes.", foto: "img/ecosistema/foto-interfases.webp" }
     ]
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
 
-  // ---------- Nuestro TMS ----------
+  // ---------- Ecosistema tecnológico: nuestro TMS en 4 pestañas ----------
   tms: {
-    antetitulo: "¿Qué puede hacer",
-    titulo: "NUESTRO TMS?",
-    bajada: "Sistema de gestión de despacho **personalizado para el cliente**.",
+    antetitulo: "Ecosistema",
+    titulo: "TECNOLÓGICO",
+    bajada: "¿Qué puede hacer nuestro TMS por la operación de **{cliente}**?",
     carga: {
-      titulo: "Gestión de carga",
-      resumen: "Planchada ordenada y a la vista",
-      texto: "Diagramamos zonas de **stage y zstage** parametrizadas en el sistema para ordenar la salida. Cada bulto se lee con **handheld** y va a su zona.",
+      titulo: "Gestión de cargas",
+      resumen: "Consolidación por ruta con staging",
+      texto: "Consolidamos los bultos por ruta mediante **staging**: zonas de **stage y zstage** parametrizadas en el sistema y lectura con **dispositivos móviles**, para optimizar el ruteo y la ocupación de la bodega.",
       panel: "Situación de la planchada",
       // Indicadores: nombre y valor inicial (después cambian con la demo)
       indicadores: [
@@ -59,15 +63,69 @@ window.SERVICIO = {
       recepcion: "Recepción",
       ayuda: "Pasá el lector por los bultos que llegan"
     },
+    // Gestión de despachos (los datos del documento y de los viajes son de ejemplo)
+    despachos: {
+      titulo: "Gestión de despachos",
+      resumen: "Viajes, documentación y salidas",
+      texto: "**Asignación de viajes**, emisión de **documentación** y control operativo de las salidas.",
+      docTitulo: "Documentación",
+      docTexto: "Se genera **automáticamente en formato digital** al firmar y queda a disposición del cliente en nuestra web.",
+      docBoton: "Firmar la entrega",
+      docListo: "Publicado en el portal de {cliente}",
+      documento: {
+        numero: "00003-00412387",
+        fecha: "18/07",
+        remitente: "{cliente} · Centro de repuestos",
+        destinatario: "Concesionario oficial (ejemplo)",
+        localidad: "Rosario, Santa Fe",
+        bultos: "6",
+        m3: "0,84",
+        kg: "126,5"
+      },
+      viajesTitulo: "Armado de rutas y viajes",
+      viajesTexto: "Cada bulto se asigna al viaje de su ruta y se controla la salida.",
+      viajesBoton: "Armar los viajes",
+      // Viajes: código, unidad, paradas (la primera es la salida) y cuántos bultos lleva
+      viajes: [
+        { codigo: "VJ-2411", unidad: "Unidad 14", paradas: ["CD Córdoba", "Villa María", "Rosario"], bultos: 5 },
+        { codigo: "VJ-2412", unidad: "Unidad 08", paradas: ["CD Córdoba", "Río Cuarto", "San Luis"], bultos: 4 },
+        { codigo: "VJ-2413", unidad: "Unidad 21", paradas: ["CD Córdoba", "Jesús María", "Sgo. del Estero"], bultos: 3 }
+      ]
+    },
+    // Digitalización y tracking (el envío y sus eventos son de ejemplo)
+    tracking: {
+      titulo: "Digitalización y tracking",
+      resumen: "Visibilidad en tiempo real",
+      texto: "Conformado **e-POD móvil**, portal del cliente y documentos digitalizados en línea. **Consulta web en tiempo real** de cada estado: fecha, hora y geolocalización.",
+      panel: "Seguimiento de envíos",
+      numero: "ADD 0031-2411873",
+      destino: "Concesionario oficial (ejemplo) · Av. Ejemplo 1234",
+      fuentesTitulo: "Información proveniente de",
+      // Las 4 fuentes (el orden importa: cada evento dice de cuál viene, 1 a 4)
+      fuentes: ["Nuestros eventos", "Socios estratégicos de transporte", "Confirmación del concesionario", "App de choferes (última milla)"],
+      // Eventos del envío: fecha y hora, qué pasó, dónde, de qué fuente viene (1 a 4) y coordenadas
+      eventos: [
+        { hora: "15/07 10:41", texto: "Ingreso a depósito", lugar: "Depósito CARGO Córdoba", fuente: 1, geo: "-31,41 / -64,18" },
+        { hora: "15/07 13:37", texto: "En tránsito", lugar: "Hacia depósito CARGO Rosario", fuente: 1, geo: "-31,41 / -64,18" },
+        { hora: "16/07 06:12", texto: "Viaje en ruta", lugar: "Ruta 9 · socio de transporte", fuente: 2, geo: "-32,41 / -63,24" },
+        { hora: "16/07 11:11", texto: "Ingreso a depósito", lugar: "Depósito CARGO Rosario", fuente: 1, geo: "-32,95 / -60,66" },
+        { hora: "18/07 07:51", texto: "Salida a distribución", lugar: "Chofer CARGO · Unidad 14", fuente: 4, geo: "-32,95 / -60,66" },
+        { hora: "18/07 11:40", texto: "Entrega realizada · e-POD", lugar: "Av. Ejemplo 1234", fuente: 4, geo: "-32,94 / -60,69" },
+        { hora: "18/07 15:03", texto: "Recepción confirmada", lugar: "Concesionario oficial (ejemplo)", fuente: 3, geo: "-32,94 / -60,69" }
+      ],
+      epod: "e-POD móvil: firma y foto del conformado",
+      epodBoton: "Ver el documento"
+    },
     interfases: {
-      titulo: "Interfases",
-      resumen: "Conectado con tus sistemas",
-      texto: "Comunicación con **sistemas propios y de terceros** (clientes, warehouse y transporte de terceros) mediante distintos protocolos.",
+      titulo: "Customizing e interfases",
+      resumen: "Adaptado a sus procesos",
+      texto: "Adaptamos el TMS a la dinámica de los procesos de cada cliente. Desarrollamos **interfaces bidireccionales** para intercambiar información con el ERP del cliente y de los redespachantes.",
+      panel: "Pasá el mouse por cada interfase para ver **qué información viaja y hacia dónde**.",
       nodos: {
         cliente: "ERP {cliente}",
         tms: "Grupo CARGO",
         warehouse: "Warehouse",
-        terceros: "Transporte de terceros",
+        terceros: "Redespachantes",
         app: "App de choferes"
       },
       // Las 4 interfases (el orden importa: cada una tiene su recorrido en el dibujo)
@@ -77,11 +135,36 @@ window.SERVICIO = {
         { titulo: "Obtención de eventos", texto: "Busca los eventos relacionados a cada carga.", paquete: "eventos" },
         { titulo: "Devolución de eventos", texto: "Informa los eventos de tracking al ERP del cliente.", paquete: "tracking" }
       ]
+    }
+  },
+
+  // ---------- Experiencia de usuario (las preguntas y los registros son de ejemplo) ----------
+  experiencia: {
+    antetitulo: "Experiencia de",
+    titulo: "USUARIO",
+    bajada: "Herramientas para que la red de concesionarios nos tenga **siempre a mano**.",
+    calidad: {
+      titulo: "Aplicativo",
+      tituloGrande: "NO CALIDAD",
+      texto: "Registro de **no calidad** en todas las instancias del proceso.",
+      instancias: ["Recepción", "Depósito", "Transporte", "Entrega"],
+      tipos: ["Faltante", "Daño", "Demora", "Documentación"],
+      boton: "Registrar",
+      sistema: "Sistema de siniestros"
     },
-    inversa: {
-      titulo: "Logística inversa",
-      resumen: "Reclamos sin papeles",
-      boton: "Ver la simulación"
+    asistente: {
+      titulo: "Customer service",
+      tituloGrande: "ARTIFICIAL",
+      texto: "Atención **24 hs** a la red sobre envíos, consultas de procesos y más.",
+      nombre: "TICO",
+      estado: "Asistente CARGO · en línea 24 hs",
+      saludo: "¡Hola! Soy TICO. ¿En qué te ayudo?",
+      // Preguntas que se pueden tocar y lo que responde
+      preguntas: [
+        { pregunta: "¿Dónde está mi envío ADD 0031-2411873?", respuesta: "Salió a distribución hoy a las 07:51 con la Unidad 14. Te aviso apenas se confirme la entrega." },
+        { pregunta: "¿Cómo va mi devolución RC-24117?", respuesta: "Ya la retiramos y está en inspección en el depósito. Cuando tenga su disposición final te llega un mail." },
+        { pregunta: "¿Dónde veo el remito conformado?", respuesta: "Está en el portal de clientes, en Documentos. Si querés, te lo mando por mail ahora." }
+      ]
     }
   },
 

@@ -32,7 +32,7 @@ window.GUIAS = {
   // ---------- Servicio a medida ----------
   entradaPartes:       { texto: "**Hacé clic** para ir directo a cada parte",       tactil: "**Tocá** para ir directo a cada parte" },
   tmsLector:           { texto: "**Pasá el mouse** por un bulto para leerlo",       tactil: "**Tocá** un bulto para leerlo" },
-  tmsInterfases:       { texto: "**Hacé clic** para ver las interfases",            tactil: "**Tocá** para ver las interfases" },
+  tmsPestanas:         { texto: "**Hacé clic** para ver otra parte del TMS",        tactil: "**Tocá** para ver otra parte del TMS" },
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
   tablerosPuntos:      { texto: "**Pasá el mouse** por los meses",                  tactil: "**Tocá** un mes para ver el detalle" },
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },

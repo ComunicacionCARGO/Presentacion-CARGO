@@ -265,7 +265,7 @@ Se edita en  datos\clientes.js  (con el Bloc de notas).
     blanco (se ven sobre el fondo rojo). Para cambiar uno, guardalo con el
     mismo nombre de archivo; para agregar uno, copiá un renglón con su coma.
   • El tamaño de cada logo se ajusta solo para que todos se vean parejos.
-¿CÓMO LO HACEMOS? ("Servicio a medida": TMS, Logística inversa, Tableros y Ventajas)
+¿CÓMO LO HACEMOS? ("Servicio a medida": ecosistema tecnológico, experiencia de usuario, logística inversa, tableros y ventajas)
 --------------------------------------------------------------------------
 Se edita en  datos\servicio.js  (con el Bloc de notas).
   • cliente: el nombre del cliente ("FORD"). En los textos, donde dice {cliente}
@@ -283,14 +283,31 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       Al mover el mouse cada capa se corre distinto, solo arriba y abajo (el
       cielo casi nada, el camión lo que más), y al bajar la siguiente pantalla
       sube por encima.
-  • como: la pantalla de entrada (título, frase y las tres tarjetas, que
-    llevan en orden a Nuestro TMS, Logística inversa y Tableros: cambiá los
-    textos, no el orden).
-  • tms: título y las dos demos.
+  • como: la pantalla de entrada "¿Cómo lo HACEMOS?" (título, frase y las 4
+    tarjetas del ecosistema, cada una con titulo, texto y foto). Cada tarjeta
+    abre su pestaña en "Ecosistema TECNOLÓGICO", en este orden: cargas,
+    despachos, digitalización e interfases (cambiá los textos, no el orden).
+    Las fotos están en img\ecosistema (salieron de la diapositiva: si tenés
+    las originales en mejor calidad, guardalas con el mismo nombre).
+  • tms: "Ecosistema TECNOLÓGICO", el TMS en 4 pestañas. Cada pestaña tiene
+    titulo, resumen (la línea chica de la pestaña) y texto (el de abajo).
       carga:      textos de la planchada y los indicadores (nombre y número
                   inicial; después cambian solos con la demo).
+      despachos:  la carta de porte que se firma (sus datos son de ejemplo)
+                  y los viajes del día: código, unidad, paradas (la primera es
+                  la salida) y cuántos bultos lleva cada uno.
+      tracking:   la consulta web de un envío: número, destino, las 4 fuentes
+                  de información y los eventos (fecha y hora, qué pasó, dónde,
+                  de qué fuente viene, del 1 al 4, y coordenadas). De ejemplo.
       interfases: nombres de los sistemas del dibujo y las 4 interfases
                   (título, texto y "paquete", lo que viaja por la línea).
+  • experiencia: pantalla "Experiencia de USUARIO" (después del ecosistema).
+      calidad:    Aplicativo NO CALIDAD: instancias del proceso y tipos de
+                  evento que se pueden elegir.
+      asistente:  Customer service ARTIFICIAL: nombre del asistente (TICO),
+                  saludo y las 3 preguntas que se pueden tocar con su respuesta.
+    Las fotos de las dos tarjetas están en img\ecosistema (no-calidad.webp y
+    robot.webp). Los registros y respuestas son de ejemplo.
   • inversa: la simulación del reclamo (el concesionario pide la devolución
     desde el celular y después lo usa el chofer).
       - número de reclamo, pieza y dirección de ejemplo; nombres de las apps y

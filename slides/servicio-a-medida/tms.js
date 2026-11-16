@@ -1,12 +1,14 @@
 /* =========================================================
-   NUESTRO TMS — dos demos que se pueden usar:
-   - Gestión de carga: la planchada (zonas de stage y zstage como en el
+   ECOSISTEMA TECNOLÓGICO — nuestro TMS en 4 pestañas:
+   - Gestión de cargas: la planchada (zonas de stage y zstage como en el
      diseño). El cursor es un lector: al pasarlo por un bulto que llega, se
      lee y vuela a su zona; los indicadores cambian. Cuando una zona se llena,
      se despacha. Si nadie lo usa, el lector trabaja solo.
-   - Interfases: el TMS en el centro, conectado con el ERP del cliente, el
-     warehouse, el transporte de terceros y la App; cada interfase enciende
-     sus recorridos (se pasan solas si nadie toca nada).
+   - Gestión de despachos y Digitalización y tracking: ecosistema.js
+     (arma su contenido en las vistas que deja este archivo en SV.tms).
+   - Customizing e interfases: el TMS en el centro, conectado con el ERP del
+     cliente, el warehouse, los redespachantes y la App; cada interfase
+     enciende sus recorridos (se pasan solas si nadie toca nada).
    Textos en datos/servicio.js → tms.
    ========================================================= */
 (function () {
@@ -15,7 +17,7 @@
   if (!SV || !seccion) return;
   const { S, txt, crear, escala } = SV;
   const T = S.tms || {};
-  const TC = T.carga || {}, TI = T.interfases || {}, TV = T.inversa || {};
+  const TC = T.carga || {}, TI = T.interfases || {}, TD = T.despachos || {}, TK = T.tracking || {};
   const NS = 'http://www.w3.org/2000/svg';
   const ahora = () => performance.now();
 
@@ -40,38 +42,49 @@
   // =========================================================
   // COLUMNA IZQUIERDA: título y pestañas
   // =========================================================
+  // las 4 pestañas (los íconos son los de las tarjetas de la entrada, en como.js)
   const PESTANAS = [
-    { k: 'carga', d: TC, icono: 'carga' },
-    { k: 'inter', d: TI, icono: 'inter' },
-    { k: 'inversa', d: TV, icono: 'inversa' }
+    { k: 'carga', d: TC, svg: SV.ICONOS.cargas },
+    { k: 'despachos', d: TD, svg: SV.ICONOS.despachos },
+    { k: 'tracking', d: TK, svg: SV.ICONOS.digital },
+    { k: 'inter', d: TI, svg: SV.ICONOS.custom }
   ];
   const izq = crear('div', 'tm-izq', seccion,
     `<p class="tm-ante ent" style="--i:0">${txt(T.antetitulo)}</p><h2 class="tm-titulo ent" style="--i:1">${txt(T.titulo)}</h2>` +
     `<p class="tm-bajada ent" style="--i:2">${txt(T.bajada)}</p>` +
     '<div class="tm-tabs" role="tablist">' + PESTANAS.map((p, i) =>
-      `<button type="button" class="tm-tab ent${p.k === 'inversa' ? ' bajar' : ''}" style="--i:${i + 3}" data-k="${p.k}">` +
-      `${icono(p.icono)}<span><b>${txt(p.d.titulo)}</b><small>${txt(p.d.resumen)}</small></span>` +
+      `<button type="button" class="tm-tab ent" style="--i:${i + 3}" data-k="${p.k}">` +
+      `${p.svg}<span><b>${txt(p.d.titulo)}</b><small>${txt(p.d.resumen)}</small></span>` +
       `<svg class="tm-flecha" viewBox="0 0 24 24" aria-hidden="true">${ICONOS.flecha}</svg></button>`).join('') + '</div>' +
-    '<p class="tm-desc ent" style="--i:6"></p>');
+    '<p class="tm-desc ent" style="--i:7"></p>');
   const desc = izq.querySelector('.tm-desc');
   const panel = crear('div', 'tm-panel ent', seccion);
   panel.style.setProperty('--i', 3);
   const vCarga = crear('div', 'tm-vista tc', panel);
-  const vInter = crear('div', 'tm-vista ti', panel);
+  const vistas = {
+    carga: vCarga,
+    despachos: crear('div', 'tm-vista td', panel),
+    tracking: crear('div', 'tm-vista tw', panel),
+    inter: crear('div', 'tm-vista ti', panel)
+  };
+  const vInter = vistas.inter;
+  const alElegir = {};   // ecosistema.js anota acá qué hacer al abrir sus pestañas
 
   let pestana = null;
   function elegir(k) {
-    if (k === 'inversa') { SV.irA(document.querySelector('.sv-inv')); return; }
-    if (k === pestana) return;
+    if (!vistas[k] || k === pestana) return;
     pestana = k;
     izq.querySelectorAll('.tm-tab').forEach((b) => b.classList.toggle('activo', b.dataset.k === k));
-    vCarga.classList.toggle('activa', k === 'carga');
-    vInter.classList.toggle('activa', k === 'inter');
-    desc.innerHTML = txt((k === 'carga' ? TC : TI).texto);
+    Object.entries(vistas).forEach(([kk, v]) => v.classList.toggle('activa', kk === k));
+    desc.innerHTML = txt((PESTANAS.find((p) => p.k === k) || {}).d.texto);
     desc.classList.remove('cambia'); void desc.offsetWidth; desc.classList.add('cambia');
     if (k === 'inter') reiniciarAuto();
+    if (alElegir[k]) alElegir[k]();
   }
   izq.querySelectorAll('.tm-tab').forEach((b) => b.addEventListener('click', () => elegir(b.dataset.k)));
+  // para ecosistema.js y para las tarjetas de la entrada (como.js)
+  SV.tms = { vistas, alElegir, elegir, get pestana() { return pestana; }, get enVista() { return enVista; } };
+  SV.elegirPestana = elegir;
 
   // =========================================================
   // GESTIÓN DE CARGA
@@ -103,7 +116,8 @@
   // Guía (compartido/guia.js): primero la mano señala un bulto de la cola y después la pestaña de interfases
   if (window.GUIA) {
     GUIA.pista({ id: 'servicio-lector', texto: 'tmsLector', objetivo: () => cola.querySelector('.tc-bulto:not(.leido):not(.leyendo)'), zona: '.tc-bulto', tipo: 'pasar', lado: 'arriba', espera: 1.6, activa: () => vCarga.classList.contains('activa') });
-    GUIA.pista({ id: 'servicio-interfases', texto: 'tmsInterfases', objetivo: () => izq.querySelector('.tm-tab[data-k="inter"]'), punto: [.85, .5], zona: '.tm-tab', lado: 'der', espera: 2.5 });
+    // después, la pestaña siguiente a la que está abierta
+    GUIA.pista({ id: 'servicio-pestanas', texto: 'tmsPestanas', objetivo: () => { const ks = PESTANAS.map((p) => p.k); return izq.querySelector(`.tm-tab[data-k="${ks[(ks.indexOf(pestana) + 1) % ks.length]}"]`); }, punto: [.85, .5], zona: '.tm-tab', lado: 'der', espera: 2.5 });
   }
   const celdas = {};
   vCarga.querySelectorAll('.tc-celda').forEach((el) => { celdas[el.dataset.z] = { el, bultos: el.querySelector('.tc-bultos'), n: 0, ocupada: false }; });
@@ -287,7 +301,7 @@
   const LISTA = (TI.lista || []).slice(0, 4);
 
   vInter.innerHTML =
-    `<p class="ti-texto">${txt(TI.texto)}</p>` +
+    `<p class="ti-texto">${txt(TI.panel || '')}</p>` +
     '<div class="ti-red"><svg viewBox="0 0 940 420" aria-hidden="true">' +
     Object.entries(LINEAS).map(([k, d]) => `<path class="ti-linea" data-l="${k}" d="${d}"/>`).join('') +
     '<g class="ti-paquetes"></g></svg>' +
