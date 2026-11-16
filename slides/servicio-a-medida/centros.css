@@ -74,8 +74,11 @@
 .ub-nota { position: absolute; left: 64px; top: 620px; z-index: 2; width: 440px; font-size: 13px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .6); }
 
 /* escenario del mapa: a la derecha, sin recuadro (los bordes del dibujo se esfuman) */
-.ub-escena { position: absolute; left: 470px; top: -20px; z-index: 1; width: 1180px; height: 940px; perspective: 1700px; perspective-origin: 50% 32%; pointer-events: none; }
-.ub-escena .ub-plano, .ub-escena .ub-mini { pointer-events: auto; }
+/* el esfumado de los bordes va en la escena (en pantalla), así la cámara puede correr el plano sin que se vean sus bordes */
+.ub-escena { position: absolute; left: 470px; top: -20px; z-index: 1; width: 1180px; height: 940px; perspective: 1700px; perspective-origin: 50% 32%; pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 54%, #000 52%, transparent 96%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 54%, #000 52%, transparent 96%); }
+.ub-escena .ub-plano { pointer-events: auto; }
 /* el país (zoom de entrada): crece hacia la zona y se desvanece */
 .ub-argentina { position: absolute; opacity: 0; transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .9s ease; filter: drop-shadow(0 18px 24px rgba(120, 40, 20, .18)); }
 .ub-argentina path { fill: #fff; stroke: rgba(58, 58, 58, .16); stroke-width: 1.2; stroke-linejoin: round; }
@@ -83,16 +86,17 @@
 .sv-ubi.visible .ub-argentina { opacity: 1; }
 .sv-ubi.zoom .ub-argentina { opacity: 0; transform: scale(16); transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .7s ease .75s; }
 /* el plano de la zona, inclinado como el mapa de distribución */
+/* tamaño, posición y transform los pone centros.js (la cámara) */
 .ub-plano {
-  position: absolute; left: 50%; top: 50%; width: 1300px; height: 820px; margin: -410px 0 0 -650px;
+  position: absolute; left: 50%; top: 50%;
   transform-style: preserve-3d;
-  transform: translate(-88px, 40px) rotateX(42deg) rotateZ(-6deg) scale(.4); opacity: 0;
+  opacity: 0;
   transition: transform 1.7s cubic-bezier(.4, 0, .2, 1), opacity .9s ease;
 }
-.sv-ubi.zoom .ub-plano { transform: translate(-88px, 40px) rotateX(42deg) rotateZ(-6deg) scale(1); opacity: 1; transition-delay: .55s, .75s; }
-.ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 98%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 98%); }
+.sv-ubi.zoom .ub-plano { opacity: 1; transition-delay: .55s, .75s; }
+/* ya armado: la cámara se desliza a cada ruta */
+.sv-ubi.listo .ub-plano { transition: transform 1.3s cubic-bezier(.45, 0, .2, 1), opacity .4s ease; transition-delay: 0s; }
+.ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ub-dibujo path, .ub-dibujo polygon { stroke-linecap: round; stroke-linejoin: round; }
 /* calles reales (mapa-pacheco.js, OpenStreetMap), en tonos de la marca */
 .ub-suelo { fill: #ECE3D6; }
@@ -113,6 +117,12 @@
 .ub-pulso { fill: none; stroke: var(--rojo); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .sv-ubi.en-vista .ub-pulso { animation: ub-pulso 2.4s ease-out var(--d, 0s) infinite; }
 @keyframes ub-pulso { 0% { opacity: .55; transform: scale(.6); } 100% { opacity: 0; transform: scale(3.2); } }
+/* rutas alternativas (como las de Google): rojo claro con borde blanco, solo con su centro elegido */
+.ub-alt path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ub-alt { opacity: 0; transition: opacity .5s ease; }
+.ub-alt.visible { opacity: 1; transition-delay: .7s; }
+.ub-alt-borde { stroke: #fff; stroke-width: 10; }
+.ub-alt-linea { stroke: #F3A28F; stroke-width: 6; }
 /* recorridos: gris tenue el que no está elegido; el elegido se dibuja en rojo y fluye */
 .ub-rec path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .ub-rec-sombra { stroke: transparent; stroke-width: 24; transition: stroke .4s ease; }
@@ -127,7 +137,8 @@
 .sv-ubi:not(.en-vista) .ub-rec-flujo { animation-play-state: paused; }
 /* lo que está parado sobre el plano (contra-rotado, como las bases del mapa de distribución) */
 .ub-lugar, .ub-dist, .ub-camion { position: absolute; transform-origin: 50% 100%; }
-.ub-lugar { display: flex; flex-direction: column; align-items: center; gap: 8px; transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg); cursor: default; }
+/* --inv (centros.js) = 1 / zoom de la cámara: así los carteles mantienen su tamaño */
+.ub-lugar { display: flex; flex-direction: column; align-items: center; gap: 8px; transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg) scale(var(--inv, 1)); cursor: default; transition: transform 1.3s cubic-bezier(.45, 0, .2, 1); }
 .ub-lugar.centro { cursor: pointer; }
 .ub-lugar::after { content: ""; width: 4px; height: 16px; margin-top: -8px; border-radius: 2px; background: currentColor; color: var(--rojo); }
 .ub-lugar.destino::after { color: var(--gris); }
@@ -140,10 +151,14 @@
 .ub-lugar.centro.activo .ub-pin { transform: scale(1.15); }
 .ub-lugar.centro.activo .ub-etq { color: var(--rojo); }
 .ub-lugar.centro:not(.activo) { opacity: .7; }
-.ub-dist { padding: 8px 16px; border-radius: 12px; background: var(--rojo); color: #fff; font-size: 15px; white-space: nowrap; box-shadow: 0 14px 24px -12px rgba(160, 40, 20, .7); transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(.6); opacity: 0; transition: opacity .4s ease, transform .5s cubic-bezier(.3, 1.5, .5, 1); }
+.ub-dist { padding: 8px 16px; border-radius: 12px; background: var(--rojo); color: #fff; font-size: 15px; white-space: nowrap; box-shadow: 0 14px 24px -12px rgba(160, 40, 20, .7); transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(calc(var(--inv, 1) * .6)); opacity: 0; transition: opacity .4s ease, transform .5s cubic-bezier(.3, 1.5, .5, 1); }
 .ub-dist b { font-family: var(--fuente-titulo); font-size: 20px; letter-spacing: .02em; }
-.ub-dist.visible { opacity: 1; transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(1); transition-delay: .9s; }
-.ub-camion { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; box-shadow: 0 10px 18px -8px rgba(0, 0, 0, .45); transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg); opacity: 0; transition: opacity .3s ease; }
+.ub-dist.visible { opacity: 1; transform: translate(-50%, -130%) rotateZ(6deg) rotateX(-42deg) scale(var(--inv, 1)); transition-delay: .9s; }
+/* las de las alternativas: blancas con letra roja, más chicas (como las de Google) */
+.ub-dist.alt { padding: 6px 12px; background: #fff; color: var(--rojo); font-size: 13px; box-shadow: 0 10px 20px -12px rgba(0, 0, 0, .4); }
+.ub-dist.alt b { font-size: 16px; }
+.ub-dist.alt.visible { transition-delay: 1.2s; }
+.ub-camion { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; box-shadow: 0 10px 18px -8px rgba(0, 0, 0, .45); transform: translate(-50%, -100%) rotateZ(6deg) rotateX(-42deg) scale(var(--inv, 1)); opacity: 0; transition: opacity .3s ease; }
 .sv-ubi[data-sel] .ub-camion { opacity: 1; }
 .ub-camion svg { width: 26px; height: 26px; fill: var(--rojo); }
 .ub-camion.izq svg { transform: scaleX(-1); }
@@ -151,7 +166,7 @@
 /* atribución de los datos del mapa (la pide la licencia de OpenStreetMap) */
 .ub-osm { position: absolute; right: 70px; bottom: 34px; font-size: 11px; color: rgba(58, 58, 58, .5); }
 /* mapita de referencia: dónde queda la zona */
-.ub-mini { position: absolute; left: -406px; top: 690px;   /* debajo de la columna de texto (x 64 del escenario) */ display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 16px; background: rgba(255, 255, 255, .92); box-shadow: 0 16px 30px -20px rgba(120, 40, 20, .5); opacity: 0; translate: 0 10px; transition: opacity .6s ease 1.9s, translate .8s cubic-bezier(.2, .8, .2, 1) 1.9s; }
+.ub-mini { position: absolute; left: 64px; top: 670px; z-index: 2;   /* debajo de la columna de texto */ display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 16px; background: rgba(255, 255, 255, .92); box-shadow: 0 16px 30px -20px rgba(120, 40, 20, .5); opacity: 0; translate: 0 10px; transition: opacity .6s ease 1.9s, translate .8s cubic-bezier(.2, .8, .2, 1) 1.9s; }
 .sv-ubi.zoom .ub-mini { opacity: 1; translate: 0 0; }
 .ub-mini-arg { width: 44px; height: 92px; }
 .ub-mini-arg path { fill: #EFE6DA; stroke: rgba(58, 58, 58, .25); stroke-width: 3; }

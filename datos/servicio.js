@@ -384,9 +384,11 @@ window.SERVICIO = {
     bajada: "Nuestros centros de Buenos Aires están **a minutos del depósito de repuestos de {cliente}**.",
     destino: "Depósito de repuestos {cliente}",
     zona: "General Pacheco · Buenos Aires",
-    // los dos centros (km y minutos por calle hasta el depósito)
+    // los dos centros (km y minutos por calle hasta el depósito). alternativas: las otras rutas
+    // que se dibujan (en orden: por El Salvador y por Sarmiento), con sus km y minutos
     centros: [
-      { k: "benavidez", nombre: "Centro Logístico Benavídez", km: "3,3", minutos: 9 },
+      { k: "benavidez", nombre: "Centro Logístico Benavídez", km: "3,3", minutos: 9,
+        alternativas: [{ km: "3,4", minutos: 10 }, { km: "4", minutos: 11 }] },
       { k: "plaza", nombre: "Centro Logístico Plaza Logística", km: "1,1", minutos: 4 }
     ],
     nota: "Distancia y tiempo por calle hasta el depósito de repuestos."

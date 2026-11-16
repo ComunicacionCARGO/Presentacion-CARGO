@@ -82,8 +82,10 @@
     // ---- Plano de la zona con calles reales (mapa-pacheco.js: OpenStreetMap + recorridos de OSRM) ----
     // Todo viene en metros al este (x) y al norte (y) del depósito del cliente.
     const MP = window.MAPA_PACHECO || { lugares: {}, rutas: {}, calles: {}, areas: {}, arroyos: [], nombres: [] };
-    const PW = 1300, PH = 820, ESC = .29;                      // 0,29 px por metro (290 px por km)
-    const X0 = -708 - PW / 2 / ESC, Y1 = 60 + PH / 2 / ESC;    // centro del plano: el medio de los dos recorridos
+    // el plano cubre toda la zona descargada (x −3275..1820 m, y −1941..1221 m) a 0,29 px por metro;
+    // la "cámara" (enfocar) lo corre y lo agranda para centrar la ruta elegida
+    const ESC = .29, X0 = -3275, Y1 = 1221;
+    const PW = Math.round((1820 - X0) * ESC), PH = Math.round((Y1 + 1941) * ESC);
     const P = (x, y) => [(x - X0) * ESC, (Y1 - y) * ESC];
     const LUGARES = { destino: [0, 0], ...(MP.lugares || {}) };
     const linea = (plano) => { let d = ''; for (let i = 0; i < plano.length; i += 2) { const [x, y] = P(plano[i], plano[i + 1]); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); } return d; };
@@ -100,7 +102,8 @@
       `<path class="ub-principal-borde" d="${capa(C.principal)}"/><path class="ub-principal" d="${capa(C.principal)}"/>` +
       `<path class="ub-autopista-borde" d="${capa(C.autopista)}"/><path class="ub-autopista" d="${capa(C.autopista)}"/>` +
       (MP.nombres || []).map((n) => { const [x, y] = P(n.x, n.y); return `<text class="ub-nombre" transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${-n.ang})">${esc(n.n)}</text>`; }).join('');
-    const RUTAS = MP.rutas || {};
+    const RUTAS = { benavidez: (MP.rutas || {}).benavidez, plaza: (MP.rutas || {}).plaza };
+    const ALTERNATIVAS = ((MP.rutas || {}).alternativas) || {};   // rutas alternativas por centro (como en Google)
 
     // ---- Argentina (para el zoom de entrada y el mapita de referencia) ----
     const GEO = window.MAPA_ARGENTINA || {};
@@ -129,7 +132,8 @@
       `<rect width="${PW}" height="${PH}" class="ub-suelo"/>` +
       dibujoReal +
       Object.values(LUGARES).map(([x, y], i) => `<circle class="ub-pulso" style="--d:${i * .6}s" cx="${P(x, y)[0].toFixed(0)}" cy="${P(x, y)[1].toFixed(0)}" r="18"/>`).join('') +
-      Object.entries(RUTAS).map(([k, pts]) => `<g class="ub-rec" data-k="${k}"><path class="ub-rec-sombra" d="${linea(pts)}"/><path class="ub-rec-base" d="${linea(pts)}"/><path class="ub-rec-flujo" d="${linea(pts)}"/></g>`).join('') +
+      Object.entries(ALTERNATIVAS).map(([k, lista]) => lista.map((pts, j) => `<g class="ub-alt" data-k="${k}" data-j="${j}"><path class="ub-alt-borde" d="${linea(pts)}"/><path class="ub-alt-linea" d="${linea(pts)}"/></g>`).join('')).join('') +
+      Object.entries(RUTAS).filter(([, pts]) => pts).map(([k, pts]) => `<g class="ub-rec" data-k="${k}"><path class="ub-rec-sombra" d="${linea(pts)}"/><path class="ub-rec-base" d="${linea(pts)}"/><path class="ub-rec-flujo" d="${linea(pts)}"/></g>`).join('') +
       '</svg>' +
       Object.entries(LUGARES).map(([k, [x, y]]) => {
         const [px, py] = P(x, y);
@@ -138,25 +142,47 @@
         return `<div class="ub-lugar ${k === 'destino' ? 'destino' : 'centro'}" data-k="${k}" style="left:${px.toFixed(0)}px;top:${py.toFixed(0)}px">` +
           `<span class="ub-etq">${nombre}</span><span class="ub-pin">${k === 'destino' ? ICO.repuestos : ICO.deposito}</span></div>`;
       }).join('') +
-      CEN.map((c) => `<span class="ub-dist" data-k="${esc(c.k)}"><b>${esc(c.km)} km</b> · ${+c.minutos || 0} min</span>`).join('') +
+      CEN.map((c) => `<span class="ub-dist" data-k="${esc(c.k)}"><b>${esc(c.km)} km</b> · ${+c.minutos || 0} min</span>` +
+        (c.alternativas || []).map((a, j) => `<span class="ub-dist alt" data-k="${esc(c.k)}" data-j="${j}"><b>${esc(a.km)} km</b> · ${+a.minutos || 0} min</span>`).join('')).join('') +
       `<span class="ub-camion">${ICO.camion}</span>` +
       '</div>' +
+      '</div>' +
       `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span></div>` +
-      '<p class="ub-osm">Mapa © colaboradores de OpenStreetMap</p>' +
-      '</div>');
+      '<p class="ub-osm">Mapa © colaboradores de OpenStreetMap</p>');
 
     const plano = sec.querySelector('.ub-plano');
+    Object.assign(plano.style, { width: PW + 'px', height: PH + 'px', marginLeft: -PW / 2 + 'px', marginTop: -PH / 2 + 'px' });
     const camion = sec.querySelector('.ub-camion');
     const recs = {}, ops = {}, dists = {};
     sec.querySelectorAll('.ub-rec').forEach((g) => { const p = g.querySelector('.ub-rec-base'); recs[g.dataset.k] = { g, p, largo: p.getTotalLength() }; });
     sec.querySelectorAll('.ub-op').forEach((b) => { ops[b.dataset.k] = b; });
-    // etiqueta de distancia en la mitad de cada recorrido
+    // alternativas de cada centro (se ven con ese centro elegido)
+    const alts = [...sec.querySelectorAll('.ub-alt')];
+    // etiqueta de distancia en la mitad de cada recorrido (las alternativas, en la mitad de la suya)
     sec.querySelectorAll('.ub-dist').forEach((el) => {
-      const r = recs[el.dataset.k]; if (!r) return;
-      const m = r.p.getPointAtLength(r.largo * .5);
+      const esAlt = el.classList.contains('alt');
+      const g = esAlt ? alts.find((a) => a.dataset.k === el.dataset.k && a.dataset.j === el.dataset.j) : null;
+      const p = esAlt ? g && g.querySelector('path') : recs[el.dataset.k] && recs[el.dataset.k].p;
+      if (!p) { el.remove(); return; }
+      const m = p.getPointAtLength(p.getTotalLength() * (esAlt ? .42 : .5));
       el.style.left = m.x.toFixed(0) + 'px'; el.style.top = m.y.toFixed(0) + 'px';
-      dists[el.dataset.k] = el;
+      if (!esAlt) dists[el.dataset.k] = el;
     });
+
+    // ---- Cámara: corre y agranda el plano para centrar la ruta elegida (el otro centro puede quedar afuera) ----
+    function cajaDe(k) {
+      const pts = [...RUTAS[k] || [], ...[].concat(...(ALTERNATIVAS[k] || []))];
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      for (let i = 0; i < pts.length; i += 2) { const [x, y] = P(pts[i], pts[i + 1]); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0 };
+    }
+    function camara(k, factor = 1) {
+      const c = cajaDe(k);
+      // que entre en unos 820 × 470 px de pantalla (el plano inclinado se ve más bajo)
+      const S = Math.max(.8, Math.min(1.55, 820 / Math.max(c.w, 1), 470 / Math.max(c.h * .78, 1))) * factor;
+      plano.style.transform = `translate(-88px, 34px) rotateX(42deg) rotateZ(-6deg) scale(${S.toFixed(3)}) translate(${(PW / 2 - c.cx).toFixed(1)}px, ${(PH / 2 - c.cy).toFixed(1)}px)`;
+      plano.style.setProperty('--inv', (1 / S).toFixed(3));
+    }
 
     let actual = null, t0 = 0, uso = -1e9, enVista = false, zoomHecho = false;
     const DUR = 2600;    // ms que tarda el camión
@@ -165,6 +191,9 @@
       if (!auto) uso = performance.now();
       actual = k;
       sec.dataset.sel = k;
+      if (sec.classList.contains('zoom')) camara(k);
+      alts.forEach((g) => g.classList.toggle('visible', g.dataset.k === k));
+      sec.querySelectorAll('.ub-dist.alt').forEach((el) => el.classList.toggle('visible', el.dataset.k === k));
       Object.entries(recs).forEach(([kk, r]) => {
         r.g.classList.toggle('activo', kk === k);
         r.g.style.setProperty('--largo', r.largo.toFixed(0));
@@ -211,9 +240,11 @@
       if (enVista && !zoomHecho) {
         zoomHecho = true;
         sec.classList.add('visible');
-        // zoom: el país crece hacia la zona y aparece el mapa de calles
-        setTimeout(() => sec.classList.add('zoom'), 500);
-        setTimeout(() => { if (!actual) elegir(CEN[0] && CEN[0].k, true); }, 2100);
+        // zoom: el país crece hacia la zona y aparece el mapa de calles, ya centrado en la primera ruta
+        const primero = actual || (CEN[0] && CEN[0].k);
+        camara(primero, .35);
+        setTimeout(() => { sec.classList.add('zoom'); camara(primero); }, 500);
+        setTimeout(() => { sec.classList.add('listo'); if (!actual) elegir(primero, true); }, 2300);
       }
     }, { threshold: .4 }).observe(sec);
     // el país se ubica con la zona en el centro de la escena, que es desde donde crece el zoom
