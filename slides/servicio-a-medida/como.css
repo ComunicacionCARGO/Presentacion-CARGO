@@ -36,7 +36,9 @@
   top: -136.2px;
   height: 137.2px;
   background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px 125.4px, var(--blanco) 125.4px);
-  box-shadow: 0 -22px 46px -12px rgba(15, 30, 45, .35);
+  /* sombra solo hacia arriba (sobre la portada): desenfoque 40 − 12 − 28 = 0 px por debajo,
+     así no ensucia el crema después de la última franja */
+  box-shadow: 0 -28px 40px -12px rgba(15, 30, 45, .35);
 }
 .sv-intro .franjitas { background: linear-gradient(90deg, var(--rojo) 0 5px, transparent 5px 6.5px, var(--rojo) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }
 .in-titulo { position: absolute; left: 64px; top: 120px; line-height: 1; white-space: nowrap; }
