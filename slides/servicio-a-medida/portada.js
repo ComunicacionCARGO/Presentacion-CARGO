@@ -1,7 +1,8 @@
 /* =========================================================
-   PORTADA DE SERVICIO A MEDIDA — el camión en la ruta en tres capas
-   (cielo, campo y camión). El camión es una secuencia de cuadros (render de
-   After Effects) que se reproduce en un lienzo; las capas se mueven distinto
+   PORTADA DE SERVICIO A MEDIDA — el camión en la ruta en capas: cielo quieto,
+   campo con árboles y alambrado que pasan sin parar (el fondo más lento) y el
+   camión, una secuencia de cuadros (render de After Effects) que se reproduce en
+   un lienzo. Además las capas se mueven distinto
    (solo en vertical) con el mouse y con el scroll. La sección queda quieta
    mientras la entrada sube por encima con las franjas de la marca.
    Textos e imágenes en datos/servicio.js → portada.
@@ -13,12 +14,74 @@
   const $ = (s) => sec.querySelector(s);
   const RAIZ = '../../';
 
-  // ---------- Cielo y campo (imágenes fijas) ----------
-  [['.pt-cielo', P.cielo], ['.pt-campo', P.campo]].forEach(([s, src]) => {
-    const img = $(s + ' img');
-    if (src) img.src = RAIZ + src; else $(s).remove();
+  // ---------- Cielo (quieto, espejado en portada.css) ----------
+  if (P.cielo) {
+    $('.pt-cielo img').src = RAIZ + P.cielo;
+    sec.style.setProperty('--cielo', `url("${RAIZ + P.cielo}")`);
+  } else $('.pt-cielo').remove();
+
+  // ---------- Fondo (árboles) y medio (alambrado): tiras que pasan sin parar ----------
+  // Las dos imágenes empalman en los costados: la tira repite la imagen las veces que
+  // haga falta para cubrir la escena y se corre una imagen entera (en CSS, en loop).
+  // Alto de cada imagen en fracción del alto de la escena (ubicadas sobre la foto vieja:
+  // el horizonte queda en y ~615 y el pasto del alambrado termina debajo de la ruta).
+  const TIRAS = [
+    { s: '.pt-fondo', src: P.fondo, alto: .93, seg: parseFloat(P.segundosFondo) || 45 },
+    { s: '.pt-medio', src: P.medio, alto: .809, seg: parseFloat(P.segundosMedio) || 9, borroso: parseFloat(P.desenfoqueMedio) || 0 }
+  ].filter((t) => { if (!t.src) $(t.s).remove(); return !!t.src; });
+
+  // Desenfoque de movimiento solo horizontal: la imagen se dibuja en un lienzo varias veces
+  // corrida de a 1 px (pesos en triángulo, sumadas con 'lighter'), dando la vuelta por los
+  // bordes para que siga empalmando. Se hace una vez; la tira usa copias del lienzo
+  // (con file:// no se puede pasar el lienzo a imagen).
+  function desenfocar(img, r) {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const x = c.getContext('2d');
+    x.globalCompositeOperation = 'lighter';
+    const total = (r + 1) * (r + 1);
+    for (let d = -r; d <= r; d++) {
+      x.globalAlpha = (r + 1 - Math.abs(d)) / total;
+      x.drawImage(img, d, 0);
+      if (d) x.drawImage(img, d - Math.sign(d) * w, 0);
+    }
+    return c;
+  }
+  function copiaDe(t) {
+    if (!t.lienzo) return t.img.cloneNode();
+    const c = document.createElement('canvas');
+    c.width = t.lienzo.width; c.height = t.lienzo.height;
+    c.getContext('2d').drawImage(t.lienzo, 0, 0);
+    return c;
+  }
+  const escena = $('.pt-escena');
+  TIRAS.forEach((t) => {
+    t.tira = $(t.s + ' .pt-tira');
+    t.tira.style.animationDuration = t.seg + 's';
+    t.img = new Image();
+    t.img.alt = ''; t.img.decoding = 'async'; t.img.src = RAIZ + t.src;
+    t.tira.appendChild(t.img);
   });
-  if (P.cielo) sec.style.setProperty('--cielo', `url("${RAIZ + P.cielo}")`);
+  function armarTiras() {
+    const ancho = escena.offsetWidth, alto = escena.offsetHeight;
+    TIRAS.forEach((t) => {
+      const w = t.img.naturalWidth, h = t.img.naturalHeight;
+      if (!w || !ancho) return;
+      // la primera vez, el alambrado pasa a la versión desenfocada
+      if (t.borroso > 0 && !t.lienzo) {
+        t.lienzo = desenfocar(t.img, Math.round(t.borroso));
+        t.tira.innerHTML = '';
+      }
+      const paso = alto * t.alto * w / h;   // ancho de una imagen en la escena
+      const n = Math.ceil(ancho / paso) + 1;
+      while (t.tira.children.length < n) t.tira.appendChild(copiaDe(t));
+      while (t.tira.children.length > n) t.tira.lastChild.remove();
+      t.tira.style.setProperty('--paso', paso.toFixed(2) + 'px');
+    });
+  }
+  TIRAS.forEach((t) => { if (t.img.complete) armarTiras(); else t.img.addEventListener('load', armarTiras); });
+  addEventListener('resize', armarTiras);
   $('.pt-titulo span').textContent = P.antetitulo || '';
   $('.pt-titulo b').textContent = P.titulo || '';
 
@@ -93,7 +156,8 @@
   const CAPAS = [
     { el: $('.pt-cielo'), my: 3, sy: .03 },
     { el: $('.pt-titulo'), my: 6, sy: .45 },
-    { el: $('.pt-campo'), my: 8, sy: .1 },
+    { el: $('.pt-fondo'), my: 7, sy: .06 },
+    { el: $('.pt-medio'), my: 9, sy: .12 },
     { el: capaCamion, my: 12, sy: .2 }
   ].filter((c) => c.el);
   const quieto = $('.pt-quieto'), sale = [$('.pt-titulo'), $('.pt-logo')];

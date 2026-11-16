@@ -12,9 +12,9 @@
 .pt-quieto { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; will-change: transform; }
 
 /* La escena va al ancho de la ventana más 30 px de sobra por lado (para el parallax),
-   con la proporción de la foto (1679 × 938) y apoyada abajo: así en 16:9 y 16:10 la foto
-   queda igual respecto del título. Si la ventana es más alta, arriba sigue el azul del
-   cielo y abajo el gris de la ruta. Las tres capas tienen el mismo tamaño: encajan entre sí. */
+   con la proporción de la foto vieja (1679 × 938) y apoyada abajo: así en 16:9 y 16:10 el
+   paisaje queda igual respecto del título. Si la ventana es más alta, arriba sigue el cielo
+   reflejado y abajo el gris de la ruta. */
 .pt-escena {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1) - 30px);
@@ -23,10 +23,24 @@
   aspect-ratio: 1679 / 938;
 }
 .pt-capa { position: absolute; inset: 0; will-change: transform; }
-.pt-cielo > img, .pt-campo > img { display: block; width: 100%; height: 100%; }
-/* arriba: el mismo cielo reflejado (portada.js pone --cielo), y más arriba el azul del borde */
-.pt-cielo::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 100%; background: var(--cielo) center top / 100% auto no-repeat, #39587A; transform: scaleY(-1); }
-.pt-campo::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 2px); height: 800px; background: #A3928A; }
+/* Cielo quieto, espejado (pedido de la persona: la luz tiene que venir de la derecha).
+   Arriba: el mismo cielo reflejado (portada.js pone --cielo), y más arriba el azul del borde. */
+.pt-cielo { transform-origin: center; }
+.pt-cielo > img { display: block; width: 100%; height: 100%; object-fit: cover; scale: -1 1; }
+.pt-cielo::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 100%; background: var(--cielo) center top / 100% auto no-repeat, #548FE0; scale: -1 -1; }
+
+/* Fondo (árboles) y medio (alambrado): tiras con la imagen repetida (portada.js pone las
+   copias y --paso, el ancho de una) que se corren una imagen entera en loop, de derecha a
+   izquierda. La duración (segundos por imagen) viene de datos/servicio.js. */
+.pt-tira { position: absolute; left: 0; display: flex; animation: pt-correr 20s linear infinite; will-change: transform; }
+.pt-tira img, .pt-tira canvas { display: block; flex: none; height: 100%; width: auto; }
+@keyframes pt-correr { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(calc(-1 * var(--paso, 0px)), 0, 0); } }
+.sv-portada.lejos .pt-tira { animation-play-state: paused; }
+/* el horizonte (el pie de los árboles) queda en y ~615 de la escena */
+.pt-fondo .pt-tira { top: 12.6%; height: 93%; }
+/* el pasto del alambrado termina debajo de la ruta del camión; más abajo, el gris de la ruta */
+.pt-medio .pt-tira { top: 9.4%; height: 80.9%; }
+.pt-medio::after { content: ""; position: absolute; left: 0; right: 0; top: calc(90.3% - 2px); height: 800px; background: #8D8C8E; }
 
 /* Camión: secuencia de cuadros del render (1920 × 1080, el mismo encuadre que la foto
    llevada a 1920 de ancho), centrada en la escena. Hasta que cargan todos se ve el
@@ -38,15 +52,16 @@
 .pt-lienzo { inset: 0; width: 100%; height: 100%; }
 .pt-comp.en-marcha img { visibility: hidden; }
 
-/* Orden de adelante hacia atrás: logo, camión, campo, TÍTULO, cielo (pedido de la persona:
-   el título va detrás del paisaje y delante del cielo). .pt-escena no arma grupo (sin z-index
-   ni opacidad), así las capas y el título se intercalan. Título y logo se desvanecen al bajar
-   (portada.js), antes de que vuelva el sello. */
+/* Orden de adelante hacia atrás: logo, camión, alambrado, árboles, TÍTULO, cielo (pedido de
+   la persona: el título va justo detrás de los árboles y delante del cielo). .pt-escena no
+   arma grupo (sin z-index ni opacidad), así las capas y el título se intercalan. Título y
+   logo se desvanecen al bajar (portada.js), antes de que vuelva el sello. */
 .pt-cielo { z-index: 0; }
 .pt-titulo { z-index: 1; }
-.pt-campo { z-index: 2; }
-.pt-camion { z-index: 3; }
-.pt-logo { z-index: 4; }
+.pt-fondo { z-index: 2; }
+.pt-medio { z-index: 3; }
+.pt-camion { z-index: 4; }
+.pt-logo { z-index: 5; }
 
 /* Título: "Tu solución" Inter Light Italic 88 (glifo en x 641, base 382) y
    "EN CAMINO" Oswald Bold 192 (glifo de x 647 a 1508, base 566) */
@@ -78,7 +93,7 @@
    Tarjeta de vidrio con desenfoque sobre la foto (pedido de la persona), debajo del
    título y alineada con él (x 647 a 1536, y 612 a 834); el camión queda a la izquierda. */
 .pt-intro {
-  position: absolute; left: 647px; top: 612px; z-index: 5;
+  position: absolute; left: 647px; top: 612px; z-index: 6;
   width: 889px; height: 222px; padding: 18px 26px 24px 30px;
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(255, 251, 243, .42), rgba(255, 251, 243, .22));

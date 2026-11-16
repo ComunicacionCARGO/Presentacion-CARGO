@@ -28,13 +28,15 @@
     <!-- Pista: las secciones se recorren con el scroll (textos en datos/servicio.js) -->
     <div class="pista">
 
-      <!-- Portada: el camión en la ruta, en tres capas con parallax (portada.js; al bajar,
+      <!-- Portada: el camión en la ruta, en capas con parallax (portada.js; al bajar,
            la entrada sube por encima con las franjas de la marca) -->
       <section class="sv-portada" data-indice="Inicio">
         <div class="pt-quieto">
           <div class="pt-escena">
             <div class="pt-capa pt-cielo"><img alt="" decoding="async"></div>
-            <div class="pt-capa pt-campo"><img alt="" decoding="async"></div>
+            <!-- fondo (árboles) y medio (alambrado): tiras que pasan sin parar de derecha a izquierda -->
+            <div class="pt-capa pt-fondo"><div class="pt-tira"></div></div>
+            <div class="pt-capa pt-medio"><div class="pt-tira"></div></div>
             <div class="pt-capa pt-camion"></div>
           </div>
           <!-- el título va entre el cielo y el paisaje (z-index en portada.css) -->

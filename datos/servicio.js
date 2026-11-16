@@ -18,10 +18,17 @@ window.SERVICIO = {
   portada: {
     antetitulo: "Nosotros",
     titulo: "LLEGAMOS",
-    // Las tres capas, de atrás para adelante. El cielo casi no se mueve, el campo un poco
-    // y el camión es lo que más se mueve (solo arriba y abajo).
-    cielo: "img/portada-servicio/cielo.jpg",
-    campo: "img/portada-servicio/campo.webp",
+    // Las capas, de atrás para adelante: el cielo (quieto, se muestra espejado), el campo
+    // con los árboles (fondo) y el alambrado (medio). Fondo y medio pasan sin parar de
+    // derecha a izquierda; los números son los segundos que tarda cada imagen en pasar
+    // entera (más segundos = más lento). El fondo va más lento que el medio.
+    cielo: "img/portada-servicio/cielo.webp",
+    fondo: "img/portada-servicio/fondo.webp",
+    medio: "img/portada-servicio/medio.webp",
+    segundosFondo: "45",
+    segundosMedio: "9",
+    // desenfoque de movimiento del alambrado, solo de costado (en px; "0" = nítido)
+    desenfoqueMedio: "5",
     // el camión andando: secuencia de cuadros (carpeta, cantidad y cuadros por segundo)
     camion: { carpeta: "img/portada-servicio/camion/", cuadros: 121, porSegundo: 24 },
     // Intro: tarjeta sobre la foto que pasa sola por los párrafos (uno por vez, con

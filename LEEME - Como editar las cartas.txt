@@ -272,9 +272,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     aparece ese nombre: si cambia el cliente, se cambia solo ahí.
   • portada: la primera pantalla, el camión en la ruta.
       antetitulo / titulo: las dos líneas del título ("Nosotros" / "LLEGAMOS").
-      cielo, campo: las dos capas de atrás (están en img\portada-servicio).
-      Tienen que medir exactamente lo mismo y encajar entre sí; el campo, con
-      fondo transparente.
+      cielo, fondo, medio: las capas de atrás (están en img\portada-servicio).
+      El cielo queda quieto y se muestra espejado (la luz viene de la derecha).
+      fondo (el campo con árboles) y medio (el alambrado) pasan sin parar de
+      derecha a izquierda: tienen fondo transparente arriba y sus bordes de los
+      costados empalman entre sí, así no se ve el corte.
+      segundosFondo / segundosMedio: cuántos segundos tarda cada imagen en pasar
+      entera (más segundos = más lento). El fondo va más lento que el medio.
+      desenfoqueMedio: desenfoque de movimiento del alambrado, solo de costado,
+      en px ("0" = nítido).
       camion: el camión andando, una secuencia de cuadros en
       img\portada-servicio\camion (cuántos cuadros y cuántos por segundo).
       Si cambia la animación hay que volver a preparar los cuadros: pedíselo
