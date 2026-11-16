@@ -76,8 +76,9 @@
 /* escenario del mapa: a la derecha, sin recuadro (los bordes del dibujo se esfuman) */
 /* el esfumado de los bordes va en la escena (en pantalla), así la cámara puede correr el plano sin que se vean sus bordes */
 .ub-escena { position: absolute; left: 470px; top: -20px; z-index: 1; width: 1180px; height: 940px; perspective: 1700px; perspective-origin: 50% 32%; pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 64%, transparent 99%);
-  mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 64%, transparent 99%); }
+  /* la elipse llega a transparente justo en los bordes de la escena: nunca se ve su recorte */
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 56%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 56%, transparent 100%); }
 .ub-escena .ub-plano { pointer-events: auto; }
 /* el país (zoom de entrada): crece hacia la zona y se desvanece */
 .ub-argentina { position: absolute; opacity: 0; transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .9s ease; filter: drop-shadow(0 18px 24px rgba(120, 40, 20, .18)); }
@@ -96,7 +97,12 @@
 .sv-ubi.zoom .ub-plano { opacity: 1; transition-delay: .55s, .75s; }
 /* ya armado: la cámara se desliza a cada ruta */
 .sv-ubi.listo .ub-plano { transition: transform 1.3s cubic-bezier(.45, 0, .2, 1), opacity .4s ease; transition-delay: 0s; }
-.ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* los bordes del propio mapa también se desvanecen (el lejano, arriba, se veía con la cámara alejada) */
+.ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, transparent, #000 18%, #000 86%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, transparent, #000 18%, #000 86%, transparent);
+  mask-composite: intersect; }
 .ub-dibujo path, .ub-dibujo polygon { stroke-linecap: round; stroke-linejoin: round; }
 /* calles reales (mapa-pacheco.js, OpenStreetMap), en tonos de la marca */
 .ub-suelo { fill: #ECE3D6; }
