@@ -179,5 +179,6 @@
 .sv-ubi:not(.en-vista) .ub-mini-arg { animation-play-state: paused; }
 .ub-mini-arg path { fill: #fff; stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; }
 .ub-mini-arg circle { fill: var(--rojo); r: 26; }
-.ub-mini span { width: 130px; font-size: 13px; font-weight: 600; line-height: 1.35; color: rgba(58, 58, 58, .72); }
-.ub-logo { display: block; width: 150px; height: auto; margin-left: auto; }
+.ub-mini span { width: 160px; font-size: 16px; font-weight: 600; line-height: 1.35; color: rgba(58, 58, 58, .75); }
+/* el logo va primero (a la izquierda) y el mapita con su texto a la derecha */
+.ub-logo { order: -1; display: block; width: 150px; height: auto; margin-right: auto; }
