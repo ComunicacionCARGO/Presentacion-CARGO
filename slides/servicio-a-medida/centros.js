@@ -2,10 +2,10 @@
    CENTROS LOGÍSTICOS y UBICACIÓN ESTRATÉGICA (después del mapa de distribución)
    - Centros: 4 tarjetas (m² que cuentan, barra comparada con el más grande,
      dirección, servicios y entrega); las de Buenos Aires bajan al mapa.
-   - Ubicación: zoom desde Argentina hasta la zona de General Pacheco y un mapa
-     de calles estilizado, inclinado como el de distribución y con los bordes
-     esfumados: el recorrido de cada centro hasta el depósito de repuestos del
-     cliente (con un camión que lo recorre). Se alternan solos si nadie toca nada.
+   - Ubicación: mapa de calles inclinado como el de distribución y con los bordes
+     esfumados: las rutas de cada centro hasta el depósito de repuestos del cliente
+     (con un camión que las recorre); la cámara centra la ruta elegida. Se alternan
+     solos si nadie toca nada.
    Textos en datos/servicio.js → centros y ubicacion.
    El mapa de la zona usa calles reales (mapa-pacheco.js: OpenStreetMap) y los
    recorridos por calle de OSRM, con las coordenadas que pasó la persona.
@@ -105,7 +105,7 @@
     const RUTAS = { benavidez: (MP.rutas || {}).benavidez, plaza: (MP.rutas || {}).plaza };
     const ALTERNATIVAS = ((MP.rutas || {}).alternativas) || {};   // rutas alternativas por centro (como en Google)
 
-    // ---- Argentina (para el zoom de entrada y el mapita de referencia) ----
+    // ---- Argentina (el mapita de referencia, abajo a la izquierda) ----
     const GEO = window.MAPA_ARGENTINA || {};
     const ZONA = [-58.6873, -34.4325];            // el depósito del cliente en General Pacheco (lon, lat)
     const COSL = Math.cos(36 * Math.PI / 180);
@@ -126,7 +126,6 @@
       `<p class="ub-nota ent" style="--i:3">${txt(U.nota)}</p>` +
       // escenario del mapa
       '<div class="ub-escena">' +
-      argSVG('ub-argentina') +
       '<div class="ub-plano">' +
       `<svg class="ub-dibujo" viewBox="0 0 ${PW} ${PH}" aria-hidden="true">` +
       `<rect width="${PW}" height="${PH}" class="ub-suelo"/>` +
@@ -140,14 +139,17 @@
         const c = CEN.find((cc) => cc.k === k);
         const nombre = k === 'destino' ? txt(U.destino) : txt(c ? c.nombre : k);
         return `<div class="ub-lugar ${k === 'destino' ? 'destino' : 'centro'}" data-k="${k}" style="left:${px.toFixed(0)}px;top:${py.toFixed(0)}px">` +
-          `<span class="ub-etq">${nombre}</span><span class="ub-pin">${k === 'destino' ? ICO.repuestos : ICO.deposito}</span></div>`;
+          `<span class="ub-etq">${nombre}</span>` +
+          (k === 'destino' && U.pinDestino
+            ? `<img class="ub-pin-cliente" src="../../${esc(U.pinDestino)}" alt="">`
+            : `<span class="ub-pin">${k === 'destino' ? ICO.repuestos : ICO.deposito}</span>`) + '</div>';
       }).join('') +
       CEN.map((c) => `<span class="ub-dist" data-k="${esc(c.k)}"><b>${esc(c.km)} km</b> · ${+c.minutos || 0} min</span>` +
         (c.alternativas || []).map((a, j) => `<span class="ub-dist alt" data-k="${esc(c.k)}" data-j="${j}"><b>${esc(a.km)} km</b> · ${+a.minutos || 0} min</span>`).join('')).join('') +
       `<span class="ub-camion">${ICO.camion}</span>` +
       '</div>' +
       '</div>' +
-      `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span></div>` +
+      `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span><img class="ub-logo" src="../../img/marca/logo-cargo.svg" alt="CARGO"></div>` +
       '<p class="ub-osm">Mapa © colaboradores de OpenStreetMap</p>');
 
     const plano = sec.querySelector('.ub-plano');
@@ -240,20 +242,13 @@
       if (enVista && !zoomHecho) {
         zoomHecho = true;
         sec.classList.add('visible');
-        // zoom: el país crece hacia la zona y aparece el mapa de calles, ya centrado en la primera ruta
+        // el mapa aparece con un fundido, ya centrado en la primera ruta (sin zoom de entrada:
+        // a la persona no le gustó cómo se veía el país agrandado, pixelado)
         const primero = actual || (CEN[0] && CEN[0].k);
-        camara(primero, .35);
-        setTimeout(() => { sec.classList.add('zoom'); camara(primero); }, 500);
-        setTimeout(() => { sec.classList.add('listo'); if (!actual) elegir(primero, true); }, 2300);
+        camara(primero);
+        setTimeout(() => sec.classList.add('zoom'), 250);
+        setTimeout(() => { sec.classList.add('listo'); if (!actual) elegir(primero, true); }, 1100);
       }
     }, { threshold: .4 }).observe(sec);
-    // el país se ubica con la zona en el centro de la escena, que es desde donde crece el zoom
-    const arg = sec.querySelector('.ub-argentina');
-    const ALTO_ARG = 640, s = ALTO_ARG / AH;
-    arg.style.height = ALTO_ARG + 'px';
-    arg.style.width = (AW * s).toFixed(1) + 'px';
-    arg.style.left = (590 - zx * s).toFixed(1) + 'px';
-    arg.style.top = (470 - zy * s).toFixed(1) + 'px';
-    arg.style.transformOrigin = `${(zx * s).toFixed(1)}px ${(zy * s).toFixed(1)}px`;
   })();
 })();

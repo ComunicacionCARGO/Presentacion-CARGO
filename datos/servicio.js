@@ -383,6 +383,7 @@ window.SERVICIO = {
     titulo: "ESTRATÉGICA",
     bajada: "Nuestros centros de Buenos Aires están **a minutos del depósito de repuestos de {cliente}**.",
     destino: "Depósito de repuestos {cliente}",
+    pinDestino: "img/ubicacion/pin-cliente.svg",   // el pin del depósito (con el logo del cliente)
     zona: "General Pacheco · Buenos Aires",
     // los dos centros (km y minutos por calle hasta el depósito). alternativas: las otras rutas
     // que se dibujan (en orden: por El Salvador y por Sarmiento), con sus km y minutos

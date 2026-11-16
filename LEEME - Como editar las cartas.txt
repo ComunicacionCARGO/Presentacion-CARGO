@@ -306,7 +306,8 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     "plaza" si lleva el botón que baja al mapa de abajo; "" si no). El total de
     m² arriba a la derecha se suma solo.
   • ubicacion: pantalla "Ubicación ESTRATÉGICA" (el mapa de la zona de Pacheco).
-    Textos, el nombre del depósito del cliente y los dos centros con sus km y
+    Textos, el nombre del depósito del cliente, pinDestino (el pin con el logo
+    del cliente, en img\ubicacion\pin-cliente.svg) y los dos centros con sus km y
     minutos hasta el depósito (Benavídez además tiene "alternativas": los km y
     minutos de las otras dos rutas, por El Salvador y por Sarmiento). El mapa usa calles reales (OpenStreetMap) y los
     recorridos reales por calle, guardados en
