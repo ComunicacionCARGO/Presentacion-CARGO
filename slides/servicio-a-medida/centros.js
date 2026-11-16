@@ -82,10 +82,10 @@
     // ---- Plano de la zona con calles reales (mapa-pacheco.js: OpenStreetMap + recorridos de OSRM) ----
     // Todo viene en metros al este (x) y al norte (y) del depósito del cliente.
     const MP = window.MAPA_PACHECO || { lugares: {}, rutas: {}, calles: {}, areas: {}, arroyos: [], nombres: [] };
-    // el plano cubre toda la zona descargada (x −3275..1820 m, y −1941..1221 m) a 0,29 px por metro;
-    // la "cámara" (enfocar) lo corre y lo agranda para centrar la ruta elegida
-    const ESC = .29, X0 = -3275, Y1 = 1221;
-    const PW = Math.round((1820 - X0) * ESC), PH = Math.round((Y1 + 1941) * ESC);
+    // el plano cubre toda la zona descargada (x −3900..2298 m, y −2407..2197 m) a 0,29 px por metro;
+    // la "cámara" (camara) lo corre y lo agranda para centrar la ruta elegida
+    const ESC = .29, X0 = -3900, Y1 = 2197;
+    const PW = Math.round((2298 - X0) * ESC), PH = Math.round((Y1 + 2407) * ESC);
     const P = (x, y) => [(x - X0) * ESC, (Y1 - y) * ESC];
     const LUGARES = { destino: [0, 0], ...(MP.lugares || {}) };
     const linea = (plano) => { let d = ''; for (let i = 0; i < plano.length; i += 2) { const [x, y] = P(plano[i], plano[i + 1]); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); } return d; };
@@ -178,9 +178,9 @@
     }
     function camara(k, factor = 1) {
       const c = cajaDe(k);
-      // que entre en unos 820 × 470 px de pantalla (el plano inclinado se ve más bajo)
-      const S = Math.max(.8, Math.min(1.55, 820 / Math.max(c.w, 1), 470 / Math.max(c.h * .78, 1))) * factor;
-      plano.style.transform = `translate(-88px, 34px) rotateX(42deg) rotateZ(-6deg) scale(${S.toFixed(3)}) translate(${(PW / 2 - c.cx).toFixed(1)}px, ${(PH / 2 - c.cy).toFixed(1)}px)`;
+      // que entre en unos 700 × 420 px de pantalla (el plano inclinado se ve más bajo), con aire a los costados
+      const S = Math.max(.8, Math.min(1.55, 700 / Math.max(c.w, 1), 420 / Math.max(c.h * .78, 1))) * factor;
+      plano.style.transform = `translate(-40px, 34px) rotateX(42deg) rotateZ(-6deg) scale(${S.toFixed(3)}) translate(${(PW / 2 - c.cx).toFixed(1)}px, ${(PH / 2 - c.cy).toFixed(1)}px)`;
       plano.style.setProperty('--inv', (1 / S).toFixed(3));
     }
 

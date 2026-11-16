@@ -76,8 +76,8 @@
 /* escenario del mapa: a la derecha, sin recuadro (los bordes del dibujo se esfuman) */
 /* el esfumado de los bordes va en la escena (en pantalla), así la cámara puede correr el plano sin que se vean sus bordes */
 .ub-escena { position: absolute; left: 470px; top: -20px; z-index: 1; width: 1180px; height: 940px; perspective: 1700px; perspective-origin: 50% 32%; pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 54%, #000 52%, transparent 96%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 54%, #000 52%, transparent 96%); }
+  -webkit-mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 64%, transparent 99%);
+  mask-image: radial-gradient(ellipse 58% 56% at 50% 54%, #000 64%, transparent 99%); }
 .ub-escena .ub-plano { pointer-events: auto; }
 /* el país (zoom de entrada): crece hacia la zona y se desvanece */
 .ub-argentina { position: absolute; opacity: 0; transition: transform 1.7s cubic-bezier(.6, 0, .2, 1), opacity .9s ease; filter: drop-shadow(0 18px 24px rgba(120, 40, 20, .18)); }
