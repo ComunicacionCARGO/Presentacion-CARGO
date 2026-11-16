@@ -307,8 +307,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     m² arriba a la derecha se suma solo.
   • ubicacion: pantalla "Ubicación ESTRATÉGICA" (el mapa de la zona de Pacheco).
     Textos, el nombre del depósito del cliente y los dos centros con sus km y
-    minutos hasta el depósito. El dibujo del mapa (calles, recorridos) no se
-    edita acá: es un esquema hecho a partir de las capturas de Google Maps.
+    minutos hasta el depósito. El mapa usa calles reales (OpenStreetMap) y los
+    recorridos reales por calle, guardados en
+    slides\servicio-a-medida\mapa-pacheco.js: ese archivo no se edita a mano;
+    si cambia un centro de lugar, hay que volver a generarlo.
   • experiencia: pantalla "Experiencia de USUARIO" (después del ecosistema).
       calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
                   evento que se pueden elegir.

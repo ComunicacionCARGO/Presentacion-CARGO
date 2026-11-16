@@ -86,23 +86,30 @@
 .ub-plano {
   position: absolute; left: 50%; top: 50%; width: 1300px; height: 820px; margin: -410px 0 0 -650px;
   transform-style: preserve-3d;
-  transform: translate(-50px, 60px) rotateX(42deg) rotateZ(-6deg) scale(.4); opacity: 0;
+  transform: translate(-88px, 40px) rotateX(42deg) rotateZ(-6deg) scale(.4); opacity: 0;
   transition: transform 1.7s cubic-bezier(.4, 0, .2, 1), opacity .9s ease;
 }
-.sv-ubi.zoom .ub-plano { transform: translate(-50px, 60px) rotateX(42deg) rotateZ(-6deg) scale(1); opacity: 1; transition-delay: .55s, .75s; }
+.sv-ubi.zoom .ub-plano { transform: translate(-88px, 40px) rotateX(42deg) rotateZ(-6deg) scale(1); opacity: 1; transition-delay: .55s, .75s; }
 .ub-dibujo { position: absolute; inset: 0; width: 100%; height: 100%;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 96%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 96%); }
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 98%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 98%); }
 .ub-dibujo path, .ub-dibujo polygon { stroke-linecap: round; stroke-linejoin: round; }
-.ub-suelo { fill: #F3ECE2; }
-.ub-verde { fill: rgba(76, 149, 108, .2); }
-.ub-industria { fill: rgba(58, 58, 58, .055); stroke: rgba(58, 58, 58, .08); stroke-width: 2; }
-.ub-calle { fill: none; stroke: rgba(58, 58, 58, .12); stroke-width: 1.5; }
-.ub-avenida-borde { fill: none; stroke: rgba(58, 58, 58, .16); stroke-width: 8; }
-.ub-avenida { fill: none; stroke: #FFFDF8; stroke-width: 5.5; }
-.ub-ruta-borde { fill: none; stroke: rgba(58, 58, 58, .22); stroke-width: 26; }
-.ub-ruta-nac { fill: none; stroke: #fff; stroke-width: 21; }
-.ub-ruta-medio { fill: none; stroke: rgba(58, 58, 58, .3); stroke-width: 1.6; stroke-dasharray: 12 10; }
+/* calles reales (mapa-pacheco.js, OpenStreetMap), en tonos de la marca */
+.ub-suelo { fill: #ECE3D6; }
+.ub-verde { fill: rgba(76, 149, 108, .26); }
+.ub-industria { fill: rgba(58, 58, 58, .09); }
+.ub-agua { fill: rgba(117, 154, 171, .5); }
+.ub-arroyo { fill: none; stroke: rgba(117, 154, 171, .85); stroke-width: 2.4; }
+.ub-servicio { fill: none; stroke: rgba(58, 58, 58, .16); stroke-width: 1.5; }
+.ub-barrio-borde { fill: none; stroke: rgba(58, 58, 58, .28); stroke-width: 5; }
+.ub-barrio { fill: none; stroke: #fff; stroke-width: 3.2; }
+.ub-secundaria-borde { fill: none; stroke: rgba(58, 58, 58, .32); stroke-width: 7.5; }
+.ub-secundaria { fill: none; stroke: #fff; stroke-width: 5.4; }
+.ub-principal-borde { fill: none; stroke: rgba(58, 58, 58, .38); stroke-width: 10.5; }
+.ub-principal { fill: none; stroke: #FFF6EE; stroke-width: 8; }
+.ub-autopista-borde { fill: none; stroke: rgba(160, 60, 30, .45); stroke-width: 16; }
+.ub-autopista { fill: none; stroke: #F8D2BE; stroke-width: 12; }
+.ub-nombre { font: 600 15px var(--fuente-texto); letter-spacing: .04em; fill: rgba(58, 58, 58, .7); text-anchor: middle; paint-order: stroke; stroke: #ECE3D6; stroke-width: 4px; stroke-linejoin: round; }
 .ub-pulso { fill: none; stroke: var(--rojo); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .sv-ubi.en-vista .ub-pulso { animation: ub-pulso 2.4s ease-out var(--d, 0s) infinite; }
 @keyframes ub-pulso { 0% { opacity: .55; transform: scale(.6); } 100% { opacity: 0; transform: scale(3.2); } }
@@ -141,9 +148,8 @@
 .ub-camion svg { width: 26px; height: 26px; fill: var(--rojo); }
 .ub-camion.izq svg { transform: scaleX(-1); }
 .ub-camion.llego { opacity: 0; }
-.ub-escudo { position: absolute; display: flex; align-items: center; gap: 6px; transform: translate(-30%, -50%); }
-.ub-escudo b { display: grid; place-items: center; width: 30px; height: 34px; border-radius: 6px 6px 14px 14px; background: var(--gris); color: #fff; font: 700 17px/1 var(--fuente-titulo); }
-.ub-escudo small { font-size: 13px; font-weight: 600; letter-spacing: .06em; color: rgba(58, 58, 58, .6); }
+/* atribución de los datos del mapa (la pide la licencia de OpenStreetMap) */
+.ub-osm { position: absolute; right: 70px; bottom: 34px; font-size: 11px; color: rgba(58, 58, 58, .5); }
 /* mapita de referencia: dónde queda la zona */
 .ub-mini { position: absolute; left: -406px; top: 690px;   /* debajo de la columna de texto (x 64 del escenario) */ display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 16px; background: rgba(255, 255, 255, .92); box-shadow: 0 16px 30px -20px rgba(120, 40, 20, .5); opacity: 0; translate: 0 10px; transition: opacity .6s ease 1.9s, translate .8s cubic-bezier(.2, .8, .2, 1) 1.9s; }
 .sv-ubi.zoom .ub-mini { opacity: 1; translate: 0 0; }

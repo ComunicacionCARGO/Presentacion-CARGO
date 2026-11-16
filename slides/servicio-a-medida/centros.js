@@ -7,8 +7,8 @@
      esfumados: el recorrido de cada centro hasta el depósito de repuestos del
      cliente (con un camión que lo recorre). Se alternan solos si nadie toca nada.
    Textos en datos/servicio.js → centros y ubicacion.
-   El mapa de la zona es un dibujo (no a escala exacta): las posiciones salen de
-   las capturas de Google Maps de la persona (Ford al centro, en km).
+   El mapa de la zona usa calles reales (mapa-pacheco.js: OpenStreetMap) y los
+   recorridos por calle de OSRM, con las coordenadas que pasó la persona.
    ========================================================= */
 (function () {
   const SV = window.SV;
@@ -79,60 +79,32 @@
     const U = S.ubicacion || {};
     const CEN = (U.centros || []).slice(0, 2);
 
-    // ---- Plano de la zona: km al este (x) y al norte (y) del depósito del cliente ----
-    const PW = 1300, PH = 820, X0 = -3.6, Y1 = 1.6, KM = 240;   // px por km
-    const P = (x, y) => [(x - X0) * KM, (Y1 - y) * KM];
-    const LUGARES = {
-      destino: [0, 0],
-      benavidez: [-2.56, 0.26],
-      plaza: [0.62, -0.91]
-    };
-    // recorridos por calle (de cada centro al depósito), leídos de las capturas
-    const RUTAS = {
-      benavidez: [[-2.56, 0.26], [-1.81, -0.21], [-0.48, 0.67], [-0.12, 0.17], [0, 0]],
-      plaza: [[0.62, -0.91], [0.36, -0.5], [0.08, -0.08], [0, 0]]
-    };
-    // camino con esquinas redondeadas
-    function camino(pts, r = 26) {
-      const q = pts.map(([x, y]) => P(x, y));
-      let d = `M${q[0][0].toFixed(1)},${q[0][1].toFixed(1)}`;
-      for (let i = 1; i < q.length - 1; i++) {
-        const [ax, ay] = q[i - 1], [bx, by] = q[i], [cx, cy] = q[i + 1];
-        const l1 = Math.hypot(bx - ax, by - ay), l2 = Math.hypot(cx - bx, cy - by);
-        const r1 = Math.min(r, l1 / 2), r2 = Math.min(r, l2 / 2);
-        d += ` L${(bx - (bx - ax) / l1 * r1).toFixed(1)},${(by - (by - ay) / l1 * r1).toFixed(1)}`;
-        d += ` Q${bx.toFixed(1)},${by.toFixed(1)} ${(bx + (cx - bx) / l2 * r2).toFixed(1)},${(by + (cy - by) / l2 * r2).toFixed(1)}`;
-      }
-      const z = q[q.length - 1];
-      return d + ` L${z[0].toFixed(1)},${z[1].toFixed(1)}`;
-    }
-    // calles: grilla girada como la de la zona, más algunas avenidas
-    function calles() {
-      const ang = 33 * Math.PI / 180, c = Math.cos(ang), s = Math.sin(ang);
-      const R = Math.hypot(PW, PH), paso = .16 * KM;
-      let fino = '', ancho = '';
-      for (let k = -Math.ceil(R / paso); k <= Math.ceil(R / paso); k++) {
-        const o = k * paso;
-        [[c, s], [-s, c]].forEach(([ux, uy], dir) => {
-          // línea perpendicular a (ux, uy) a distancia o del centro del plano
-          const cx = PW / 2 + ux * o, cy = PH / 2 + uy * o;
-          const d = `M${(cx - uy * R).toFixed(0)},${(cy + ux * R).toFixed(0)} L${(cx + uy * R).toFixed(0)},${(cy - ux * R).toFixed(0)}`;
-          if ((((k + dir * 2) % 5) + 5) % 5 === 0) ancho += d; else fino += d;
-        });
-      }
-      return `<path class="ub-calle" d="${fino}"/><path class="ub-avenida-borde" d="${ancho}"/><path class="ub-avenida" d="${ancho}"/>`;
-    }
-    const pan = [P(-3.08, 1.8), P(-2.98, .6), P(-3.02, -.6), P(-2.88, -1.8)];
-    const panD = `M${pan[0]} C${pan[1]} ${pan[2]} ${pan[3]}`;
-    const zonaVerde = [[-2.2, 1.25], [-1.62, 1.33], [-1.5, .88], [-2.08, .8]].map(([x, y]) => P(x, y).map((v) => v.toFixed(0)).join(',')).join(' ');
-    const industrial = [
-      [[-.55, .42], [.42, .55], [.58, -.2], [-.34, -.36]],
-      [[.2, -.45], [1.05, -.4], [1.12, -1.25], [.3, -1.32]]
-    ].map((poly) => `<polygon class="ub-industria" points="${poly.map(([x, y]) => P(x, y).map((v) => v.toFixed(0)).join(',')).join(' ')}"/>`).join('');
+    // ---- Plano de la zona con calles reales (mapa-pacheco.js: OpenStreetMap + recorridos de OSRM) ----
+    // Todo viene en metros al este (x) y al norte (y) del depósito del cliente.
+    const MP = window.MAPA_PACHECO || { lugares: {}, rutas: {}, calles: {}, areas: {}, arroyos: [], nombres: [] };
+    const PW = 1300, PH = 820, ESC = .29;                      // 0,29 px por metro (290 px por km)
+    const X0 = -708 - PW / 2 / ESC, Y1 = 60 + PH / 2 / ESC;    // centro del plano: el medio de los dos recorridos
+    const P = (x, y) => [(x - X0) * ESC, (Y1 - y) * ESC];
+    const LUGARES = { destino: [0, 0], ...(MP.lugares || {}) };
+    const linea = (plano) => { let d = ''; for (let i = 0; i < plano.length; i += 2) { const [x, y] = P(plano[i], plano[i + 1]); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); } return d; };
+    const capa = (lista, cerrar) => (lista || []).map((l) => linea(l) + (cerrar ? 'Z' : '')).join('');
+    const C = MP.calles || {}, A = MP.areas || {};
+    const dibujoReal =
+      `<path class="ub-verde" d="${capa(A.verde, true)}"/>` +
+      `<path class="ub-industria" d="${capa(A.industria, true)}"/>` +
+      `<path class="ub-agua" d="${capa(A.agua, true)}"/>` +
+      `<path class="ub-arroyo" d="${capa(MP.arroyos)}"/>` +
+      `<path class="ub-servicio" d="${capa(C.servicio)}"/>` +
+      `<path class="ub-barrio-borde" d="${capa(C.barrio)}"/><path class="ub-barrio" d="${capa(C.barrio)}"/>` +
+      `<path class="ub-secundaria-borde" d="${capa(C.secundaria)}"/><path class="ub-secundaria" d="${capa(C.secundaria)}"/>` +
+      `<path class="ub-principal-borde" d="${capa(C.principal)}"/><path class="ub-principal" d="${capa(C.principal)}"/>` +
+      `<path class="ub-autopista-borde" d="${capa(C.autopista)}"/><path class="ub-autopista" d="${capa(C.autopista)}"/>` +
+      (MP.nombres || []).map((n) => { const [x, y] = P(n.x, n.y); return `<text class="ub-nombre" transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${-n.ang})">${esc(n.n)}</text>`; }).join('');
+    const RUTAS = MP.rutas || {};
 
     // ---- Argentina (para el zoom de entrada y el mapita de referencia) ----
     const GEO = window.MAPA_ARGENTINA || {};
-    const ZONA = [-58.66, -34.43];                // General Pacheco (lon, lat)
+    const ZONA = [-58.6873, -34.4325];            // el depósito del cliente en General Pacheco (lon, lat)
     const COSL = Math.cos(36 * Math.PI / 180);
     const ARG = (lon, lat) => [(lon + 74) * COSL * 22, (-21 - lat) * 22];
     const argD = Object.values(GEO).map((p) => (p.anillos || []).map((a) =>
@@ -155,13 +127,10 @@
       '<div class="ub-plano">' +
       `<svg class="ub-dibujo" viewBox="0 0 ${PW} ${PH}" aria-hidden="true">` +
       `<rect width="${PW}" height="${PH}" class="ub-suelo"/>` +
-      `<polygon class="ub-verde" points="${zonaVerde}"/>${industrial}` +
-      calles() +
-      `<path class="ub-ruta-borde" d="${panD}"/><path class="ub-ruta-nac" d="${panD}"/><path class="ub-ruta-medio" d="${panD}"/>` +
+      dibujoReal +
       Object.values(LUGARES).map(([x, y], i) => `<circle class="ub-pulso" style="--d:${i * .6}s" cx="${P(x, y)[0].toFixed(0)}" cy="${P(x, y)[1].toFixed(0)}" r="18"/>`).join('') +
-      Object.entries(RUTAS).map(([k, pts]) => `<g class="ub-rec" data-k="${k}"><path class="ub-rec-sombra" d="${camino(pts)}"/><path class="ub-rec-base" d="${camino(pts)}"/><path class="ub-rec-flujo" d="${camino(pts)}"/></g>`).join('') +
+      Object.entries(RUTAS).map(([k, pts]) => `<g class="ub-rec" data-k="${k}"><path class="ub-rec-sombra" d="${linea(pts)}"/><path class="ub-rec-base" d="${linea(pts)}"/><path class="ub-rec-flujo" d="${linea(pts)}"/></g>`).join('') +
       '</svg>' +
-      `<span class="ub-escudo" style="left:${P(-2.98, -.55)[0].toFixed(0)}px;top:${P(-2.98, -.55)[1].toFixed(0)}px"><b>9</b><small>Panamericana</small></span>` +
       Object.entries(LUGARES).map(([k, [x, y]]) => {
         const [px, py] = P(x, y);
         const c = CEN.find((cc) => cc.k === k);
@@ -173,6 +142,7 @@
       `<span class="ub-camion">${ICO.camion}</span>` +
       '</div>' +
       `<div class="ub-mini">${argSVG('ub-mini-arg')}<span>${txt(U.zona)}</span></div>` +
+      '<p class="ub-osm">Mapa © colaboradores de OpenStreetMap</p>' +
       '</div>');
 
     const plano = sec.querySelector('.ub-plano');
