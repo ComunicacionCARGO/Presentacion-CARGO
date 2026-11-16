@@ -273,7 +273,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
   • portada: la primera pantalla, el camión en la ruta.
       antetitulo / titulo: las dos líneas del título ("Nosotros" / "LLEGAMOS").
       cielo, fondo, medio: las capas de atrás (están en img\portada-servicio).
-      El cielo queda quieto y se muestra espejado (la luz viene de la derecha).
+      El cielo queda quieto. Las imágenes ya tienen una corrección de color para que
+      todo parezca una sola foto (y el cielo ya está espejado: la luz viene de la
+      derecha). Si se cambia alguna imagen, conviene pedir que se le haga la misma
+      corrección; las originales sin corregir están en img\portada-servicio\originales.
       fondo (el campo con árboles) y medio (el alambrado) pasan sin parar de
       derecha a izquierda: tienen fondo transparente arriba y sus bordes de los
       costados empalman entre sí, así no se ve el corte.
