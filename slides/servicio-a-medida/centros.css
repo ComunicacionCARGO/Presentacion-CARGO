@@ -151,7 +151,9 @@
 .ub-pin-cliente { display: block; width: 46px; height: auto; margin-bottom: -2px; filter: drop-shadow(0 10px 10px rgba(30, 50, 90, .35)); }
 .ub-lugar.destino:has(.ub-pin-cliente)::after { display: none; }
 .ub-etq { padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: 0 10px 20px -12px rgba(0, 0, 0, .35); font-size: 14px; font-weight: 600; white-space: nowrap; transition: color .3s ease, background .3s ease; }
-.ub-lugar.destino .ub-etq { background: var(--gris); color: #fff; font-size: 15px; }
+/* el depósito del cliente, en el celeste de su pin (#7696c8) */
+.ub-lugar.destino .ub-etq { background: #7696C8; color: #fff; font-size: 15px; }
+.ub-pulso.destino { stroke: #7696C8; }
 .ub-lugar.centro.activo .ub-pin { transform: scale(1.15); }
 .ub-lugar.centro.activo .ub-etq { color: var(--rojo); }
 .ub-lugar.centro:not(.activo) { opacity: .7; }

@@ -130,7 +130,7 @@
       `<svg class="ub-dibujo" viewBox="0 0 ${PW} ${PH}" aria-hidden="true">` +
       `<rect width="${PW}" height="${PH}" class="ub-suelo"/>` +
       dibujoReal +
-      Object.values(LUGARES).map(([x, y], i) => `<circle class="ub-pulso" style="--d:${i * .6}s" cx="${P(x, y)[0].toFixed(0)}" cy="${P(x, y)[1].toFixed(0)}" r="18"/>`).join('') +
+      Object.entries(LUGARES).map(([k, [x, y]], i) => `<circle class="ub-pulso${k === 'destino' ? ' destino' : ''}" style="--d:${i * .6}s" cx="${P(x, y)[0].toFixed(0)}" cy="${P(x, y)[1].toFixed(0)}" r="18"/>`).join('') +
       Object.entries(ALTERNATIVAS).map(([k, lista]) => lista.map((pts, j) => `<g class="ub-alt" data-k="${k}" data-j="${j}"><path class="ub-alt-borde" d="${linea(pts)}"/><path class="ub-alt-linea" d="${linea(pts)}"/></g>`).join('')).join('') +
       Object.entries(RUTAS).filter(([, pts]) => pts).map(([k, pts]) => `<g class="ub-rec" data-k="${k}"><path class="ub-rec-sombra" d="${linea(pts)}"/><path class="ub-rec-base" d="${linea(pts)}"/><path class="ub-rec-flujo" d="${linea(pts)}"/></g>`).join('') +
       '</svg>' +
