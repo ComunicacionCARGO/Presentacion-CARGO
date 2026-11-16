@@ -5,7 +5,7 @@
    por encima, encabezada por las franjas de la marca (.in-franjas, como.css).
    Medidas en px del escenario, tomadas del diseño de la persona.
    ========================================================= */
-.pista section.sv-portada { z-index: 0; height: 991px; }   /* 900 + las franjas de la entrada (91), que así arrancan fuera de la pantalla */
+.pista section.sv-portada { z-index: 0; height: 1036px; }   /* 900 + las tres franjas de la entrada (136), que así arrancan fuera de la pantalla */
 .pista section.sv-intro { z-index: 1; }
 .sv-portada.lejos { visibility: hidden; }
 

@@ -27,14 +27,15 @@
 .sv-intro { color: var(--gris); }
 .sv-intro .sv-fondo { top: 0; height: calc(450px + 50vh / var(--escala, 1)); background: var(--blanco); }
 /* Franjas de la marca que encabezan la entrada cuando sube por encima de la portada:
-   gris, hueco crema, rojo, hueco crema y el crema de la sección (34,6 / 10,8, como las de Clientes) */
+   las tres (gris, rojo y rojo, de 34,6 con huecos crema de 10,8, pedido de la persona)
+   y después el crema de la sección. La portada mide 900 + estas 136,2 (portada.css). */
 .in-franjas {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
-  top: -90.8px;
-  height: 91.8px;
-  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px);
+  top: -136.2px;
+  height: 137.2px;
+  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px 125.4px, var(--blanco) 125.4px);
   box-shadow: 0 -22px 46px -12px rgba(15, 30, 45, .35);
 }
 .sv-intro .franjitas { background: linear-gradient(90deg, var(--rojo) 0 5px, transparent 5px 6.5px, var(--rojo) 6.5px 11.5px, transparent 11.5px 13px, var(--gris) 13px 18px); }

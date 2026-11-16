@@ -2,11 +2,10 @@
    EXPERIENCIA DE USUARIO (experiencia.js; textos en datos/servicio.js → experiencia).
    Sección crema como la entrada y el ecosistema (la suite tecnológica):
    encabezado con la grilla común (x 64, y 84) y dos tarjetas blancas de x 64
-   a 1536, de y 290 a 820. Mide 1037: abajo, las tres franjas de la marca
-   (gris, rojo y rojo, del mismo grosor y separadas igual) dan paso al rojo de
-   la logística inversa.
+   a 1536, de y 290 a 820. Mide 991: abajo, las franjas de la marca (gris,
+   hueco, rojo, hueco) y la tercera franja es el rojo de la logística inversa.
    ========================================================= */
-.pista section.sv-exp { height: 1037px; }
+.pista section.sv-exp { height: 991px; }
 .sv-exp { color: var(--gris); }
 .sv-exp .sv-fondo { top: -2px; height: calc(100% + 2px); background: var(--blanco); }
 .ex-franjas {
@@ -14,9 +13,9 @@
   left: calc(800px - 50vw / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
   top: 900px;
-  height: 139px;
-  /* franjas de 34,6 y huecos de 10,8: gris, rojo, rojo y después el rojo de la sección */
-  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px 125.4px, var(--blanco) 125.4px 136.2px, var(--rojo) 136.2px);
+  height: 93px;
+  /* franjas de 34,6 y huecos de 10,8: gris, rojo y la tercera se vuelve el fondo rojo de la sección */
+  background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px);
 }
 .sv-exp button { font: inherit; border: 0; cursor: pointer; }
 .sv-exp svg { display: block; }
