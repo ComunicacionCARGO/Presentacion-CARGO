@@ -44,7 +44,7 @@
    campo. Va dentro de .pt-fondo, así se mueve con él; --atmosfera (portada.js) es la intensidad. */
 .pt-fondo::after {
   content: ""; position: absolute; left: 0; right: 0; top: 48%; height: 40%;
-  background: linear-gradient(to bottom, rgba(176, 202, 224, 0) 0%, rgba(176, 202, 224, .38) 30%, rgba(184, 206, 222, .42) 45%, rgba(190, 208, 218, .2) 62%, rgba(190, 208, 218, 0) 100%);
+  background: linear-gradient(to bottom, rgba(150, 196, 238, 0) 0%, rgba(150, 196, 238, .38) 30%, rgba(158, 200, 236, .42) 45%, rgba(166, 204, 234, .2) 62%, rgba(166, 204, 234, 0) 100%);
   opacity: var(--atmosfera, 1);
   pointer-events: none;
 }

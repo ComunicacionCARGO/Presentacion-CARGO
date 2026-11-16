@@ -31,7 +31,7 @@ window.SERVICIO = {
     desenfoqueMedio: "5",
     // bruma del color del cielo sobre los árboles (efecto de atmósfera): "1" normal,
     // "0" sin bruma, "1.5" más fuerte
-    atmosfera: "1",
+    atmosfera: "0.6",
     // el camión andando: secuencia de cuadros (carpeta, cantidad y cuadros por segundo)
     camion: { carpeta: "img/portada-servicio/camion/", cuadros: 121, porSegundo: 24 },
     // Intro: tarjeta sobre la foto que pasa sola por los párrafos (uno por vez, con
