@@ -56,6 +56,8 @@
     return c;
   }
   const escena = $('.pt-escena');
+  // intensidad de la bruma sobre el fondo (portada.css → .pt-fondo::after)
+  if (P.atmosfera != null && P.atmosfera !== '') sec.style.setProperty('--atmosfera', parseFloat(P.atmosfera) || 0);
   TIRAS.forEach((t) => {
     t.tira = $(t.s + ' .pt-tira');
     t.tira.style.animationDuration = t.seg + 's';

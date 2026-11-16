@@ -284,6 +284,8 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       entera (más segundos = más lento). El fondo va más lento que el medio.
       desenfoqueMedio: desenfoque de movimiento del alambrado, solo de costado,
       en px ("0" = nítido).
+      atmosfera: bruma del color del cielo sobre los árboles, para que se vean
+      lejanos. "1" normal, "0" sin bruma, "1.5" más fuerte.
       camion: el camión andando, una secuencia de cuadros en
       img\portada-servicio\camion (cuántos cuadros y cuántos por segundo).
       Si cambia la animación hay que volver a preparar los cuadros: pedíselo
