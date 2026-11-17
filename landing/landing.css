@@ -254,8 +254,19 @@ body.arrastrando, body.arrastrando * { cursor: grabbing !important; user-select:
   font-size: calc(var(--ts) * var(--u));
   color: var(--blanco);
 }
+/* subtítulo: una frase corta debajo del título, centrada en la carta */
+.r-sub {
+  left: calc(var(--sx) * var(--u));
+  top: calc(var(--sy) * var(--u));
+  font-weight: 500;
+  font-size: calc(var(--ss) * var(--u));
+  letter-spacing: .01em;
+  color: var(--blanco);
+  text-shadow: 0 calc(1px * var(--f)) calc(3px * var(--f)) rgba(10, 10, 14, .45), 0 calc(2px * var(--f)) calc(10px * var(--f)) rgba(10, 10, 14, .6);
+}
+.r-num, .r-sub { position: absolute; line-height: 1; white-space: nowrap; }
 /* sin foto: vidrio claro, textos en gris */
-.carta.sin-foto .r-ante, .carta.sin-foto .r-tit { color: var(--gris); }
+.carta.sin-foto .r-ante, .carta.sin-foto .r-tit, .carta.sin-foto .r-sub { color: var(--gris); }
 
 /* ---------- Flechas y puntos del carrusel ----------
    Pedido de la persona (tras probarla con otras personas): flechas a los costados para

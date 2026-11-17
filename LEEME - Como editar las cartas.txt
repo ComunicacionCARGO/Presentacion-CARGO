@@ -52,6 +52,7 @@ En datos\cartas.js cada carta es un bloque así:
   {
     antetitulo: "Nuestro",
     titulo: "ALMACENAMIENTO",
+    subtitulo: "Tu stock seguro y a mano",
     portada: "img/cartas/almacenamiento.jpg",
     foco: 50,
     destino: "slides/almacenamiento/index.html"
@@ -60,6 +61,10 @@ En datos\cartas.js cada carta es un bloque así:
   • antetitulo: palabra chica de arriba. titulo: palabra grande.
     Si el antetítulo empieza con "¿", ese signo queda colgado a la izquierda.
     El número (01, 02…) se pone solo, según el orden.
+  • subtitulo: frase corta debajo del título que cuenta qué hay en la
+    diapositiva (por ejemplo "45 años llevando la logística más lejos").
+    Va en un solo renglón: si es larga, la letra se achica sola.
+    Conviene que no pase de unas 45 letras. Vacía "" = sin subtítulo.
 
 Para agregar una:
 1. Copiá un bloque completo, desde la llave { hasta la llave },

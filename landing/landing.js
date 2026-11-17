@@ -166,8 +166,13 @@
       anchoTexto(`700 ${R.num.tam}px Oswald`, dosDigitos(i + 1)),
       ante ? R.ante.x + anchoTexto(fAnte, ante) - colgado : 0,
       R.tit.x + anchoTexto(`700 ${R.tit.tam}px Oswald`, d.titulo || ''));
-    return { ancho, colgado };
+    return { ancho, colgado, sub: d.subtitulo ? anchoTexto(`500 ${SUB.tam}px Inter`, d.subtitulo) : 0 };
   }
+  // Subtítulo (una frase corta debajo del título, pedido de la persona): centrado en la carta,
+  // a SUB.debajo px de la línea base del título; con subtítulo, todo el grupo sube SUB.sube px.
+  // Si la frase no entra en el ancho útil (SUB.ancho de la carta), se achica solo esa letra.
+  const SUB = { tam: 15, debajo: 27, sube: 12, ancho: .8 };
+  const HAY_SUB = CARTAS.some((d) => d.subtitulo);
   let medidas = [], tRotulo = 1;
   function ubicarRotulos() {
     medidas = CARTAS.map(medirRotulo);
@@ -176,7 +181,7 @@
   }
   function ubicarRotulo(a, m, t) {
     const R = ROTULO, { ancho, colgado } = m;
-    const gx = (ANCHO - ancho * t) / 2, cy = ALTO / 2;
+    const gx = (ANCHO - ancho * t) / 2, cy = ALTO / 2 - (HAY_SUB ? SUB.sube : 0);
     const fija = (k, v) => a.style.setProperty(k, v.toFixed(2));
     const lugar = (pre, r, base, menos) => {
       fija(`--${pre}s`, r.tam * t);
@@ -186,6 +191,12 @@
     lugar('n', R.num, BASE_OSWALD);
     lugar('a', R.ante, BASE_INTER, colgado);
     lugar('t', R.tit, BASE_OSWALD);
+    if (m.sub) {
+      const k = Math.min(1, ANCHO * SUB.ancho / m.sub), tam = SUB.tam * k;
+      fija('--ss', tam);
+      fija('--sx', (ANCHO - m.sub * k) / 2);
+      fija('--sy', cy + (R.tit.base - cy) * t + SUB.debajo - BASE_INTER * tam);
+    }
   }
 
   // ---------- Construcción de las cartas ----------
@@ -230,6 +241,7 @@
       crear('span', 'r-num', modelo).textContent = dosDigitos(i + 1);
       if (datos.antetitulo) crear('span', 'r-ante', modelo).textContent = datos.antetitulo;
       crear('span', 'r-tit', modelo).textContent = datos.titulo || '';
+      if (datos.subtitulo) crear('span', 'r-sub', modelo).textContent = datos.subtitulo;
     }
     return modelo.innerHTML;
   });

@@ -54,7 +54,10 @@ window.PORTADA = {
    titulo:     la palabra grande (por ejemplo "SOMOS?").
                Si el título es largo, la letra se achica sola para que entre.
                El número (01, 02…) se pone solo, según el orden.
-   portada:    foto que se ve "detrás" de la carta, como por una ventana
+   subtitulo:  una frase corta debajo del título que cuenta qué hay adentro
+               (un solo renglón: si es larga, la letra se achica sola).
+               Si se deja vacía "" no se muestra.
+   portada:   foto que se ve "detrás" de la carta, como por una ventana
                (guardala en la carpeta img/cartas). Sirve una foto común,
                horizontal (por ejemplo 2000 × 1125 px), en JPG o WEBP.
                Si se deja vacía "" se muestra una carta de vidrio sin foto.
@@ -67,6 +70,7 @@ window.CARTAS = [
   {
     antetitulo: "¿Quiénes",
     titulo: "SOMOS?",
+    subtitulo: "45 años llevando la logística más lejos",
     portada: "img/cartas/nuestra-estructura.jpg",
     foco: 50,
     destino: "slides/quienes-somos/index.html"
@@ -74,6 +78,7 @@ window.CARTAS = [
   {
     antetitulo: "Un servicio",
     titulo: "PARA FORD",
+    subtitulo: "Una operación diseñada solo para Ford",
     portada: "img/cartas/quienes-somos.webp",
     foco: 50,
     destino: "slides/servicio-a-medida/index.html"
@@ -81,6 +86,7 @@ window.CARTAS = [
   {
     antetitulo: "¿Qué hacemos",
     titulo: "DIFERENTE?",
+    subtitulo: "Lo que Ford necesita, no lo que hacen todos",
     portada: "img/cartas/servicio-diferencial.webp",
     foco: 30,
     destino: "slides/por-que-elegirnos/index.html"
