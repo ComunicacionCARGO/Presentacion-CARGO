@@ -173,6 +173,10 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     en SVG, en img\estructura\elegirnos), icono de respaldo (excelencia,
     innovacion, flexibilidad o crecimiento), titulo, texto y, si querés,
     datos: cifras destacadas con valor y texto (por ejemplo 98%).
+    Cada tarjeta se puede tocar y lleva a otra parte de la diapositiva:
+    ir dice adónde ("adaptabilidad", "mejora", "rse", "numeros", "comunidad"
+    o "clientes"), paso qué paso abre en adaptabilidad (1 a 4) y boton es el
+    texto del enlace que aparece abajo de la tarjeta.
     Para cambiar un ícono, reemplazá el SVG con el mismo nombre (conviene
     claro, porque las tarjetas son de vidrio sobre el fondo oscuro).
   • El título de cada tarjeta va al lado del ícono, en dos líneas: la última

@@ -147,8 +147,9 @@
 
   // ubicación de etiquetas y sistemas alrededor
   const ANG_ETIQ = [-150, -96, -38, 18, 82, 146, 200, 250].slice(0, ETIQ.length);
-  // corridos medio lugar: así ninguno queda arriba de todo, donde está el rótulo del paso
-  const ANG_SIST = SIST.map((_, k) => -90 + (k + .5) * 360 / SIST.length);
+  // corridos medio lugar y 12° más: así ninguno queda arriba de todo (donde está el rótulo
+  // del paso) ni abajo a la derecha (donde está "Paso siguiente")
+  const ANG_SIST = SIST.map((_, k) => -78 + (k + .5) * 360 / SIST.length);
   const enElipse = (gr, rx, ry) => [CX + rx * Math.cos(gr * Math.PI / 180), CY + ry * Math.sin(gr * Math.PI / 180)];
   etiquetas.forEach((e, k) => { const [x, y] = enElipse(ANG_ETIQ[k], 340, 318); e.style.left = x + 'px'; e.style.top = y + 'px'; });
   sistemas.forEach((e, k) => { const [x, y] = enElipse(ANG_SIST[k], 356, 306); e.style.left = x + 'px'; e.style.top = y + 'px'; });
@@ -299,7 +300,9 @@
   // ---------- Con el scroll ----------
   // la sección empieza en y 900 + offsetTop de la diapositiva: entera en pantalla con bajada = 900 + top
   const TOP = 900 + sec.offsetTop;
-  let tilt = null;
+  // las tarjetas de arriba (diapositiva.js) piden abrir un paso: se abre al llegar
+  let pendiente = null;
+  window.ADAPTABILIDAD = { abrir(k) { if (activo) ir(k, true); else pendiente = Math.max(0, Math.min(3, k)); } };
   document.addEventListener('desplazamiento', (e) => {
     const y = Math.max(0, e.detail.y);
     const rel = y - TOP;                 // 0 = entera en pantalla
@@ -307,7 +310,9 @@
     activo = rel > -260 && rel < 300;
     sec.classList.toggle('visible', rel > -470);
     document.body.classList.toggle('sin-guia-scroll', rel > -400 && rel < 400);
-    if (activo && !empezo) { empezo = true; ir(0); }
+    // al llegar: el paso pedido por una tarjeta (ADAPTABILIDAD.abrir) o, la primera vez, el 1
+    if (activo && pendiente != null) { const k = pendiente; pendiente = null; empezo = true; ir(k, true); }
+    else if (activo && !empezo) { empezo = true; ir(0); }
     if (enVista) animar();
   });
   document.addEventListener('visibilitychange', animar);

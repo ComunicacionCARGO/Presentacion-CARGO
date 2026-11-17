@@ -23,28 +23,35 @@ window.ESTRUCTURA = {
      imagen: ícono propio en SVG (carpeta img/estructura/elegirnos); si no está, se usa "icono"
      titulo: el título de la tarjeta.
      texto:  el párrafo (**negrita**).
-     datos:  (opcional) cifras destacadas, cada una con valor y texto. */
+     datos:  (opcional) cifras destacadas, cada una con valor y texto.
+     ir:     adónde lleva la tarjeta al hacer clic: "adaptabilidad", "mejora" (Mejora
+             continua), "rse" (Impacto cero), "numeros", "comunidad" o "clientes".
+     paso:   (solo con "adaptabilidad") qué paso se abre: 1, 2, 3 o 4.
+     boton:  el texto del enlace que aparece abajo de la tarjeta. */
   elegirnos: [
     {
       icono: "flexibilidad",
       imagen: "img/estructura/elegirnos/flexibilidad.svg",
       titulo: "Flexibilidad y adaptabilidad",
       texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
-      datos: []
+      datos: [],
+      ir: "adaptabilidad", paso: 1, boton: "Cómo nos adaptamos"
     },
     {
       icono: "innovacion",
       imagen: "img/estructura/elegirnos/innovacion.svg",
       titulo: "Innovación y tecnología",
       texto: "Herramientas que optimizan cada eslabón de la cadena: de la **trazabilidad en tiempo real** a la **analítica de datos**. Un servicio más eficiente, transparente e inteligente, que mejora las decisiones y reduce errores.",
-      datos: []
+      datos: [],
+      ir: "adaptabilidad", paso: 3, boton: "Tecnología a medida"
     },
     {
       icono: "crecimiento",
       imagen: "img/estructura/elegirnos/crecimiento.svg",
       titulo: "Compromiso con el crecimiento",
       texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
-      datos: []
+      datos: [],
+      ir: "clientes", boton: "Los que crecen con nosotros"
     },
     {
       icono: "excelencia",
@@ -54,7 +61,8 @@ window.ESTRUCTURA = {
       datos: [
         { valor: "98%", texto: "de cumplimiento en tiempos de entrega en rutas propias" },
         { valor: "+500.000 kg", texto: "movilizados por mes" }
-      ]
+      ],
+      ir: "mejora", boton: "Nuestra mejora continua"
     }
   ],
 

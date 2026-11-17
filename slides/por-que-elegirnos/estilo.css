@@ -146,6 +146,20 @@
 .el-texto strong { font-weight: 600; color: var(--blanco); }
 .el-datos { display: flex; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 251, 243, .18); }
 .el-datos div { flex: 1; min-width: 0; }
+/* Tarjetas que llevan a su parte de la diapositiva: enlace abajo a la izquierda */
+.el-tarjeta.con-destino { cursor: pointer; outline: none; }
+.el-ir {
+  position: absolute; left: 28px; bottom: 24px; z-index: 1;
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 16px;
+  border: 1px solid rgba(255, 251, 243, .35); border-radius: 999px;
+  background: rgba(255, 251, 243, .08);
+  font: 500 14px var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; color: var(--blanco);
+  transition: background .3s ease, border-color .3s ease, color .3s ease;
+}
+.el-ir svg { width: 16px; height: 16px; fill: currentColor; transition: translate .3s ease; }
+.el-tarjeta.activa .el-ir, .el-tarjeta:focus-visible .el-ir { background: var(--rojo); border-color: var(--rojo); }
+.el-tarjeta.activa .el-ir svg { translate: 0 3px; }
+.el-tarjeta:focus-visible .el-vidrio { border-color: rgba(255, 255, 255, .6); }
 .el-datos b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 28px; line-height: 1; color: var(--rojo); white-space: nowrap; }
 .el-datos span { display: block; margin-top: 4px; font-size: 11.5px; font-weight: 300; line-height: 1.35; color: rgba(255, 251, 243, .72); }
 

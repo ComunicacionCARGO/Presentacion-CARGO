@@ -69,8 +69,20 @@
     return formato(p.slice(0, corte).join(' ')) + '<br>' + formato(p.slice(corte).join(' '));
   };
   const contEl = $('.el-tarjetas');
+  // Adónde lleva cada tarjeta ("ir" en los datos): la sección queda entera en pantalla
+  // (el tramo arranca en y 900 de la diapositiva, así que y = 900 + su offsetTop)
+  const SECCION_DE = { adaptabilidad: '.mc-adap', mejora: '.mc-elegir', rse: '.mc-rse', numeros: '.mc-num', comunidad: '.mc-com', clientes: '.mc-cli' };
+  const flechaIr = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg>';
+  function irATarjeta(t) {
+    const el = $(SECCION_DE[String(t.ir || '').trim()]);
+    if (!el || !window.desplazarA) return;
+    // en Adaptabilidad, además, abre el paso pedido cuando llega (adaptabilidad.js)
+    if (t.ir === 'adaptabilidad' && t.paso && window.ADAPTABILIDAD) window.ADAPTABILIDAD.abrir(+t.paso - 1);
+    window.desplazarA(900 + el.offsetTop);
+  }
   (E.elegirnos || []).slice(0, 4).forEach((t, i) => {
     const art = crear('article', 'el-tarjeta', contEl);
+    const conDestino = !!SECCION_DE[String(t.ir || '').trim()];
     art.style.setProperty('--i', i);
     const v = crear('div', 'el-vidrio', art);
     v.style.setProperty('--i', i);
@@ -89,6 +101,15 @@
       img.src = '../../' + t.imagen;
     } else incluido();
     crear('i', 'el-brillo', v);
+    // la tarjeta entera se puede tocar y lleva a su parte de la diapositiva
+    if (conDestino) {
+      art.classList.add('con-destino');
+      art.tabIndex = 0;
+      art.setAttribute('role', 'link');
+      crear('span', 'el-ir', v, `${formato(t.boton || 'Ver más')}${flechaIr}`);
+      art.addEventListener('click', () => irATarjeta(t));
+      art.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); irATarjeta(t); } });
+    }
     // inclinación 3D y reflejo que siguen al cursor
     art.addEventListener('pointermove', (e) => {
       const r = v.getBoundingClientRect();
@@ -109,6 +130,8 @@
   // ---------- Entrada: cuando se abre la cortina, el título sube a su lugar y entran las tarjetas ----------
   const seccionEl = $('.seccion-mejora');
   const entrar = () => setTimeout(() => seccionEl.classList.add('arriba'), 350);
+  // Guía (compartido/guia.js): la mano invita a tocar la primera tarjeta, hasta que se toca una
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.el-tarjeta.con-destino .el-ir'), punto: [.5, .5], zona: '.el-tarjeta', lado: 'abajo', espera: 2.6, activa: () => seccionEl.classList.contains('arriba') && (window.desplazamiento ? window.desplazamiento.y : 0) < 60 });
   if (document.body.classList.contains('lista')) entrar(); else document.addEventListener('pagina-lista', entrar, { once: true });
 
   // =========================================================
