@@ -70,15 +70,15 @@ window.CARTAS = [
     destino: "slides/quienes-somos/index.html"
   },
   {
-    antetitulo: "Servicio",
-    titulo: "DIFERENCIAL",
+    antetitulo: "Un servicio",
+    titulo: "PARA FORD",
     portada: "img/cartas/quienes-somos.webp",
     foco: 50,
     destino: "slides/servicio-a-medida/index.html"
   },
   {
-    antetitulo: "¿Por qué",
-    titulo: "ELEGIRNOS?",
+    antetitulo: "¿Qué hacemos",
+    titulo: "DIFERENTE?",
     portada: "img/cartas/servicio-diferencial.webp",
     foco: 30,
     destino: "slides/por-que-elegirnos/index.html"

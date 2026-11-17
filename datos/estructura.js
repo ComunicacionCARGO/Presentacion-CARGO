@@ -14,9 +14,9 @@ window.ESTRUCTURA = {
   bajada: "Un equipo interconectado: cada área sostiene y potencia a las demás.",
   ayuda: "Tocá cada área para conocerla",
 
-  // ---------- "¿Por qué elegirnos?" (aparece al bajar, después de la transición de anillos) ----------
-  elegirnosAntetitulo: "¿Por qué",
-  elegirnosTitulo: "ELEGIRNOS?",
+  // ---------- "¿Qué hacemos DIFERENTE?" (antes "¿Por qué elegirnos?"): título de la carta 3 ----------
+  elegirnosAntetitulo: "¿Qué hacemos",
+  elegirnosTitulo: "DIFERENTE?",
 
   /* Tarjetas de vidrio. Cada una tiene:
      icono:  excelencia, innovacion, flexibilidad o crecimiento (ícono incluido, de respaldo)
