@@ -258,7 +258,8 @@ body.arrastrando, body.arrastrando * { cursor: grabbing !important; user-select:
 .r-sub {
   left: calc(var(--sx) * var(--u));
   top: calc(var(--sy) * var(--u));
-  font-weight: 500;
+  font-weight: 300;
+  font-style: italic;
   font-size: calc(var(--ss) * var(--u));
   letter-spacing: .01em;
   color: var(--blanco);

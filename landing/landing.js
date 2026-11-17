@@ -166,12 +166,12 @@
       anchoTexto(`700 ${R.num.tam}px Oswald`, dosDigitos(i + 1)),
       ante ? R.ante.x + anchoTexto(fAnte, ante) - colgado : 0,
       R.tit.x + anchoTexto(`700 ${R.tit.tam}px Oswald`, d.titulo || ''));
-    return { ancho, colgado, sub: d.subtitulo ? anchoTexto(`500 ${SUB.tam}px Inter`, d.subtitulo) : 0 };
+    return { ancho, colgado, sub: d.subtitulo ? anchoTexto(`italic 300 ${SUB.tam}px Inter`, d.subtitulo) : 0 };
   }
   // Subtítulo (una frase corta debajo del título, pedido de la persona): centrado en la carta,
   // a SUB.debajo px de la línea base del título; con subtítulo, todo el grupo sube SUB.sube px.
   // Si la frase no entra en el ancho útil (SUB.ancho de la carta), se achica solo esa letra.
-  const SUB = { tam: 15, debajo: 27, sube: 12, ancho: .8 };
+  const SUB = { tam: 17, debajo: 28, sube: 12, ancho: .8 };
   const HAY_SUB = CARTAS.some((d) => d.subtitulo);
   let medidas = [], tRotulo = 1;
   function ubicarRotulos() {
