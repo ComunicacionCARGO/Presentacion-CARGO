@@ -50,7 +50,7 @@
   transition: transform 3.2s cubic-bezier(.16, .84, .24, 1);
 }
 .seccion-mejora.arriba .df-deposito { transform: none; }
-/* Luz del techo que respira y un haz suave por el pasillo (ahí flota el polvo) */
+/* Luz del techo que respira (el haz en forma de trapecio se sacó: pedido de la persona) */
 .df-luz {
   position: absolute;
   left: 548px;
@@ -62,16 +62,6 @@
   transition: opacity 2s ease .6s;
 }
 .seccion-mejora.arriba .df-luz { opacity: 1; animation: df-respirar 5.5s ease-in-out 2.6s infinite alternate; }
-.df-luz::after {
-  content: "";
-  position: absolute;
-  left: 30px;
-  top: 236px;
-  width: 440px;
-  height: 640px;
-  background: linear-gradient(to bottom, rgba(255, 236, 212, .13), rgba(255, 236, 212, .04) 55%, rgba(255, 236, 212, 0));
-  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
-}
 @keyframes df-respirar { from { opacity: 1; } to { opacity: .62; } }
 .df-polvo { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; opacity: 0; transition: opacity 2.4s ease 1s; }
 .seccion-mejora.arriba .df-polvo { opacity: 1; }
