@@ -19,7 +19,9 @@ window.PORTADA = {
   sello: "Propuesta de servicio logístico",
 
   segundosPorVuelta: 40,   // velocidad del carrusel: más alto = más lento
-  sentido: 1,              // 1 = gira hacia la derecha, -1 = hacia la izquierda
+  sentido: 1,              // 1 = las cartas pasan en orden (1, 2, 3) corriendo hacia la izquierda, -1 = al revés
+  lugares: 4,              // lugares en el círculo: si hay menos cartas, se repiten (más lugares = cartas más cortas)
+  segundosQuietaAlEntrar: 6, // al entrar, la primera carta se queda quieta adelante estos segundos antes de girar
   intensidadParalaje: 1,   // movimiento con el mouse: 0 = nada, 1 = normal, 2 = el doble
   mostrarNombres: true,    // true = muestra el número y nombre sobre cada carta
 

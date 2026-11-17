@@ -49,10 +49,14 @@
   });
 
   // ---------- Medidas del carrusel (px del escenario 1600×900) ----------
-  // Las cartas son largas y entre todas completan el círculo, con un hueco chico entre una y otra.
+  // El círculo tiene M lugares (AJ.lugares, 4) aunque haya menos cartas: las cartas se repiten
+  // (con 3 cartas: 1, 2, 3, 1, 2, 3…). Cada lugar cambia de carta cuando pasa por atrás del todo,
+  // donde no se ve, así el carrusel parece infinito y las cartas son más cortas (se ven mejor las
+  // de los costados). Entre todos los lugares completan el círculo, con un hueco chico entre uno y otro.
   const N = CARTAS.length;
+  const M = N ? Math.max(N, Math.round(+AJ.lugares) || 4) : 0;   // lugares en el círculo
   const radio = 310;                             // radio del círculo de cartas
-  const paso = N ? 360 / N : 0;
+  const paso = M ? 360 / M : 0;
   const HUECO = 7;                               // grados libres entre una carta y la siguiente
   const ARCO = N ? Math.min(150, paso - HUECO) : 0;   // grados que ocupa cada carta
   const ANCHO = Math.round(radio * ARCO * RAD), ALTO = 174, ESQUINA = 18;   // tamaño de cada carta
@@ -164,10 +168,11 @@
       R.tit.x + anchoTexto(`700 ${R.tit.tam}px Oswald`, d.titulo || ''));
     return { ancho, colgado };
   }
+  let medidas = [], tRotulo = 1;
   function ubicarRotulos() {
-    const medidas = CARTAS.map(medirRotulo);
-    const t = Math.min(1, ...medidas.map((m) => ROTULO_MAX / m.ancho));
-    cartas.forEach((ca, i) => ubicarRotulo(ca.a, medidas[i], t));
+    medidas = CARTAS.map(medirRotulo);
+    tRotulo = Math.min(1, ...medidas.map((m) => ROTULO_MAX / m.ancho));
+    cartas.forEach((ca) => { if (ca.cont >= 0) ubicarRotulo(ca.a, medidas[ca.cont], tRotulo); });
   }
   function ubicarRotulo(a, m, t) {
     const R = ROTULO, { ancho, colgado } = m;
@@ -217,10 +222,53 @@
     };
   }
 
-  const cartas = CARTAS.map((datos, i) => {
+  // Lo que cambia de una carta a otra: textos de las franjas, foto y destino.
+  // Cada lugar del círculo muestra una carta y la cambia con asignar() al pasar por atrás.
+  const TEXTOS = CARTAS.map((datos, i) => {
+    const modelo = document.createElement('div');
+    if (AJ.mostrarNombres) {
+      crear('span', 'r-num', modelo).textContent = dosDigitos(i + 1);
+      if (datos.antetitulo) crear('span', 'r-ante', modelo).textContent = datos.antetitulo;
+      crear('span', 'r-tit', modelo).textContent = datos.titulo || '';
+    }
+    return modelo.innerHTML;
+  });
+  const FOTOS = CARTAS.map((datos) => {
+    const f = {
+      url: datos.portada || '', ok: !!datos.portada, alto: FOTO_ANCHO * 9 / 16,
+      foco: Math.max(0, Math.min(100, datos.foco === undefined ? 50 : +datos.foco || 0))
+    };
+    if (f.ok) {
+      const prueba = crear('img', '', precarga);
+      prueba.alt = '';
+      prueba.onload = () => { f.alto = FOTO_ANCHO * prueba.naturalHeight / prueba.naturalWidth; reasignar(); };
+      prueba.onerror = () => { f.ok = false; reasignar(); };
+      prueba.src = f.url;
+    }
+    return f;
+  });
+  function asignar(ca, i, forzar) {
+    if (ca.cont === i && !forzar) return;
+    ca.cont = i;
+    const datos = CARTAS[i], f = FOTOS[i];
+    ca.a.href = datos.destino || '#';
+    ca.a.setAttribute('aria-label', nombreCarta(datos));
+    ca.a.classList.toggle('sin-foto', !f.ok);
+    ca.tiras.forEach((t) => { t.firstChild.innerHTML = TEXTOS[i]; });
+    if (medidas.length) ubicarRotulo(ca.a, medidas[i], tRotulo);
+    ca.foco = f.foco;
+    ca.fotoAlto = f.alto;
+    ca.fotoOk = f.ok;
+    ca.foto[0].style.display = f.ok ? '' : 'none';
+    if (f.ok) {
+      ca.foto[0].style.backgroundImage = `url("${f.url}")`;
+      ca.foto[0].style.height = f.alto + 'px';
+    }
+  }
+  function reasignar() { cartas.forEach((ca) => { if (ca.cont >= 0) asignar(ca, ca.cont, true); }); }
+
+  const cartas = Array.from({ length: M }, (_, i) => {
     const a = crear('a', 'carta', mundo);
-    a.href = datos.destino || '#';
-    a.setAttribute('aria-label', nombreCarta(datos));
     const id = 'carta' + i;
     const partes = [crearParte(a, id + 'a', true), crearParte(a, id + 'b', false)];
 
@@ -228,12 +276,6 @@
     //    ("¿Quiénes" / "SOMOS?"). La foto no va acá (seguiría la curva) sino en el vidrio.
     const modelo = document.createElement('div');
     modelo.className = 'contenido';
-    if (!datos.portada) a.classList.add('sin-foto');
-    if (AJ.mostrarNombres) {
-      crear('span', 'r-num', modelo).textContent = dosDigitos(i + 1);
-      if (datos.antetitulo) crear('span', 'r-ante', modelo).textContent = datos.antetitulo;
-      crear('span', 'r-tit', modelo).textContent = datos.titulo || '';
-    }
     const anchoTira = (ANCHO_TIRA + SOLAPE) * F;
     const tiras = [];
     for (let j = 0; j < TIRAS; j++) {
@@ -253,26 +295,14 @@
     }
     // Foto de fondo (plana) dentro del vidrio de la parte de adelante.
     // Si la imagen no existe, la carta queda de vidrio con su número y su título.
-    const ca = { a, foco: Math.max(0, Math.min(100, datos.foco === undefined ? 50 : +datos.foco || 0)), foto: null, fotoAlto: FOTO_ANCHO * 9 / 16 };
     // Una sola copia de la foto, en modo de fusión "superponer" y algo transparente: se mezcla
     // con el vidrio. Con el cursor encima o al abrir no cambia, solo se agranda (pedido de la persona).
-    if (datos.portada) {
-      ca.foto = ['vf-superponer'].map((clase) => {
-        const el = crear('div', 'vidrio-foto ' + clase, partes[0].vidrio);
-        el.style.backgroundImage = `url("${datos.portada}")`;
-        el.style.width = FOTO_ANCHO + 'px';
-        el.style.height = ca.fotoAlto + 'px';
-        return el;
-      });
-      const prueba = crear('img', '', precarga);
-      prueba.alt = '';
-      prueba.onload = () => {
-        ca.fotoAlto = FOTO_ANCHO * prueba.naturalHeight / prueba.naturalWidth;
-        ca.foto.forEach((el) => { el.style.height = ca.fotoAlto + 'px'; });
-      };
-      prueba.onerror = () => { a.classList.add('sin-foto'); ca.foto.forEach((el) => el.remove()); ca.foto = null; };
-      prueba.src = datos.portada;
-    }
+    const ca = { a, cont: -1, grados: 0, foco: 50, fotoOk: false, fotoAlto: FOTO_ANCHO * 9 / 16 };
+    ca.foto = ['vf-superponer'].map((clase) => {
+      const el = crear('div', 'vidrio-foto ' + clase, partes[0].vidrio);
+      el.style.width = FOTO_ANCHO + 'px';
+      return el;
+    });
 
     return Object.assign(ca, {
       partes, tiras,
@@ -307,7 +337,12 @@
 
   // ---------- Estado ----------
   const base = (360 / AJ.segundosPorVuelta) * AJ.sentido;
-  let giro = 0;
+  // Entrada: el carrusel llega girando a la primera carta y se queda quieto un rato
+  // (antes entraba girando rápido y la primera carta ya había pasado cuando terminaba de cargar).
+  const QUIETA = Math.max(0, +AJ.segundosQuietaAlEntrar || 0) * 1000;
+  const ENTRADA = 1900;                          // ms que tarda en llegar a la primera carta
+  let giro = -paso * 1.25;
+  let entrada = null;
   let vel = 0;
   let activa = -1;        // carta bajo el cursor
   let elegida = -1;       // carta que se está abriendo
@@ -321,10 +356,26 @@
   let ex = 800, ey = 450; // cursor en coordenadas del escenario
 
   const normalizar = (g) => ((g % 360) + 540) % 360 - 180;
+  const modulo = (a, b) => ((a % b) + b) % b;
+
+  // Posición "virtual" de cada lugar: con el giro en g (en cartas), el lugar s muestra la
+  // posición v (v = s, s ± M, s ± 2M…) que queda a menos de media vuelta del frente,
+  // y la carta v mod N. Al pasar por atrás del todo, v salta una vuelta y cambia la carta.
+  const virtualDe = (s, g) => s + M * Math.round((g - s) / M);
+  function repartir() {
+    const g = giro / paso;
+    cartas.forEach((ca, s) => {
+      const v = virtualDe(s, g);
+      ca.grados = giro - v * paso;
+      asignar(ca, modulo(v, N));
+    });
+  }
+  if (M) repartir();
 
   document.addEventListener('pagina-lista', () => {
     listaDesde = performance.now();
-    vel = base * 14;   // entrada con giro rápido
+    entrada = { t0: listaDesde, desde: giro };
+    pausaHasta = listaDesde + ENTRADA + QUIETA;
   });
 
   function activar(i) {
@@ -334,10 +385,23 @@
     if (i >= 0) cartas[i].a.classList.add('activa');
   }
 
-  // Lleva la carta i al frente del carrusel
+  // Lleva al frente el lugar i del carrusel
   function centrar(i) {
     inercia = 0;
-    objetivo = giro + normalizar(i * paso - giro);
+    entrada = null;
+    objetivo = giro - normalizar(cartas[i].grados);
+  }
+  // Lleva al frente la carta i de los datos (la repetición más cercana); devuelve su lugar
+  function centrarCarta(i) {
+    inercia = 0;
+    entrada = null;
+    const g = giroActual() / paso;
+    let v = null;
+    for (let k = Math.round(g) - N; k <= Math.round(g) + N; k++) {
+      if (modulo(k, N) === i && (v === null || Math.abs(k - g) < Math.abs(v - g))) v = k;
+    }
+    objetivo = v * paso;
+    return modulo(v, M);
   }
 
   // ---------- Mouse ----------
@@ -452,6 +516,7 @@
   const giroActual = () => (objetivo === null ? giro : objetivo);
   document.addEventListener('pointerdown', (e) => {
     if (!e.isPrimary || abriendo || !N) return;
+    if (e.target.closest && e.target.closest('.carrusel-control')) return;   // flechas y puntos
     const tactil = e.pointerType === 'touch';
     if (!tactil && e.button !== 0) return;
     inercia = 0;                                // si venía girando suelto, lo agarra
@@ -480,7 +545,7 @@
     }
     const ahora = performance.now(), antes = giro;
     pausaHasta = ahora + 5000;
-    objetivo = dedo.giro0 + (e.clientX - dedo.x) / escalaPortada() * GIRO_POR_PX;
+    objetivo = dedo.giro0 - (e.clientX - dedo.x) / escalaPortada() * GIRO_POR_PX;   // hacia la izquierda: la siguiente
     giro = objetivo;                            // sin demora: acompaña al gesto
     // velocidad del gesto (grados por segundo), suavizada
     const dt = Math.max(1, ahora - dedo.tv);
@@ -515,23 +580,53 @@
   addEventListener('pointercancel', soltarCarrusel);
 
   // ---------- Teclado ----------
-  function enfocar(i) {
+  // Pasa a la carta siguiente (+1) o a la anterior (-1); con las flechas del teclado o de la pantalla
+  function enfocar(sentido) {
     inercia = 0;
-    i = ((i % N) + N) % N;
+    entrada = null;
     activar(-1);
     centrando = false;
     ignorar = bajoCursor;
-    centrar(i);
-    pausaHasta = performance.now() + 5000;
+    objetivo = (Math.round(giroActual() / paso) + sentido) * paso;
+    pausaHasta = performance.now() + 6000;
+  }
+  // Lleva al frente la carta i de los datos (puntos de abajo)
+  function enfocarCarta(i) {
+    activar(-1);
+    centrando = false;
+    ignorar = bajoCursor;
+    centrarCarta(i);
+    pausaHasta = performance.now() + 6000;
   }
 
   addEventListener('keydown', (e) => {
     if (!N || abriendo) return;
-    if (e.key === 'ArrowRight') enfocar(frente + 1);
-    else if (e.key === 'ArrowLeft') enfocar(frente - 1);
-    else if (e.key === 'Enter') abrir(activa >= 0 ? activa : frente);
-    else if (/^[1-9]$/.test(e.key) && +e.key <= N) abrir(+e.key - 1);
+    if (e.key === 'ArrowRight') enfocar(1);
+    else if (e.key === 'ArrowLeft') enfocar(-1);
+    else if (e.key === 'Enter') {
+      if (e.target.closest && e.target.closest('.carrusel-control')) return;   // Enter sobre una flecha o un punto: hace lo suyo
+      abrir(activa >= 0 ? activa : frente);
+    }
+    else if (/^[1-9]$/.test(e.key) && +e.key <= N) abrir(centrarCarta(+e.key - 1));
   });
+
+  // ---------- Flechas a los costados y puntos de abajo ----------
+  // Pedido de la persona: a quien la veía no le quedaba claro que el carrusel se puede girar,
+  // ni cuántas cartas hay. Las flechas pasan de a una carta; los puntos muestran cuál está
+  // adelante y llevan a cada una.
+  const controles = $('.carrusel-flechas'), puntos = $('.carrusel-puntos');
+  if (controles && N > 1) {
+    controles.querySelector('.cf-ant').addEventListener('click', () => { if (!abriendo) enfocar(-1); });
+    controles.querySelector('.cf-sig').addEventListener('click', () => { if (!abriendo) enfocar(1); });
+  } else if (controles) controles.hidden = true;
+  const botonesPunto = !puntos || N < 2 ? [] : CARTAS.map((datos, i) => {
+    const b = crear('button', 'cp-punto', puntos);
+    b.type = 'button';
+    b.setAttribute('aria-label', nombreCarta(datos));
+    b.addEventListener('click', () => { if (!abriendo) enfocarCarta(i); });
+    return b;
+  });
+  if (puntos && N < 2) puntos.hidden = true;
 
   // ---------- Abrir diapositiva ----------
   function abrir(i) {
@@ -541,18 +636,23 @@
     elegida = i;
     centrar(i);  // la trae al frente mientras avanza
     document.body.classList.add('abriendo');
-    irA(CARTAS[i].destino, 350);
+    irA(CARTAS[cartas[i].cont].destino, 350);
   }
 
   // ---------- HUD ----------
   const hudNum = $('.hud-num'), hudNom = $('.hud-nom');
   $('.hud-total').textContent = '/ ' + dosDigitos(N);
   let hudActual = -1;
-  function actualizarHud(i) {
+  function actualizarHud(s) {
+    const i = s >= 0 ? cartas[s].cont : -1;
     if (i === hudActual || i < 0) return;
     hudActual = i;
     hudNum.textContent = dosDigitos(i + 1);
     hudNom.textContent = nombreCarta(CARTAS[i]);
+    botonesPunto.forEach((b, k) => {
+      b.classList.toggle('actual', k === i);
+      if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
   }
 
   // ---------- Caminos: palabras que aparecen y convergen hacia las cartas ----------
@@ -791,7 +891,14 @@
     const dt = Math.min(.05, (t - ultimo) / 1000);
     ultimo = t;
 
-    if (inercia) {
+    if (entrada && (objetivo !== null || inercia || (dedo && dedo.girando))) entrada = null;   // la persona ya lo movió
+    if (entrada) {
+      // llega a la primera carta frenando suave y se queda quieta (pausaHasta)
+      const k = Math.min(1, (t - entrada.t0) / ENTRADA);
+      giro = entrada.desde * Math.pow(1 - k, 3);
+      vel = 0;
+      if (k >= 1) { giro = 0; entrada = null; }
+    } else if (inercia) {
       // sigue con el impulso del gesto y se va frenando; ya despacio, se acomoda en la carta siguiente
       giro += inercia * dt;
       inercia *= Math.exp(-dt * FRENO);
@@ -808,7 +915,7 @@
       if (centrando && Math.abs(d) < 1.5) terminarCentrado();
       if (Math.abs(d) < .05) { giro = objetivo; objetivo = null; }
     } else {
-      const quieto = activa >= 0 || t < pausaHasta;
+      const quieto = activa >= 0 || t < pausaHasta || !listaDesde;
       const meta = quieto ? 0 : base;
       vel += (meta - vel) * Math.min(1, dt * (quieto ? 7 : 1.2));
       giro += vel * dt;
@@ -832,6 +939,7 @@
     const fBrillo = 1 - Math.exp(-dt * 9);
 
     let mejor = -2;
+    repartir();   // qué carta muestra cada lugar y en qué ángulo está
     cartas.forEach((ca, i) => {
       // Valores a los que se dirige cada carta
       const entro = listaDesde && t > listaDesde + 500 + i * 70;
@@ -846,14 +954,16 @@
       if (Math.abs(mOp - ca.op) < .004) ca.op = mOp;
       ca.act += (mAct - ca.act) * fBrillo;
 
-      const grados = giro - i * paso;   // en orden inverso al giro: al girar pasan 1, 2, 3…
+      // la carta siguiente queda a la derecha (03 | 01 | 02, como los puntos de abajo):
+      // al avanzar, las cartas corren hacia la izquierda y pasan 1, 2, 3…
+      const grados = -ca.grados;
       const c = Math.cos(grados * RAD);
       if (c > mejor) { mejor = c; frente = i; }
 
       // La carta elegida o bajo el cursor queda por encima de las demás
       const destacada = i === activa || i === elegida ? 2400 : 0;
       dibujarCarta(ca, grados, inclinacion, rot, destacada);
-      if (ca.foto) ubicarFoto(ca, grados, rot, kp);
+      if (ca.fotoOk) ubicarFoto(ca, grados, rot, kp);
     });
     actualizarHud(activa >= 0 ? activa : frente);
 

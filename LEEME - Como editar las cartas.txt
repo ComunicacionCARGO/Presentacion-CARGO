@@ -12,6 +12,9 @@ Controles:
   • Pasar sobre una carta ..... la carta viaja al centro, se levanta y se ilumina
   • Clic en una carta ......... abre su diapositiva
   • Rueda del mouse ........... cada movimiento de la rueda pasa a la carta siguiente
+  • Flechas ‹ › de la pantalla  a los costados del carrusel: carta anterior / siguiente
+  • Puntos de abajo ........... muestran qué carta está adelante; un clic lleva a esa carta
+  • Arrastrar ................. hacia la izquierda: la carta siguiente
   • Flechas ← → ............... girar el carrusel carta por carta
   • Enter ..................... abrir la carta del frente
   • Números 1 a 9 ............. abrir esa carta directamente
@@ -65,7 +68,12 @@ Para agregar una:
 3. Cambiá antetítulo, título, portada, foco y destino.
 
 Para quitar una carta: borrá el bloque completo con su coma.
-Las cartas siempre completan el círculo: con más cartas, cada una es más corta.
+El círculo tiene "lugares: 4" (en datos\cartas.js): con 3 cartas, se repiten
+(1, 2, 3, 1, 2, 3…) y cada carta cambia cuando pasa por atrás, donde no se ve.
+Más lugares = cartas más cortas y se ven más las de los costados. Si hay más
+cartas que lugares, el círculo usa una por carta.
+"segundosQuietaAlEntrar": al abrir la portada, el carrusel llega a la carta 01
+y se queda quieto esos segundos antes de empezar a girar solo.
 Para cambiar el orden: mové los bloques de lugar.
 
 

@@ -257,6 +257,93 @@ body.arrastrando, body.arrastrando * { cursor: grabbing !important; user-select:
 /* sin foto: vidrio claro, textos en gris */
 .carta.sin-foto .r-ante, .carta.sin-foto .r-tit { color: var(--gris); }
 
+/* ---------- Flechas y puntos del carrusel ----------
+   Pedido de la persona (tras probarla con otras personas): flechas a los costados para
+   que se entienda que gira, y un punto por carta para saber cuál está adelante y cuántas hay. */
+.carrusel-flechas { position: absolute; inset: 0; pointer-events: none; }
+.carrusel-control { font: inherit; }
+.cf-ant, .cf-sig {
+  position: absolute;
+  top: 640px;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .7);
+  border-radius: 50%;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .85), rgba(255, 238, 228, .6));
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: 0 14px 28px -12px rgba(150, 40, 20, .45), inset 0 1px 0 rgba(255, 255, 255, .8);
+  color: var(--rojo);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background .25s ease, color .25s ease, border-color .25s ease, scale .25s cubic-bezier(.2, .8, .2, 1), opacity .8s ease, translate 1s cubic-bezier(.2, .8, .2, 1);
+}
+.cf-ant { left: 372px; }
+.cf-sig { left: 1168px; }
+.cf-ant svg, .cf-sig svg { display: block; width: 28px; height: 28px; margin: auto; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.cf-ant:hover, .cf-sig:hover, .cf-ant:focus-visible, .cf-sig:focus-visible { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); scale: 1.08; outline: none; }
+.cf-ant:active, .cf-sig:active { scale: .94; }
+.cf-ant:hover svg { animation: cf-empujar-izq .9s ease-in-out infinite; }
+.cf-sig:hover svg { animation: cf-empujar-der .9s ease-in-out infinite; }
+@keyframes cf-empujar-izq { 50% { translate: -3px 0; } }
+@keyframes cf-empujar-der { 50% { translate: 3px 0; } }
+
+/* cápsula de vidrio crema: abajo está la remera roja del operario */
+.carrusel-puntos {
+  position: absolute;
+  left: 800px;
+  top: 816px;
+  translate: -50% 0;
+  display: flex;
+  gap: 2px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, .7);
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .88), rgba(255, 238, 228, .7));
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: 0 12px 24px -12px rgba(150, 40, 20, .5), inset 0 1px 0 rgba(255, 255, 255, .8);
+  pointer-events: none;
+}
+.cp-punto {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: width .4s cubic-bezier(.2, .8, .2, 1);
+}
+.cp-punto::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(58, 58, 58, .28);
+  translate: -50% -50%;
+  transition: width .4s cubic-bezier(.2, .8, .2, 1), background .3s ease;
+}
+.cp-punto:hover::before { background: rgba(58, 58, 58, .55); }
+.cp-punto.actual { width: 48px; }
+.cp-punto.actual::before { width: 34px; background: var(--rojo); }
+.cp-punto:focus-visible { outline: none; }
+.cp-punto:focus-visible::before { box-shadow: 0 0 0 3px rgba(239, 69, 41, .3); }
+
+.cf-ant, .cf-sig, .carrusel-puntos { opacity: 0; }
+.cf-ant { translate: 24px 0; }
+.cf-sig { translate: -24px 0; }
+body.lista .cf-ant, body.lista .cf-sig { opacity: 1; translate: 0 0; transition-delay: 0s, 0s, 0s, 0s, 1.4s, 1.4s; }
+.carrusel-puntos { transition: opacity .4s ease; }
+body.lista .carrusel-puntos { opacity: 1; transition: opacity 1s ease 1.6s; }
+body.abriendo .carrusel-flechas, body.abriendo .carrusel-puntos { opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+body.abriendo .carrusel-flechas * { pointer-events: none; }
+
 /* ---------- Indicadores (HUD) ---------- */
 .hud-ayuda {
   position: absolute;
