@@ -41,8 +41,9 @@ window.GUIAS = {
   mapaProvincias:      { texto: "**Hacé clic** en una provincia para ver sus rutas", tactil: "**Tocá** una provincia para ver sus rutas" },
   mapaFlujograma:      { texto: "**Hacé clic** para ver el flujograma de la provincia", tactil: "**Tocá** para ver el flujograma de la provincia" },
 
-  // ---------- ¿Por qué elegirnos? ----------
-  mejoraLados:         { texto: "**Hacé clic** en un lado para entrar",             tactil: "**Tocá** un lado para entrar" },
+  // ---------- ¿Qué hacemos diferente? ----------
+  adaptaSiguiente:     { texto: "**Hacé clic** para ver el paso siguiente",         tactil: "**Tocá** para ver el paso siguiente" },
+  mejoraLados:        { texto: "**Hacé clic** en un lado para entrar",             tactil: "**Tocá** un lado para entrar" },
   temaSecciones:       { texto: "**Hacé clic** en las pestañas o usá la rueda",     tactil: "**Tocá** las pestañas o deslizá" },
   pilares:             { texto: "**Pasá el mouse** por cada pilar",                 tactil: "**Tocá** cada pilar" },
   palancas:            { texto: "**Hacé clic** en una palanca para activarla",      tactil: "**Tocá** una palanca para activarla" },

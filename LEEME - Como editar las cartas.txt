@@ -166,9 +166,10 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     reacomoda sola y los caminos se vuelven a trazar.
   • **texto** = negrita;  *texto* = rojo en cursiva.
   • Íconos propios: ver img\estructura\LEEME.txt.
-  • En el mismo archivo están los textos de la diapositiva "¿Por qué ELEGIRNOS?"
-    (carta 3 de la portada): elegirnosAntetitulo / elegirnosTitulo y cuatro
-    tarjetas de vidrio. Cada tarjeta, en "elegirnos", tiene imagen (su ícono
+  • En el mismo archivo están los textos de la diapositiva "¿Qué hacemos
+    DIFERENTE?" (carta 3 de la portada): elegirnosAntetitulo / elegirnosTitulo
+    y cuatro tarjetas de vidrio. Las tarjetas se muestran en el orden de la
+    lista. Cada tarjeta, en "elegirnos", tiene imagen (su ícono
     en SVG, en img\estructura\elegirnos), icono de respaldo (excelencia,
     innovacion, flexibilidad o crecimiento), titulo, texto y, si querés,
     datos: cifras destacadas con valor y texto (por ejemplo 98%).
@@ -178,6 +179,16 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     palabra (con su "el" o "la") pasa sola a la segunda línea.
   • El fondo de esa parte es img\slides\nuestra-estructura\fondo-elegirnos.jpg.
   • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
+  • adaptabilidad: la pantalla que sigue a las tarjetas ("No hacemos lo que
+    hacen todos. Hacemos lo que Ford necesita"). Tiene antetitulo, titulo
+    (*Ford* entre asteriscos simples sale en rojo), bajada y cuatro pasos
+    (titulo y texto de cada uno). En el paso 1, "etiquetas" son las
+    necesidades que aparecen alrededor de la forma; en el paso 3, "sistemas"
+    son los sistemas que aparecen con el sello "a medida". Los pasos pasan
+    solos si nadie toca nada; al final aparece el botón botonSeguir
+    ("Seguí bajando"). Se pueden cambiar los textos, no la cantidad de pasos.
+    Los demás textos (necesidad, estandar, medida, sello…) son los carteles
+    del dibujo.
 
 
 MEJORA CONTINUA (después de "¿Por qué elegirnos?", en la carta 3)

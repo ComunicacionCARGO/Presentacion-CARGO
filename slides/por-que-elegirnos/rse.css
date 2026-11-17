@@ -1,8 +1,8 @@
 /* =========================================================
    RSE (datos/rse.js) — tres secciones de 900 px dentro de .mc-tramo:
-   1. Tablero "Hacia un impacto CERO" (rse.js, y 900)
-   2. "Lo que hacemos, EN NÚMEROS" (rse-numeros.js, y 1800)
-   3. "Acompañamos a la COMUNIDAD" (rse-comunidad.js, y 2700)
+   1. Tablero "Hacia un impacto CERO" (rse.js, y 1800)
+   2. "Lo que hacemos, EN NÚMEROS" (rse-numeros.js, y 2700)
+   3. "Acompañamos a la COMUNIDAD" (rse-comunidad.js, y 3600)
    Fondo crema como el resto y acento VERDE (excepción al manual pedida por la
    persona para esta parte). Vidrio vivo: tarjetas translúcidas con
    backdrop-filter sobre manchas verdes suaves (quietas, para no recalcular el vidrio en cada cuadro).
@@ -23,9 +23,9 @@
   color: var(--gris);
   pointer-events: auto;
 }
-.mc-rse { top: 900px; }
-.mc-num { top: 1800px; }
-.mc-com { top: 2700px; }
+.mc-rse { top: 1800px; }   /* antes 900, 1800 y 2700: arriba se sumó la pantalla de adaptabilidad (adaptabilidad.js) */
+.mc-num { top: 2700px; }
+.mc-com { top: 3600px; }
 .mc-rse h2, .mc-rse h3, .mc-rse p, .mc-rse ul,
 .mc-num h2, .mc-num h3, .mc-num p,
 .mc-com h2, .mc-com h3, .mc-com p, .mc-com figure { margin: 0; padding: 0; }
@@ -38,7 +38,7 @@
 .rse-fondo-comun {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
-  top: 900px;
+  top: 1800px;
   width: calc(100vw / var(--escala, 1));
   height: calc(2700px + 50vh / var(--escala, 1));
   background: var(--blanco);

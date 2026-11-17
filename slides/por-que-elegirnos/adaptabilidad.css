@@ -1,0 +1,168 @@
+/* =========================================================
+   ADAPTABILIDAD (adaptabilidad.js; datos en datos/estructura.js → adaptabilidad)
+   Pantalla gris de 900 px dentro de .mc-tramo (top 0), entre las tarjetas y la
+   pantalla partida: el gris continúa el de arriba y el de abajo, sin costuras.
+   Izquierda (x 64, y 84): encabezado y los cuatro pasos. Derecha: la escena
+   (x 640–1540, y 60–840) con la necesidad de Ford y la pieza de CARGO.
+   ========================================================= */
+.mc-adap { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; color: var(--blanco); pointer-events: auto; }
+.mc-adap h2, .mc-adap p, .mc-adap ol { margin: 0; padding: 0; }
+.mc-adap ol { list-style: none; }
+.mc-adap strong { font-weight: 600; color: var(--blanco); }
+.mc-adap em { font-style: normal; color: var(--rojo); }
+
+/* Fondo: el gris de la marca a todo el ancho de la ventana, con un resplandor rojo detrás de la escena */
+.ad-fondo {
+  position: absolute; top: 0; bottom: 0;
+  left: calc(800px - 50vw / var(--escala, 1)); width: calc(100vw / var(--escala, 1));
+  background:
+    radial-gradient(620px 520px at calc(50vw / var(--escala, 1) + 290px) 450px, rgba(239, 69, 41, .13), rgba(239, 69, 41, 0) 70%),
+    var(--gris);
+}
+
+/* ---------- Columna izquierda ---------- */
+.ad-izq { position: absolute; left: 64px; top: 84px; width: 540px; }
+.ad-ante { font-size: 34px; font-weight: 300; line-height: 1.15; color: rgba(255, 251, 243, .86); }
+.ad-titulo { margin-top: 6px !important; font: 700 76px/1 var(--fuente-titulo); letter-spacing: .005em; text-transform: uppercase; color: var(--blanco); }
+.ad-bajada { margin-top: 20px !important; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .78); }
+
+/* Pasos: botones que se despliegan (el elegido muestra su texto) */
+.ad-pasos { margin-top: 30px !important; display: flex; flex-direction: column; gap: 8px; }
+.ad-paso {
+  position: relative; display: block; width: 100%; padding: 0; overflow: hidden;
+  border: 1px solid rgba(255, 251, 243, .14); border-radius: 14px;
+  background: rgba(255, 251, 243, .04); color: inherit; font: inherit; text-align: left; cursor: pointer;
+  transition: background .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.ad-paso:hover { background: rgba(255, 251, 243, .09); border-color: rgba(255, 251, 243, .3); }
+.ad-paso.activo { background: rgba(255, 251, 243, .1); border-color: rgba(239, 69, 41, .65); box-shadow: 0 18px 34px -22px rgba(0, 0, 0, .8), inset 4px 0 0 var(--rojo); }
+.ad-paso-cab { display: flex; align-items: center; gap: 16px; height: 54px; padding: 0 20px; }
+.ad-paso-cab b { width: 30px; font: 700 20px var(--fuente-titulo); color: rgba(255, 251, 243, .4); transition: color .3s ease; }
+.ad-paso.activo .ad-paso-cab b, .ad-paso.visto .ad-paso-cab b { color: var(--rojo); }
+.ad-paso-cab > span { flex: 1; font: 700 22px var(--fuente-titulo); letter-spacing: .03em; text-transform: uppercase; color: rgba(255, 251, 243, .7); transition: color .3s ease; }
+.ad-paso.activo .ad-paso-cab > span { color: var(--blanco); }
+/* tilde de los pasos ya vistos */
+.ad-tilde { width: 20px; height: 20px; border-radius: 50%; background: var(--rojo); opacity: 0; scale: .5; transition: opacity .3s ease, scale .4s cubic-bezier(.3, 1.6, .5, 1); }
+.ad-tilde::after { content: ""; display: block; width: 8px; height: 4px; margin: 6px 0 0 5.5px; border: solid var(--blanco); border-width: 0 0 2px 2px; rotate: -45deg; }
+.ad-paso.visto .ad-tilde { opacity: 1; scale: 1; }
+/* el paso que sigue late, para invitar a tocarlo */
+.ad-paso.siguiente::after { content: ""; position: absolute; right: 22px; top: 21px; width: 12px; height: 12px; border-radius: 50%; background: var(--rojo); animation: ad-latir 1.6s ease-out infinite; }
+@keyframes ad-latir { 0% { box-shadow: 0 0 0 0 rgba(239, 69, 41, .65); } 100% { box-shadow: 0 0 0 14px rgba(239, 69, 41, 0); } }
+.ad-paso-cuerpo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s cubic-bezier(.2, .8, .2, 1); }
+.ad-paso.activo .ad-paso-cuerpo { grid-template-rows: 1fr; }
+.ad-paso-cuerpo > span { overflow: hidden; min-height: 0; }
+.ad-paso-txt { display: block; padding: 0 22px 18px 66px; font-size: 15.5px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .82); opacity: 0; transition: opacity .3s ease; }
+.ad-paso.activo .ad-paso-txt { opacity: 1; transition-delay: .2s; }
+/* barrita de tiempo cuando los pasos pasan solos */
+.ad-paso-barra { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; }
+.ad-paso-barra i { display: block; width: 0; height: 100%; background: rgba(239, 69, 41, .8); }
+
+/* ---------- Escena ---------- */
+.ad-escena { position: absolute; left: 640px; top: 60px; width: 900px; height: 780px; perspective: 1400px; }
+.ad-giro { position: absolute; inset: 0; transition: transform .6s cubic-bezier(.2, .8, .2, 1); transform-style: flat; }
+.ad-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ad-guias { fill: none; stroke: rgba(255, 251, 243, .09); stroke-width: 1; stroke-dasharray: 2 7; }
+.ad-guias path { stroke-dasharray: none; stroke: rgba(255, 251, 243, .25); }
+.ad-halo { opacity: 0; }
+/* la necesidad */
+.ad-nec-trazo { fill: none; stroke: rgba(255, 251, 243, .45); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ad-nec-borde { fill: none; stroke: rgba(255, 251, 243, .85); stroke-width: 2.4; stroke-dasharray: 10 8; stroke-linecap: round; opacity: 0; }
+.mc-adap.encajo .ad-nec-borde { stroke: rgba(255, 251, 243, .5); }
+/* la solución estándar */
+.ad-estandar { opacity: 0; }
+.ad-estandar rect { fill: rgba(150, 150, 150, .3); stroke: rgba(210, 210, 210, .7); stroke-width: 2; }
+.ad-estandar text { text-anchor: middle; fill: rgba(255, 251, 243, .85); }
+.ad-est-t { font: 700 26px var(--fuente-titulo); letter-spacing: .06em; }
+.ad-est-n { font: italic 300 18px var(--fuente-texto, Inter); fill: rgba(255, 251, 243, .65) !important; }
+.ad-cruz { opacity: 0; }
+.ad-cruz circle { fill: var(--rojo); }
+.ad-cruz path { fill: none; stroke: var(--blanco); stroke-width: 4; stroke-linecap: round; }
+/* la pieza de CARGO */
+.ad-pieza, .ad-pieza-luz, .ad-pieza-sombra { opacity: 0; }
+.ad-pieza { stroke: rgba(255, 220, 205, .5); stroke-width: 1.5; }
+.ad-pieza-sombra { fill: #000; transform: translate(0, 22px); }
+.ad-pieza-pulso { fill: none; stroke: var(--rojo); stroke-width: 3; opacity: 0; transform-origin: 450px 392px; }
+.mc-adap.encajo .ad-pieza-pulso { animation: ad-pulso 1.1s ease-out 1; }
+@keyframes ad-pulso { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.18); } }
+/* líneas a las etiquetas y a los sistemas */
+.ad-lineas-etiq line { stroke: rgba(255, 251, 243, .35); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0; transition: opacity .5s ease; }
+.ad-lineas-sist line { stroke: rgba(239, 69, 41, .75); stroke-width: 1.4; opacity: 0; transition: opacity .5s ease; }
+.mc-adap[data-paso="0"] .ad-lineas-etiq line { opacity: 1; transition-delay: .9s; }
+.mc-adap[data-paso="2"] .ad-lineas-sist line { opacity: 1; transition-delay: .5s; }
+/* ciclo del paso 4 */
+.ad-ciclo { opacity: 0; transition: opacity .6s ease; }
+.ad-ciclo path { fill: none; stroke: rgba(255, 251, 243, .55); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 2 7; }
+.ad-ciclo-giro { transform-origin: 450px 392px; animation: ad-girar 14s linear infinite; animation-play-state: paused; }
+.mc-adap[data-paso="3"] .ad-ciclo { opacity: 1; }
+.mc-adap[data-paso="3"] .ad-ciclo-giro { animation-play-state: running; }
+@keyframes ad-girar { to { rotate: 360deg; } }
+
+/* etiquetas (paso 1): pastillas de vidrio alrededor */
+.ad-etiq, .ad-sist { position: absolute; translate: -50% -50%; white-space: nowrap; pointer-events: none; }
+.ad-etiq {
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border: 1px solid rgba(255, 251, 243, .3); border-radius: 999px;
+  background: rgba(58, 58, 58, .72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  font-size: 15px; font-weight: 400; color: rgba(255, 251, 243, .92);
+  opacity: 0; scale: .85; transition: opacity .35s ease, scale .35s ease;
+}
+.ad-etiq i { width: 7px; height: 7px; border-radius: 50%; background: var(--blanco); }
+.mc-adap[data-paso="0"] .ad-etiq { opacity: 1; scale: 1; transition: opacity .5s ease calc(.7s + var(--i) * .16s), scale .6s cubic-bezier(.3, 1.5, .5, 1) calc(.7s + var(--i) * .16s); }
+/* sistemas a medida (paso 3) */
+.ad-sist {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px 9px;
+  border-radius: 12px; background: var(--blanco); color: var(--gris);
+  box-shadow: 0 18px 30px -16px rgba(0, 0, 0, .7);
+  opacity: 0; scale: .7; transition: opacity .3s ease, scale .3s ease;
+}
+.ad-sist span { font: 700 17px var(--fuente-titulo); letter-spacing: .03em; text-transform: uppercase; }
+.ad-sist b { padding: 2px 8px; border: 1.5px solid var(--rojo); border-radius: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); rotate: -3deg; }
+.mc-adap[data-paso="2"] .ad-sist { opacity: 1; scale: 1; transition: opacity .4s ease calc(.4s + var(--i) * .13s), scale .55s cubic-bezier(.3, 1.6, .5, 1) calc(.4s + var(--i) * .13s); }
+.mc-adap[data-paso="3"] .ad-sist { opacity: .25; scale: .92; transition-duration: .5s; }
+
+/* textos del centro */
+.ad-centro { position: absolute; left: 450px; top: 392px; width: 280px; translate: -50% -50%; text-align: center; pointer-events: none; opacity: 0; transition: opacity .45s ease, scale .5s ease; scale: .92; }
+.ad-c-nec span { font: 700 26px/1.1 var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; color: rgba(255, 251, 243, .85); }
+.ad-c-med b { display: block; font: 700 34px/1 var(--fuente-titulo); letter-spacing: .03em; text-transform: uppercase; color: var(--blanco); }
+.ad-c-med span { display: block; margin-top: 6px; font-size: 17px; font-style: italic; font-weight: 300; color: rgba(255, 251, 243, .9); }
+.ad-sello { display: inline-block; padding: 12px 18px; border: 3px double rgba(255, 251, 243, .9); border-radius: 8px; font: 700 26px/1.05 var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; color: var(--blanco); rotate: -6deg; }
+.ad-sello em { color: var(--blanco); }
+.mc-adap[data-paso="0"] .ad-c-nec { opacity: 1; scale: 1; transition-delay: .5s; }
+.mc-adap.encajo[data-paso="1"] .ad-c-med, .mc-adap[data-paso="3"] .ad-c-med { opacity: 1; scale: 1; }
+.mc-adap[data-paso="2"] .ad-c-sello { opacity: 1; scale: 1; transition: opacity .3s ease .2s, scale .5s cubic-bezier(.3, 1.8, .5, 1) .2s; }
+
+/* rótulo del paso, arriba a la izquierda de la escena */
+.ad-rotulo { position: absolute; left: 40px; top: 24px; display: flex; align-items: baseline; gap: 8px; font-family: var(--fuente-titulo); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 251, 243, .55); }
+.ad-rotulo b { font-size: 26px; color: var(--rojo); }
+.ad-rotulo span { font-size: 15px; }
+.ad-rotulo i { align-self: center; width: 28px; height: 1px; margin: 0 4px; background: rgba(255, 251, 243, .35); }
+.ad-rotulo em { font-size: 15px; font-style: normal; color: rgba(255, 251, 243, .85); }
+
+/* "Siguiente paso" y, al final, "Seguí bajando" (en el mismo lugar, abajo a la derecha) */
+.ad-sig, .ad-seguir {
+  position: absolute; right: 30px; bottom: 16px;
+  display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 18px 0 22px;
+  border: 0; border-radius: 999px; font: 500 16px var(--fuente-titulo); letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+  transition: opacity .4s ease, translate .4s ease, background .25s ease;
+}
+.ad-sig svg, .ad-seguir svg { width: 20px; height: 20px; fill: currentColor; }
+.ad-sig { background: var(--blanco); color: var(--gris); box-shadow: 0 16px 30px -16px rgba(0, 0, 0, .8); }
+.ad-sig::before { content: attr(data-antes); margin-right: -2px; font-family: var(--fuente-texto, Inter); font-size: 13px; font-weight: 400; letter-spacing: .02em; text-transform: none; color: rgba(58, 58, 58, .6); }
+.ad-sig:hover { background: #fff; }
+.ad-sig:hover svg { translate: 3px 0; }
+.mc-adap.ultimo .ad-sig, .mc-adap:not([data-paso]) .ad-sig { opacity: 0; pointer-events: none; translate: 0 10px; }
+.ad-seguir { background: var(--rojo); color: var(--blanco); box-shadow: 0 18px 34px -16px rgba(160, 40, 20, .9); opacity: 0; translate: 0 14px; pointer-events: none; }
+.mc-adap.terminado .ad-seguir { opacity: 1; translate: 0 0; pointer-events: auto; animation: ad-invitar 1.8s ease-in-out 1s infinite; }
+.mc-adap.terminado:not(.ultimo) .ad-seguir { right: auto; left: 40px; }   /* si se volvió a un paso anterior, no pisa "Paso siguiente" */
+@keyframes ad-invitar { 0%, 100% { translate: 0 0; } 50% { translate: 0 6px; } }
+.ad-seguir svg { animation: ad-flecha 1.8s ease-in-out infinite; }
+@keyframes ad-flecha { 0%, 100% { translate: 0 -2px; } 50% { translate: 0 3px; } }
+
+/* entrada con el scroll */
+.mc-adap .ent { opacity: 0; translate: 0 24px; transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1); }
+.mc-adap.visible .ent { opacity: 1; translate: 0 0; }
+.mc-adap.visible .ad-titulo { transition-delay: .08s; }
+.mc-adap.visible .ad-bajada { transition-delay: .16s; }
+.mc-adap.visible .ad-pasos .ent { transition-delay: calc(.26s + var(--i) * .08s); }
+.ad-escena { opacity: 0; transition: opacity 1s ease .2s; }
+.mc-adap.visible .ad-escena { opacity: 1; }

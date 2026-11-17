@@ -1,12 +1,12 @@
 /* =========================================================
    NUESTROS CLIENTES (clientes.js, datos/clientes.js) — cierre de "¿Por qué elegirnos?".
-   Va dentro de .mc-tramo en y 3600, después de Comunidad. La diapositiva vuelve al rojo de
+   Va dentro de .mc-tramo en y 4500, después de Comunidad. La diapositiva vuelve al rojo de
    la marca: arriba, las franjas (gris, rojo) separan el crema de RSE del rojo; logos en
    blanco en una grilla de 6 × 6 que se filtra por rubro.
    Medidas en px del escenario de 1600 × 900.
    ========================================================= */
 /* Sube por encima de Comunidad, que queda quieta (diapositiva.js le da su propio translate) */
-.mc-cli { position: absolute; left: 0; top: 3600px; width: 1600px; height: 1000px; z-index: 3; color: var(--blanco); pointer-events: auto; will-change: translate; }
+.mc-cli { position: absolute; left: 0; top: 4500px; width: 1600px; height: 1000px; z-index: 3; color: var(--blanco); pointer-events: auto; will-change: translate; }
 .mc-cli h2, .mc-cli p, .mc-cli ul { margin: 0; padding: 0; }
 .mc-cli ul { list-style: none; }
 

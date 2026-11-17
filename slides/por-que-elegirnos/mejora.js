@@ -191,14 +191,16 @@
   // =========================================================
   let bajada = 0;
   document.addEventListener('desplazamiento', (e) => {
-    bajada = Math.max(0, e.detail.y);   // la pantalla partida empieza en y 900 de la diapositiva (debajo de "¿Por qué elegirnos?")
-    elegir.classList.toggle('visible', bajada > 450);
+    // la pantalla partida empieza en y 1800 de la diapositiva (debajo de las tarjetas y de la
+    // pantalla de adaptabilidad): queda entera en pantalla con bajada = 1800
+    bajada = Math.max(0, e.detail.y);
+    elegir.classList.toggle('visible', bajada > 1350);
     tramo.setAttribute('aria-hidden', bajada > 300 ? 'false' : 'true');
-    if ((bajada < 600 || bajada > 1300) && hover >= 0 && eligiendo < 0) resaltar(-1);
+    if ((bajada < 1500 || bajada > 2200) && hover >= 0 && eligiendo < 0) resaltar(-1);
   });
   // en la pantalla partida: ← → eligen un lado y Enter lo abre
   addEventListener('keydown', (e) => {
-    if (capitulo.classList.contains('abierto') || bajada < 800 || bajada > 1100) return;
+    if (capitulo.classList.contains('abierto') || bajada < 1700 || bajada > 2000) return;
     if (e.key === 'ArrowLeft') { e.preventDefault(); resaltar(0); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); resaltar(1); }
     else if (e.key === 'Enter' && hover >= 0) { e.preventDefault(); elegirTema(hover); }

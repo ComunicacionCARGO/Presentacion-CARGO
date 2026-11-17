@@ -121,7 +121,7 @@
   // Al final, RSE (Comunidad) queda quieta y "Nuestros clientes" sube por encima:
   // pasado QUIETO_DESDE el tramo deja de subir y solo se mueve la sección de Clientes.
   const tramo = $('.mc-tramo'), clientesEl = $('.mc-cli');
-  const QUIETO_DESDE = 900 + 2700;                  // Comunidad entera en pantalla
+  const QUIETO_DESDE = 900 + 900 + 2700;            // Comunidad entera en pantalla (adaptabilidad + pantalla partida + RSE)
   let bajada = -1;
   document.addEventListener('desplazamiento', (e) => {
     const y = Math.max(0, e.detail.y);
@@ -133,7 +133,7 @@
     seccionEl.classList.toggle('lejos', y > 1800);   // ya quedó muy arriba: no se dibuja
   });
 
-  const MAXIMO = 900 + 2700 + 1000;               // pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) + Clientes (1000: al final aparece el botón Volver)
+  const MAXIMO = 900 + 900 + 2700 + 1000;         // adaptabilidad (900) + pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) + Clientes (1000: al final aparece el botón Volver)
   const RIGIDEZ = 13;
   let objetivoY = 0, animacion = null, velocidad = 0, posicion = 0, ultimoCuadro = 0;
   const destino = () => (animacion ? objetivoY : (window.desplazamiento ? window.desplazamiento.y : 0));

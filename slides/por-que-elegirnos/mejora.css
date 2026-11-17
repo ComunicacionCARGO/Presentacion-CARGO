@@ -7,8 +7,9 @@
    parte gris continúa el gris de arriba; después sigue RSE (rse.css) */
 .seccion-mejora, .mc-tramo { will-change: translate; }   /* diapositiva.js les pone `translate` con el scroll; cada una es su propia capa */
 .seccion-mejora.lejos { visibility: hidden; }        /* ya quedó muy arriba */
-.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 4600px; z-index: 7; pointer-events: none; }
-.mc-elegir { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.mc-tramo { position: absolute; left: 0; top: 900px; width: 1600px; height: 5500px; z-index: 7; pointer-events: none; }
+/* arriba de la pantalla partida va la de adaptabilidad (adaptabilidad.js, top 0 del tramo) */
+.mc-elegir { position: absolute; left: 0; top: 900px; width: 1600px; height: 900px; }
 .mc-elegir.visible { pointer-events: auto; cursor: pointer; }
 .mc-elegir.eligiendo { pointer-events: none; }
 

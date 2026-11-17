@@ -26,14 +26,11 @@ window.ESTRUCTURA = {
      datos:  (opcional) cifras destacadas, cada una con valor y texto. */
   elegirnos: [
     {
-      icono: "excelencia",
-      imagen: "img/estructura/elegirnos/excelencia.svg",
-      titulo: "Excelencia en el servicio",
-      texto: "Nuestra cultura de **mejora continua** sostiene un servicio de alto nivel, alineado a los estándares del cliente.",
-      datos: [
-        { valor: "98%", texto: "de cumplimiento en tiempos de entrega en rutas propias" },
-        { valor: "+500.000 kg", texto: "movilizados por mes" }
-      ]
+      icono: "flexibilidad",
+      imagen: "img/estructura/elegirnos/flexibilidad.svg",
+      titulo: "Flexibilidad y adaptabilidad",
+      texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
+      datos: []
     },
     {
       icono: "innovacion",
@@ -43,20 +40,66 @@ window.ESTRUCTURA = {
       datos: []
     },
     {
-      icono: "flexibilidad",
-      imagen: "img/estructura/elegirnos/flexibilidad.svg",
-      titulo: "Flexibilidad y adaptabilidad",
-      texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
-      datos: []
-    },
-    {
       icono: "crecimiento",
       imagen: "img/estructura/elegirnos/crecimiento.svg",
       titulo: "Compromiso con el crecimiento",
       texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
       datos: []
+    },
+    {
+      icono: "excelencia",
+      imagen: "img/estructura/elegirnos/excelencia.svg",
+      titulo: "Excelencia en el servicio",
+      texto: "Nuestra cultura de **mejora continua** sostiene un servicio de alto nivel, alineado a los estándares del cliente.",
+      datos: [
+        { valor: "98%", texto: "de cumplimiento en tiempos de entrega en rutas propias" },
+        { valor: "+500.000 kg", texto: "movilizados por mes" }
+      ]
     }
   ],
+
+  /* ---------- Adaptabilidad: la pantalla que sigue a las tarjetas ----------
+     Profundiza "Flexibilidad" e "Innovación": nuestro mayor valor es adaptarnos al
+     cliente, y para eso desarrollamos la tecnología a su medida.
+     *texto* (entre asteriscos simples) se ve en rojo; **texto**, en negrita.
+     pasos: los cuatro momentos que se recorren (a la izquierda), cada uno cambia el
+     dibujo de la derecha. Se pueden cambiar los textos, no la cantidad de pasos.
+       etiquetas (paso 1): las necesidades que aparecen alrededor de la forma.
+       sistemas (paso 3): los sistemas que aparecen alrededor, con el sello "a medida". */
+  adaptabilidad: {
+    antetitulo: "No hacemos lo que hacen todos.",
+    titulo: "Hacemos lo que *Ford* necesita",
+    bajada: "La **adaptabilidad** es nuestro mayor valor agregado. Para lograrla innovamos y desarrollamos **tecnología y sistemas propios, adaptados a Ford**.",
+    pasos: [
+      {
+        titulo: "Escuchamos",
+        texto: "Primero entendemos cómo opera Ford: su red de concesionarios, sus tiempos, sus sistemas y sus estándares. Cada necesidad tiene su forma.",
+        etiquetas: ["Red de concesionarios", "Repuestos urgentes", "Ventanas de entrega", "Su ERP", "Estándares Ford", "Devoluciones"]
+      },
+      {
+        titulo: "Diseñamos a medida",
+        texto: "Una solución estándar no encaja. Diseñamos la operación para esa necesidad: rutas, centros, procesos y tiempos."
+      },
+      {
+        titulo: "Desarrollamos la tecnología",
+        texto: "Las herramientas que viste en «Un servicio para Ford» **no son un producto de catálogo**: nuestro equipo las desarrolla y adapta para ustedes.",
+        sistemas: ["Gestión de cargas", "Despachos y e-POD", "Tracking web", "Interfases con su ERP", "Atención con TICO", "Logística inversa", "Tableros de BI"]
+      },
+      {
+        titulo: "Evolucionamos juntos",
+        texto: "Si la necesidad cambia, la solución cambia con ella: medimos, ajustamos y mejoramos de forma continua."
+      }
+    ],
+    necesidad: "La necesidad de Ford",
+    estandar: "Solución estándar",
+    estandarNota: "lo que hacen todos",
+    medida: "Solución CARGO",
+    medidaNota: "a medida de Ford",
+    sello: "Desarrollado para Ford",
+    aMedida: "a medida",
+    pasoSiguiente: "Paso siguiente:",
+    botonSeguir: "Seguí bajando"
+  },
 
   /* Cada área es una burbuja de la red. Tiene:
      id:      nombre corto sin espacios ni acentos (no se ve; no lo repitas).

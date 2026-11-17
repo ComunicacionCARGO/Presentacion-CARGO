@@ -231,7 +231,9 @@
     const segundos = yaBajo ? (+T.segundosSinBajar || 6) : 1.6;
     const alFinal = !s || s.y >= s.max - 30;
     const puede = lista() && listaDesde && ahora - listaDesde > 1200 && !alFinal && !moviendo() &&
-      !bloqueado() && !document.body.classList.contains('capitulo-abierto') && ahora - ultimoMov > segundos * 1000;
+      !bloqueado() && !document.body.classList.contains('capitulo-abierto') && ahora - ultimoMov > segundos * 1000 &&
+      // una sección que tiene su propia invitación a seguir bajando lo pide con body.sin-guia-scroll
+      !document.body.classList.contains('sin-guia-scroll');
     const visible = guia.classList.contains('visible');
     if (puede && !visible) {
       const x = POSICIONES.find((v) => !ocupado(v));
