@@ -18,11 +18,22 @@
     if (padre) padre.appendChild(el);
     return el;
   }
-  // ---------- Título ----------
-  $('.mc-ante').textContent = E.elegirnosAntetitulo || '¿Por qué';
-  $('.mc-grande').textContent = E.elegirnosTitulo || 'ELEGIRNOS?';
+  const seccionEl = $('.seccion-mejora');
+  const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // ---------- Título: cada letra de la palabra grande sube por separado ----------
+  const anteEl = $('.mc-ante'), grandeEl = $('.mc-grande');
+  anteEl.textContent = E.elegirnosAntetitulo || '¿Qué hacemos';
+  grandeEl.innerHTML = Array.from(E.elegirnosTitulo || 'DIFERENTE?').map((c, l) => `<i style="--l:${l}">${c === ' ' ? '&nbsp;' : esc(c)}</i>`).join('');
+  // si se cambia por un texto más largo, la letra se achica para que entre
+  const ajustarTitulo = () => {
+    anteEl.style.fontSize = grandeEl.style.fontSize = '';
+    if (anteEl.scrollWidth > 1180) anteEl.style.fontSize = (110.4 * 1180 / anteEl.scrollWidth) + 'px';
+    if (grandeEl.scrollWidth > 1180) grandeEl.style.fontSize = (212 * 1180 / grandeEl.scrollWidth) + 'px';
+  };
+  ajustarTitulo();
+  if (document.fonts) document.fonts.ready.then(ajustarTitulo);
 
-  // ---------- Tarjetas de "¿Por qué elegirnos?" (íconos redibujados de las diapositivas originales) ----------
+  // ---------- Íconos de "¿Qué hacemos diferente?" (incluidos, por si falta el SVG propio) ----------
   const sello = (() => {
     // sello dentado con un aro y un tilde calados
     const pts = [], n = 16;
@@ -43,30 +54,7 @@
       '<circle cx="22" cy="12.3" r="1.25"/><circle cx="20.6" cy="17" r="1.25"/><circle cx="7.2" cy="20.3" r="1.25"/><circle cx="12" cy="21.3" r="1.25"/><circle cx="16.8" cy="20.3" r="1.25"/>',
     flexibilidad:
       '<path fill-rule="evenodd" d="M6.6 3h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM17.2 5a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>' +
-      '<path fill-rule="evenodd" d="M6.6 13.2h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM6.8 15.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>',
-    // tres personas de la mano (la de la izquierda con vestido) y una flecha en zigzag que sube
-    crecimiento: (() => {
-      const persona = (cx, vestido) => {
-        const cabeza = `<circle cx="${cx}" cy="3.3" r="1.75"/>`;
-        const cuerpo = vestido
-          ? `<path d="M${cx - 1.5} 5.6h3l1.4 4.6.9 3.4h-2.2v4.8h-1.3v-4.8h-.6v4.8h-1.3v-4.8h-2.2l.9-3.4z"/>`
-          : `<path d="M${cx - 1.6} 5.6h3.2c.8 0 1.4.6 1.4 1.4v4.9h-1.2v6.2h-1.4v-5.4h-.8v5.4H${cx - 1.6}v-6.2h-1.2V7c0-.8.6-1.4 1.4-1.4z"/>`;
-        return cabeza + cuerpo;
-      };
-      return persona(5.2, true) + persona(12, false) + persona(18.8, false) +
-        '<path d="M7.4 9.6h2.6v1.1H7.4zM14 9.6h2.6v1.1H14z"/>' +
-        '<path class="hueco" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/><path class="trazo flecha" d="M2 22l6.2-6.4 3.8 3.4 7.6-7.8"/>' +
-        '<path d="M22.8 8.4l-.6 6.4-2.4-2.4-1.6-1.6-2.4-2.4z"/>';
-    })()
-  };
-  // Título al lado del ícono en dos líneas: la última palabra baja, junto con su artículo
-  // ("Excelencia en / el servicio", "Innovación y / tecnología")
-  const tituloEnDosLineas = (titulo) => {
-    const p = String(titulo || '').trim().split(/\s+/);
-    if (p.length < 2) return formato(titulo);
-    let corte = p.length - 1;
-    if (corte > 1 && /^(el|la|los|las|un|una|lo)$/i.test(p[corte - 1])) corte--;
-    return formato(p.slice(0, corte).join(' ')) + '<br>' + formato(p.slice(corte).join(' '));
+      '<path fill-rule="evenodd" d="M6.6 13.2h10.8a4.4 4.4 0 0 1 0 8.8H6.6a4.4 4.4 0 0 1 0-8.8zM6.8 15.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z"/>'
   };
   const contEl = $('.el-tarjetas');
   // Adónde lleva cada tarjeta ("ir" en los datos): la sección queda entera en pantalla
@@ -80,58 +68,206 @@
     if (t.ir === 'adaptabilidad' && t.paso && window.ADAPTABILIDAD) window.ADAPTABILIDAD.abrir(+t.paso - 1);
     window.desplazarA(900 + el.offsetTop);
   }
-  (E.elegirnos || []).slice(0, 4).forEach((t, i) => {
-    const art = crear('article', 'el-tarjeta', contEl);
-    const conDestino = !!SECCION_DE[String(t.ir || '').trim()];
-    art.style.setProperty('--i', i);
-    const v = crear('div', 'el-vidrio', art);
-    v.style.setProperty('--i', i);
+
+  // ---------- Dónde va cada ícono (medido del diseño de la persona, en px del escenario) ----------
+  // icono: x, y y lado de la caja del SVG; dibujo: dónde está el dibujo dentro de esa caja (0–1);
+  // etiqueta: arriba a la izquierda del título; de → a: la línea, del título al punto de la foto,
+  // que va pegado a una capa (el escáner y la tabla, al operario; el estante, al depósito).
+  const LUGARES = {
+    innovacion:   { icono: [125.7, 488.9, 144.5], dibujo: [.03, .07, .978, .927], etiqueta: [294, 508.7], de: [530, 538], a: [659, 470], capa: 'operario', curva: .2 },
+    flexibilidad: { icono: [571.5, 730.4, 131.5], dibujo: [.133, .152, .875, .855], etiqueta: [711, 750.3], de: [716, 714], a: [739, 613], capa: 'operario', curva: .14 },
+    excelencia:   { icono: [1081, 559.4, 136.3], dibujo: [.122, .122, .885, .887], etiqueta: [1221, 579.1], de: [1158, 568], a: [1094, 450], capa: 'deposito', curva: -.18 }
+  };
+  const ORDEN_LUGARES = ['innovacion', 'flexibilidad', 'excelencia'];
+  const PAD = 26, ALTO_RENGLON = 46;
+  // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
+  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], puntos: [32, -.05] };
+  const capas = {};
+  document.querySelectorAll('.df-capa').forEach((c) => { capas[c.dataset.capa] = c; });
+
+  const svgLineas = $('.df-lineas'), defs = $('defs', svgLineas);
+  const NS = 'http://www.w3.org/2000/svg';
+  const nuevoSvg = (tag, attrs, padre) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); padre.appendChild(e); return e; };
+
+  const usados = new Set();
+  const puntos = (E.elegirnos || []).slice(0, 3).map((t, i) => {
+    // lugar por su ícono; si no coincide, el primero libre
+    let clave = LUGARES[t.icono] && !usados.has(t.icono) ? t.icono : ORDEN_LUGARES.find((k) => !usados.has(k));
+    usados.add(clave);
+    const L = LUGARES[clave];
+    const [ix, iy, is] = L.icono, [d0, d1, , d3] = L.dibujo;
+    const x = ix + d0 * is - PAD, y = iy + d1 * is - PAD;          // esquina de la tarjeta abierta
+    const renglones = String(t.titulo || '').split(/\s+\/\s+/).filter(Boolean);
+    const cabH = Math.max(iy + d3 * is, L.etiqueta[1] + renglones.length * ALTO_RENGLON) - y + 14;
+    const el = crear('div', 'df-punto', contEl);
     const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
-    const cont = crear('div', 'el-contenido', v,
-      `<div class="el-cabeza"><span class="el-icono"></span><h3 class="el-titulo">${tituloEnDosLineas(t.titulo)}</h3></div><p class="el-texto">${formato(t.texto)}</p>` +
-      (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : ''));
+    const conDestino = !!SECCION_DE[String(t.ir || '').trim()];
+    el.dataset.icono = clave;
+    el.style.cssText = `--i:${i};--x:${x}px;--y:${y}px;--ix:${ix - x}px;--iy:${iy - y}px;--is:${is}px;--lx:${L.etiqueta[0] - x}px;--ly:${L.etiqueta[1] - y}px;--cab-h:${cabH}px;--ox:${ix - x + is / 2}px;--oy:${iy - y + is / 2}px`;
+    el.innerHTML =
+      '<div class="df-vidrio"><i class="df-brillo"></i></div>' +
+      `<div class="df-cabeza"><span class="el-icono"></span><h3 class="df-etiqueta">${renglones.map((r) => `<span>${formato(r)}</span>`).join('')}</h3></div>` +
+      `<div class="df-cuerpo"><p class="el-texto">${formato(t.texto)}</p>` +
+      (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : '') +
+      (t.frase ? `<p class="df-frase">${formato(t.frase)}</p>` : '') +
+      (conDestino ? `<span class="el-ir">${formato(t.boton || 'Ver más')}${flechaIr}</span>` : '') + '</div>';
+    el.setAttribute('aria-label', renglones.join(' '));
     // Ícono propio en SVG (si está); si no, el incluido
-    const ic = $('.el-icono', cont);
-    const incluido = () => { ic.classList.remove('propio'); ic.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg>`; };
+    const ic = $('.el-icono', el);
+    const incluido = () => { ic.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS_EL[t.icono] || ICONOS_EL.excelencia}</svg>`; };
     if (t.imagen) {
-      ic.classList.add('propio');
       const img = crear('img', '', ic);
       img.alt = '';
       img.onerror = incluido;
       img.src = '../../' + t.imagen;
     } else incluido();
-    crear('i', 'el-brillo', v);
-    // la tarjeta entera se puede tocar y lleva a su parte de la diapositiva
-    if (conDestino) {
-      art.classList.add('con-destino');
-      art.tabIndex = 0;
-      art.setAttribute('role', 'link');
-      crear('span', 'el-ir', v, `${formato(t.boton || 'Ver más')}${flechaIr}`);
-      art.addEventListener('click', () => irATarjeta(t));
-      art.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); irATarjeta(t); } });
-    }
-    // inclinación 3D y reflejo que siguen al cursor
-    art.addEventListener('pointermove', (e) => {
-      const r = v.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      v.style.setProperty('--ry', `${(x - .5) * 10}deg`);
-      v.style.setProperty('--rx', `${(.5 - y) * 8}deg`);
-      v.style.setProperty('--mx', `${x * 100}%`);
-      v.style.setProperty('--my', `${y * 100}%`);
-    });
-    art.addEventListener('pointerenter', () => art.classList.add('activa'));
-    art.addEventListener('pointerleave', () => {
-      art.classList.remove('activa');
-      v.style.setProperty('--rx', '0deg');
-      v.style.setProperty('--ry', '0deg');
-    });
+    // la línea (con un degradé que se apaga hacia el título) y el punto en la foto
+    const grad = nuevoSvg('linearGradient', { id: 'df-g-' + i, gradientUnits: 'userSpaceOnUse' }, defs);
+    nuevoSvg('stop', { offset: '0', 'stop-opacity': '.95' }, grad);
+    nuevoSvg('stop', { offset: '1', 'stop-opacity': '.2' }, grad);
+    const linea = nuevoSvg('path', { class: 'df-linea', pathLength: '1', stroke: `url(#df-g-${i})`, style: `--i:${i}` }, svgLineas);
+    const punto = nuevoSvg('g', { class: 'df-punto-foto', style: `--i:${i};--d:${i * -.9}s` }, svgLineas);
+    nuevoSvg('circle', { class: 'df-halo', r: '9' }, punto);
+    nuevoSvg('circle', { class: 'df-onda', r: '4.5' }, punto);
+    nuevoSvg('circle', { r: '4.5' }, punto);
+    return { t, el, L, x, y, grad, linea, punto, conDestino, p: 0, sube: 0, fase: i * 2.1 };
   });
 
-  // ---------- Entrada: cuando se abre la cortina, el título sube a su lugar y entran las tarjetas ----------
-  const seccionEl = $('.seccion-mejora');
-  const entrar = () => setTimeout(() => seccionEl.classList.add('arriba'), 350);
-  // Guía (compartido/guia.js): la mano invita a tocar la primera tarjeta, hasta que se toca una
-  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.el-tarjeta.con-destino .el-ir'), punto: [.5, .5], zona: '.el-tarjeta', lado: 'abajo', espera: 2.6, activa: () => seccionEl.classList.contains('arriba') && (window.desplazamiento ? window.desplazamiento.y : 0) < 60 });
+  // Si la tarjeta abierta no entra abajo, sube (con su título) lo que haga falta
+  const medir = () => puntos.forEach((o) => { const h = o.el.offsetHeight; o.sube = Math.max(92 - o.y, Math.min(0, 868 - (o.y + h))); });
+  medir();
+  if (document.fonts) document.fonts.ready.then(medir);
+
+  // ---------- Abrir y cerrar (cursor, foco o toque) ----------
+  let cierre = null;
+  function abrir(o) {
+    clearTimeout(cierre);
+    puntos.forEach((q) => {
+      const si = q === o;
+      q.el.classList.toggle('abierta', si);
+      q.linea.classList.toggle('activa', si);
+      q.grad.classList.toggle('activa', si);
+      q.punto.classList.toggle('activa', si);
+    });
+    seccionEl.classList.add('con-tarjeta');
+    despertar();
+  }
+  function cerrar() {
+    clearTimeout(cierre);
+    puntos.forEach((q) => { q.el.classList.remove('abierta'); q.linea.classList.remove('activa'); q.grad.classList.remove('activa'); q.punto.classList.remove('activa'); });
+    seccionEl.classList.remove('con-tarjeta');
+  }
+  puntos.forEach((o) => {
+    const { el } = o;
+    const vidrio = $('.df-vidrio', el);
+    let abiertaAlTocar = false, tipo = 'mouse';
+    if (o.conDestino) { el.tabIndex = 0; el.setAttribute('role', 'link'); }
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') abrir(o); });
+    el.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') { clearTimeout(cierre); cierre = setTimeout(cerrar, 220); } });
+    el.addEventListener('pointerdown', (e) => { tipo = e.pointerType; abiertaAlTocar = el.classList.contains('abierta'); });
+    el.addEventListener('click', () => {
+      // con el dedo, el primer toque abre la tarjeta y el segundo lleva a su parte
+      if (tipo === 'touch' && !abiertaAlTocar) { abrir(o); return; }
+      if (o.conDestino) irATarjeta(o.t);
+    });
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && o.conDestino) { e.preventDefault(); irATarjeta(o.t); } });
+    el.addEventListener('focus', () => abrir(o));
+    el.addEventListener('blur', () => { if (!el.matches(':hover')) cerrar(); });
+    // reflejo del vidrio que sigue al cursor
+    el.addEventListener('pointermove', (e) => {
+      const r = vidrio.getBoundingClientRect();
+      vidrio.style.setProperty('--mx', `${(e.clientX - r.left) / r.width * 100}%`);
+      vidrio.style.setProperty('--my', `${(e.clientY - r.top) / r.height * 100}%`);
+    });
+  });
+  // un toque fuera de las tarjetas las cierra
+  document.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch' && !e.target.closest('.df-punto')) cerrar(); }, true);
+
+  // ---------- Polvo que flota en el haz de luz del pasillo ----------
+  const lienzo = $('.df-polvo'), ctx = lienzo.getContext('2d');
+  const enHaz = (y) => 800 + (Math.random() - .5) * (90 + y * .62);
+  const motas = Array.from({ length: reducido ? 0 : 58 }, (_, k) => {
+    const haz = k < 42, y = 40 + Math.random() * 740;
+    return { haz, x: haz ? enHaz(y) : Math.random() * 1600, y, r: .5 + Math.random() * (haz ? 1.5 : 1.1), v: 5 + Math.random() * 13, a: .25 + Math.random() * .55, f: Math.random() * 6.28, w: .6 + Math.random() * 1.4 };
+  });
+  function dibujarPolvo(t, dt) {
+    ctx.clearRect(0, 0, 800, 450);
+    for (const m of motas) {
+      m.y -= m.v * dt;
+      m.x += Math.sin(t * .0005 * m.w + m.f) * 4 * dt;
+      if (m.y < 24) { m.y = 780; m.x = m.haz ? enHaz(m.y) : Math.random() * 1600; }
+      const abajo = Math.min(1, Math.max(0, (820 - m.y) / 220));         // se apaga al llegar al gris
+      const a = m.a * (.55 + .45 * Math.sin(t * .0012 * m.w + m.f)) * abajo * (m.haz ? 1 : .45);
+      if (a < .02) continue;
+      ctx.fillStyle = `rgba(255, 238, 214, ${a.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(m.x / 2, m.y / 2, m.r, 0, 6.2832);
+      ctx.fill();
+    }
+  }
+
+  // ---------- Paralaje (mouse y scroll), tarjetas que flotan y líneas: un solo bucle ----------
+  let mx = 0, my = 0, objX = 0, objY = 0, scrollY = 0, ultimo = 0, bucle = null;
+  addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse' || reducido) return;
+    objX = Math.max(-1, Math.min(1, (e.clientX / innerWidth - .5) * 2));
+    objY = Math.max(-1, Math.min(1, (e.clientY / innerHeight - .5) * 2));
+    despertar();
+  }, { passive: true });
+  document.addEventListener('desplazamiento', (e) => {
+    scrollY = Math.max(0, e.detail.y);
+    if (scrollY > 260 && seccionEl.classList.contains('con-tarjeta')) cerrar();   // al bajar, la tarjeta abierta se cierra
+    despertar();
+  });
+  document.addEventListener('visibilitychange', despertar);
+  const visible = () => scrollY < 900 && !document.hidden;
+  const suave = (p) => p * p * (3 - 2 * p);
+  function cuadro(t) {
+    const dt = Math.min(.05, Math.max(0, (t - ultimo) / 1000));
+    ultimo = t;
+    const k = 1 - Math.exp(-dt * 3.4);
+    mx += (objX - mx) * k;
+    my += (objY - my) * k;
+    const o = {};
+    for (const c in PROF) {
+      const [px, s] = PROF[c];
+      o[c] = [-mx * px, -my * px * .6 + scrollY * s];
+      if (capas[c]) capas[c].style.transform = `translate3d(${o[c][0].toFixed(2)}px, ${o[c][1].toFixed(2)}px, 0)`;
+    }
+    const kp = 1 - Math.exp(-dt * 9);
+    for (const q of puntos) {
+      q.p += ((q.el.classList.contains('abierta') ? 1 : 0) - q.p) * kp;
+      const flota = reducido ? [0, 0] : [Math.cos(t * .00041 + q.fase) * 2.2, Math.sin(t * .00057 + q.fase) * 5.5];
+      const dx = flota[0], dy = flota[1] + q.sube * suave(q.p);
+      q.el.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
+      // línea: del título (se mueve con la tarjeta) al punto de su capa
+      const ox = q.L.de[0] + o.puntos[0] + dx, oy = q.L.de[1] + o.puntos[1] + dy;
+      const capa = o[q.L.capa];
+      const ax = q.L.a[0] + capa[0], ay = q.L.a[1] + capa[1];
+      const lx = ax - ox, ly = ay - oy;
+      const cx = (ox + ax) / 2 - ly * q.L.curva, cy = (oy + ay) / 2 + lx * q.L.curva;
+      q.linea.setAttribute('d', `M${ox.toFixed(1)} ${oy.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ax.toFixed(1)} ${ay.toFixed(1)}`);
+      q.grad.setAttribute('x1', ax.toFixed(1)); q.grad.setAttribute('y1', ay.toFixed(1));
+      q.grad.setAttribute('x2', ox.toFixed(1)); q.grad.setAttribute('y2', oy.toFixed(1));
+      q.punto.setAttribute('transform', `translate(${ax.toFixed(1)} ${ay.toFixed(1)})`);
+    }
+    if (motas.length) dibujarPolvo(t, dt);
+    bucle = visible() ? requestAnimationFrame(cuadro) : null;
+  }
+  function despertar() {
+    if (bucle || !visible()) return;
+    ultimo = performance.now();
+    bucle = requestAnimationFrame(cuadro);
+  }
+  despertar();
+
+  // ---------- Entrada: al abrirse la cortina aparecen las capas; después, las líneas y los íconos ----------
+  const entrar = () => {
+    setTimeout(() => seccionEl.classList.add('arriba'), 350);
+    setTimeout(() => seccionEl.classList.add('lineas'), 2250);
+  };
+  // Guía (compartido/guia.js): la mano invita a pasar por un ícono (Innovación), hasta que se usa uno
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="innovacion"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 3.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 60 });
   if (document.body.classList.contains('lista')) entrar(); else document.addEventListener('pagina-lista', entrar, { once: true });
 
   // =========================================================

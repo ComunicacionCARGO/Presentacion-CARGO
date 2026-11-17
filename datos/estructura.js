@@ -18,21 +18,25 @@ window.ESTRUCTURA = {
   elegirnosAntetitulo: "¿Qué hacemos",
   elegirnosTitulo: "DIFERENTE?",
 
-  /* Tarjetas de vidrio. Cada una tiene:
-     icono:  excelencia, innovacion, flexibilidad o crecimiento (ícono incluido, de respaldo)
+  /* Los tres íconos que flotan sobre la foto. Al pasar el cursor, cada uno se abre como
+     una tarjeta con el resto del contenido; al hacer clic lleva a su parte.
+     icono:  innovacion, flexibilidad o excelencia. Decide DÓNDE va en la pantalla
+             (innovación a la izquierda, flexibilidad abajo al medio, excelencia a la derecha)
+             y es el ícono de respaldo.
      imagen: ícono propio en SVG (carpeta img/estructura/elegirnos); si no está, se usa "icono"
-     titulo: el título de la tarjeta.
+     titulo: el título que flota al lado del ícono. " / " marca dónde se corta el renglón.
      texto:  el párrafo (**negrita**).
      datos:  (opcional) cifras destacadas, cada una con valor y texto.
-     ir:     adónde lleva la tarjeta al hacer clic: "adaptabilidad", "mejora" (Mejora
-             continua), "rse" (Impacto cero), "numeros", "comunidad" o "clientes".
+     frase:  (opcional) una frase destacada con una raya roja al costado.
+     ir:     adónde lleva al hacer clic: "adaptabilidad", "mejora" (Mejora continua),
+             "rse" (Impacto cero), "numeros", "comunidad" o "clientes".
      paso:   (solo con "adaptabilidad") qué paso se abre: 1, 2, 3 o 4.
-     boton:  el texto del enlace que aparece abajo de la tarjeta. */
+     boton:  el texto del botón que aparece abajo de la tarjeta. */
   elegirnos: [
     {
       icono: "flexibilidad",
       imagen: "img/estructura/elegirnos/flexibilidad.svg",
-      titulo: "Flexibilidad y adaptabilidad",
+      titulo: "Nos adaptamos / con flexibilidad",
       texto: "Nos **adaptamos** a los cambios y a las necesidades de cada negocio con **soluciones logísticas a medida**, ágiles y personalizadas, que responden con precisión a cada desafío.",
       datos: [],
       ir: "adaptabilidad", paso: 1, boton: "Cómo nos adaptamos"
@@ -40,7 +44,7 @@ window.ESTRUCTURA = {
     {
       icono: "innovacion",
       imagen: "img/estructura/elegirnos/innovacion.svg",
-      titulo: "Innovación y tecnología",
+      titulo: "Innovamos / con Tecnología",
       texto: "Herramientas que optimizan cada eslabón de la cadena: de la **trazabilidad en tiempo real** a la **analítica de datos**. Un servicio más eficiente, transparente e inteligente, que mejora las decisiones y reduce errores.",
       datos: [],
       ir: "adaptabilidad", paso: 3, boton: "Tecnología a medida"
@@ -48,21 +52,14 @@ window.ESTRUCTURA = {
     {
       icono: "excelencia",
       imagen: "img/estructura/elegirnos/excelencia.svg",
-      titulo: "Excelencia en el servicio",
+      titulo: "Nos superamos / con excelencia",
       texto: "Nuestra cultura de **mejora continua** sostiene un servicio de alto nivel, alineado a los estándares del cliente.",
       datos: [
         { valor: "98%", texto: "de cumplimiento en tiempos de entrega en rutas propias" },
         { valor: "+500.000 kg", texto: "movilizados por mes" }
       ],
+      frase: "Somos un **aliado estratégico** en el crecimiento de Ford: acompañamos su evolución con un servicio confiable y alineado a sus objetivos.",
       ir: "mejora", boton: "Nuestra mejora continua"
-    },
-    {
-      icono: "crecimiento",
-      imagen: "img/estructura/elegirnos/crecimiento.svg",
-      titulo: "Compromiso con el crecimiento",
-      texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
-      datos: [],
-      ir: "clientes", boton: "Los que crecen con nosotros"
     }
   ],
 

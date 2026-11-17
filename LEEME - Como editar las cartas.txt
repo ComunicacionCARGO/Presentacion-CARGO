@@ -181,22 +181,28 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
   • Íconos propios: ver img\estructura\LEEME.txt.
   • En el mismo archivo están los textos de la diapositiva "¿Qué hacemos
     DIFERENTE?" (carta 3 de la portada): elegirnosAntetitulo / elegirnosTitulo
-    y cuatro tarjetas de vidrio. Las tarjetas se muestran en el orden de la
-    lista. Cada tarjeta, en "elegirnos", tiene imagen (su ícono
-    en SVG, en img\estructura\elegirnos), icono de respaldo (excelencia,
-    innovacion, flexibilidad o crecimiento), titulo, texto y, si querés,
-    datos: cifras destacadas con valor y texto (por ejemplo 98%).
-    Cada tarjeta se puede tocar y lleva a otra parte de la diapositiva:
-    ir dice adónde ("adaptabilidad", "mejora", "rse", "numeros", "comunidad"
-    o "clientes"), paso qué paso abre en adaptabilidad (1 a 4) y boton es el
-    texto del enlace que aparece abajo de la tarjeta.
-    Para cambiar un ícono, reemplazá el SVG con el mismo nombre (conviene
-    claro, porque las tarjetas son de vidrio sobre el fondo oscuro).
-  • El título de cada tarjeta va al lado del ícono, en dos líneas: la última
-    palabra (con su "el" o "la") pasa sola a la segunda línea.
-  • El fondo de esa parte es img\slides\nuestra-estructura\fondo-elegirnos.jpg.
-  • Si una tarjeta tiene mucho texto, la letra se achica sola para que entre.
-  • adaptabilidad: la pantalla que sigue a las tarjetas ("No hacemos lo que
+    y los tres íconos que flotan sobre la foto (en "elegirnos"). Al pasar el
+    cursor por un ícono se abre como una tarjeta con el resto del contenido;
+    al hacer clic lleva a su parte (con el dedo: un toque la abre, otro toque
+    lleva). Cada uno tiene:
+      icono:  innovacion, flexibilidad o excelencia. Decide DÓNDE va: innovación
+              a la izquierda, flexibilidad abajo al medio y excelencia a la
+              derecha (cada uno con su línea a un punto de la foto).
+      imagen: su ícono en SVG (en img\estructura\elegirnos). Tiene que ser
+              claro (blanco), porque va sobre la foto oscura.
+      titulo: el título que flota al lado del ícono. " / " marca el corte de
+              renglón, por ejemplo "Nos superamos / con excelencia".
+      texto, datos (cifras con valor y texto, por ejemplo 98%) y frase (una
+              frase destacada con una raya roja; en excelencia va la del
+              compromiso con el crecimiento de Ford): lo que se ve en la tarjeta.
+      ir:     adónde lleva ("adaptabilidad", "mejora", "rse", "numeros",
+              "comunidad" o "clientes"); paso: qué paso abre en adaptabilidad
+              (1 a 4); boton: el texto del botón rojo de abajo.
+  • La foto está en capas, en img\slides\diferente: deposito.webp (el fondo),
+    operario.webp (va delante del título) y degradado.webp (funde con el gris).
+    Para cambiar una, reemplazá el archivo con el mismo nombre y medidas.
+  • Si el título se cambia por uno más largo, la letra se achica sola.
+  • adaptabilidad: la pantalla que sigue a la portada ("No hacemos lo que
     hacen todos. Hacemos lo que Ford necesita"). Tiene antetitulo, titulo
     (*Ford* entre asteriscos simples sale en rojo), bajada y cuatro pasos
     (titulo y texto de cada uno). En el paso 1, "etiquetas" son las

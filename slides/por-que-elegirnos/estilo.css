@@ -1,20 +1,24 @@
 /* =========================================================
-   ¿POR QUÉ ELEGIRNOS? — medidas en px sobre el escenario 1600×900
-   (antes "Nuestra estructura": la red de áreas pasó a ¿Quiénes somos?)
+   ¿QUÉ HACEMOS DIFERENTE? (carpeta por-que-elegirnos) — medidas en px sobre el escenario 1600×900
    ========================================================= */
 
 /* La pista vacía solo da el largo del scroll; diapositiva.js sube las capas con translate */
 .pista { position: absolute; left: 0; top: 0; width: 1600px; pointer-events: none; visibility: hidden; }
-.pista-espacio { height: 6400px; }   /* tarjetas (900) + adaptabilidad (900) + pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) + Clientes (1000) */
+.pista-espacio { height: 6400px; }   /* portada (900) + adaptabilidad (900) + pantalla partida (900) + RSE: tablero, números y comunidad (3 × 900) + Clientes (1000) */
 
-/* ---------- ¿Por qué elegirnos? ---------- */
+/* ---------- Portada "¿Qué hacemos DIFERENTE?" ----------
+   Diseño de la persona (captura de 1000 × 649, llevada al escenario × 1,6; las capas se
+   ubicaron midiendo dónde caen en esa captura). De atrás hacia adelante: depósito, luz y
+   polvo, título, operario (delante del título), degradado gris (funde con el gris de la
+   sección siguiente), líneas con sus puntos y los tres íconos con su título.
+   Cada .df-capa se mueve con el mouse y con el scroll (paralaje, diapositiva.js). */
 .seccion-mejora {
   position: absolute;
   inset: 0;
   z-index: 7;
   pointer-events: none;
 }
-/* Fondo de camiones: cubre la ventana; sus bordes se funden con el gris institucional */
+/* gris de la marca a toda la ventana */
 .el-fondo {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
@@ -23,145 +27,266 @@
   height: calc(100vh / var(--escala, 1));
   background: var(--gris);
 }
-.el-imagen {
-  position: absolute;
-  left: calc(50vw / var(--escala, 1) - 800px - 60px);
-  top: calc(50vh / var(--escala, 1) - 450px - 34px);
-  width: 1720px;
-  height: 968px;
-  background: url(../../img/slides/nuestra-estructura/fondo-elegirnos.jpg) center / cover no-repeat;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 52%, #000 62%, transparent 100%);
-  transform: scale(1.04);
-  transition: transform 2.4s cubic-bezier(.2, .8, .2, 1);
-}
-.seccion-mejora.arriba .el-imagen { transform: scale(1); }
+.df-capa { position: absolute; inset: 0; will-change: transform; }
 
-/* Título: aparece en el centro y, al terminar los anillos, sube a su lugar.
-   Posición final medida del diseño: "¿Por qué" de x 441, y 106 a 178;
-   "ELEGIRNOS?" de x 478 a 1163, y 181 a 297 (cada texto se ubica por su línea base). */
-.mc-titulo {
+/* Depósito: a la escala del diseño (0,8 de la imagen) y 4 % más grande para que el paralaje no
+   muestre los bordes; si la ventana es más ancha crece con ella, siempre con el fondo del pasillo
+   en el mismo punto (800, 396). Se funde arriba y a los costados con el gris. */
+.df-deposito {
+  /* si la ventana es más alta que 16:9, crece hasta cubrir también arriba */
+  --w: max(1664px, calc(100vw / var(--escala, 1) + 64px), calc((50vh / var(--escala, 1) - 20px) / .2503));
   position: absolute;
-  inset: 0;
-  transform: translateY(248px);
-  transition: transform 1s cubic-bezier(.33, .1, .2, 1);
+  left: calc(801.6px - var(--w) * .5);
+  top: calc(396.5px - var(--w) * .2503);
+  width: var(--w);
+  height: calc(var(--w) * .6675);
+  background: url(../../img/slides/diferente/deposito.webp) center / 100% 100% no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
+  mask-composite: intersect;
+  transform: scale(1.1);
+  transform-origin: 50% 37.5%;
+  transition: transform 3.2s cubic-bezier(.16, .84, .24, 1);
 }
-.seccion-mejora.arriba .mc-titulo { transform: none; }
-.mc-ante, .mc-grande { position: absolute; display: block; line-height: 1; white-space: nowrap; will-change: opacity, transform; }
-.mc-ante { left: 438px; top: 98px; font-size: 74px; font-weight: 300; color: var(--blanco); }
-.mc-grande {
-  left: 470px;
-  top: 163px;
-  font-family: var(--fuente-titulo);
-  font-weight: 700;
-  font-size: 142px;
-  letter-spacing: -.007em;
-  color: var(--blanco);
-}
-
-/* Tarjetas de vidrio flotantes */
-.el-tarjetas {
+.seccion-mejora.arriba .df-deposito { transform: none; }
+/* Luz del techo que respira y un haz suave por el pasillo (ahí flota el polvo) */
+.df-luz {
   position: absolute;
-  left: 55px;
-  top: 391px;
-  width: 1462px;
-  height: 391px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr);
-  gap: 51.3px;
-}
-.seccion-mejora.arriba .el-tarjetas { pointer-events: auto; }
-.el-tarjeta {
-  height: 100%;
-  animation: flotar calc(5.6s + var(--i) * .7s) ease-in-out calc(var(--i) * -1.8s) infinite alternate;
-}
-@keyframes flotar {
-  from { translate: 0 -7px; }
-  to { translate: 0 7px; }
-}
-.el-vidrio {
-  position: relative;
-  height: 100%;
-  padding: 30px 28px 26px;
-  border-radius: 22px;
-  overflow: hidden;
-  /* vidrio transparente (como las tarjetas de Logros): se ve el fondo desenfocado */
-  background: linear-gradient(160deg, rgba(255, 251, 243, .2), rgba(255, 251, 243, .06));
-  -webkit-backdrop-filter: blur(18px) saturate(1.35);
-  backdrop-filter: blur(18px) saturate(1.35);
-  border: 1px solid rgba(255, 255, 255, .26);
-  box-shadow: 0 44px 70px -30px rgba(0, 0, 0, .6), 0 12px 26px -14px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(255, 255, 255, .1);
-  transform: perspective(1100px) translateY(var(--lev, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  left: 548px;
+  top: -196px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 240, 216, .34), rgba(255, 232, 204, .1) 34%, rgba(255, 230, 200, 0) 62%);
   opacity: 0;
-  translate: 0 90px;
-  transition:
-    opacity .8s ease calc(var(--i) * .08s + .2s),
-    translate 1.1s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * .08s + .2s),
-    transform .35s cubic-bezier(.2, .8, .2, 1),
-    box-shadow .5s ease;
+  transition: opacity 2s ease .6s;
 }
-.seccion-mejora.arriba .el-vidrio { opacity: 1; translate: 0 0; }
-/* al volver, desaparecen enseguida */
-.seccion-mejora:not(.arriba) .el-vidrio { transition-delay: 0s, 0s, 0s, 0s; transition-duration: .35s, .45s, .35s, .5s; }
-.el-tarjeta.activa .el-vidrio { --lev: -12px; border-color: rgba(255, 255, 255, .4); box-shadow: 0 60px 80px -30px rgba(0, 0, 0, .7), 0 16px 30px -14px rgba(0, 0, 0, .45), 0 0 0 1px rgba(239, 69, 41, .35), inset 0 1px 0 rgba(255, 255, 255, .55); }
-.el-vidrio::before {
+.seccion-mejora.arriba .df-luz { opacity: 1; animation: df-respirar 5.5s ease-in-out 2.6s infinite alternate; }
+.df-luz::after {
   content: "";
   position: absolute;
-  left: 28px;
+  left: 30px;
+  top: 236px;
+  width: 440px;
+  height: 640px;
+  background: linear-gradient(to bottom, rgba(255, 236, 212, .13), rgba(255, 236, 212, .04) 55%, rgba(255, 236, 212, 0));
+  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+}
+@keyframes df-respirar { from { opacity: 1; } to { opacity: .62; } }
+.df-polvo { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; opacity: 0; transition: opacity 2.4s ease 1s; }
+.seccion-mejora.arriba .df-polvo { opacity: 1; }
+
+/* Título, ubicado por su línea base (medido del diseño): "¿Qué hacemos" Inter Light 110 con el
+   glifo desde x 317 y la base en 146; "DIFERENTE?" Oswald Bold 212, glifo de x 374 a 1361, de y 184 a 358 */
+.mc-titulo { position: absolute; inset: 0; margin: 0; font-weight: inherit; }
+.mc-ante, .mc-grande { position: absolute; display: block; line-height: 1; white-space: nowrap; color: var(--blanco); }
+.mc-ante {
+  left: 312px;
+  top: 50.2px;
+  font-size: 110.4px;
+  font-weight: 300;
+  text-shadow: 0 6px 30px rgba(20, 14, 10, .28);
+  opacity: 0;
+  translate: 0 36px;
+  transition: opacity 1s ease .25s, translate 1.3s cubic-bezier(.16, .84, .24, 1) .25s;
+}
+.mc-grande {
+  left: 362.4px;
+  top: 156.6px;
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 212px;
+  text-shadow: 0 10px 40px rgba(20, 14, 10, .3);
+}
+/* cada letra sube desde detrás del operario, una tras otra */
+.mc-grande i { display: inline-block; font-style: normal; opacity: 0; translate: 0 120px; transition: opacity .7s ease, translate 1.1s cubic-bezier(.16, .84, .24, 1); transition-delay: calc(.45s + var(--l) * .055s); }
+.seccion-mejora.arriba .mc-ante, .seccion-mejora.arriba .mc-grande i { opacity: 1; translate: 0 0; }
+
+/* Operario: delante del título (sube apenas al entrar) */
+.df-operario {
+  position: absolute;
+  left: 618.4px;
+  top: 303.2px;
+  width: 347.6px;
+  height: 831.9px;
+  opacity: 0;
+  translate: 0 46px;
+  transition: opacity 1.2s ease .7s, translate 1.6s cubic-bezier(.16, .84, .24, 1) .7s;
+}
+.seccion-mejora.arriba .df-operario { opacity: 1; translate: 0 0; }
+
+/* Degradado gris de la persona: llega al gris pleno antes del borde de abajo (y ~870) y debajo
+   sigue el gris, así se une sin costura con la sección siguiente */
+.df-degradado {
+  --w: max(1600px, calc(100vw / var(--escala, 1) + 64px));
+  position: absolute;
+  left: calc(800px - var(--w) / 2);
+  top: 0;
+  width: var(--w);
+  height: 924px;
+  background: url(../../img/slides/diferente/degradado.webp) 0 0 / 100% 100% no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
+}
+.df-degradado::after { content: ""; position: absolute; left: 0; top: 100%; width: 100%; height: 640px; background: var(--gris); }
+
+/* Velo que oscurece la foto mientras hay una tarjeta abierta */
+.df-velo {
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: calc(450px - 50vh / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  height: calc(100vh / var(--escala, 1));
+  background: radial-gradient(ellipse at 50% 55%, rgba(18, 16, 16, .34), rgba(18, 16, 16, .58));
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.seccion-mejora.con-tarjeta .df-velo { opacity: 1; }
+
+/* Líneas finas de cada ícono a su punto en la foto (diapositiva.js las redibuja con el paralaje) */
+.df-lineas { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; }
+.df-linea {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.2s cubic-bezier(.5, 0, .2, 1), opacity .4s ease;
+}
+.df-lineas stop { stop-color: #FFFBF3; transition: stop-color .35s ease; }
+.df-lineas linearGradient.activa stop { stop-color: #FF6A4D; }
+.df-punto-foto { opacity: 0; transition: opacity .4s ease; }
+.df-punto-foto circle { fill: #FFFBF3; transition: fill .35s ease; }
+.df-punto-foto .df-halo { fill: rgba(255, 251, 243, .2); }
+.df-punto-foto .df-onda { fill: none; stroke: #FFFBF3; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: df-onda 2.8s cubic-bezier(.2, .6, .3, 1) infinite; animation-delay: var(--d, 0s); }
+.df-punto-foto.activa circle { fill: var(--rojo); }
+.df-punto-foto.activa .df-halo { fill: rgba(239, 69, 41, .3); }
+.df-punto-foto.activa .df-onda { stroke: #FF6A4D; animation-duration: 1.4s; }
+@keyframes df-onda { from { transform: scale(1); opacity: .8; } to { transform: scale(4.2); opacity: 0; } }
+.seccion-mejora.lineas .df-linea { stroke-dashoffset: 0; transition-delay: calc(var(--i) * .16s), 0s; }
+.seccion-mejora.lineas .df-punto-foto { opacity: 1; transition-delay: calc(var(--i) * .16s); }
+.seccion-mejora.con-tarjeta .df-linea:not(.activa), .seccion-mejora.con-tarjeta .df-punto-foto:not(.activa) { opacity: .25; transition-delay: 0s; }
+
+/* ---------- Íconos con su título que se abren como tarjeta ----------
+   Cada .df-punto mide como la tarjeta abierta (460 de ancho). Cerrado solo se ven el ícono y
+   el título; con el cursor (o el foco, o un toque) aparece el vidrio y el resto del contenido.
+   diapositiva.js lo mueve (flota, paralaje y, si abierta no entra, sube). */
+.el-tarjetas { position: absolute; inset: 0; }
+.df-punto {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 460px;
+  outline: none;
+  pointer-events: none;
+  will-change: transform;
+}
+.df-punto.abierta { z-index: 2; }
+.seccion-mejora.arriba .df-punto.abierta { pointer-events: auto; cursor: pointer; }
+.df-vidrio {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 251, 243, .17), rgba(255, 251, 243, .05));
+  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+  backdrop-filter: blur(22px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, .26);
+  box-shadow: 0 50px 80px -34px rgba(0, 0, 0, .7), 0 14px 30px -14px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(255, 255, 255, .1);
+  opacity: 0;
+  transform: scale(.86);
+  transform-origin: var(--ox) var(--oy);
+  transition: opacity .3s ease, transform .55s cubic-bezier(.2, .9, .25, 1);
+}
+.df-punto.abierta .df-vidrio { opacity: 1; transform: none; }
+/* franjas de la marca arriba a la izquierda */
+.df-vidrio::before {
+  content: "";
+  position: absolute;
+  left: 26px;
   top: 0;
   width: 40px;
   height: 5px;
   background: linear-gradient(90deg, var(--rojo) 0 12px, transparent 12px 15px, var(--rojo) 15px 27px, transparent 27px 30px, var(--gris) 30px 40px);
 }
-.el-brillo {
+.df-brillo {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background: radial-gradient(360px circle at var(--mx, 30%) var(--my, 0%), rgba(255, 255, 255, .28), rgba(255, 255, 255, 0) 60%);
-  opacity: .5;
-  transition: opacity .4s ease;
+  background: radial-gradient(380px circle at var(--mx, 30%) var(--my, 0%), rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 60%);
 }
-.el-tarjeta.activa .el-brillo { opacity: 1; }
-.el-contenido { position: relative; z-index: 1; }
-/* ícono a la izquierda y título al lado, en dos líneas */
-.el-cabeza { display: flex; align-items: center; gap: 14px; min-height: 66px; }
-.el-icono { flex: none; display: block; width: 62px; height: 62px; color: var(--rojo); }
-/* íconos propios (claros, con margen alrededor del dibujo): se agrandan para que el dibujo mida lo mismo */
-.el-icono.propio img { display: block; width: 78px; height: 78px; margin: -8px 0 0 -8px; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .3)); }
-.el-icono svg { display: block; width: 100%; height: 100%; fill: var(--rojo); }
-.el-icono svg .trazo { fill: none; stroke: var(--rojo); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
-.el-icono svg .trazo.flecha { stroke-width: 1.9; stroke-linecap: butt; }
-.el-icono svg .hueco { fill: none; stroke: #FFFBF3; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
-.el-titulo {
-  flex: 1;
-  min-width: 0;
+.df-cabeza { position: relative; height: var(--cab-h); }
+.df-cabeza > * { position: absolute; pointer-events: auto; }
+.seccion-mejora:not(.arriba) .df-cabeza > * { pointer-events: none; }
+.df-cabeza .el-icono {
+  left: var(--ix);
+  top: var(--iy);
+  width: var(--is);
+  height: var(--is);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .35));
+  transition: transform .45s cubic-bezier(.2, .9, .25, 1);
+}
+.df-punto.abierta .el-icono { transform: scale(1.05) rotate(-3deg); }
+.el-icono img, .el-icono svg { display: block; width: 100%; height: 100%; }
+/* íconos incluidos (si falta el SVG propio): blancos como los de la persona */
+.el-icono svg { fill: #F2F2F2; transform: scale(.82); }
+.el-icono svg .trazo { fill: none; stroke: #F2F2F2; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.el-icono svg .hueco { fill: none; stroke: var(--gris); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+/* Título en dos renglones: Oswald Bold 37,5 (medido del diseño), interlineado 46 */
+.df-etiqueta {
+  left: var(--lx);
+  top: var(--ly);
+  margin: 0;
   font-family: var(--fuente-titulo);
   font-weight: 700;
-  font-size: 27px;
-  line-height: 1.06;
+  font-size: 37.5px;
+  line-height: 46px;
   color: var(--blanco);
+  white-space: nowrap;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, .35);
 }
-.el-texto { margin-top: 18px; font-size: 15px; font-weight: 300; line-height: 1.5; color: rgba(255, 251, 243, .82); }
+.df-etiqueta span { display: block; }
+/* Entrada: los íconos aparecen después de las líneas */
+.df-cabeza > * { opacity: 0; translate: 0 18px; transition: opacity .8s ease, translate 1s cubic-bezier(.16, .84, .24, 1), transform .45s cubic-bezier(.2, .9, .25, 1); }
+.seccion-mejora.lineas .df-cabeza > * { opacity: 1; translate: 0 0; transition-delay: calc(.35s + var(--i) * .16s), calc(.35s + var(--i) * .16s), 0s; }
+.seccion-mejora.con-tarjeta .df-punto:not(.abierta) .df-cabeza > * { opacity: .32; transition-delay: 0s; }
+.df-cuerpo {
+  position: relative;
+  padding: 0 26px 26px;
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 -10px;
+  transition: opacity .25s ease, translate .4s ease, visibility 0s linear .4s;
+}
+.df-punto.abierta .df-cuerpo { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .45s ease .14s, translate .55s cubic-bezier(.2, .9, .25, 1) .1s, visibility 0s; }
+.el-texto { margin: 0; font-size: 16px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .86); }
 .el-texto strong { font-weight: 600; color: var(--blanco); }
-.el-datos { display: flex; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 251, 243, .18); }
+.el-datos { display: flex; gap: 18px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255, 251, 243, .18); }
 .el-datos div { flex: 1; min-width: 0; }
-/* Tarjetas que llevan a su parte de la diapositiva: enlace abajo a la izquierda */
-.el-tarjeta.con-destino { cursor: pointer; outline: none; }
+.el-datos b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 34px; line-height: 1; color: #FF6A4D; white-space: nowrap; }
+.el-datos span { display: block; margin-top: 5px; font-size: 12.5px; font-weight: 300; line-height: 1.38; color: rgba(255, 251, 243, .74); }
+/* frase destacada (en Excelencia: el compromiso con el crecimiento) */
+.df-frase {
+  margin: 18px 0 0;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--rojo);
+  font-size: 15px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(255, 251, 243, .84);
+}
+.df-frase strong { font-weight: 600; color: var(--blanco); }
 .el-ir {
-  position: absolute; left: 28px; bottom: 24px; z-index: 1;
-  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 16px;
+  display: inline-flex; align-items: center; gap: 8px; height: 38px; margin-top: 20px; padding: 0 14px 0 18px;
   border: 1px solid rgba(255, 251, 243, .35); border-radius: 999px;
   background: rgba(255, 251, 243, .08);
   font: 500 14px var(--fuente-titulo); letter-spacing: .08em; text-transform: uppercase; color: var(--blanco);
-  transition: background .3s ease, border-color .3s ease, color .3s ease;
+  transition: background .3s ease, border-color .3s ease;
 }
 .el-ir svg { width: 16px; height: 16px; fill: currentColor; transition: translate .3s ease; }
-.el-tarjeta.activa .el-ir, .el-tarjeta:focus-visible .el-ir { background: var(--rojo); border-color: var(--rojo); }
-.el-tarjeta.activa .el-ir svg { translate: 0 3px; }
-.el-tarjeta:focus-visible .el-vidrio { border-color: rgba(255, 255, 255, .6); }
-.el-datos b { display: block; font-family: var(--fuente-titulo); font-weight: 700; font-size: 28px; line-height: 1; color: var(--rojo); white-space: nowrap; }
-.el-datos span { display: block; margin-top: 4px; font-size: 11.5px; font-weight: 300; line-height: 1.35; color: rgba(255, 251, 243, .72); }
+.df-punto.abierta .el-ir { background: var(--rojo); border-color: var(--rojo); }
+.df-punto.abierta:hover .el-ir svg { translate: 0 3px; }
+.df-punto:focus-visible .df-vidrio { border-color: rgba(255, 255, 255, .7); }
 
 
 /* ---------- Interfaz fija ---------- */
@@ -196,5 +321,6 @@
 .sello { right: 80px; color: rgba(58, 58, 58, .7); }
 
 @media (prefers-reduced-motion: reduce) {
-  .el-tarjeta { animation: none; }
+  .df-deposito, .mc-ante, .mc-grande i, .df-operario { transition-duration: .01s; transition-delay: 0s; }
+  .df-luz, .df-punto-foto .df-onda { animation: none; }
 }

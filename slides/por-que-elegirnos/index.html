@@ -20,11 +20,18 @@
 
   <main class="escenario">
 
-    <!-- 1. ¿Qué hacemos diferente? El título aparece en el centro, sube y muestra las tarjetas -->
+    <!-- 1. ¿Qué hacemos diferente? Capas con paralaje (de atrás hacia adelante): depósito, luz y polvo,
+         título, operario, degradado gris, líneas y los tres íconos que se abren como tarjetas (diapositiva.js) -->
     <section class="seccion-mejora" data-indice="¿Qué hacemos diferente?" data-indice-tono="oscuro">
-      <div class="el-fondo"><div class="el-imagen"></div></div>
-      <h1 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h1>
-      <div class="el-tarjetas"></div>
+      <div class="el-fondo"></div>
+      <div class="df-capa" data-capa="deposito"><div class="df-deposito"></div><div class="df-luz"></div></div>
+      <div class="df-capa" data-capa="polvo"><canvas class="df-polvo" width="800" height="450"></canvas></div>
+      <div class="df-capa" data-capa="titulo"><h1 class="mc-titulo"><span class="mc-ante"></span><b class="mc-grande"></b></h1></div>
+      <div class="df-capa" data-capa="operario"><img class="df-operario" src="../../img/slides/diferente/operario.webp" alt="" decoding="async"></div>
+      <div class="df-degradado"></div>
+      <div class="df-velo"></div>
+      <svg class="df-lineas" viewBox="0 0 1600 900" aria-hidden="true"><defs></defs></svg>
+      <div class="df-capa" data-capa="puntos"><div class="el-tarjetas"></div></div>
     </section>
 
     <div class="mc-tramo" aria-hidden="true">
