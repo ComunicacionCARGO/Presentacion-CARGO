@@ -46,14 +46,6 @@ window.ESTRUCTURA = {
       ir: "adaptabilidad", paso: 3, boton: "Tecnología a medida"
     },
     {
-      icono: "crecimiento",
-      imagen: "img/estructura/elegirnos/crecimiento.svg",
-      titulo: "Compromiso con el crecimiento",
-      texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
-      datos: [],
-      ir: "clientes", boton: "Los que crecen con nosotros"
-    },
-    {
       icono: "excelencia",
       imagen: "img/estructura/elegirnos/excelencia.svg",
       titulo: "Excelencia en el servicio",
@@ -63,6 +55,14 @@ window.ESTRUCTURA = {
         { valor: "+500.000 kg", texto: "movilizados por mes" }
       ],
       ir: "mejora", boton: "Nuestra mejora continua"
+    },
+    {
+      icono: "crecimiento",
+      imagen: "img/estructura/elegirnos/crecimiento.svg",
+      titulo: "Compromiso con el crecimiento",
+      texto: "Somos un **aliado estratégico** en el crecimiento del cliente: acompañamos su evolución con un servicio logístico eficiente, confiable y alineado a sus objetivos.",
+      datos: [],
+      ir: "clientes", boton: "Los que crecen con nosotros"
     }
   ],
 
