@@ -32,10 +32,12 @@
 .rc-f-arriba, .rc-f-sombra, .rc-f-abajo { position: absolute; left: 208.4px; right: calc(800px - 50vw / var(--escala, 1)); height: 125.4px; }
 .rc-f-arriba, .rc-f-sombra { top: -136.2px; }
 .rc-f-arriba { background: linear-gradient(to bottom, var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--gris) 90.8px); }
-/* sombra solo hacia arriba (sobre la portada) */
-.rc-f-sombra { box-shadow: 0 -28px 40px -12px rgba(15, 30, 45, .35); }
+/* sombra solo hacia arriba (sobre la portada), de lado a lado: arriba el borde es recto, así la
+   unión con la curva no se nota (pedido de la persona: que se vea como una sola franja) */
+.rc-f-sombra { left: calc(800px - 50vw / var(--escala, 1)); box-shadow: 0 -28px 40px -12px rgba(15, 30, 45, .35); }
+/* el costado izquierdo es rojo: la franja de afuera llena hasta el borde de la ventana */
+.rc-f-izq { position: absolute; left: calc(800px - 50vw / var(--escala, 1)); right: 1541.4px; top: -136.2px; background: var(--rojo); }
 .rc-f-codo { position: absolute; width: 185.4px; height: 185.4px; overflow: visible; fill: none; }
-.rc-f-codo:first-of-type { filter: drop-shadow(0 -14px 16px rgba(15, 30, 45, .22)); }
 .rc-f-baja { position: absolute; width: 125.4px; background: linear-gradient(90deg, var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--gris) 90.8px); }
 .rc-f-abajo { background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px); }
 /* el tramo con tracking: una barra celeste al costado de las franjas */

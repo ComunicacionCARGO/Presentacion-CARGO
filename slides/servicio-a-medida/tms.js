@@ -80,18 +80,26 @@
   seccion.style.height = (ABAJO + 91) + 'px';
   const iTrack = [PARADAS.findIndex((p) => p.clave === 'staging'), PARADAS.findIndex((p) => p.clave === 'entrega')];
   const conTracking = (i) => iTrack[0] >= 0 && i >= iTrack[0] && i <= iTrack[1];
-  // una curva: los tres arcos (y el crema de los huecos) de un cuarto de círculo
+  // una curva: dos arcos (gris y rojo, con el crema de los huecos) de un cuarto de círculo;
+  // la franja de afuera no es un arco: todo lo de afuera de la curva va en rojo (pedido de la
+  // persona: el costado izquierdo es rojo, como si la tercera franja llenara la esquina)
   const arcos = (cx, cy, desde) => {
     const arco = (r) => desde === 'arriba'
       ? `M${cx} ${cy - r}A${r} ${r} 0 0 0 ${cx - r} ${cy}`
       : `M${cx - r} ${cy}A${r} ${r} 0 0 0 ${cx} ${cy + r}`;
+    const r = RADIO + 90.8;               // borde de afuera del último hueco
+    const afuera = desde === 'arriba'
+      ? `M-1 -1H${CODO + 1}V${CODO - r}H${CODO}A${r} ${r} 0 0 0 ${CODO - r} ${CODO}V${CODO + 1}H-1Z`
+      : `M-1 -1H${CODO - r}V0A${r} ${r} 0 0 0 ${CODO} ${r}H${CODO + 1}V${CODO + 1}H-1Z`;
     return `<path d="${arco(RADIO + ANCHO / 2)}" stroke="var(--blanco)" stroke-width="${ANCHO}"/>` +
+      `<path d="${afuera}" fill="var(--rojo)"/>` +
       `<path d="${arco(RADIO + 17.3)}" stroke="var(--gris)" stroke-width="34.6"/>` +
-      `<path d="${arco(RADIO + 62.7)}" stroke="var(--rojo)" stroke-width="34.6"/>` +
-      `<path d="${arco(RADIO + 108.1)}" stroke="var(--rojo)" stroke-width="34.6"/>`;
+      `<path d="${arco(RADIO + 62.7)}" stroke="var(--rojo)" stroke-width="34.6"/>`;
   };
   const franjas = crear('div', 'rc-franjas', seccion,
     '<i class="rc-f-sombra"></i><i class="rc-f-arriba"></i>' +
+    // el costado izquierdo, de arriba hasta el rojo de la logística inversa: rojo
+    `<i class="rc-f-izq" style="height:${ABAJO + 91 + 136.2 + 2}px"></i>` +
     `<svg class="rc-f-codo" style="left:${X0}px;top:-136.2px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, CODO, 'arriba')}</svg>` +
     `<i class="rc-f-baja" style="left:${X0}px;top:${CODO - 137.2}px;height:${ABAJO - RADIO - (CODO - 136.2) + 2}px"></i>` +
     `<svg class="rc-f-codo" style="left:${X0}px;top:${ABAJO - RADIO}px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, 0, 'abajo')}</svg>` +
