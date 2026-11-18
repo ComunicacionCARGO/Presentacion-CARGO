@@ -102,6 +102,7 @@
   height: 820.99px;
   opacity: 0;
   translate: 0 46px;
+  scale: -1 1;          /* espejado (pedido de la persona): el escáner queda a la derecha y la foto acompaña el orden de los íconos */
   transition: opacity 1.2s ease .7s, translate 1.6s cubic-bezier(.16, .84, .24, 1) .7s;
 }
 .seccion-mejora.arriba .df-operario { opacity: 1; translate: 0 0; }

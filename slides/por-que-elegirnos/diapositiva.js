@@ -69,16 +69,28 @@
     window.desplazarA(900 + el.offsetTop);
   }
 
-  // ---------- Dónde va cada ícono (medido del diseño de la persona, en px del escenario) ----------
-  // icono: x, y y lado de la caja del SVG; dibujo: dónde está el dibujo dentro de esa caja (0–1);
-  // etiqueta: arriba a la izquierda del título; de → a: la línea, del título al punto de la foto,
-  // que va pegado a una capa (el escáner y la tabla, al operario; el estante, al depósito).
+  // ---------- Dónde va cada ícono (en px del escenario) ----------
+  // Orden de lectura de izquierda a derecha (pedido de la persona: que lo primero que quieran tocar
+  // sea "Nos adaptamos con flexibilidad"; el operario va espejado para que la foto acompañe):
+  //   flexibilidad a la izquierda, con la línea a un estante del depósito;
+  //   innovación abajo al medio, con la línea al escáner;
+  //   excelencia a la derecha, con la línea a la tabla.
+  // etiqueta: arriba a la izquierda del título (el ícono va a su izquierda, centrado con los dos
+  // renglones); de → a: la línea, del título al punto de la foto, que va pegado a una capa.
+  // Los puntos del operario son los de la foto espejada (eje en x 791,3).
   const LUGARES = {
-    innovacion:   { icono: [125.7, 488.9, 144.5], dibujo: [.03, .07, .978, .927], etiqueta: [294, 508.7], de: [530, 538], a: [659, 470], capa: 'operario', curva: .2 },
-    flexibilidad: { icono: [571.5, 730.4, 131.5], dibujo: [.133, .152, .875, .855], etiqueta: [711, 750.3], de: [716, 714], a: [739, 613], capa: 'operario', curva: .14 },
-    excelencia:   { icono: [1081, 559.4, 136.3], dibujo: [.122, .122, .885, .887], etiqueta: [1221, 579.1], de: [1158, 568], a: [1094, 450], capa: 'deposito', curva: -.18 }
+    flexibilidad: { etiqueta: [294, 508.7], de: [532, 540], a: [590, 418], capa: 'deposito', curva: -.22 },
+    // (bien curvada hacia la izquierda: pasa por delante de la tabla sin cruzarse con la línea de excelencia)
+    innovacion:   { etiqueta: [711, 742], de: [770, 726], a: [923.6, 470], capa: 'operario', curva: -.35 },
+    excelencia:   { etiqueta: [1221, 579.1], de: [1086, 626], a: [843.6, 613], capa: 'operario', curva: .16 }
   };
-  const ORDEN_LUGARES = ['innovacion', 'flexibilidad', 'excelencia'];
+  // tamaño de cada ícono (lado de la caja del SVG) y dónde está el dibujo dentro de esa caja (0–1)
+  const ICONO_TAM = {
+    innovacion:   { s: 144.5, dibujo: [.03, .07, .978, .927] },
+    flexibilidad: { s: 131.5, dibujo: [.133, .152, .875, .855] },
+    excelencia:   { s: 136.3, dibujo: [.122, .122, .885, .887] }
+  };
+  const ORDEN_LUGARES = ['flexibilidad', 'innovacion', 'excelencia'];
   const PAD = 26, ALTO_RENGLON = 46;
   // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
   const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], puntos: [32, -.05] };
@@ -95,7 +107,10 @@
     let clave = LUGARES[t.icono] && !usados.has(t.icono) ? t.icono : ORDEN_LUGARES.find((k) => !usados.has(k));
     usados.add(clave);
     const L = LUGARES[clave];
-    const [ix, iy, is] = L.icono, [d0, d1, , d3] = L.dibujo;
+    const T = ICONO_TAM[t.icono] || ICONO_TAM[clave];
+    const is = T.s, [d0, d1, d2, d3] = T.dibujo;
+    // el dibujo del ícono termina 24 px antes del título y queda centrado con sus dos renglones
+    const ix = L.etiqueta[0] - 24 - d2 * is, iy = L.etiqueta[1] + ALTO_RENGLON - (d1 + d3) / 2 * is;
     const x = ix + d0 * is - PAD, y = iy + d1 * is - PAD;          // esquina de la tarjeta abierta
     const renglones = String(t.titulo || '').split(/\s+\/\s+/).filter(Boolean);
     const cabH = Math.max(iy + d3 * is, L.etiqueta[1] + renglones.length * ALTO_RENGLON) - y + 14;
@@ -266,8 +281,8 @@
     setTimeout(() => seccionEl.classList.add('arriba'), 350);
     setTimeout(() => seccionEl.classList.add('lineas'), 2250);
   };
-  // Guía (compartido/guia.js): la mano invita a pasar por un ícono (Innovación), hasta que se usa uno
-  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="innovacion"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 3.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 60 });
+  // Guía (compartido/guia.js): la mano invita a pasar por el primer ícono (Flexibilidad), hasta que se usa uno
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="flexibilidad"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 3.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 60 });
   if (document.body.classList.contains('lista')) entrar(); else document.addEventListener('pagina-lista', entrar, { once: true });
 
   // =========================================================

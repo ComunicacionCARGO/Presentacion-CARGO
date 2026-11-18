@@ -21,7 +21,7 @@ window.ESTRUCTURA = {
   /* Los tres íconos que flotan sobre la foto. Al pasar el cursor, cada uno se abre como
      una tarjeta con el resto del contenido; al hacer clic lleva a su parte.
      icono:  innovacion, flexibilidad o excelencia. Decide DÓNDE va en la pantalla
-             (innovación a la izquierda, flexibilidad abajo al medio, excelencia a la derecha)
+             (flexibilidad a la izquierda, innovación abajo al medio, excelencia a la derecha)
              y es el ícono de respaldo.
      imagen: ícono propio en SVG (carpeta img/estructura/elegirnos); si no está, se usa "icono"
      titulo: el título que flota al lado del ícono. " / " marca dónde se corta el renglón.
