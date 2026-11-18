@@ -1,9 +1,11 @@
 /* =========================================================
    ¿CÓMO LO HACEMOS? — el recorrido de un pedido de Ford, parada por parada
    (pedido de la persona, con el esquema de su equipo: más guiado y lineal).
-   La sección es larga: mientras se baja, la pantalla queda quieta (.rc-quieto)
-   y la mercadería avanza por la ruta de la izquierda; cada parada abre su
-   explicación (y su interfaz, si tiene) y cambia el panel de la derecha:
+   Las tres franjas de la marca entran por arriba, se doblan y bajan por la
+   izquierda: son la ruta. La sección es larga: mientras se baja, la caja, el
+   texto y el panel quedan quietos (.rc-quieto) y los puntos de las paradas
+   suben con las franjas; en cada parada cambian el título, la explicación (y
+   su interfaz, si tiene) y el panel de la derecha:
      1. Ingreso del pedido (interfaz Ingreso de pedidos): demo de este archivo.
      2. Geoposicionamiento indoor: la planchada con stages y z-stages (este archivo).
      3. Staging por ruta (interfaz Obtención de eventos; empieza el tracking): este archivo.
@@ -11,8 +13,8 @@
      5. Entrega y digitalización (interfaz Devolución de eventos): ecosistema.js
         (los viajes, el tracking y la carta de porte que se completa al entregar).
      6. Experiencia de usuario: experiencia.js (No calidad y TICO).
-   Arriba de la sección van las tres franjas de la marca (sube por encima de
-   la portada) y abajo dos (la tercera es el rojo de la logística inversa).
+   Al final las franjas se doblan hacia la derecha y la tercera se vuelve el
+   rojo de la logística inversa.
    Textos en datos/servicio.js → como, recorrido, tms y experiencia.
    ========================================================= */
 (function () {
@@ -60,43 +62,74 @@
   const VISTA_DE = { pedido: 'pedido', ubicacion: 'carga', staging: 'staging', viajes: 'despachos', entrega: 'despachos', experiencia: 'experiencia' };
   const PARADAS = (R.paradas || []).filter((p) => VISTA_DE[p.clave]);
   const N = PARADAS.length;
-  const PASO = 480;                       // px de scroll por parada
+
+  // =========================================================
+  // LAS FRANJAS: entran por arriba (encabezan la sección cuando sube por encima de
+  // la portada), se doblan hacia abajo y bajan por la izquierda; al final se doblan
+  // otra vez y salen hacia la derecha (la tercera se vuelve el rojo de la logística
+  // inversa). Van con la sección (no quietas): por eso los puntos de las paradas
+  // suben con el scroll mientras la caja queda quieta en pantalla.
+  // =========================================================
+  const PASO = 360;                       // px de scroll por parada (= distancia entre puntos)
+  const CAJA_Y = 450;                     // altura de la caja en la pantalla
+  const X0 = 24, ANCHO = 125.4, RADIO = 60;   // franjas de 34,6 con huecos de 10,8; radio interior de las curvas
+  const CODO = RADIO + ANCHO;             // 185,4: lado del cuadrado de cada curva
+  const MEDIO = X0 + ANCHO / 2;           // eje de las franjas
+  const RECORRIDO = Math.max(0, N - 1) * PASO;
+  const ABAJO = 900 + RECORRIDO;          // donde arrancan las franjas de abajo
+  seccion.style.height = (ABAJO + 91) + 'px';
   const iTrack = [PARADAS.findIndex((p) => p.clave === 'staging'), PARADAS.findIndex((p) => p.clave === 'entrega')];
   const conTracking = (i) => iTrack[0] >= 0 && i >= iTrack[0] && i <= iTrack[1];
-
-  // la sección mide 900 + lo que se recorre + las dos franjas de abajo
-  const RECORRIDO = Math.max(0, N - 1) * PASO;
-  seccion.style.height = (900 + RECORRIDO + 91) + 'px';
-  crear('div', 'in-franjas', seccion);
-  crear('div', 'ex-franjas', seccion).style.top = (900 + RECORRIDO) + 'px';
+  // una curva: los tres arcos (y el crema de los huecos) de un cuarto de círculo
+  const arcos = (cx, cy, desde) => {
+    const arco = (r) => desde === 'arriba'
+      ? `M${cx} ${cy - r}A${r} ${r} 0 0 0 ${cx - r} ${cy}`
+      : `M${cx - r} ${cy}A${r} ${r} 0 0 0 ${cx} ${cy + r}`;
+    return `<path d="${arco(RADIO + ANCHO / 2)}" stroke="var(--blanco)" stroke-width="${ANCHO}"/>` +
+      `<path d="${arco(RADIO + 17.3)}" stroke="var(--gris)" stroke-width="34.6"/>` +
+      `<path d="${arco(RADIO + 62.7)}" stroke="var(--rojo)" stroke-width="34.6"/>` +
+      `<path d="${arco(RADIO + 108.1)}" stroke="var(--rojo)" stroke-width="34.6"/>`;
+  };
+  const franjas = crear('div', 'rc-franjas', seccion,
+    '<i class="rc-f-sombra"></i><i class="rc-f-arriba"></i>' +
+    `<svg class="rc-f-codo" style="left:${X0}px;top:-136.2px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, CODO, 'arriba')}</svg>` +
+    `<i class="rc-f-baja" style="left:${X0}px;top:${CODO - 137.2}px;height:${ABAJO - RADIO - (CODO - 136.2) + 2}px"></i>` +
+    `<svg class="rc-f-codo" style="left:${X0}px;top:${ABAJO - RADIO}px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, 0, 'abajo')}</svg>` +
+    `<i class="rc-f-abajo" style="top:${ABAJO}px"></i>` +
+    (iTrack[0] >= 0 ? `<p class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + iTrack[0] * PASO}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"><span>${txt(R.tracking || 'Tracking en tiempo real')}</span></p>` : '') +
+    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + i * PASO}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b></button>`).join(''));
+  const puntosEl = [...franjas.querySelectorAll('.rc-punto')];
   const quieto = crear('div', 'rc-quieto', seccion);
 
   // =========================================================
-  // COLUMNA IZQUIERDA: título y la ruta
+  // LA CAJA (quieta en pantalla, sobre las franjas) Y EL TEXTO DE CADA PARADA
   // =========================================================
+  const caja = crear('div', 'rc-caja', quieto, icono('caja'));
+  caja.style.left = MEDIO + 'px';
+  caja.style.top = CAJA_Y + 'px';
   const izq = crear('div', 'tm-izq', quieto,
-    `<div class="tm-cab ent" style="--i:0"><p class="tm-ante"><span>${txt(CO.antetitulo)}</span>` +
-    `<span class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</span></p><h2 class="tm-titulo">${txt(CO.titulo)}</h2></div>` +
-    `<p class="tm-bajada ent" style="--i:1">${txt(CO.bajada)}</p>` +
-    '<div class="rc-ruta ent" style="--i:2">' +
-    '<i class="rc-linea"><i class="rc-track"></i><i class="rc-hecha"></i></i>' +
-    `<span class="rc-bulto">${icono('caja')}</span>` +
-    '<ol>' + PARADAS.map((p, i) => {
+    `<div class="tm-cab ent" style="--i:0"><p class="tm-ante"><span>${txt(CO.antetitulo)}</span> <b>${txt(CO.titulo)}</b></p>` +
+    `<p class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</p></div>` +
+    '<div class="rc-etapas ent" style="--i:1">' + PARADAS.map((p, i) => {
       const f = p.interfaz || {};
-      return `<li class="rc-parada${conTracking(i) ? ' con-track' : ''}" data-i="${i}">` +
-        `<button type="button" class="rc-nodo" aria-label="${esc(p.titulo)}">${icono(p.clave)}</button>` +
-        `<div class="rc-cuerpo"><button type="button" class="rc-tit"><small>${String(i + 1).padStart(2, '0')}</small><b>${txt(p.titulo)}</b>` +
-        (conTracking(i) ? `<em class="rc-vivo"><i></i>${txt(R.tracking || 'Tracking')}</em>` : '') + '</button>' +
-        `<div class="rc-mas"><div><p class="rc-texto">${txt(p.texto)}</p>` +
+      return `<div class="rc-etapa" data-i="${i}">` +
+        `<p class="rc-num"><b>${String(i + 1).padStart(2, '0')}</b><span>/ ${String(N).padStart(2, '0')}</span>` +
+        (conTracking(i) ? `<em class="rc-vivo"><i></i>${txt(R.tracking || 'Tracking')}</em>` : '') + '</p>' +
+        `<h3 class="rc-titulo">${txt(p.titulo)}</h3><p class="rc-texto">${txt(p.texto)}</p>` +
         (f.nombre ? `<div class="rc-if">${icono('interfaz')}<div><span>${txt(R.interfaz || 'Interfaz')}</span><b>${txt(f.nombre)}</b><p>${txt(f.texto)}</p>` +
           `<div class="rc-via"><small>${txt(f.de)}</small><i><u></u></i><small>${txt(f.a)}</small></div></div></div>` : '') +
-        '</div></div></div></li>';
-    }).join('') + '</ol></div>' +
-    (R.final ? `<button type="button" class="rc-final ent" style="--i:3"><span>${txt(R.final)}</span><b>${txt(R.finalBoton || '')}${icono('flecha')}</b></button>` : ''));
-  const paradasEl = [...izq.querySelectorAll('.rc-parada')];
-  const linea = izq.querySelector('.rc-linea'), hecha = izq.querySelector('.rc-hecha'), track = izq.querySelector('.rc-track');
-  const bulto = izq.querySelector('.rc-bulto');
-  const ruta = izq.querySelector('.rc-ruta');
+        '</div>';
+    }).join('') + '</div>' +
+    (R.final ? `<button type="button" class="rc-final ent" style="--i:2"><span>${txt(R.final)}</span><b>${txt(R.finalBoton || '')}${icono('flecha')}</b></button>` : ''));
+  const etapasEl = [...izq.querySelectorAll('.rc-etapa')];
+  // el título grande se achica si una palabra no entra en la columna
+  const ajustarTitulos = () => izq.querySelectorAll('.rc-titulo').forEach((h) => {
+    let t = 58;
+    h.style.fontSize = t + 'px';
+    while (h.scrollWidth > h.clientWidth + 1 && t > 30) { t -= 2; h.style.fontSize = t + 'px'; }
+  });
+  ajustarTitulos();
+  if (document.fonts) document.fonts.ready.then(ajustarTitulos);
 
   const panel = crear('div', 'tm-panel ent', quieto);
   panel.style.setProperty('--i', 3);
@@ -112,10 +145,10 @@
     if (i === parada) return;
     parada = i;
     const p = PARADAS[i];
-    paradasEl.forEach((el, k) => {
-      el.classList.toggle('activa', k === i);
-      el.classList.toggle('hecha', k < i);
-    });
+    etapasEl.forEach((el, k) => { el.classList.toggle('activa', k === i); el.classList.toggle('pasada', k < i); });
+    puntosEl.forEach((el, k) => { el.classList.toggle('activa', k === i); el.classList.toggle('pasada', k < i); });
+    caja.classList.toggle('en-track', conTracking(i));
+    caja.classList.remove('llega'); void caja.offsetWidth; caja.classList.add('llega');
     pestana = VISTA_DE[p.clave];
     modo = p.clave;
     Object.entries(vistas).forEach(([k, v]) => v.classList.toggle('activa', k === pestana));
@@ -127,54 +160,29 @@
   // para ecosistema.js y experiencia.js
   SV.tms = { vistas, alElegir, get pestana() { return pestana; }, get modo() { return modo; }, get enVista() { return enVista; } };
 
-  // ---------- El scroll mueve la mercadería; la pantalla queda quieta ----------
+  // ---------- El scroll sube los puntos; la caja y el panel quedan quietos ----------
   const topeDe = () => seccion.offsetTop;
   const irParada = (i) => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + i * PASO); };
-  paradasEl.forEach((el, i) => {
-    el.querySelector('.rc-nodo').addEventListener('click', () => irParada(i));
-    el.querySelector('.rc-tit').addEventListener('click', () => irParada(i));
-  });
+  puntosEl.forEach((el, i) => el.addEventListener('click', () => irParada(i)));
   const final = izq.querySelector('.rc-final');
   if (final) final.addEventListener('click', () => { const bi = document.querySelector('.sv-bi'); if (bi && window.desplazamiento) window.desplazamiento.ir(bi.offsetTop); });
 
-  let avance = 0;                         // 0 … N−1 (en paradas, con decimales)
+  let reloj = null;
   function alDesplazar(y) {
     const d = y - topeDe();
     quieto.style.transform = `translate3d(0, ${Math.min(Math.max(d, 0), RECORRIDO).toFixed(2)}px, 0)`;
-    avance = Math.min(Math.max(d / PASO, 0), N - 1);
+    const avance = Math.min(Math.max(d / PASO, 0), N - 1);
     const antes = enVista;
     enVista = d > -700 && d < RECORRIDO + 700;
     seccion.classList.toggle('en-vista', enVista);
     if (enVista && !antes) seccion.classList.add('visible');
+    // mientras se baja, la caja traquetea un poco (va andando por las franjas)
+    if (d > 0 && d < RECORRIDO) { caja.classList.add('anda'); clearTimeout(reloj); reloj = setTimeout(() => caja.classList.remove('anda'), 180); }
     const i = Math.round(avance);
     if (i !== parada) elegir(i);
     else if (enVista && !antes) activarVista();
-    despertar();
   }
   document.addEventListener('desplazamiento', (e) => alDesplazar(e.detail.y));
-
-  // la línea, lo recorrido, el tramo con tracking y la caja que baja (un cuadro solo mientras algo se mueve)
-  let bucle = null, mostrado = -1, quietoDesde = 0;
-  const centro = (el) => { const n = el.querySelector('.rc-nodo'); return el.offsetTop + n.offsetTop + n.offsetHeight / 2; };
-  function cuadro(t) {
-    bucle = null;
-    if (!enVista || !N) return;
-    mostrado += (avance - mostrado) * (mostrado < 0 ? 1 : .22);
-    const cs = paradasEl.map(centro);
-    const k = Math.min(N - 2, Math.floor(mostrado)), f = mostrado - Math.max(0, k);
-    const yb = N > 1 ? cs[Math.max(0, k)] + (cs[Math.max(0, k) + 1] - cs[Math.max(0, k)]) * f : cs[0];
-    linea.style.top = cs[0] + 'px';
-    linea.style.height = (cs[N - 1] - cs[0]) + 'px';
-    hecha.style.height = Math.max(0, yb - cs[0]) + 'px';
-    if (iTrack[0] >= 0) { track.style.top = (cs[iTrack[0]] - cs[0]) + 'px'; track.style.height = (cs[iTrack[1]] - cs[iTrack[0]]) + 'px'; }
-    bulto.style.transform = `translate3d(0, ${yb.toFixed(1)}px, 0)`;
-    bulto.classList.toggle('en-track', conTracking(Math.round(mostrado)) || (mostrado > iTrack[0] && mostrado < iTrack[1]));
-    // sigue unos cuadros más mientras se acomodan las paradas que se abren
-    if (Math.abs(avance - mostrado) > .002) quietoDesde = t;
-    if (t - quietoDesde < 700) despertar();
-  }
-  function despertar() { if (!bucle) bucle = requestAnimationFrame(cuadro); }
-  ruta.addEventListener('transitionend', despertar);
 
   // =========================================================
   // 1. INGRESO DEL PEDIDO (interfaz con el ERP del cliente y llegada al depósito)

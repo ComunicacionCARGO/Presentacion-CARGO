@@ -342,9 +342,11 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
   • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,
     sello "Pensado para..." y la frase de abajo).
   • recorrido: "¿Cómo lo hacemos?" es el recorrido de un pedido de Ford, desde
-    que llega hasta el concesionario. Al bajar, la pantalla queda quieta y una
-    caja avanza por la ruta de la izquierda: en cada parada se abre su texto
-    (y su interfaz, si tiene) y a la derecha cambia la demo. Cada parada tiene:
+    que llega hasta el concesionario. Las tres franjas de la marca entran por
+    arriba, se doblan y bajan por la izquierda: al bajar, la caja queda quieta
+    sobre ellas mientras los puntos de las paradas suben; en cada parada cambia
+    el título grande, su texto (y su interfaz, si tiene) y la demo de la
+    derecha. Cada parada tiene:
       clave:    qué demo se muestra. NO SE CAMBIA (pedido, ubicacion, staging,
                 viajes, entrega o experiencia). Sí se puede sacar una parada
                 entera o cambiar el orden.
