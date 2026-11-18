@@ -82,11 +82,11 @@ window.ESTRUCTURA = {
         etiquetas: ["Red de concesionarios", "Repuestos urgentes", "Ventanas de entrega", "Su ERP", "Estándares Ford", "Devoluciones"]
       },
       {
-        titulo: "Diseñamos a medida",
+        titulo: "Lo que hace el resto",
         texto: "Una solución estándar no encaja. Diseñamos la operación para esa necesidad: rutas, centros, procesos y tiempos."
       },
       {
-        titulo: "Desarrollamos la tecnología",
+        titulo: "Diseñamos a medida",
         texto: "Las herramientas que viste en «Un servicio para Ford» **no son un producto de catálogo**: nuestro equipo las desarrolla y adapta para ustedes.",
         sistemas: ["Gestión de cargas", "Despachos y e-POD", "Tracking web", "Interfases con su ERP", "Atención con TICO", "Logística inversa", "Tableros de BI"]
       },

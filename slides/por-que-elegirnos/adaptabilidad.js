@@ -6,9 +6,9 @@
 
    Cuatro pasos (a la izquierda) que cambian el dibujo de la derecha:
    1. Escuchamos: aparece la forma de "la necesidad de Ford", con sus etiquetas.
-   2. Diseñamos a medida: una solución estándar (un cuadrado gris) prueba y no
+   2. Lo que hace el resto: una solución estándar (un cuadrado gris) prueba y no
       encaja; la pieza roja de CARGO toma la forma exacta.
-   3. Desarrollamos la tecnología: alrededor aparecen los sistemas "a medida" y
+   3. Diseñamos a medida: alrededor aparecen los sistemas "a medida" y
       el sello "Desarrollado para Ford".
    4. Evolucionamos juntos: la necesidad cambia de forma y la pieza la sigue.
    Los pasos pasan solos si nadie toca nada (con la sección en pantalla); al final
