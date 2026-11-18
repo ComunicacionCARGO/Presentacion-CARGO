@@ -58,7 +58,10 @@ window.SERVICIO = {
     antetitulo: "¿Cómo lo",
     titulo: "HACEMOS?",
     sello: "Pensado para {cliente}",
-    // invitación de la entrada (debajo del título grande): con mouse y con el dedo
+    // la entrada: la frase al lado del título grande, el rótulo del mapa de las paradas y la
+    // invitación a bajar (con mouse y con el dedo)
+    entrada: "Seguí un pedido de **{cliente}** desde que nos llega hasta el concesionario: seis paradas, cuatro interfaces con sus sistemas y **tracking en tiempo real**.",
+    mapa: "El recorrido",
     invitacion: "**Bajá** para descubrir el proceso",
     invitacionTactil: "**Deslizá** para descubrir el proceso"
     // el cartel "Bajá para seguir" está en datos/guias.js
@@ -75,6 +78,9 @@ window.SERVICIO = {
   recorrido: {
     interfaz: "Interfaz",               // el rótulo de las interfaces
     tracking: "Tracking",               // marca de las paradas con seguimiento en tiempo real
+    de: "de",                           // "01 de 06"
+    siguiente: "Siguiente",             // al lado del punto de la parada que viene
+    primera: "Primera parada",
     paradas: [
       {
         clave: "pedido",

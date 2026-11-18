@@ -41,8 +41,8 @@
 .rc-f-baja { position: absolute; width: 125.4px; background: linear-gradient(90deg, var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--gris) 90.8px); }
 .rc-f-abajo { background: linear-gradient(to bottom, var(--gris) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--rojo) 90.8px); }
 /* el tramo con tracking: una barra celeste al costado de las franjas */
-.rc-f-track { position: absolute; width: 6px; margin: 0; border-radius: 3px; background: linear-gradient(to bottom, rgba(94, 143, 166, 0), #5E8FA6 60px, #5E8FA6 calc(100% - 60px), rgba(94, 143, 166, 0)); }
-.rc-f-track span { position: absolute; left: 12px; top: 50%; translate: 0 -50%; writing-mode: vertical-rl; rotate: 180deg; font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #4F7D92; white-space: nowrap; }
+/* (sin rótulo parado: chocaba con el título de arriba; el "Tracking" va en la columna del texto) */
+.rc-f-track { position: absolute; width: 6px; border-radius: 3px; background: linear-gradient(to bottom, rgba(94, 143, 166, 0), #5E8FA6 60px, #5E8FA6 calc(100% - 60px), rgba(94, 143, 166, 0)); }
 /* los puntos de las paradas, sobre las franjas (suben con el scroll) */
 .rc-punto {
   position: absolute;
@@ -58,9 +58,17 @@
   color: var(--gris);
   cursor: pointer;
   box-shadow: 0 8px 16px -8px rgba(40, 20, 10, .6);
-  transition: background .35s ease, color .35s ease, transform .3s ease;
+  transition: background .35s ease, color .35s ease, transform .3s ease, opacity .35s ease;
 }
 .rc-punto b { font: 700 17px/1 var(--fuente-titulo); letter-spacing: .03em; }
+/* al llegar arriba se apagan (si no, se metían debajo del botón Volver) */
+.rc-punto.oculto { opacity: 0; pointer-events: none; }
+/* el nombre de la parada que viene, al lado de su punto cuando asoma abajo */
+.rc-sig { position: absolute; left: 96px; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; gap: 3px; text-align: left; white-space: nowrap; opacity: 0; transition: opacity .3s ease, translate .4s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.rc-sig small { font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
+.rc-sig { font: 700 18px/1 var(--fuente-titulo); letter-spacing: .02em; color: var(--gris); }
+.rc-punto.sig .rc-sig { opacity: 1; translate: 0 -50%; }
+.rc-punto:not(.sig) .rc-sig { translate: -8px -50%; }
 .rc-punto:hover { transform: scale(1.1); }
 .rc-punto.pasada { background: var(--gris); color: var(--blanco); border-color: var(--blanco); }
 /* las paradas con interfaz llevan un puntito verde */
@@ -106,14 +114,38 @@
 
 /* ---------- Columna del texto: el título cambia en cada parada ---------- */
 .tm-izq { position: absolute; left: 196px; top: 84px; width: 370px; height: 736px; }   /* abajo en 820, como el panel */
-/* "¿Cómo lo HACEMOS?": en la entrada, grande y centrado en dos renglones; con el scroll se achica
-   a un renglón arriba a la izquierda (tms.js lo mueve y lo escala con transform, sin recalcular estilos) */
+/* "¿Cómo lo HACEMOS?": en la entrada, grande en dos renglones y alineado a la izquierda; con el
+   scroll se achica a un renglón arriba (tms.js lo mueve y lo escala con transform, sin recalcular estilos) */
 .rc-gran { position: absolute; left: 0; top: 0; z-index: 3; margin: 0; font-weight: inherit; pointer-events: none; }
 .rc-gran span, .rc-gran b { position: absolute; left: 0; top: 0; line-height: 1; white-space: nowrap; transform-origin: 0 0; will-change: transform; }
-.rc-gran span { font-size: 96px; font-weight: 300; color: var(--gris); }
-.rc-gran b { font: 700 220px/1 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
-/* la invitación a bajar, debajo del título grande */
-.rc-invita { position: absolute; left: 870px; top: 640px; z-index: 3; display: flex; align-items: center; gap: 14px; margin: 0; translate: -50% 0; font-size: 19px; font-weight: 300; color: rgba(58, 58, 58, .85); white-space: nowrap; cursor: pointer; transition: opacity .2s linear; }
+.rc-gran span { font-size: 88px; font-weight: 300; color: var(--gris); }
+.rc-gran b { font: 700 196px/1 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
+/* ---------- Lo demás de la entrada (composición asimétrica, alineada a la izquierda en x 236):
+   el rótulo arriba, la frase a la derecha del título, el mapa de las paradas y la invitación ---------- */
+.rc-portada { position: absolute; inset: 0; z-index: 3; pointer-events: none; will-change: opacity, transform; }
+.rc-portada > * { pointer-events: auto; }
+.rc-ent-rotulo { position: absolute; left: 236px; top: 140px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
+.rc-ent-txt { position: absolute; left: 1120px; top: 300px; width: 400px; padding-top: 22px; border-top: 3px solid var(--rojo); font-size: 22px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .85); text-wrap: pretty; }
+.rc-ent-txt strong { font-weight: 600; color: var(--gris); }
+/* el mapa: las seis paradas en una línea, como un adelanto del recorrido (clic → esa parada) */
+.rc-mapa { position: absolute; left: 236px; right: 64px; top: 590px; }
+.rc-mapa > p { margin-bottom: 18px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
+.rc-mapa ol { position: relative; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.rc-mapa ol::before { content: ""; position: absolute; left: 9px; right: 0; top: 8px; height: 2px; background: repeating-linear-gradient(90deg, rgba(58, 58, 58, .25) 0 6px, transparent 6px 11px); }
+.rc-mapa button { position: relative; display: block; width: 100%; padding: 0 18px 0 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rc-mapa button > i { display: block; width: 18px; height: 18px; border: 3px solid var(--gris); border-radius: 50%; background: var(--blanco); transition: background .25s ease, border-color .25s ease, scale .25s ease; }
+.rc-mapa b { display: block; margin-top: 14px; font: 700 15px/1 var(--fuente-titulo); letter-spacing: .06em; color: var(--rojo); }
+.rc-mapa span { display: block; margin-top: 6px; font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--gris); text-wrap: balance; }
+.rc-mapa em { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11.5px; font-style: normal; font-weight: 500; color: var(--verde); }
+.rc-mapa em svg { width: 13px; height: 13px; fill: var(--verde); }
+.rc-mapa button:hover > i, .rc-mapa button:focus-visible > i { border-color: var(--rojo); background: var(--rojo); scale: 1.15; }
+.rc-mapa button:hover span { color: var(--rojo); }
+.rc-mapa button:active { translate: 0 1px; }
+.sv-tms .rc-mapa li { opacity: 0; translate: 0 14px; }
+.sv-tms.visible .rc-mapa li { animation: rc-mapa-entra .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.35s + var(--i) * .09s); }
+@keyframes rc-mapa-entra { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+/* la invitación a bajar, abajo a la izquierda */
+.rc-invita { position: absolute; left: 236px; top: 790px; display: flex; align-items: center; gap: 14px; margin: 0; font-size: 19px; font-weight: 300; color: rgba(58, 58, 58, .85); white-space: nowrap; cursor: pointer; }
 .rc-invita strong { font-weight: 600; color: var(--rojo); }
 .rc-invita > svg { width: 22px; height: 22px; fill: var(--rojo); animation: rc-invitar 1.6s ease-in-out infinite; }
 @keyframes rc-invitar { 0%, 100% { translate: 0 -3px; } 50% { translate: 0 5px; } }
@@ -125,40 +157,49 @@
 .guia-tactil .rc-inv-tactil { display: inline; }
 .guia-tactil .rc-raton { display: none; }
 .sv-tms:not(.en-vista) .rc-invita > svg, .sv-tms:not(.en-vista) .rc-raton u { animation-play-state: paused; }
-/* mientras dura la entrada, el recorrido no se ve: aparece de a poco al terminar */
-.sv-tms.entrada .rc-quieto .tm-cab, .sv-tms.entrada .rc-quieto .rc-etapas, .sv-tms.entrada .rc-quieto .rc-final,
-.sv-tms.entrada .rc-quieto .tm-panel, .sv-tms.entrada .rc-quieto .rc-caja { opacity: 0; translate: 0 30px; pointer-events: none; transition-delay: 0s; transition-duration: .3s; }
+/* mientras dura la entrada, el recorrido no se ve (la caja sí: espera en las franjas, flotando);
+   aparece de a poco al terminar */
+.sv-tms.entrada .rc-quieto .tm-cab, .sv-tms.entrada .rc-quieto .rc-etapas,
+.sv-tms.entrada .rc-quieto .tm-panel { opacity: 0; translate: 0 30px; pointer-events: none; transition-delay: 0s; transition-duration: .3s; }
+.rc-caja.espera { animation: rc-espera 2.6s ease-in-out infinite; }
+@keyframes rc-espera { 0%, 100% { translate: 0 -4px; } 50% { translate: 0 4px; } }
+.sv-tms:not(.en-vista) .rc-caja.espera { animation-play-state: paused; }
 .rc-caja, .tm-cab { transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
 .tm-cab { padding-top: 38px; }
 .tm-sello { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
 .rc-etapas { position: absolute; left: 0; right: 0; top: 92px; bottom: 64px; }
-.rc-etapa { position: absolute; inset: 0; opacity: 0; translate: 0 46px; pointer-events: none; transition: opacity .4s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
+/* el texto de la parada va centrado a la altura de la caja (y ~450), no pegado arriba */
+.rc-etapa { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; translate: 0 46px; pointer-events: none; transition: opacity .4s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
 .rc-etapa.pasada { translate: 0 -46px; }
 .rc-etapa.activa { opacity: 1; translate: 0 0; pointer-events: auto; transition-delay: .08s; }
-.rc-num { display: flex; align-items: baseline; gap: 10px; }
-.rc-num b { font: 700 64px/1 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
-.rc-num span { font-size: 16px; font-weight: 300; color: rgba(58, 58, 58, .55); font-variant-numeric: tabular-nums; }
+/* número de la parada, el avance (una rayita por parada) y "de 06": un solo acento rojo, el avance */
+.rc-num { display: flex; align-items: center; gap: 12px; }
+.rc-num b { font: 700 40px/1 var(--fuente-titulo); letter-spacing: .02em; color: var(--gris); font-variant-numeric: tabular-nums; }
+.rc-prog { display: flex; gap: 4px; }
+.rc-prog i { width: 18px; height: 4px; border-radius: 2px; background: rgba(58, 58, 58, .15); }
+.rc-prog i.si { background: var(--rojo); }
+.rc-num small { font-size: 13px; font-weight: 500; color: rgba(58, 58, 58, .55); font-variant-numeric: tabular-nums; }
 /* "Tracking" en las paradas donde la mercadería se sigue en tiempo real */
 .rc-vivo { display: flex; align-items: center; gap: 6px; margin-left: auto; align-self: center; padding: 5px 11px; border-radius: 999px; background: rgba(117, 154, 171, .16); font-size: 10.5px; font-style: normal; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #4F7D92; white-space: nowrap; }
 .rc-vivo i { width: 7px; height: 7px; border-radius: 50%; background: #5E8FA6; animation: titilar 1.4s ease-in-out infinite; }
-.rc-titulo { margin-top: 12px; font: 700 58px/1 var(--fuente-titulo); letter-spacing: .01em; text-transform: uppercase; color: var(--gris); overflow-wrap: normal; }
-.rc-texto { margin-top: 16px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .82); }
+.rc-titulo { margin-top: 16px; font: 700 58px/.98 var(--fuente-titulo); letter-spacing: .005em; text-transform: uppercase; color: var(--gris); overflow-wrap: normal; text-wrap: balance; }
+.rc-texto { margin-top: 18px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(58, 58, 58, .82); text-wrap: pretty; }
 .rc-texto strong { font-weight: 600; color: var(--gris); }
 /* la interfaz con el sistema del cliente (o de los socios) que actúa en esa parada */
 .rc-if { display: grid; grid-template-columns: 24px 1fr; gap: 12px; margin-top: 22px; padding: 12px 15px 13px; border: 1px solid rgba(76, 149, 108, .35); border-radius: 14px; background: rgba(76, 149, 108, .08); }
 .rc-if > svg { width: 22px; height: 22px; margin-top: 2px; fill: var(--verde); }
-.rc-if span { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--verde); }
-.rc-if b { display: block; margin-top: 2px; font: 700 18px/1.1 var(--fuente-titulo); letter-spacing: .02em; color: var(--gris); }
-.rc-if p { margin-top: 3px; font-size: 13px; font-weight: 300; line-height: 1.4; color: rgba(58, 58, 58, .78); }
-.rc-via { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.rc-via small { font-size: 11px; font-weight: 600; color: rgba(58, 58, 58, .72); white-space: nowrap; }
+.rc-if span { display: block; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--verde); }
+.rc-if b { display: block; margin-top: 3px; font: 700 19px/1.1 var(--fuente-titulo); letter-spacing: .02em; color: var(--gris); }
+.rc-if p { margin-top: 4px; font-size: 14px; font-weight: 300; line-height: 1.45; color: rgba(58, 58, 58, .8); text-wrap: pretty; }
+.rc-via { display: flex; align-items: center; gap: 10px; margin-top: 9px; }
+.rc-via small { font-size: 11.5px; font-weight: 600; color: rgba(58, 58, 58, .72); white-space: nowrap; }
 .rc-via i { position: relative; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, rgba(76, 149, 108, .55) 0 5px, transparent 5px 9px); }
 .rc-via u { position: absolute; left: 0; top: -4px; width: 10px; height: 10px; border-radius: 3px; background: var(--verde); box-shadow: 0 0 0 3px rgba(76, 149, 108, .2); }
 .rc-etapa.activa .rc-via u { animation: rc-dato 1.7s cubic-bezier(.5, 0, .5, 1) infinite; }
 @keyframes rc-dato { 0% { left: 0; opacity: 0; } 15%, 85% { opacity: 1; } 100% { left: calc(100% - 10px); opacity: 0; } }
 .sv-tms:not(.en-vista) .rc-via u { animation-play-state: paused; }
-/* al final: todo alimenta los tableros de inteligencia de negocio */
-.rc-final { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 14px; padding: 12px 0 0; border: 0; border-top: 1px solid rgba(58, 58, 58, .14); background: none; color: inherit; text-align: left; cursor: pointer; }
+/* en la última parada: todo alimenta los tableros de inteligencia de negocio */
+.rc-final { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 26px; padding: 14px 0 0; border: 0; border-top: 1px solid rgba(58, 58, 58, .14); background: none; color: inherit; text-align: left; cursor: pointer; }
 .rc-final span { flex: 1; font-size: 13px; font-weight: 300; line-height: 1.4; color: rgba(58, 58, 58, .75); }
 .rc-final strong { font-weight: 600; color: var(--gris); }
 .rc-final b { display: flex; align-items: center; gap: 6px; font: 500 14px var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--rojo); white-space: nowrap; }

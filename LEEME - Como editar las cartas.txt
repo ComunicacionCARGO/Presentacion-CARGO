@@ -340,9 +340,11 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       cada párrafo, en el mismo orden: "gestion" (caja con flechas), "objetivo"
       (diana) o "" (sin ícono).
   • como: el título "¿Cómo lo HACEMOS?" (antetitulo, titulo y sello "Pensado
-    para..."). Al llegar se ve solo el título grande con la invitación a bajar
-    (invitacion con mouse, invitacionTactil con el dedo); al bajar, el título
-    se achica arriba a la izquierda y aparece el recorrido.
+    para..."). Al llegar se ve la entrada: el título grande, a su derecha la
+    frase "entrada", abajo el mapa de las seis paradas (su rótulo es "mapa";
+    los nombres salen de las paradas) y la invitación a bajar (invitacion con
+    mouse, invitacionTactil con el dedo); al bajar, el título se achica arriba
+    a la izquierda y aparece el recorrido.
   • recorrido: "¿Cómo lo hacemos?" es el recorrido de un pedido de Ford, desde
     que llega hasta el concesionario. Las tres franjas de la marca entran por
     arriba, se doblan y bajan por la izquierda: al bajar, la caja queda quieta
@@ -356,8 +358,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       interfaz: (opcional) la conexión entre sistemas que actúa ahí: nombre,
                 texto, de (de dónde sale la información) y a (adónde va).
     Las paradas de staging a entrega llevan la marca "Tracking" (el texto de
-    esa marca y el rótulo "Interfaz" también están en recorrido). final y
-    finalBoton: la frase de abajo de la ruta, que lleva a los tableros.
+    esa marca, el rótulo "Interfaz", el "de" de "01 de 06" y los rótulos
+    "Siguiente" y "Primera parada" que aparecen al lado del punto que viene
+    también están en recorrido). final y finalBoton: la frase de la última
+    parada, que lleva a los tableros.
   • tms: los datos de las demos de cada parada (todos de ejemplo).
       pedido:     ingreso del pedido: nombres de los dos sistemas, el archivo
                   que viaja, los pedidos (número, destino, bultos y tipo: Stock,

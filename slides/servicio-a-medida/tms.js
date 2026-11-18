@@ -109,8 +109,10 @@
     `<i class="rc-f-baja" style="left:${X0}px;top:${CODO - 137.2}px;height:${ABAJO - RADIO - (CODO - 136.2) + 2}px"></i>` +
     `<svg class="rc-f-codo" style="left:${X0}px;top:${ABAJO - RADIO}px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, 0, 'abajo')}</svg>` +
     `<i class="rc-f-abajo" style="top:${ABAJO}px"></i>` +
-    (iTrack[0] >= 0 ? `<p class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + yParada(iTrack[0])}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"><span>${txt(R.tracking || 'Tracking en tiempo real')}</span></p>` : '') +
-    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + yParada(i)}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b></button>`).join(''));
+    (iTrack[0] >= 0 ? `<i class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + yParada(iTrack[0])}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"></i>` : '') +
+    // cada punto lleva el nombre de su parada: se ve solo el de la siguiente, cuando asoma abajo
+    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + yParada(i)}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b>` +
+      `<span class="rc-sig"><small>${txt(i ? (R.siguiente || 'Siguiente') : (R.primera || 'Primera parada'))}</small>${txt(p.titulo)}</span></button>`).join(''));
   const puntosEl = [...franjas.querySelectorAll('.rc-punto')];
   const quieto = crear('div', 'rc-quieto', seccion);
 
@@ -123,23 +125,34 @@
   // el título "¿Cómo lo HACEMOS?": grande en dos renglones al llegar, chico en un renglón después
   const gran = crear('h2', 'rc-gran', quieto, `<span>${txt(CO.antetitulo)}</span><b>${txt(CO.titulo)}</b>`);
   const [granAnte, granTit] = gran.children;
-  const invita = crear('p', 'rc-invita', quieto,
-    `<i class="rc-raton"><u></u></i><span class="rc-inv-mouse">${txt(CO.invitacion)}</span><span class="rc-inv-tactil">${txt(CO.invitacionTactil || CO.invitacion)}</span>` +
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg>');
+  // lo demás de la entrada (se va al bajar): la frase, el mapa de las paradas y la invitación
+  const portada = crear('div', 'rc-portada', quieto,
+    `<p class="rc-ent-rotulo"><i class="franjitas"></i>${txt(CO.sello)}</p>` +
+    `<p class="rc-ent-txt">${txt(CO.entrada)}</p>` +
+    `<div class="rc-mapa"><p>${txt(CO.mapa)}</p><ol>` + PARADAS.map((p, i) =>
+      `<li style="--i:${i}"><button type="button" data-i="${i}"><i></i><b>${String(i + 1).padStart(2, '0')}</b><span>${txt(p.titulo)}</span>` +
+      (p.interfaz && p.interfaz.nombre ? `<em>${icono('interfaz')}${txt(p.interfaz.nombre)}</em>` : '') + '</button></li>').join('') + '</ol></div>' +
+    `<p class="rc-invita"><i class="rc-raton"><u></u></i><span class="rc-inv-mouse">${txt(CO.invitacion)}</span><span class="rc-inv-tactil">${txt(CO.invitacionTactil || CO.invitacion)}</span>` +
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg></p>');
+  const invita = portada.querySelector('.rc-invita');
   invita.addEventListener('click', () => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + yParada(0)); });
+  portada.querySelectorAll('.rc-mapa button').forEach((b) => b.addEventListener('click', () => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + yParada(+b.dataset.i)); }));
   const izq = crear('div', 'tm-izq', quieto,
     `<div class="tm-cab"><p class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</p></div>` +
     '<div class="rc-etapas ent" style="--i:1">' + PARADAS.map((p, i) => {
       const f = p.interfaz || {};
+      // número y avance (una rayita por parada, rojas hasta la actual)
       return `<div class="rc-etapa" data-i="${i}">` +
-        `<p class="rc-num"><b>${String(i + 1).padStart(2, '0')}</b><span>/ ${String(N).padStart(2, '0')}</span>` +
+        `<p class="rc-num"><b>${String(i + 1).padStart(2, '0')}</b><span class="rc-prog">${PARADAS.map((_, k) => `<i${k <= i ? ' class="si"' : ''}></i>`).join('')}</span>` +
+        `<small>${txt(R.de || 'de')} ${String(N).padStart(2, '0')}</small>` +
         (conTracking(i) ? `<em class="rc-vivo"><i></i>${txt(R.tracking || 'Tracking')}</em>` : '') + '</p>' +
         `<h3 class="rc-titulo">${txt(p.titulo)}</h3><p class="rc-texto">${txt(p.texto)}</p>` +
         (f.nombre ? `<div class="rc-if">${icono('interfaz')}<div><span>${txt(R.interfaz || 'Interfaz')}</span><b>${txt(f.nombre)}</b><p>${txt(f.texto)}</p>` +
           `<div class="rc-via"><small>${txt(f.de)}</small><i><u></u></i><small>${txt(f.a)}</small></div></div></div>` : '') +
+        // en la última parada, el enlace a los tableros
+        (i === N - 1 && R.final ? `<button type="button" class="rc-final"><span>${txt(R.final)}</span><b>${txt(R.finalBoton || '')}${icono('flecha')}</b></button>` : '') +
         '</div>';
-    }).join('') + '</div>' +
-    (R.final ? `<button type="button" class="rc-final ent" style="--i:2"><span>${txt(R.final)}</span><b>${txt(R.finalBoton || '')}${icono('flecha')}</b></button>` : ''));
+    }).join('') + '</div>');
   const etapasEl = [...izq.querySelectorAll('.rc-etapa')];
   // el título grande se achica si una palabra no entra en la columna
   const ajustarTitulos = () => izq.querySelectorAll('.rc-titulo').forEach((h) => {
@@ -186,12 +199,21 @@
   const final = izq.querySelector('.rc-final');
   if (final) final.addEventListener('click', () => { const bi = document.querySelector('.sv-bi'); if (bi && window.desplazamiento) window.desplazamiento.ir(bi.offsetTop); });
 
-  // ---------- El título de la entrada: de grande y centrado a chico arriba a la izquierda ----------
-  // (se mide una vez con la letra grande y después solo se mueve y se escala con transform)
-  const GRANDE = { ante: 96, tit: 220 }, CHICO = { ante: 28, tit: 32 };
-  const CENTRO_X = 870, ARRIBA_Y = 232;
+  // ---------- El título de la entrada: de grande a chico, siempre alineado a la izquierda ----------
+  // (se mide una vez con la letra grande y después solo se mueve y se escala con transform;
+  // al estar los dos alineados a la izquierda, al bajar el título solo se achica y sube)
+  const GRANDE = { ante: 88, tit: 196 }, CHICO = { ante: 28, tit: 32 };
+  const IZQ_X = 236, ARRIBA_Y = 186;      // borde izquierdo del texto y alto del "¿Cómo lo" grande
   let med = null;
-  const medir = () => { med = { a: granAnte.offsetWidth, t: granTit.offsetWidth }; ubicarTitulo(ultimoM); };
+  const fraseEl = portada.querySelector('.rc-ent-txt');
+  const medir = () => {
+    med = { a: granAnte.offsetWidth, t: granTit.offsetWidth };
+    // la frase va a la derecha del "HACEMOS?" grande, hasta el margen de 1536
+    const x = Math.max(1080, IZQ_X + med.t + 56);
+    fraseEl.style.left = x + 'px';
+    fraseEl.style.width = Math.max(300, 1536 - x) + 'px';
+    ubicarTitulo(ultimoM);
+  };
   const suave = (x) => x * x * (3 - 2 * x);
   let ultimoM = 0;
   function ubicarTitulo(m) {
@@ -202,12 +224,16 @@
     // chico: en un renglón, alineados por la línea de base (Inter .864, Oswald .952 con interlineado 1)
     const base = 84 + .864 * CHICO.ante;
     const fin = { ax: 196, ay: 84, tx: 196 + med.a * CHICO.ante / GRANDE.ante + 10, ty: base - .952 * CHICO.tit };
-    const ini = { ax: CENTRO_X - med.a / 2, ay: ARRIBA_Y, tx: CENTRO_X - med.t / 2, ty: ARRIBA_Y + GRANDE.ante + 8 };
+    // grande: el "¿" y la H corridos lo que mide su margen, así los dos quedan parejos a la izquierda
+    const ini = { ax: IZQ_X - 6, ay: ARRIBA_Y, tx: IZQ_X - 11, ty: ARRIBA_Y + GRANDE.ante + 4 };
     const l = (a, b) => (a + (b - a) * e).toFixed(2);
     granAnte.style.transform = `translate(${l(ini.ax, fin.ax)}px, ${l(ini.ay, fin.ay)}px) scale(${sA.toFixed(4)})`;
     granTit.style.transform = `translate(${l(ini.tx, fin.tx)}px, ${l(ini.ty, fin.ty)}px) scale(${sT.toFixed(4)})`;
-    invita.style.opacity = Math.max(0, 1 - m * 2.6).toFixed(3);
-    invita.style.visibility = m > .4 ? 'hidden' : '';
+    // lo demás de la entrada se va enseguida, hacia arriba
+    const s = Math.min(1, m * 2.4);
+    portada.style.opacity = (1 - s).toFixed(3);
+    portada.style.transform = `translate3d(0, ${(-60 * s).toFixed(1)}px, 0)`;
+    portada.style.visibility = s >= 1 ? 'hidden' : '';
   }
   medir();
   if (document.fonts) document.fonts.ready.then(medir);
@@ -230,6 +256,15 @@
     const i = Math.min(N - 1, Math.max(0, Math.round((d - ENTRADA) / PASO)));
     if (i !== parada) elegir(i);
     else if (enVista && !enEntrada && (!antes || antesEntrada)) activarVista();
+    caja.classList.toggle('espera', enEntrada);
+    // los puntos se apagan al llegar arriba (no se meten debajo de "Volver") y el de la parada
+    // siguiente muestra su nombre cuando asoma abajo
+    const dq = Math.min(Math.max(d, 0), RECORRIDO);
+    puntosEl.forEach((el, k) => {
+      const ys = CAJA_Y + yParada(k) - dq;
+      el.classList.toggle('oculto', ys < 160);
+      el.classList.toggle('sig', ys > 600 && ys < 870 && k === (enEntrada ? 0 : parada + 1));
+    });
   }
   document.addEventListener('desplazamiento', (e) => alDesplazar(e.detail.y));
 
