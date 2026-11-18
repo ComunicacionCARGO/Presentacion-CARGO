@@ -69,59 +69,55 @@
     window.desplazarA(900 + el.offsetTop);
   }
 
-  // ---------- Dónde va cada ícono (en px del escenario) ----------
-  // Orden de lectura de izquierda a derecha (pedido de la persona: que lo primero que quieran tocar
-  // sea "Nos adaptamos con flexibilidad"; el operario va espejado para que la foto acompañe):
-  //   flexibilidad a la izquierda, con la línea a un estante del depósito;
-  //   innovación abajo al medio, con la línea al escáner;
-  //   excelencia a la derecha, con la línea a la tabla.
-  // etiqueta: arriba a la izquierda del título (el ícono va a su izquierda, centrado con los dos
-  // renglones); de → a: la línea, del título al punto de la foto, que va pegado a una capa.
-  // Los puntos del operario son los de la foto espejada (eje en x 791,3).
-  const LUGARES = {
-    flexibilidad: { etiqueta: [294, 508.7], de: [532, 540], a: [590, 418], capa: 'deposito', curva: -.22 },
-    // (bien curvada hacia la izquierda: pasa por delante de la tabla sin cruzarse con la línea de excelencia)
-    innovacion:   { etiqueta: [711, 742], de: [770, 726], a: [923.6, 470], capa: 'operario', curva: -.35 },
-    excelencia:   { etiqueta: [1221, 579.1], de: [1086, 626], a: [843.6, 613], capa: 'operario', curva: .16 }
-  };
+  // ---------- Las tres claves, en un zócalo abajo (opción A elegida por la persona) ----------
+  // Sin líneas a la foto (los objetos no tenían relación con cada idea): las tres en fila sobre el
+  // gris, en orden de lectura (flexibilidad, innovación, excelencia), numeradas y unidas por una
+  // línea punteada con un punto en cada una, como el mapa de la entrada de "¿Cómo lo hacemos?".
+  // Cada clave: el ícono (su dibujo mide ALTO_ICONO de alto) y a su derecha el número y el título.
+  const ORDEN_LUGARES = ['flexibilidad', 'innovacion', 'excelencia'];
+  const COL_X = [262, 632, 1002];         // borde izquierdo de cada clave (columnas de 370)
+  const FILA_Y = 716;                     // arriba de las claves; la línea punteada va en 687
+  const ALTO_ICONO = 64, SEP = 20;        // alto del dibujo del ícono y aire hasta el texto
   // tamaño de cada ícono (lado de la caja del SVG) y dónde está el dibujo dentro de esa caja (0–1)
   const ICONO_TAM = {
     innovacion:   { s: 144.5, dibujo: [.03, .07, .978, .927] },
     flexibilidad: { s: 131.5, dibujo: [.133, .152, .875, .855] },
     excelencia:   { s: 136.3, dibujo: [.122, .122, .885, .887] }
   };
-  const ORDEN_LUGARES = ['flexibilidad', 'innovacion', 'excelencia'];
-  const PAD = 26, ALTO_RENGLON = 46;
+  const PAD = 26, ALTO_RENGLON = 34, ALTO_NUM = 22;
   // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
-  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], puntos: [32, -.05] };
+  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], puntos: [14, -.05] };
   const capas = {};
   document.querySelectorAll('.df-capa').forEach((c) => { capas[c.dataset.capa] = c; });
-
-  const svgLineas = $('.df-lineas'), defs = $('defs', svgLineas);
-  const NS = 'http://www.w3.org/2000/svg';
-  const nuevoSvg = (tag, attrs, padre) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); padre.appendChild(e); return e; };
+  // la línea punteada del zócalo, con un punto sobre cada clave
+  const zocalo = crear('div', 'df-zocalo', contEl);
 
   const usados = new Set();
-  const puntos = (E.elegirnos || []).slice(0, 3).map((t, i) => {
-    // lugar por su ícono; si no coincide, el primero libre
-    let clave = LUGARES[t.icono] && !usados.has(t.icono) ? t.icono : ORDEN_LUGARES.find((k) => !usados.has(k));
-    usados.add(clave);
-    const L = LUGARES[clave];
+  const lista = (E.elegirnos || []).slice(0, 3);
+  // en el orden de lectura, por su ícono (si no coincide, el primero libre)
+  const claves = lista.map((t) => { const k = ORDEN_LUGARES.includes(t.icono) && !usados.has(t.icono) ? t.icono : ORDEN_LUGARES.find((kk) => !usados.has(kk)); usados.add(k); return k; });
+  const puntos = lista.map((t, i) => {
+    const clave = claves[i], col = ORDEN_LUGARES.indexOf(clave);
     const T = ICONO_TAM[t.icono] || ICONO_TAM[clave];
-    const is = T.s, [d0, d1, d2, d3] = T.dibujo;
-    // el dibujo del ícono termina 24 px antes del título y queda centrado con sus dos renglones
-    const ix = L.etiqueta[0] - 24 - d2 * is, iy = L.etiqueta[1] + ALTO_RENGLON - (d1 + d3) / 2 * is;
-    const x = ix + d0 * is - PAD, y = iy + d1 * is - PAD;          // esquina de la tarjeta abierta
+    const [d0, d1, d2, d3] = T.dibujo, is = ALTO_ICONO / (d3 - d1);   // el dibujo de todos mide lo mismo de alto
     const renglones = String(t.titulo || '').split(/\s+\/\s+/).filter(Boolean);
-    const cabH = Math.max(iy + d3 * is, L.etiqueta[1] + renglones.length * ALTO_RENGLON) - y + 14;
+    const altoTexto = ALTO_NUM + renglones.length * ALTO_RENGLON;
+    // el ícono centrado con el bloque del texto; su dibujo arranca en el borde de la columna
+    const ix = COL_X[col] - d0 * is, iy = FILA_Y + (altoTexto - ALTO_ICONO) / 2 - d1 * is;
+    const lx = COL_X[col] + (d2 - d0) * is + SEP, ly = FILA_Y;
+    const x = COL_X[col] - PAD, y = FILA_Y - PAD;                     // esquina de la tarjeta abierta
+    const cabH = altoTexto + PAD + 14;
+    const punto = crear('i', '', zocalo);
+    punto.style.left = (COL_X[col] + (d2 - d0) * is / 2 - 220) + 'px';   // sobre el ícono (el zócalo arranca en x 220)
+    punto.dataset.c = col;
     const el = crear('div', 'df-punto', contEl);
     const datos = (t.datos || []).filter((d) => d && (d.valor || d.texto));
     const conDestino = !!SECCION_DE[String(t.ir || '').trim()];
     el.dataset.icono = clave;
-    el.style.cssText = `--i:${i};--x:${x}px;--y:${y}px;--ix:${ix - x}px;--iy:${iy - y}px;--is:${is}px;--lx:${L.etiqueta[0] - x}px;--ly:${L.etiqueta[1] - y}px;--cab-h:${cabH}px;--ox:${ix - x + is / 2}px;--oy:${iy - y + is / 2}px`;
+    el.style.cssText = `--i:${col};--x:${x}px;--y:${y}px;--ix:${ix - x}px;--iy:${iy - y}px;--is:${is}px;--lx:${lx - x}px;--ly:${ly - y}px;--cab-h:${cabH}px;--ox:${ix - x + is / 2}px;--oy:${iy - y + is / 2}px`;
     el.innerHTML =
       '<div class="df-vidrio"><i class="df-brillo"></i></div>' +
-      `<div class="df-cabeza"><span class="el-icono"></span><h3 class="df-etiqueta">${renglones.map((r) => `<span>${formato(r)}</span>`).join('')}</h3></div>` +
+      `<div class="df-cabeza"><span class="el-icono"></span><h3 class="df-etiqueta"><small>${String(col + 1).padStart(2, '0')}</small>${renglones.map((r) => `<span>${formato(r)}</span>`).join('')}</h3></div>` +
       `<div class="df-cuerpo"><p class="el-texto">${formato(t.texto)}</p>` +
       (datos.length ? '<div class="el-datos">' + datos.map((d) => `<div><b>${esc(d.valor)}</b><span>${formato(d.texto)}</span></div>`).join('') + '</div>' : '') +
       (t.frase ? `<p class="df-frase">${formato(t.frase)}</p>` : '') +
@@ -136,17 +132,10 @@
       img.onerror = incluido;
       img.src = '../../' + t.imagen;
     } else incluido();
-    // la línea (con un degradé que se apaga hacia el título) y el punto en la foto
-    const grad = nuevoSvg('linearGradient', { id: 'df-g-' + i, gradientUnits: 'userSpaceOnUse' }, defs);
-    nuevoSvg('stop', { offset: '0', 'stop-opacity': '.95' }, grad);
-    nuevoSvg('stop', { offset: '1', 'stop-opacity': '.2' }, grad);
-    const linea = nuevoSvg('path', { class: 'df-linea', pathLength: '1', stroke: `url(#df-g-${i})`, style: `--i:${i}` }, svgLineas);
-    const punto = nuevoSvg('g', { class: 'df-punto-foto', style: `--i:${i};--d:${i * -.9}s` }, svgLineas);
-    nuevoSvg('circle', { class: 'df-halo', r: '9' }, punto);
-    nuevoSvg('circle', { class: 'df-onda', r: '4.5' }, punto);
-    nuevoSvg('circle', { r: '4.5' }, punto);
-    return { t, el, L, x, y, grad, linea, punto, conDestino, p: 0, sube: 0, fase: i * 2.1 };
+    return { t, el, x, y, conDestino, p: 0, sube: 0 };
   });
+  // en el orden de lectura (así el foco con el teclado y la guía van primero a Flexibilidad)
+  puntos.slice().sort((a, b) => ORDEN_LUGARES.indexOf(a.el.dataset.icono) - ORDEN_LUGARES.indexOf(b.el.dataset.icono)).forEach((q) => contEl.appendChild(q.el));
 
   // Si la tarjeta abierta no entra abajo, sube (con su título) lo que haga falta
   const medir = () => puntos.forEach((o) => { const h = o.el.offsetHeight; o.sube = Math.max(92 - o.y, Math.min(0, 868 - (o.y + h))); });
@@ -157,19 +146,15 @@
   let cierre = null;
   function abrir(o) {
     clearTimeout(cierre);
-    puntos.forEach((q) => {
-      const si = q === o;
-      q.el.classList.toggle('abierta', si);
-      q.linea.classList.toggle('activa', si);
-      q.grad.classList.toggle('activa', si);
-      q.punto.classList.toggle('activa', si);
-    });
+    puntos.forEach((q) => q.el.classList.toggle('abierta', q === o));
+    zocalo.dataset.activa = ORDEN_LUGARES.indexOf(o.el.dataset.icono);
     seccionEl.classList.add('con-tarjeta');
     despertar();
   }
   function cerrar() {
     clearTimeout(cierre);
-    puntos.forEach((q) => { q.el.classList.remove('abierta'); q.linea.classList.remove('activa'); q.grad.classList.remove('activa'); q.punto.classList.remove('activa'); });
+    puntos.forEach((q) => q.el.classList.remove('abierta'));
+    delete zocalo.dataset.activa;
     seccionEl.classList.remove('con-tarjeta');
   }
   puntos.forEach((o) => {
@@ -221,7 +206,7 @@
     }
   }
 
-  // ---------- Paralaje (mouse y scroll), tarjetas que flotan y líneas: un solo bucle ----------
+  // ---------- Paralaje (mouse y scroll) y la tarjeta que se abre: un solo bucle ----------
   let mx = 0, my = 0, objX = 0, objY = 0, scrollY = 0, ultimo = 0, bucle = null;
   addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse' || reducido) return;
@@ -250,21 +235,10 @@
       if (capas[c]) capas[c].style.transform = `translate3d(${o[c][0].toFixed(2)}px, ${o[c][1].toFixed(2)}px, 0)`;
     }
     const kp = 1 - Math.exp(-dt * 9);
+    // las claves del zócalo quedan quietas (solo el paralaje de su capa); la abierta sube lo que haga falta
     for (const q of puntos) {
       q.p += ((q.el.classList.contains('abierta') ? 1 : 0) - q.p) * kp;
-      const flota = reducido ? [0, 0] : [Math.cos(t * .00041 + q.fase) * 2.2, Math.sin(t * .00057 + q.fase) * 5.5];
-      const dx = flota[0], dy = flota[1] + q.sube * suave(q.p);
-      q.el.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
-      // línea: del título (se mueve con la tarjeta) al punto de su capa
-      const ox = q.L.de[0] + o.puntos[0] + dx, oy = q.L.de[1] + o.puntos[1] + dy;
-      const capa = o[q.L.capa];
-      const ax = q.L.a[0] + capa[0], ay = q.L.a[1] + capa[1];
-      const lx = ax - ox, ly = ay - oy;
-      const cx = (ox + ax) / 2 - ly * q.L.curva, cy = (oy + ay) / 2 + lx * q.L.curva;
-      q.linea.setAttribute('d', `M${ox.toFixed(1)} ${oy.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ax.toFixed(1)} ${ay.toFixed(1)}`);
-      q.grad.setAttribute('x1', ax.toFixed(1)); q.grad.setAttribute('y1', ay.toFixed(1));
-      q.grad.setAttribute('x2', ox.toFixed(1)); q.grad.setAttribute('y2', oy.toFixed(1));
-      q.punto.setAttribute('transform', `translate(${ax.toFixed(1)} ${ay.toFixed(1)})`);
+      q.el.style.transform = `translate3d(0, ${(q.sube * suave(q.p)).toFixed(2)}px, 0)`;
     }
     if (motas.length) dibujarPolvo(t, dt);
     bucle = visible() ? requestAnimationFrame(cuadro) : null;
@@ -276,10 +250,10 @@
   }
   despertar();
 
-  // ---------- Entrada: al abrirse la cortina aparecen las capas; después, las líneas y los íconos ----------
+  // ---------- Entrada: al abrirse la cortina aparecen las capas; después, el zócalo con las claves ----------
   const entrar = () => {
     setTimeout(() => seccionEl.classList.add('arriba'), 350);
-    setTimeout(() => seccionEl.classList.add('lineas'), 2250);
+    setTimeout(() => seccionEl.classList.add('lineas'), 1900);
   };
   // Guía (compartido/guia.js): la mano invita a pasar por el primer ícono (Flexibilidad), hasta que se usa uno
   if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="flexibilidad"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 3.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 60 });

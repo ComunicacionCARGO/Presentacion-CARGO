@@ -135,29 +135,17 @@
 }
 .seccion-mejora.con-tarjeta .df-velo { opacity: 1; }
 
-/* Líneas finas de cada ícono a su punto en la foto (diapositiva.js las redibuja con el paralaje) */
-.df-lineas { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; }
-.df-linea {
-  fill: none;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-dasharray: 1 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.2s cubic-bezier(.5, 0, .2, 1), opacity .4s ease;
-}
-.df-lineas stop { stop-color: #FFFBF3; transition: stop-color .35s ease; }
-.df-lineas linearGradient.activa stop { stop-color: #FF6A4D; }
-.df-punto-foto { opacity: 0; transition: opacity .4s ease; }
-.df-punto-foto circle { fill: #FFFBF3; transition: fill .35s ease; }
-.df-punto-foto .df-halo { fill: rgba(255, 251, 243, .2); }
-.df-punto-foto .df-onda { fill: none; stroke: #FFFBF3; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: df-onda 2.8s cubic-bezier(.2, .6, .3, 1) infinite; animation-delay: var(--d, 0s); }
-.df-punto-foto.activa circle { fill: var(--rojo); }
-.df-punto-foto.activa .df-halo { fill: rgba(239, 69, 41, .3); }
-.df-punto-foto.activa .df-onda { stroke: #FF6A4D; animation-duration: 1.4s; }
-@keyframes df-onda { from { transform: scale(1); opacity: .8; } to { transform: scale(4.2); opacity: 0; } }
-.seccion-mejora.lineas .df-linea { stroke-dashoffset: 0; transition-delay: calc(var(--i) * .16s), 0s; }
-.seccion-mejora.lineas .df-punto-foto { opacity: 1; transition-delay: calc(var(--i) * .16s); }
-.seccion-mejora.con-tarjeta .df-linea:not(.activa), .seccion-mejora.con-tarjeta .df-punto-foto:not(.activa) { opacity: .25; transition-delay: 0s; }
+/* El zócalo (opción A elegida por la persona; reemplazó a las líneas que iban de cada ícono a un
+   objeto de la foto): una línea punteada crema de lado a lado con un punto sobre cada clave; se
+   dibuja de izquierda a derecha al entrar y el punto de la clave abierta se pone rojo */
+.df-zocalo { position: absolute; left: 220px; right: 220px; top: 687px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255, 251, 243, .42) 0 6px, transparent 6px 12px); clip-path: inset(-12px 100% -12px 0); transition: clip-path 1.3s cubic-bezier(.5, 0, .2, 1); }
+.seccion-mejora.lineas .df-zocalo { clip-path: inset(-12px 0 -12px 0); }
+.df-zocalo i { position: absolute; top: -7px; width: 16px; height: 16px; margin-left: -8px; border: 3px solid var(--blanco); border-radius: 50%; background: var(--gris); opacity: 0; scale: .4; transition: opacity .4s ease, scale .5s cubic-bezier(.3, 1.6, .5, 1), background .3s ease; }
+.seccion-mejora.lineas .df-zocalo i { opacity: 1; scale: 1; }
+.seccion-mejora.lineas .df-zocalo i[data-c="0"] { transition-delay: .35s; }
+.seccion-mejora.lineas .df-zocalo i[data-c="1"] { transition-delay: .75s; }
+.seccion-mejora.lineas .df-zocalo i[data-c="2"] { transition-delay: 1.15s; }
+.df-zocalo[data-activa="0"] i[data-c="0"], .df-zocalo[data-activa="1"] i[data-c="1"], .df-zocalo[data-activa="2"] i[data-c="2"] { background: var(--rojo); scale: 1.25; transition-delay: 0s; }
 
 /* ---------- Íconos con su título que se abren como tarjeta ----------
    Cada .df-punto mide como la tarjeta abierta (460 de ancho). Cerrado solo se ven el ícono y
@@ -223,19 +211,20 @@
 .el-icono svg { fill: #F2F2F2; transform: scale(.82); }
 .el-icono svg .trazo { fill: none; stroke: #F2F2F2; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
 .el-icono svg .hueco { fill: none; stroke: var(--gris); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
-/* Título en dos renglones: Oswald Bold 37,5 (medido del diseño), interlineado 46 */
+/* El número (01, 02, 03) y el título en dos renglones: Oswald Bold 30, interlineado 34 */
 .df-etiqueta {
   left: var(--lx);
   top: var(--ly);
   margin: 0;
   font-family: var(--fuente-titulo);
   font-weight: 700;
-  font-size: 37.5px;
-  line-height: 46px;
+  font-size: 30px;
+  line-height: 34px;
   color: var(--blanco);
   white-space: nowrap;
   text-shadow: 0 4px 18px rgba(0, 0, 0, .35);
 }
+.df-etiqueta small { display: block; height: 22px; font: 600 13px/16px var(--fuente-texto); letter-spacing: .22em; color: #FF6A4D; text-shadow: none; }
 .df-etiqueta span { display: block; }
 /* Entrada: cuando terminan de dibujarse las líneas, cada ícono aparece con un rebote (crece de
    chico, se pasa un poco y se asienta) y una onda que se abre detrás; su título entra desde el

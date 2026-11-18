@@ -185,10 +185,9 @@ Se edita en  datos\estructura.js  (con el Bloc de notas).
     cursor por un ícono se abre como una tarjeta con el resto del contenido;
     al hacer clic lleva a su parte (con el dedo: un toque la abre, otro toque
     lleva). Cada uno tiene:
-      icono:  innovacion, flexibilidad o excelencia. Decide DÓNDE va:
-              flexibilidad a la izquierda (línea a un estante), innovación
-              abajo al medio (línea al escáner) y excelencia a la derecha
-              (línea a la tabla), en ese orden de lectura.
+      icono:  innovacion, flexibilidad o excelencia. Decide DÓNDE va en la
+              fila de abajo (el zócalo, numerado 01, 02, 03): flexibilidad
+              primero, innovación en el medio y excelencia al final.
       imagen: su ícono en SVG (en img\estructura\elegirnos). Tiene que ser
               claro (blanco), porque va sobre la foto oscura.
       titulo: el título que flota al lado del ícono. " / " marca el corte de
