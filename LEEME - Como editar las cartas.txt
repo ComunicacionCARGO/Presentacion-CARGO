@@ -385,14 +385,20 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     A la izquierda van el título, la frase, el total de m² (se suma solo) y la
     lista de centros: el que se elige se despliega con sus datos. En lista,
     cada centro tiene nombre, m2 (el número sin puntos: 17000), direccion,
-    servicios, entrega y ubicacion ("benavidez" o "plaza" si al elegirlo el
-    mapa muestra su ruta; "" si no).
+    servicios, entrega y ubicacion: "plaza" o "benavidez" (al elegirlo el mapa
+    muestra su ruta por las calles), "rosario" o "cordoba" (el mapa pasa a una
+    vista de la zona central del país, con la flecha desde Buenos Aires y
+    flechitas naranjas hacia afuera) o "" (nada). Van por cercanía: el orden
+    de la lista es el de la pantalla y el de cuando el mapa pasa solo.
   • ubicacion: el mapa de la zona de Pacheco, a la derecha de la lista de centros.
     bajada (se suma a la frase de los centros), nota (va abajo a la derecha,
     junto a la aclaración del mapa), el nombre del depósito del cliente, pinDestino (el pin con el logo
     del cliente, en img\ubicacion\pin-cliente.svg) y los dos centros con sus km y
     minutos hasta el depósito (Benavídez además tiene "alternativas": los km y
-    minutos de las otras dos rutas, por El Salvador y por Sarmiento). El mapa usa calles reales (OpenStreetMap) y los
+    minutos de las otras dos rutas, por El Salvador y por Sarmiento).
+    Para la vista del país: origen (el cartel de Buenos Aires), regional (el
+    renglón que aparece en Rosario y Córdoba al desplegarlos) y regionales:
+    cada centro del interior con su nombre y sus coordenadas (lat y lon). El mapa usa calles reales (OpenStreetMap) y los
     recorridos reales por calle, guardados en
     slides\servicio-a-medida\mapa-pacheco.js: ese archivo no se edita a mano;
     si cambia un centro de lugar, hay que volver a generarlo.

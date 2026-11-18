@@ -80,6 +80,40 @@
     const [zx, zy] = ARG(ZONA[0], ZONA[1]);
     const argSVG = (clase) => `<svg class="${clase}" viewBox="0 0 ${AW.toFixed(0)} ${AH.toFixed(0)}" aria-hidden="true"><path d="${argD}"/><circle cx="${zx.toFixed(1)}" cy="${zy.toFixed(1)}" r="9"/></svg>`;
 
+    // ---- Vista del país para los centros del interior (Rosario y Córdoba; pedido de la persona) ----
+    // Solo la zona central (de Córdoba a Buenos Aires), con los bordes esfumados: el país entero ya
+    // se vio en el mapa de distribución. Una flecha sale de los centros de Buenos Aires hacia el
+    // elegido y desde ahí, flechitas naranjas hacia afuera: de ese centro sale a toda su zona.
+    const REG = (U.regionales || []).slice(0, 4);
+    const LON0 = -66.4, LAT1 = -29.4, KP = 96, COSP = Math.cos(33 * Math.PI / 180);
+    const QW = 790, QH = 730;
+    const Q = (lon, lat) => [(lon - LON0) * COSP * KP, (LAT1 - lat) * KP];
+    const provD = (p) => (p.anillos || []).map((a) => 'M' + a.map(([lo, la]) => Q(lo, la).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z').join('');
+    const ORIGEN = Q(ZONA[0], ZONA[1]);
+    const rutaPais = (r) => {
+      const [x0, y0] = ORIGEN, [x1, y1] = Q(r.lon, r.lat);
+      const cx = (x0 + x1) / 2 + (y1 - y0) * .2, cy = (y0 + y1) / 2 - (x1 - x0) * .2;
+      return { d: `M${x0.toFixed(1)},${y0.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`, x1, y1, ang: Math.atan2(y1 - cy, x1 - cx) };
+    };
+    // flechitas que salen del centro, abiertas en abanico hacia adelante (a donde seguiría el camino)
+    const abanico = (ru) => [-1.45, -.75, 0, .75, 1.45].map((da, j) => {
+      const a = ru.ang + da, p = (r) => [ru.x1 + Math.cos(a) * r, ru.y1 + Math.sin(a) * r].map((v) => v.toFixed(1)).join(',');
+      return `<path style="--j:${j}" d="M${p(30)}L${p(j === 2 ? 92 : 76)}"/>`;
+    }).join('');
+    const paisHTML = !REG.length ? '' :
+      '<div class="ub-pais">' +
+      `<svg class="up-dibujo" viewBox="0 0 ${QW} ${QH}" aria-hidden="true"><defs>` +
+      '<marker id="up-punta" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0 0L10 5L0 10z" fill="#EF4529"/></marker>' +
+      '<marker id="up-punta-n" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F4A127"/></marker></defs>' +
+      Object.entries(GEO).map(([k, p]) => `<path class="up-prov${k === 'B' ? ' ba' : ''}" d="${provD(p)}"/>`).join('') +
+      REG.map((r) => { const ru = rutaPais(r); return `<g class="up-ruta" data-k="${esc(r.k)}"><path class="up-ruta-base" d="${ru.d}"/><path class="up-ruta-flujo" d="${ru.d}"/></g><g class="up-sale" data-k="${esc(r.k)}">${abanico(ru)}</g>`; }).join('') +
+      [ORIGEN, ...REG.map((r) => Q(r.lon, r.lat))].map(([x, y], i) => `<circle class="up-pulso" style="--d:${i * .7}s" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/>`).join('') +
+      '</svg>' +
+      `<div class="ub-lugar ba" style="left:${ORIGEN[0].toFixed(0)}px;top:${ORIGEN[1].toFixed(0)}px"><span class="ub-etq">${txt(U.origen)}</span><span class="ub-pin">${ICO.deposito}</span></div>` +
+      REG.map((r) => { const [x, y] = Q(r.lon, r.lat); return `<div class="ub-lugar centro reg" data-k="${esc(r.k)}" style="left:${x.toFixed(0)}px;top:${y.toFixed(0)}px"><span class="ub-etq">${txt(r.nombre)}</span><span class="ub-pin">${ICO.deposito}</span></div>`; }).join('') +
+      `<span class="ub-camion up-camion">${ICO.camion}</span>` +
+      '</div>';
+
     sec.insertAdjacentHTML('beforeend',
       '<div class="ub-izq">' +
       `<div class="ub-cab ent" style="--i:0"><p class="ub-ante">${txt(CL.antetitulo)}</p><h2 class="ub-titulo">${txt(CL.titulo)}</h2>` +
@@ -87,15 +121,18 @@
       `<p class="ub-total ent" style="--i:1"><b data-n="${totalM2}">0</b><span>m²</span><small>${txt(CL.totalTexto)}</small></p>` +
       '<div class="ub-lista">' + LISTA.map((c, i) => {
         const r = CEN.find((cc) => cc.k === c.ubicacion);
-        return `<button type="button" class="ub-c ent" style="--i:${i + 2}" data-i="${i}"${r ? ` data-k="${esc(r.k)}"` : ''}>` +
+        const g = REG.find((cc) => cc.k === c.ubicacion);
+        const k = (r || g || {}).k;
+        return `<button type="button" class="ub-c ent" style="--i:${i + 2}" data-i="${i}"${k ? ` data-k="${esc(k)}"` : ''}>` +
           `<span class="ub-c-cab">${ICO.deposito}<span class="ub-c-nom"><small>Centro logístico</small><b>${txt(c.nombre)}</b></span>` +
           `<span class="ub-c-m2"><b data-n="${+c.m2 || 0}">0</b><small>m²</small></span></span>` +
           `<i class="ub-c-barra"><i style="--p:${((+c.m2 || 0) / maxM2 * 100).toFixed(1)}%"></i></i>` +
           '<span class="ub-c-det"><span><ul>' +
           (r ? `<li class="ub-c-dist">${ICO.camion}<span><b>${esc(r.km)} km · ${+r.minutos || 0} min</b> hasta el ${txt(U.destino)}</span></li>` : '') +
+          (g ? `<li class="ub-c-dist">${ICO.camion}<span>${txt(U.regional)}</span></li>` : '') +
           `<li>${ICO.pin}<span>${txt(c.direccion)}</span></li><li>${ICO.crece}<span>${txt(c.servicios)}</span></li><li>${ICO.reloj}<span>${txt(c.entrega)}</span></li>` +
           '</ul></span></span>' +
-          (r ? '<i class="ub-c-tiempo"></i>' : '') + '</button>';
+          (k ? '<i class="ub-c-tiempo"></i>' : '') + '</button>';
       }).join('') + '</div></div>' +
       // escenario del mapa
       '<div class="ub-escena">' +
@@ -121,6 +158,7 @@
         (c.alternativas || []).map((a, j) => `<span class="ub-dist alt" data-k="${esc(c.k)}" data-j="${j}"><b>${esc(a.km)} km</b> · ${+a.minutos || 0} min</span>`).join('')).join('') +
       `<span class="ub-camion">${ICO.camion}</span>` +
       '</div>' +
+      paisHTML +
       '</div>' +
       `<div class="ub-mini"><span>${txt(U.zona)}</span>${argSVG('ub-mini-arg')}</div>` +
       `<p class="ub-osm">${U.nota ? txt(U.nota) + ' · ' : ''}Mapa © colaboradores de OpenStreetMap</p>`);
@@ -182,13 +220,63 @@
       plano.style.setProperty('--inv', (1 / S).toFixed(3));
     }
 
-    let actual = null, t0 = 0, uso = -1e9, enVista = false, zoomHecho = false;
+    // ---- La vista del país: la cámara se aleja desde Buenos Aires (y se acerca al volver) ----
+    const pais = sec.querySelector('.ub-pais');
+    const regs = {};
+    if (pais) {
+      Object.assign(pais.style, { width: QW + 'px', height: QH + 'px', marginLeft: -QW / 2 + 'px', marginTop: -QH / 2 + 'px' });
+      pais.querySelectorAll('.up-ruta').forEach((g) => { const p = g.querySelector('.up-ruta-base'); regs[g.dataset.k] = { g, p, largo: p.getTotalLength(), sale: pais.querySelector(`.up-sale[data-k="${g.dataset.k}"]`) }; });
+    }
+    const camionPais = sec.querySelector('.up-camion');
+    // encuadre: de Córdoba a Buenos Aires, con lugar para las flechitas
+    const cajaPais = (() => {
+      const pts = [ORIGEN, ...REG.map((r) => Q(r.lon, r.lat))];
+      const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+      const x0 = Math.min(...xs) - 90, x1 = Math.max(...xs) + 40, y0 = Math.min(...ys) - 90, y1 = Math.max(...ys) + 60;
+      return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, S: Math.min(1.35, 760 / (x1 - x0), 460 / ((y1 - y0) * .78)) };
+    })();
+    function camaraPais(enBA, sinTransicion) {
+      if (!pais) return;
+      // enBA: muy cerca de Buenos Aires (de ahí "sale" la cámara al pasar del plano de calles al país)
+      const S = enBA ? cajaPais.S * 3 : cajaPais.S;
+      const cx = enBA ? ORIGEN[0] : cajaPais.cx, cy = enBA ? ORIGEN[1] : cajaPais.cy;
+      if (sinTransicion) pais.style.transition = 'none';
+      pais.style.transform = `translate(-40px, 34px) rotateX(42deg) rotateZ(-6deg) scale(${S.toFixed(3)}) translate(${(QW / 2 - cx).toFixed(1)}px, ${(QH / 2 - cy).toFixed(1)}px)`;
+      pais.style.setProperty('--inv', (1 / S).toFixed(3));
+      if (sinTransicion) { void pais.offsetWidth; pais.style.transition = ''; }
+    }
+    camaraPais(true, true);
+
+    let actual = null, actualCalle = null, vista = 'calle', t0 = 0, uso = -1e9, enVista = false, zoomHecho = false;
     const DUR = 2600;    // ms que tarda el camión
     function elegir(k, auto) {
-      if (!recs[k]) return;
+      if (!recs[k] && !regs[k]) return;
       if (!auto) uso = performance.now();
       actual = k;
       sec.dataset.sel = k;
+      const antes = vista;
+      vista = regs[k] ? 'pais' : 'calle';
+      sec.dataset.vista = vista;
+      if (vista === 'pais') {
+        // del plano de calles al país: el plano se aleja y se apaga, y el país aparece alejándose desde Buenos Aires
+        if (antes !== 'pais') { if (actualCalle) camara(actualCalle, .35); camaraPais(true, true); requestAnimationFrame(() => camaraPais(false)); }
+        Object.entries(regs).forEach(([kk, r]) => {
+          r.g.classList.toggle('activo', kk === k);
+          r.sale.classList.toggle('activo', kk === k);
+          r.g.style.setProperty('--largo', r.largo.toFixed(0));
+          if (kk === k) { r.g.classList.remove('dibuja'); void r.g.getBoundingClientRect(); r.g.classList.add('dibuja'); }
+        });
+        sec.querySelectorAll('.ub-lugar.reg').forEach((el) => el.classList.toggle('activo', el.dataset.k === k));
+        filas.forEach((f, i) => {
+          f.classList.remove('auto');
+          if (f.dataset.k === k) { desplegar(i); if (auto) { void f.offsetWidth; f.classList.add('auto'); } }
+        });
+        t0 = performance.now() + (antes !== 'pais' ? 1100 : 500);
+        return;
+      }
+      // del país al plano de calles: la cámara se acerca a Buenos Aires
+      if (antes === 'pais') camaraPais(true);
+      actualCalle = k;
       if (sec.classList.contains('zoom')) camara(k);
       alts.forEach((g) => g.classList.toggle('visible', g.dataset.k === k));
       sec.querySelectorAll('.ub-dist.alt').forEach((el) => el.classList.toggle('visible', el.dataset.k === k));
@@ -214,26 +302,30 @@
       desplegar(i);
     }));
     sec.querySelectorAll('.ub-lugar.centro').forEach((el) => el.addEventListener('click', () => elegir(el.dataset.k)));
+    // en la vista del país, los centros de Buenos Aires vuelven al plano de calles
+    sec.querySelectorAll('.ub-lugar.ba').forEach((el) => el.addEventListener('click', () => elegir(actualCalle || (CEN[0] && CEN[0].k))));
     window.UBICACION = { elegir };
 
     // camión que recorre el camino elegido (y queda en el depósito un rato)
     (function cuadro(t) {
       requestAnimationFrame(cuadro);
       if (!enVista || !actual) return;
-      const r = recs[actual];
-      const p = Math.max(0, Math.min(1, (t - t0) / DUR));
+      const enPais = vista === 'pais';
+      const r = enPais ? regs[actual] : recs[actual], cam = enPais ? camionPais : camion;
+      if (!r || !cam) return;
+      const p = Math.max(0, Math.min(1, (t - t0) / (enPais ? DUR * 1.15 : DUR)));
       const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       const q = r.p.getPointAtLength(e * r.largo), q2 = r.p.getPointAtLength(Math.min(r.largo, e * r.largo + 2));
-      camion.style.left = q.x.toFixed(1) + 'px';
-      camion.style.top = q.y.toFixed(1) + 'px';
-      camion.classList.toggle('izq', q2.x < q.x - .01);
-      camion.classList.toggle('llego', p >= 1);
+      cam.style.left = q.x.toFixed(1) + 'px';
+      cam.style.top = q.y.toFixed(1) + 'px';
+      cam.classList.toggle('izq', q2.x < q.x - .01);
+      cam.classList.toggle('llego', p >= 1);
     })(performance.now());
 
-    // alterna solo si nadie toca nada
+    // alterna solo si nadie toca nada, por los cuatro centros en el orden de la lista (por cercanía)
     setInterval(() => {
       if (!enVista || !zoomHecho || performance.now() - uso < 9000) return;
-      const ks = CEN.map((c) => c.k);
+      const ks = filas.map((f) => f.dataset.k).filter((k) => recs[k] || regs[k]);
       elegir(ks[(ks.indexOf(actual) + 1) % ks.length], true);
     }, 6000);
 
@@ -246,7 +338,8 @@
         setTimeout(contar, 350);
         // el mapa aparece con un fundido, ya centrado en la primera ruta (sin zoom de entrada:
         // a la persona no le gustó cómo se veía el país agrandado, pixelado)
-        const primero = actual || (CEN[0] && CEN[0].k);
+        // el primero de la lista que tenga ruta en el plano de calles (Plaza Logística, el más cercano)
+        const primero = actualCalle || (filas.map((f) => f.dataset.k).find((k) => recs[k])) || (CEN[0] && CEN[0].k);
         camara(primero);
         setTimeout(() => sec.classList.add('zoom'), 250);
         setTimeout(() => { sec.classList.add('listo'); if (!actual) elegir(primero, true); }, 1100);

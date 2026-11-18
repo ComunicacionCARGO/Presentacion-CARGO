@@ -455,12 +455,14 @@ window.SERVICIO = {
     bajada: "Almacenamiento y crossdocking en los puntos clave de la red, con **entrega al cliente en 24 hs**.",
     totalTexto: "de depósito en 4 centros",
     // Cada centro: nombre, metros cuadrados (número, sin puntos), dirección, servicios y entrega.
-    // ubicacion: "benavidez" o "plaza" si al elegirlo el mapa muestra su ruta ("" si no)
+    // Van por cercanía al depósito del cliente (el orden de la lista es el de la pantalla).
+    // ubicacion: qué muestra el mapa al elegirlo: "plaza" o "benavidez" (su ruta en el plano de
+    // calles), "rosario" o "cordoba" (la vista del país, ver "regionales" más abajo) o "" (nada)
     lista: [
-      { nombre: "Córdoba", m2: 4000, direccion: "Rosa Ferreyra de Roca 2862, Córdoba Capital", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
-      { nombre: "Rosario", m2: 1800, direccion: "Vélez Sársfield 6501-6599, Rosario, Santa Fe", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "" },
+      { nombre: "Plaza Logística", m2: 17000, direccion: "Av. J. D. Perón 4000, Pacheco, Buenos Aires", servicios: "Almacenamiento, crossdocking, carga paletizada y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "plaza" },
       { nombre: "Benavídez", m2: 5680, direccion: "V. Tedín 111, Benavídez, Provincia de Buenos Aires", servicios: "Almacenamiento multicliente, carga paletizada y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "benavidez" },
-      { nombre: "Plaza Logística", m2: 17000, direccion: "Av. J. D. Perón 4000, Pacheco, Buenos Aires", servicios: "Almacenamiento, crossdocking, carga paletizada y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "plaza" }
+      { nombre: "Rosario", m2: 1800, direccion: "Vélez Sársfield 6501-6599, Rosario, Santa Fe", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "rosario" },
+      { nombre: "Córdoba", m2: 4000, direccion: "Rosa Ferreyra de Roca 2862, Córdoba Capital", servicios: "Almacenamiento, crossdocking, carga seca y reparto local", entrega: "**24 hs** entrega al cliente", ubicacion: "cordoba" }
     ]
   },
 
@@ -474,10 +476,19 @@ window.SERVICIO = {
     // los dos centros (km y minutos por calle hasta el depósito). alternativas: las otras rutas
     // que se dibujan (en orden: por El Salvador y por Sarmiento), con sus km y minutos
     centros: [
+      { k: "plaza", nombre: "Centro Logístico Plaza Logística", km: "1,1", minutos: 4 },
       { k: "benavidez", nombre: "Centro Logístico Benavídez", km: "3,3", minutos: 9,
-        alternativas: [{ km: "3,4", minutos: 10 }, { km: "4", minutos: 11 }] },
-      { k: "plaza", nombre: "Centro Logístico Plaza Logística", km: "1,1", minutos: 4 }
+        alternativas: [{ km: "3,4", minutos: 10 }, { km: "4", minutos: 11 }] }
     ],
-    nota: "Distancia y tiempo por calle hasta el depósito de repuestos."
+    nota: "Distancia y tiempo por calle hasta el depósito de repuestos.",
+    // Los centros del interior: al elegirlos, el mapa pasa a una vista de la zona central del
+    // país con la flecha desde los centros de Buenos Aires y flechitas naranjas hacia afuera.
+    // lat y lon: dónde va el punto (coordenadas aproximadas de la ciudad).
+    origen: "Centros Buenos Aires",
+    regional: "Recibe desde Buenos Aires y **distribuye a toda su zona**",
+    regionales: [
+      { k: "rosario", nombre: "Centro Logístico Rosario", lat: -32.90, lon: -60.69 },
+      { k: "cordoba", nombre: "Centro Logístico Córdoba", lat: -31.39, lon: -64.20 }
+    ]
   }
 };
