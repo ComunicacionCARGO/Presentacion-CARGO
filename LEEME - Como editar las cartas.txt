@@ -340,20 +340,38 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       cada párrafo, en el mismo orden: "gestion" (caja con flechas), "objetivo"
       (diana) o "" (sin ícono).
   • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,
-    sello "Pensado para..." y la frase de abajo). En esa misma pantalla están
-    las 5 pestañas del ecosistema: las 4 de "tms" y la de "experiencia".
-  • tms: las primeras 4 pestañas del ecosistema. Cada pestaña tiene
-    titulo, resumen (la línea chica de la pestaña) y texto (el de abajo).
-      carga:      textos de la planchada y los indicadores (nombre y número
-                  inicial; después cambian solos con la demo).
-      despachos:  la carta de porte que se firma (sus datos son de ejemplo)
-                  y los viajes del día: código, unidad, paradas (la primera es
-                  la salida) y cuántos bultos lleva cada uno.
-      tracking:   la consulta web de un envío: número, destino, las 4 fuentes
-                  de información y los eventos (fecha y hora, qué pasó, dónde,
-                  de qué fuente viene, del 1 al 4, y coordenadas). De ejemplo.
-      interfases: nombres de los sistemas del dibujo y las 4 interfases
-                  (título, texto y "paquete", lo que viaja por la línea).
+    sello "Pensado para..." y la frase de abajo).
+  • recorrido: "¿Cómo lo hacemos?" es el recorrido de un pedido de Ford, desde
+    que llega hasta el concesionario. Al bajar, la pantalla queda quieta y una
+    caja avanza por la ruta de la izquierda: en cada parada se abre su texto
+    (y su interfaz, si tiene) y a la derecha cambia la demo. Cada parada tiene:
+      clave:    qué demo se muestra. NO SE CAMBIA (pedido, ubicacion, staging,
+                viajes, entrega o experiencia). Sí se puede sacar una parada
+                entera o cambiar el orden.
+      titulo y texto: lo que se lee en la parada.
+      interfaz: (opcional) la conexión entre sistemas que actúa ahí: nombre,
+                texto, de (de dónde sale la información) y a (adónde va).
+    Las paradas de staging a entrega llevan la marca "Tracking" (el texto de
+    esa marca y el rótulo "Interfaz" también están en recorrido). final y
+    finalBoton: la frase de abajo de la ruta, que lleva a los tableros.
+  • tms: los datos de las demos de cada parada (todos de ejemplo).
+      pedido:     ingreso del pedido: nombres de los dos sistemas, el archivo
+                  que viaja, los pedidos (número, destino, bultos y tipo: Stock,
+                  Urgente o V.I.) y el texto de la llegada al depósito
+                  ({bultos} se reemplaza por el total).
+      carga:      geoposicionamiento indoor: textos de la planchada y los
+                  indicadores (nombre y número inicial; después cambian solos).
+      staging:    staging por ruta: los textos de la pantalla. Las rutas salen
+                  de los viajes de "despachos". En evento se pueden usar
+                  {codigo} y {ruta}; en control, {total}.
+      despachos:  gestión de viajes y entrega: la carta de porte (sus datos y
+                  los textos de antes y después de firmarla) y los viajes del
+                  día: código, unidad, paradas (la primera es la salida) y
+                  cuántos bultos lleva cada uno.
+      tracking:   el seguimiento del envío en la entrega: número, las 4
+                  fuentes de información y los eventos (fecha y hora, qué
+                  pasó, dónde y de qué fuente viene, del 1 al 4). Los eventos
+                  desde el que dice "Entrega" llegan recién al firmar.
   • centros: pantalla "Centros logísticos / CROSSDOCKING" (después del mapa de
     distribución; comparte la pantalla con el mapa de la zona de Pacheco).
     A la izquierda van el título, la frase, el total de m² (se suma solo) y la
@@ -370,8 +388,7 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     recorridos reales por calle, guardados en
     slides\servicio-a-medida\mapa-pacheco.js: ese archivo no se edita a mano;
     si cambia un centro de lugar, hay que volver a generarlo.
-  • experiencia: la quinta pestaña del ecosistema, "Experiencia de usuario"
-    (titulo, resumen y texto de la pestaña, como las demás).
+  • experiencia: la última parada del recorrido, "Experiencia de usuario".
       calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
                   evento que se pueden elegir.
       asistente:  tarjeta CUSTOMER SERVICE: nombre del asistente (TICO),
@@ -380,8 +397,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       grande (tituloGrande); si queda vacía (""), solo se ve el grande.
     Las fotos de las dos tarjetas están en img\ecosistema (no-calidad.webp y
     robot.webp). Los registros y respuestas son de ejemplo.
-  • inversa: la simulación del reclamo (el concesionario pide la devolución
-    desde el celular y después lo usa el chofer).
+  • inversa: la pantalla "¿Y si hay una DEVOLUCIÓN?" (antetitulo y titulo; si
+    el título es largo, la letra se achica sola) y la simulación del reclamo
+    (el concesionario pide la devolución desde el celular y después lo usa el
+    chofer).
       - número de reclamo, pieza y dirección de ejemplo; nombres de las apps y
         de quién usa el celular (Concesionario / Chofer CARGO);
       - tipos: los motivos que elige el concesionario (Devolución, Garantía,
@@ -391,7 +410,7 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       - destinos: las 3 opciones de la disposición final;
       - estados: cómo cambia el estado del reclamo en la ficha;
       - pasos: título, texto y eventos (hora y texto) de cada uno de los 7
-        pasos. En los textos se pueden usar {numero}, {tipo} y {destino};
+        pasos. En los textos se pueden usar {numero}, {pieza}, {tipo} y {destino};
       - cierre: textos del final, los beneficios y el botón "Simular otro
         reclamo".
     Los horarios, números y cantidades son de ejemplo: es una simulación.

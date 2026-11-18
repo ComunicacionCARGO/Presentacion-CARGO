@@ -27,7 +27,7 @@
   const pad = (n) => String(n).padStart(2, '0');
 
   let tipo = null;
-  const vars = () => ({ numero: I.numero || '', tipo: tipo ? tipo.nombre : '', destino: tipo ? tipo.destino : '' });
+  const vars = () => ({ numero: I.numero || '', pieza: I.pieza || '', tipo: tipo ? tipo.nombre : '', destino: tipo ? tipo.destino : '' });
   const t = (s) => txt(s, vars());
   const plano = (s) => { const d = document.createElement('div'); d.innerHTML = t(s); return d.textContent; };
 
@@ -119,6 +119,17 @@
     '<img class="cel-mano" src="../../img/logistica-inversa/mano.webp" alt="" draggable="false" decoding="async"></div></div>' +
     '<div class="iv-mails"></div>' +
     `<div class="iv-mano">${ICONO_MANO}</div><i class="iv-dato"></i>`);
+
+  // si el título no entra en la columna (400 px), la letra se achica
+  const tituloEl = $('.iv-titulo');
+  const ajustarTitulo = () => {
+    tituloEl.style.fontSize = '';
+    tituloEl.style.whiteSpace = 'nowrap';
+    const w = tituloEl.scrollWidth;
+    if (w > 400) tituloEl.style.fontSize = (84 * 400 / w).toFixed(1) + 'px';
+  };
+  ajustarTitulo();
+  if (document.fonts) document.fonts.ready.then(ajustarTitulo);
 
   const svg = $('.iv-svg');
   const camion = $('.iv-camion');

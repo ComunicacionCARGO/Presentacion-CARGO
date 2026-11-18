@@ -1,5 +1,5 @@
 /* =========================================================
-   EXPERIENCIA DE USUARIO — quinta pestaña de ¿Cómo lo hacemos? (tms.js): dos
+   EXPERIENCIA DE USUARIO — última parada del recorrido de ¿Cómo lo hacemos? (tms.js): dos
    tarjetas (fotos de la diapositiva de la persona):
    - Aplicativo NO CALIDAD: se elige la instancia del proceso y el tipo de
      evento, se registra y aparece en el "Sistema de siniestros" (Abierto →

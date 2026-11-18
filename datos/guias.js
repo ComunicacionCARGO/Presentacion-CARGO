@@ -32,7 +32,7 @@ window.GUIAS = {
   // ---------- Servicio a medida ----------
   introSiguiente:      { texto: "**Hacé clic** para seguir leyendo",                tactil: "**Tocá** para seguir leyendo" },
   tmsLector:           { texto: "**Pasá el mouse** por un bulto para leerlo",       tactil: "**Tocá** un bulto para leerlo" },
-  tmsPestanas:         { texto: "**Hacé clic** para ver otra parte del TMS",        tactil: "**Tocá** para ver otra parte del TMS" },
+  entregaFirma:        { texto: "**Firmá** la carta de porte con el mouse",         tactil: "**Firmá** la carta de porte con el dedo" },
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
   tablerosPuntos:      { texto: "**Pasá el mouse** por los meses",                  tactil: "**Tocá** un mes para ver el detalle" },
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },

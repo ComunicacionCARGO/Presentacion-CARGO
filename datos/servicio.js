@@ -1,6 +1,6 @@
 /* =========================================================
    SERVICIO A MEDIDA (diapositiva slides/servicio-a-medida)
-   Portada con la intro, ¿Cómo lo hacemos? (5 pestañas), Logística inversa,
+   Portada con la intro, ¿Cómo lo hacemos? (el recorrido de un pedido), Logística inversa,
    Tableros y Ventajas, y después del mapa de distribución los Centros
    logísticos con su ubicación.
 
@@ -53,23 +53,92 @@ window.SERVICIO = {
     }
   },
 
-  // ---------- ¿Cómo lo hacemos? (título de la pantalla del ecosistema) ----------
+  // ---------- ¿Cómo lo hacemos? (título de la pantalla del recorrido) ----------
   como: {
     antetitulo: "¿Cómo lo",
     titulo: "HACEMOS?",
     sello: "Pensado para {cliente}",
-    bajada: "Un **ecosistema tecnológico** propio: esto es lo que nuestro TMS puede hacer por la operación de {cliente}."
+    bajada: "Seguí un pedido de **{cliente}** desde que nos llega hasta el concesionario. **Bajá** para avanzar."
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
 
-  // ---------- El ecosistema tecnológico en 5 pestañas ----------
-  // Cada pestaña: titulo y resumen (en el botón) y texto (debajo de las pestañas).
-  // Las cuatro primeras van acá; la quinta es "experiencia" (más abajo).
+  // ---------- El recorrido de ¿Cómo lo hacemos?, parada por parada ----------
+  // Al bajar, la mercadería avanza por la ruta de la izquierda y cada parada muestra
+  // su explicación y su demo a la derecha.
+  //   clave: qué demo se muestra (NO cambiar): pedido, ubicacion, staging, viajes,
+  //          entrega o experiencia. Se pueden sacar paradas o cambiar el orden.
+  //   titulo y texto: lo que se lee en la parada.
+  //   interfaz (opcional): la conexión entre sistemas que actúa en esa parada:
+  //          nombre, texto, y de dónde (de) y hacia dónde (a) viaja la información.
+  recorrido: {
+    interfaz: "Interfaz",               // el rótulo de las interfaces
+    tracking: "Tracking",               // marca de las paradas con seguimiento en tiempo real
+    paradas: [
+      {
+        clave: "pedido",
+        titulo: "Ingreso del pedido",
+        texto: "**{cliente}** nos envía el pedido desde su sistema y la mercadería llega al **depósito de CARGO**.",
+        interfaz: { nombre: "Ingreso de pedidos", texto: "Recibe y procesa los archivos que informa {cliente}: nadie vuelve a cargar los datos.", de: "ERP {cliente}", a: "TMS CARGO" }
+      },
+      {
+        clave: "ubicacion",
+        titulo: "Geoposicionamiento indoor",
+        texto: "Cada bulto se lee al ingresar y queda **ubicado en su posición exacta** del depósito: zonas de **stage y z-stage** parametrizadas en el sistema."
+      },
+      {
+        clave: "staging",
+        titulo: "Staging por ruta",
+        texto: "Los bultos se agrupan **por ruta logística**, listos para salir hacia cada destino **sin pérdidas**. Desde acá empieza el **tracking en tiempo real**.",
+        interfaz: { nombre: "Obtención de eventos", texto: "Busca y registra los eventos de cada carga: así arranca su seguimiento.", de: "Depósito y socios", a: "TMS CARGO" }
+      },
+      {
+        clave: "viajes",
+        titulo: "Gestión de viajes",
+        texto: "Al despachar, cada bulto sube al **viaje de su ruta** y se emite la **carta de porte**, que queda pendiente hasta la entrega.",
+        interfaz: { nombre: "Precarga", texto: "Informa los datos de la carga por entregar a los redespachantes y a la App de choferes.", de: "TMS CARGO", a: "Redespachantes y App" }
+      },
+      {
+        clave: "entrega",
+        titulo: "Entrega y digitalización",
+        texto: "En el concesionario se **firma la carta de porte**: el documento se digitaliza (**e-POD**) y el **tracking se cierra**.",
+        interfaz: { nombre: "Devolución de eventos", texto: "Informa los eventos del tracking al sistema de {cliente}.", de: "TMS CARGO", a: "ERP {cliente}" }
+      },
+      {
+        clave: "experiencia",
+        titulo: "Experiencia de usuario",
+        texto: "La red de concesionarios nos tiene **siempre a mano**: registro de **no calidad** en todo el proceso y atención **24 hs** con TICO."
+      }
+    ],
+    // abajo de la ruta (lleva a los tableros)
+    final: "Todo lo que pasa en el recorrido alimenta los tableros de **Inteligencia de negocio**.",
+    finalBoton: "Ver tableros"
+  },
+
+  // ---------- Las demos de cada parada (los datos son de ejemplo) ----------
   tms: {
+    // 1. Ingreso del pedido
+    pedido: {
+      panel: "Ingreso de pedidos",
+      erp: "ERP {cliente}",
+      erpTexto: "Sistema de {cliente}",
+      tms: "TMS CARGO",
+      tmsTexto: "Recibe y procesa el pedido",
+      archivo: "pedidos.txt",
+      tabla: "Pedidos recibidos en el TMS",
+      // Pedidos: número, destino, bultos y tipo (Stock, Urgente o V.I., como en la planchada)
+      pedidos: [
+        { numero: "PD-58211", destino: "Concesionario Rosario", bultos: 6, tipo: "Urgente" },
+        { numero: "PD-58212", destino: "Concesionario San Luis", bultos: 4, tipo: "Stock" },
+        { numero: "PD-58213", destino: "Concesionario Sgo. del Estero", bultos: 3, tipo: "Stock" },
+        { numero: "PD-58214", destino: "Concesionario Villa María", bultos: 2, tipo: "V.I." }
+      ],
+      llegada: "Llegada de la mercadería",
+      deposito: "Depósito CARGO",
+      recibidos: "✓ **{bultos} bultos** recibidos: pasan a ubicarse en el depósito",
+      boton: "Recibir otro pedido"
+    },
+    // 2. Geoposicionamiento indoor: la planchada
     carga: {
-      titulo: "Gestión de cargas",
-      resumen: "Consolidación por ruta con staging",
-      texto: "Consolidamos los bultos por ruta mediante **staging**: zonas de **stage y zstage** parametrizadas en el sistema y lectura con **dispositivos móviles**, para optimizar el ruteo y la ocupación de la bodega.",
       panel: "Situación de la planchada",
       // Indicadores: nombre y valor inicial (después cambian con la demo)
       indicadores: [
@@ -79,15 +148,27 @@ window.SERVICIO = {
       ],
       total: "Total",
       recepcion: "Recepción",
-      ayuda: "Pasá el lector por los bultos que llegan"
+      ayuda: "Pasá el lector por los bultos que llegan",
+      ayudaAuto: "Lector automático · pasá el mouse por un bulto para leerlo vos"
     },
-    // Gestión de despachos (los datos del documento y de los viajes son de ejemplo)
+    // 3. Staging por ruta (las rutas son las de los viajes de abajo)
+    staging: {
+      panel: "Staging por ruta logística",
+      desde: "Desde la planchada",
+      ruta: "Ruta",
+      rutaLista: "Ruta completa",
+      eventos: "Eventos · tracking en tiempo real",
+      evento: "{codigo} ubicado en el staging de la ruta {ruta}",
+      fuente: "Nuestros eventos",
+      control: "{total} de {total} bultos controlados · sin pérdidas"
+    },
+    // 4 y 5. Gestión de viajes y entrega (los datos del documento y de los viajes son de ejemplo)
     despachos: {
-      titulo: "Gestión de despachos",
-      resumen: "Viajes, documentación y salidas",
-      texto: "**Asignación de viajes**, emisión de **documentación** y control operativo de las salidas.",
-      docTitulo: "Documentación",
-      docTexto: "Se genera **automáticamente en formato digital** al firmar y queda a disposición del cliente en nuestra web.",
+      docTitulo: "Carta de porte",
+      docTexto: "Se emite al despachar y queda **pendiente hasta la entrega**.",
+      docTextoEntrega: "Al firmarla se genera **en formato digital** y queda a disposición de {cliente} en nuestra web.",
+      docPendiente: "Pendiente de conformar",
+      firmaPendiente: "Se firma en la entrega",
       docBoton: "Firmar la entrega",
       docListo: "Publicado en el portal de {cliente}",
       documento: {
@@ -110,58 +191,32 @@ window.SERVICIO = {
         { codigo: "VJ-2413", unidad: "Unidad 21", paradas: ["CD Córdoba", "Jesús María", "Sgo. del Estero"], bultos: 3 }
       ]
     },
-    // Digitalización y tracking (el envío y sus eventos son de ejemplo)
+    // 5. Entrega: el tracking del envío hasta que se firma (el envío y sus eventos son de ejemplo)
     tracking: {
-      titulo: "Digitalización y tracking",
-      resumen: "Visibilidad en tiempo real",
-      texto: "Conformado **e-POD móvil**, portal del cliente y documentos digitalizados en línea. **Consulta web en tiempo real** de cada estado: fecha, hora y geolocalización.",
-      panel: "Seguimiento de envíos",
+      panel: "Tracking en tiempo real",
+      texto: "Cada estado con fecha, hora y lugar, de **varias fuentes**: nuestros eventos, los socios de transporte, el concesionario y la App de choferes.",
       numero: "ADD 0031-2411873",
-      destino: "Concesionario oficial (ejemplo) · Av. Ejemplo 1234",
-      fuentesTitulo: "Información proveniente de",
+      esperando: "esperando la firma",
+      fin: "Tracking cerrado · eventos devueltos al sistema de {cliente}",
       // Las 4 fuentes (el orden importa: cada evento dice de cuál viene, 1 a 4)
       fuentes: ["Nuestros eventos", "Socios estratégicos de transporte", "Confirmación del concesionario", "App de choferes (última milla)"],
-      // Eventos del envío: fecha y hora, qué pasó, dónde, de qué fuente viene (1 a 4) y coordenadas
+      // Eventos del envío: fecha y hora, qué pasó, dónde y de qué fuente viene (1 a 4).
+      // Los que dicen "Entrega" (y los que siguen) llegan recién cuando se firma la carta de porte.
       eventos: [
-        { hora: "15/07 10:41", texto: "Ingreso a depósito", lugar: "Depósito CARGO Córdoba", fuente: 1, geo: "-31,41 / -64,18" },
-        { hora: "15/07 13:37", texto: "En tránsito", lugar: "Hacia depósito CARGO Rosario", fuente: 1, geo: "-31,41 / -64,18" },
-        { hora: "16/07 06:12", texto: "Viaje en ruta", lugar: "Ruta 9 · socio de transporte", fuente: 2, geo: "-32,41 / -63,24" },
-        { hora: "16/07 11:11", texto: "Ingreso a depósito", lugar: "Depósito CARGO Rosario", fuente: 1, geo: "-32,95 / -60,66" },
-        { hora: "18/07 07:51", texto: "Salida a distribución", lugar: "Chofer CARGO · Unidad 14", fuente: 4, geo: "-32,95 / -60,66" },
-        { hora: "18/07 11:40", texto: "Entrega realizada · e-POD", lugar: "Av. Ejemplo 1234", fuente: 4, geo: "-32,94 / -60,69" },
-        { hora: "18/07 15:03", texto: "Recepción confirmada", lugar: "Concesionario oficial (ejemplo)", fuente: 3, geo: "-32,94 / -60,69" }
-      ],
-      epod: "e-POD móvil: firma y foto del conformado",
-      epodBoton: "Ver el documento"
-    },
-    interfases: {
-      titulo: "Customizing e interfases",
-      resumen: "Adaptado a sus procesos",
-      texto: "Adaptamos el TMS a la dinámica de los procesos de cada cliente. Desarrollamos **interfaces bidireccionales** para intercambiar información con el ERP del cliente y de los redespachantes.",
-      panel: "Pasá el mouse por cada interfase para ver **qué información viaja y hacia dónde**.",
-      nodos: {
-        cliente: "ERP {cliente}",
-        tms: "Grupo CARGO",
-        warehouse: "Warehouse",
-        terceros: "Redespachantes",
-        app: "App de choferes"
-      },
-      // Las 4 interfases (el orden importa: cada una tiene su recorrido en el dibujo)
-      lista: [
-        { titulo: "Ingreso de pedidos", texto: "Recibe y procesa los archivos txt que informa el cliente.", paquete: "pedidos.txt" },
-        { titulo: "Precarga", texto: "Informa los datos de la carga por entregar: nadie tiene que volver a cargarlos.", paquete: "datos de carga" },
-        { titulo: "Obtención de eventos", texto: "Busca los eventos relacionados a cada carga.", paquete: "eventos" },
-        { titulo: "Devolución de eventos", texto: "Informa los eventos de tracking al ERP del cliente.", paquete: "tracking" }
+        { hora: "15/07 10:41", texto: "Ingreso a depósito", lugar: "Depósito CARGO Córdoba", fuente: 1 },
+        { hora: "15/07 13:37", texto: "En tránsito", lugar: "Hacia depósito CARGO Rosario", fuente: 1 },
+        { hora: "16/07 06:12", texto: "Viaje en ruta", lugar: "Ruta 9 · socio de transporte", fuente: 2 },
+        { hora: "16/07 11:11", texto: "Ingreso a depósito", lugar: "Depósito CARGO Rosario", fuente: 1 },
+        { hora: "18/07 07:51", texto: "Salida a distribución", lugar: "Chofer CARGO · Unidad 14", fuente: 4 },
+        { hora: "18/07 11:40", texto: "Entrega realizada · e-POD", lugar: "Av. Ejemplo 1234", fuente: 4 },
+        { hora: "18/07 15:03", texto: "Recepción confirmada", lugar: "Concesionario oficial (ejemplo)", fuente: 3 }
       ]
     }
   },
 
-  // ---------- Experiencia de usuario: quinta pestaña del ecosistema ----------
+  // ---------- Experiencia de usuario: última parada del recorrido ----------
   // (las preguntas y los registros son de ejemplo)
   experiencia: {
-    titulo: "Experiencia de usuario",
-    resumen: "No calidad y customer service",
-    texto: "Herramientas para que la red de concesionarios nos tenga **siempre a mano**.",
     calidad: {
       titulo: "",
       tituloGrande: "NO CALIDAD",
@@ -190,9 +245,9 @@ window.SERVICIO = {
   // ---------- Logística inversa: simulación de un reclamo ----------
   // Los horarios, números y cantidades son de ejemplo (es una simulación).
   inversa: {
-    antetitulo: "Logística",
-    titulo: "INVERSA",
-    bajada: "Gestionamos de forma integral la **recolección, traslado, trazabilidad y disposición final** de productos y partes que reingresan al circuito logístico por devolución, garantía o rotación.",
+    antetitulo: "¿Y si hay una",
+    titulo: "DEVOLUCIÓN?",
+    bajada: "Empieza en {cliente}: el concesionario **autogestiona** la devolución y, si el número de la pieza coincide con nuestra base, **se aprueba** y arranca la logística inversa.",
     app: "Fénix",                        // App del chofer
     appConcesionario: "Devoluciones",    // lo que ve el concesionario en el celular
     quienConcesionario: "Concesionario",
@@ -202,8 +257,8 @@ window.SERVICIO = {
     centro: "Depósito",
     numero: "RC-24117",
     pieza: "Pieza 7A2B-14K",
-    introTitulo: "¿Y si una pieza tiene que volver?",
-    introTexto: "Seguí una devolución de {cliente}: el concesionario la **autogestiona** y nosotros nos ocupamos del resto. **Vos manejás el celular.**",
+    introTitulo: "Así funciona una devolución",
+    introTexto: "El número de cada pieza ya está en la base de datos de CARGO gracias a la **interfaz** con {cliente}: si coincide, la devolución se aprueba y nos ocupamos del resto (retiro, traslado, trazabilidad y disposición final). **Vos manejás el celular.**",
     empezar: "Simular un reclamo",
     ejemplo: "Simulación con datos de ejemplo",
     sinReclamo: "Todavía no hay ningún reclamo. Empezá la simulación y mirá cómo se completa el seguimiento.",
@@ -229,8 +284,9 @@ window.SERVICIO = {
       },
       {
         titulo: "Registro",
-        texto: "El reclamo entra solo al TMS y se avisa **por mail** a {cliente} y al concesionario.",
+        texto: "El número de la pieza se **valida contra la base de CARGO**: coincide, así que la devolución **se aprueba** y se avisa **por mail** a {cliente} y al concesionario.",
         eventos: [
+          { hora: "Día 1 · 10:43", texto: "{pieza}: coincide con la base de CARGO · aprobada" },
           { hora: "Día 1 · 10:43", texto: "Reclamo {numero} creado en el TMS" },
           { hora: "Día 1 · 10:43", texto: "Aviso por mail a {cliente} y al concesionario" }
         ],

@@ -88,7 +88,7 @@ window.ESTRUCTURA = {
       {
         titulo: "Diseñamos a medida",
         texto: "Las herramientas que viste en «Un servicio para Ford» **no son un producto de catálogo**: nuestro equipo las desarrolla y adapta para ustedes.",
-        sistemas: ["Gestión de cargas", "Despachos y e-POD", "Tracking web", "Interfases con su ERP", "Atención con TICO", "Logística inversa", "Tableros de BI"]
+        sistemas: ["Gestión de cargas", "Despachos y e-POD", "Tracking web", "Interfaces con su ERP", "Atención con TICO", "Logística inversa", "Tableros de BI"]
       },
       {
         titulo: "Evolucionamos juntos",
