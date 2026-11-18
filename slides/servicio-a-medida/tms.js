@@ -75,8 +75,13 @@
   const X0 = 24, ANCHO = 125.4, RADIO = 60;   // franjas de 34,6 con huecos de 10,8; radio interior de las curvas
   const CODO = RADIO + ANCHO;             // 185,4: lado del cuadrado de cada curva
   const MEDIO = X0 + ANCHO / 2;           // eje de las franjas
-  const RECORRIDO = Math.max(0, N - 1) * PASO;
+  // Entrada (pedido de la persona): al llegar solo está el título grande "¿Cómo lo / HACEMOS?"
+  // con la invitación a bajar; en los primeros TITULO px de scroll se achica y sube arriba a
+  // la izquierda, y recién ahí aparece el recorrido. La parada 1 llega a la caja en ENTRADA.
+  const ENTRADA = 520, TITULO = 340;
+  const RECORRIDO = ENTRADA + Math.max(0, N - 1) * PASO;
   const ABAJO = 900 + RECORRIDO;          // donde arrancan las franjas de abajo
+  const yParada = (i) => ENTRADA + i * PASO;   // scroll (desde el comienzo de la sección) de cada parada
   seccion.style.height = (ABAJO + 91) + 'px';
   const iTrack = [PARADAS.findIndex((p) => p.clave === 'staging'), PARADAS.findIndex((p) => p.clave === 'entrega')];
   const conTracking = (i) => iTrack[0] >= 0 && i >= iTrack[0] && i <= iTrack[1];
@@ -104,8 +109,8 @@
     `<i class="rc-f-baja" style="left:${X0}px;top:${CODO - 137.2}px;height:${ABAJO - RADIO - (CODO - 136.2) + 2}px"></i>` +
     `<svg class="rc-f-codo" style="left:${X0}px;top:${ABAJO - RADIO}px" viewBox="0 0 ${CODO} ${CODO}" aria-hidden="true">${arcos(CODO, 0, 'abajo')}</svg>` +
     `<i class="rc-f-abajo" style="top:${ABAJO}px"></i>` +
-    (iTrack[0] >= 0 ? `<p class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + iTrack[0] * PASO}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"><span>${txt(R.tracking || 'Tracking en tiempo real')}</span></p>` : '') +
-    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + i * PASO}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b></button>`).join(''));
+    (iTrack[0] >= 0 ? `<p class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + yParada(iTrack[0])}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"><span>${txt(R.tracking || 'Tracking en tiempo real')}</span></p>` : '') +
+    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + yParada(i)}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b></button>`).join(''));
   const puntosEl = [...franjas.querySelectorAll('.rc-punto')];
   const quieto = crear('div', 'rc-quieto', seccion);
 
@@ -115,9 +120,15 @@
   const caja = crear('div', 'rc-caja', quieto, icono('caja'));
   caja.style.left = MEDIO + 'px';
   caja.style.top = CAJA_Y + 'px';
+  // el título "¿Cómo lo HACEMOS?": grande en dos renglones al llegar, chico en un renglón después
+  const gran = crear('h2', 'rc-gran', quieto, `<span>${txt(CO.antetitulo)}</span><b>${txt(CO.titulo)}</b>`);
+  const [granAnte, granTit] = gran.children;
+  const invita = crear('p', 'rc-invita', quieto,
+    `<i class="rc-raton"><u></u></i><span class="rc-inv-mouse">${txt(CO.invitacion)}</span><span class="rc-inv-tactil">${txt(CO.invitacionTactil || CO.invitacion)}</span>` +
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg>');
+  invita.addEventListener('click', () => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + yParada(0)); });
   const izq = crear('div', 'tm-izq', quieto,
-    `<div class="tm-cab ent" style="--i:0"><p class="tm-ante"><span>${txt(CO.antetitulo)}</span> <b>${txt(CO.titulo)}</b></p>` +
-    `<p class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</p></div>` +
+    `<div class="tm-cab"><p class="tm-sello"><i class="franjitas"></i>${txt(CO.sello)}</p></div>` +
     '<div class="rc-etapas ent" style="--i:1">' + PARADAS.map((p, i) => {
       const f = p.interfaz || {};
       return `<div class="rc-etapa" data-i="${i}">` +
@@ -147,7 +158,7 @@
   const vCarga = vistas.carga;
   const alElegir = {};   // ecosistema.js y este archivo anotan acá qué hacer al llegar a cada parada
 
-  let parada = -1, pestana = null, modo = null, enVista = false;
+  let parada = -1, pestana = null, modo = null, enVista = false, enEntrada = true;
   function elegir(i) {
     i = Math.max(0, Math.min(N - 1, i));
     if (i === parada) return;
@@ -161,7 +172,7 @@
     modo = p.clave;
     Object.entries(vistas).forEach(([k, v]) => v.classList.toggle('activa', k === pestana));
     vistas.despachos.dataset.modo = modo;
-    if (enVista) activarVista();
+    if (enVista && !enEntrada) activarVista();
   }
   // cada demo arranca al llegar a su parada (con la sección en pantalla)
   function activarVista() { if (alElegir[pestana]) alElegir[pestana](modo); }
@@ -170,25 +181,55 @@
 
   // ---------- El scroll sube los puntos; la caja y el panel quedan quietos ----------
   const topeDe = () => seccion.offsetTop;
-  const irParada = (i) => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + i * PASO); };
+  const irParada = (i) => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + yParada(i)); };
   puntosEl.forEach((el, i) => el.addEventListener('click', () => irParada(i)));
   const final = izq.querySelector('.rc-final');
   if (final) final.addEventListener('click', () => { const bi = document.querySelector('.sv-bi'); if (bi && window.desplazamiento) window.desplazamiento.ir(bi.offsetTop); });
+
+  // ---------- El título de la entrada: de grande y centrado a chico arriba a la izquierda ----------
+  // (se mide una vez con la letra grande y después solo se mueve y se escala con transform)
+  const GRANDE = { ante: 96, tit: 220 }, CHICO = { ante: 28, tit: 32 };
+  const CENTRO_X = 870, ARRIBA_Y = 232;
+  let med = null;
+  const medir = () => { med = { a: granAnte.offsetWidth, t: granTit.offsetWidth }; ubicarTitulo(ultimoM); };
+  const suave = (x) => x * x * (3 - 2 * x);
+  let ultimoM = 0;
+  function ubicarTitulo(m) {
+    ultimoM = m;
+    if (!med) return;
+    const e = suave(m);
+    const sA = 1 + (CHICO.ante / GRANDE.ante - 1) * e, sT = 1 + (CHICO.tit / GRANDE.tit - 1) * e;
+    // chico: en un renglón, alineados por la línea de base (Inter .864, Oswald .952 con interlineado 1)
+    const base = 84 + .864 * CHICO.ante;
+    const fin = { ax: 196, ay: 84, tx: 196 + med.a * CHICO.ante / GRANDE.ante + 10, ty: base - .952 * CHICO.tit };
+    const ini = { ax: CENTRO_X - med.a / 2, ay: ARRIBA_Y, tx: CENTRO_X - med.t / 2, ty: ARRIBA_Y + GRANDE.ante + 8 };
+    const l = (a, b) => (a + (b - a) * e).toFixed(2);
+    granAnte.style.transform = `translate(${l(ini.ax, fin.ax)}px, ${l(ini.ay, fin.ay)}px) scale(${sA.toFixed(4)})`;
+    granTit.style.transform = `translate(${l(ini.tx, fin.tx)}px, ${l(ini.ty, fin.ty)}px) scale(${sT.toFixed(4)})`;
+    invita.style.opacity = Math.max(0, 1 - m * 2.6).toFixed(3);
+    invita.style.visibility = m > .4 ? 'hidden' : '';
+  }
+  medir();
+  if (document.fonts) document.fonts.ready.then(medir);
 
   let reloj = null;
   function alDesplazar(y) {
     const d = y - topeDe();
     quieto.style.transform = `translate3d(0, ${Math.min(Math.max(d, 0), RECORRIDO).toFixed(2)}px, 0)`;
-    const avance = Math.min(Math.max(d / PASO, 0), N - 1);
-    const antes = enVista;
+    ubicarTitulo(Math.min(Math.max(d / TITULO, 0), 1));
+    const antes = enVista, antesEntrada = enEntrada;
     enVista = d > -700 && d < RECORRIDO + 700;
+    enEntrada = d < TITULO - 10;
     seccion.classList.toggle('en-vista', enVista);
+    seccion.classList.toggle('entrada', enEntrada);
+    // en la entrada la invitación propia reemplaza al cartel común de "Bajá para seguir"
+    document.body.classList.toggle('sin-guia-scroll', enVista && enEntrada);
     if (enVista && !antes) seccion.classList.add('visible');
     // mientras se baja, la caja traquetea un poco (va andando por las franjas)
-    if (d > 0 && d < RECORRIDO) { caja.classList.add('anda'); clearTimeout(reloj); reloj = setTimeout(() => caja.classList.remove('anda'), 180); }
-    const i = Math.round(avance);
+    if (d > TITULO && d < RECORRIDO) { caja.classList.add('anda'); clearTimeout(reloj); reloj = setTimeout(() => caja.classList.remove('anda'), 180); }
+    const i = Math.min(N - 1, Math.max(0, Math.round((d - ENTRADA) / PASO)));
     if (i !== parada) elegir(i);
-    else if (enVista && !antes) activarVista();
+    else if (enVista && !enEntrada && (!antes || antesEntrada)) activarVista();
   }
   document.addEventListener('desplazamiento', (e) => alDesplazar(e.detail.y));
 

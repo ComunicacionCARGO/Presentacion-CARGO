@@ -58,7 +58,9 @@ window.SERVICIO = {
     antetitulo: "¿Cómo lo",
     titulo: "HACEMOS?",
     sello: "Pensado para {cliente}",
-    bajada: "Seguí un pedido de **{cliente}** desde que nos llega hasta el concesionario. **Bajá** para avanzar."
+    // invitación de la entrada (debajo del título grande): con mouse y con el dedo
+    invitacion: "**Bajá** para descubrir el proceso",
+    invitacionTactil: "**Deslizá** para descubrir el proceso"
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
 

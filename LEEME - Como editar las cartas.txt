@@ -339,8 +339,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       iconos: el ícono grande y suave de la esquina de abajo a la izquierda de
       cada párrafo, en el mismo orden: "gestion" (caja con flechas), "objetivo"
       (diana) o "" (sin ícono).
-  • como: el título de la pantalla "¿Cómo lo HACEMOS?" (antetitulo, titulo,
-    sello "Pensado para..." y la frase de abajo).
+  • como: el título "¿Cómo lo HACEMOS?" (antetitulo, titulo y sello "Pensado
+    para..."). Al llegar se ve solo el título grande con la invitación a bajar
+    (invitacion con mouse, invitacionTactil con el dedo); al bajar, el título
+    se achica arriba a la izquierda y aparece el recorrido.
   • recorrido: "¿Cómo lo hacemos?" es el recorrido de un pedido de Ford, desde
     que llega hasta el concesionario. Las tres franjas de la marca entran por
     arriba, se doblan y bajan por la izquierda: al bajar, la caja queda quieta
