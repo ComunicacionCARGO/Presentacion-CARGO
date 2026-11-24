@@ -70,7 +70,7 @@ window.CARTAS = [
   {
     antetitulo: "¿Quiénes",
     titulo: "SOMOS?",
-    subtitulo: "45 años llevando la logística más lejos",
+    subtitulo: "Historia, sedes, estructura y certificaciones",
     portada: "img/cartas/nuestra-estructura.jpg",
     foco: 50,
     destino: "slides/quienes-somos/index.html"
@@ -78,7 +78,7 @@ window.CARTAS = [
   {
     antetitulo: "Un servicio",
     titulo: "PARA FORD",
-    subtitulo: "Una operación diseñada solo para Ford",
+    subtitulo: "El servicio que ofrecemos a Ford, en detalle",
     portada: "img/cartas/quienes-somos.webp",
     foco: 50,
     destino: "slides/servicio-a-medida/index.html"
@@ -86,7 +86,7 @@ window.CARTAS = [
   {
     antetitulo: "¿Qué hacemos",
     titulo: "DIFERENTE?",
-    subtitulo: "Lo que Ford necesita, no lo que hacen todos",
+    subtitulo: "Adaptabilidad, mejora continua, RSE y clientes",
     portada: "img/cartas/servicio-diferencial.webp",
     foco: 30,
     destino: "slides/por-que-elegirnos/index.html"
