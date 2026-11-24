@@ -78,7 +78,7 @@ Repositorio: https://github.com/ComunicacionCARGO/Presentacion-CARGO (público, 
   - Borde, brillo y halo en SVG.
   - El contenido se dibuja a resolución `--f` (2× o más) y se reduce.
   - JS replica la proyección 3D: perspectiva 1600, origen (800, 450), centro de órbita (800, 668).
-- Cursor sobre una carta: viaja al centro y se levanta. Las cartas que pasan solas bajo el cursor se ignoran hasta que el mouse se mueva. Rueda: cada muesca pasa una carta en el momento (se suman); el touchpad gira mientras desliza y al soltar sigue a la carta siguiente en ese sentido (nunca vuelve atrás). Teclas: flechas, Enter, 1–9.
+- **Cursor sobre una carta** (cambiado a pedido de la persona: antes la carta del costado viajaba al centro y quienes la probaron pasaban de carta sin querer): el carrusel se frena y se acomoda en la carta más cercana al centro (si gira solo; no pisa la rueda, las flechas ni el arrastre), y **solo se levanta la de adelante** (`lugarAlFrente()`); no gira solo mientras el cursor está sobre cualquier carta. Clic en la de adelante: la abre; clic en una de costado: la trae al frente (`enfocarLugar`), sin abrirla. Para pasar: flechas, rueda, arrastre, puntos o ese clic. Las cartas que pasan solas bajo el cursor se ignoran hasta que el mouse se mueva. Rueda: cada muesca pasa una carta en el momento (se suman); el touchpad gira mientras desliza y al soltar sigue a la carta siguiente en ese sentido (nunca vuelve atrás). Teclas: flechas, Enter, 1–9.
 - Palabras con caminos: Inter ExtraLight Italic, gris con baja opacidad, líneas de 0,7 px que convergen hacia una elipse alrededor del carrusel, sin tocar las cartas.
 
 ### "¿Quiénes somos?" (`slides/quienes-somos/`)

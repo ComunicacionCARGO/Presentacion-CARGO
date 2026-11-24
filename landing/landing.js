@@ -417,9 +417,11 @@
   }
 
   // ---------- Mouse ----------
-  // Al pasar el cursor por una carta, esa carta viaja al centro y se levanta.
-  // Mientras viaja, otras cartas pasan por debajo del cursor: esas se ignoran
-  // hasta que el mouse se vuelva a mover hacia otra carta.
+  // Con el cursor sobre una carta, el carrusel se frena y se acomoda en la carta más cercana
+  // al centro; solo esa (la de adelante) se levanta. Las de los costados ya no viajan al centro
+  // al pasarles el cursor (pedido de la persona: quienes la probaron pasaban de carta sin querer);
+  // para pasar están las flechas, la rueda, el arrastre, los puntos y el clic en una carta de costado.
+  // Las cartas que llegan solas bajo el cursor quieto se ignoran hasta que el mouse se mueva.
   let centrando = false;
   let bajoCursor = -1;    // carta que está bajo el cursor (-1 = ninguna)
   let ignorar = null;     // carta que llegó sola bajo el cursor
@@ -436,11 +438,22 @@
     ignorar = null;
     if (bajoCursor < 0) {
       if (activa >= 0) { activar(-1); pausaHasta = performance.now() + 1200; }
-    } else if (bajoCursor !== activa) {
-      activar(bajoCursor);
-      centrar(bajoCursor);
-      centrando = true;
+      return;
     }
+    // si gira solo (no con la rueda, las flechas ni un arrastre), se acomoda en la más cercana
+    if (objetivo === null && !inercia && !(dedo && dedo.girando)) {
+      entrada = null;
+      objetivo = Math.round(giro / paso) * paso;
+    }
+    // se levanta solo la carta de adelante
+    activar(bajoCursor === lugarAlFrente() ? bajoCursor : -1);
+  }
+  // lugar que queda (o va a quedar) adelante: el más cercano al giro al que se dirige
+  function lugarAlFrente() {
+    const g = giroActual();
+    let mejor = -1, d = Infinity;
+    cartas.forEach((ca, i) => { const x = Math.abs(normalizar(ca.grados - giro + g)); if (x < d) { d = x; mejor = i; } });
+    return mejor;
   }
 
   function terminarCentrado() {
@@ -518,6 +531,8 @@
     ca.a.addEventListener('click', (e) => {
       e.preventDefault();
       if (performance.now() < sinClicHasta) return;
+      // la de adelante se abre; una de costado primero viene al frente
+      if (i !== lugarAlFrente()) { enfocarLugar(i); return; }
       abrir(i);
     });
     ca.a.addEventListener('dragstart', (e) => e.preventDefault());
@@ -600,6 +615,13 @@
     centrando = false;
     ignorar = bajoCursor;
     objetivo = (Math.round(giroActual() / paso) + sentido) * paso;
+    pausaHasta = performance.now() + 6000;
+  }
+  // Lleva al frente el lugar i (clic en una carta de costado) y la levanta
+  function enfocarLugar(i) {
+    centrar(i);
+    centrando = true;
+    activar(i);
     pausaHasta = performance.now() + 6000;
   }
   // Lleva al frente la carta i de los datos (puntos de abajo)
@@ -927,7 +949,8 @@
       if (centrando && Math.abs(d) < 1.5) terminarCentrado();
       if (Math.abs(d) < .05) { giro = objetivo; objetivo = null; }
     } else {
-      const quieto = activa >= 0 || t < pausaHasta || !listaDesde;
+      // quieto con una carta levantada o el cursor sobre cualquier carta
+      const quieto = activa >= 0 || bajoCursor >= 0 || t < pausaHasta || !listaDesde;
       const meta = quieto ? 0 : base;
       vel += (meta - vel) * Math.min(1, dt * (quieto ? 7 : 1.2));
       giro += vel * dt;
