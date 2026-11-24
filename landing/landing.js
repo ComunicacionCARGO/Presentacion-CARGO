@@ -171,7 +171,7 @@
   // Subtítulo (una frase corta debajo del título, pedido de la persona): centrado en la carta,
   // a SUB.debajo px de la línea base del título; con subtítulo, todo el grupo sube SUB.sube px.
   // Si la frase no entra en el ancho útil (SUB.ancho de la carta), se achica solo esa letra.
-  const SUB = { tam: 17, debajo: 28, sube: 12, ancho: .8 };
+  const SUB = { tam: 15, debajo: 26, sube: 11, ancho: .8 };
   const HAY_SUB = CARTAS.some((d) => d.subtitulo);
   let medidas = [], tRotulo = 1;
   function ubicarRotulos() {
