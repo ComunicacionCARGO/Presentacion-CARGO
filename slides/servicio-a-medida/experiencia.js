@@ -36,11 +36,12 @@
     `<div class="ex-txt"><p class="ex-t1">${C.titulo ? txt(C.titulo) + ' ' : ''}<b>${txt(C.tituloGrande)}</b></p><p class="ex-t2">${txt(C.texto)}</p></div>` +
     '<div class="nc-app">' +
     '<div class="nc-form">' +
-    '<p class="nc-rot">Instancia</p><div class="nc-chips nc-inst">' + (C.instancias || []).map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('') + '</div>' +
-    '<p class="nc-rot">Tipo de evento</p><div class="nc-chips nc-tipo">' + (C.tipos || []).map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('') + '</div>' +
-    `<div class="nc-pie"><span class="nc-foto">${ICO.foto}<small>Foto</small></span><button type="button" class="nc-registrar">${ICO.alerta}${txt(C.boton)}</button></div>` +
+    `<p class="nc-rot" data-paso="0">${txt(C.pasoDonde || 'Instancia')}</p><div class="nc-chips nc-inst">` + (C.instancias || []).map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('') + '</div>' +
+    `<p class="nc-rot" data-paso="1">${txt(C.pasoQue || 'Tipo de evento')}</p><div class="nc-chips nc-tipo">` + (C.tipos || []).map((t, i) => `<button type="button" data-i="${i}">${esc(t)}</button>`).join('') + '</div>' +
+    (C.pasoRegistro ? `<p class="nc-rot" data-paso="2">${txt(C.pasoRegistro)}</p>` : '') +
+    `<div class="nc-pie"><button type="button" class="nc-foto">${ICO.foto}<small>${txt(C.foto || 'Foto')}</small></button><button type="button" class="nc-registrar">${ICO.alerta}${txt(C.boton)}</button></div>` +
     '</div>' +
-    `<div class="nc-sistema"><p class="nc-rot">${txt(C.sistema)}</p><div class="nc-tabla"></div></div>` +
+    `<div class="nc-sistema"><p class="nc-rot">${txt(C.sistema)}</p><p class="nc-aviso"></p><div class="nc-tabla"></div></div>` +
     '</div></article>' +
     // ---- Asistente ----
     '<article class="ex-tarjeta ex-asistente">' +
@@ -61,7 +62,9 @@
     const foto = app.querySelector('.nc-foto');
     const bReg = app.querySelector('.nc-registrar');
     const tabla = app.querySelector('.nc-tabla');
-    let iSel = -1, tSel = -1, conFoto = false, numero = 1045, uso = -1e9, auto = false;
+    const aviso = app.querySelector('.nc-aviso');
+    const rotulos = [...app.querySelectorAll('.nc-rot[data-paso]')];
+    let iSel = -1, tSel = -1, conFoto = false, numero = 1045, uso = -1e9, auto = false, relojAviso = 0;
     const ESTADOS = ['Abierto', 'En análisis', 'Resuelto'];
     function fila(n, i, t, est, nueva) {
       const f = document.createElement('div');
@@ -78,31 +81,45 @@
       tipos.forEach((b, k) => b.classList.toggle('activo', k === tSel));
       foto.classList.toggle('activo', conFoto);
       bReg.disabled = iSel < 0 || tSel < 0;
+      // el paso que toca hacer se marca en rojo: dónde pasó → qué pasó → foto y registro
+      const toca = iSel < 0 ? 0 : tSel < 0 ? 1 : 2;
+      rotulos.forEach((r) => r.classList.toggle('toca', +r.dataset.paso === toca));
+      bReg.classList.toggle('toca', toca === 2);
     }
     inst.forEach((b, k) => b.addEventListener('click', () => { if (!auto) uso = ahora(); iSel = k; marcar(); }));
-    tipos.forEach((b, k) => b.addEventListener('click', () => { if (!auto) uso = ahora(); tSel = k; conFoto = true; marcar(); }));
-    foto.addEventListener('click', () => { uso = ahora(); conFoto = !conFoto; marcar(); });
+    tipos.forEach((b, k) => b.addEventListener('click', () => { if (!auto) uso = ahora(); tSel = k; marcar(); }));
+    foto.addEventListener('click', () => { if (!auto) uso = ahora(); conFoto = !conFoto; marcar(); });
+    const cambiar = (f, est) => { const em = f.querySelector('em'); em.className = 'e' + est; em.textContent = ESTADOS[est]; };
     function registrar() {
       if (iSel < 0 || tSel < 0) return;
-      const f = fila(numero++, iSel, tSel, 0, true);
+      const n = numero++;
+      const f = fila(n, iSel, tSel, 0, true);
       bReg.classList.add('hecho');
       setTimeout(() => bReg.classList.remove('hecho'), 900);
-      setTimeout(() => { const em = f.querySelector('em'); em.className = 'e1'; em.textContent = ESTADOS[1]; }, 1900);
+      // el caso se sigue hasta resolverlo
+      setTimeout(() => cambiar(f, 1), 2600);
+      setTimeout(() => cambiar(f, 2), 6200);
+      aviso.textContent = txt(C.registrado || '{numero} registrado', { numero: 'NC-' + n }).replace(/<[^>]+>/g, '');
+      aviso.classList.remove('visible'); void aviso.offsetWidth; aviso.classList.add('visible');
+      clearTimeout(relojAviso);
+      relojAviso = setTimeout(() => aviso.classList.remove('visible'), 4200);
       iSel = tSel = -1; conFoto = false;
       marcar();
     }
     bReg.addEventListener('click', () => { if (!auto) uso = ahora(); registrar(); });
     marcar();
-    // solo, si nadie lo usa: elige instancia, tipo y registra
+    // solo, si nadie lo usa: elige dónde y qué pasó, suma la foto y registra (despacio, paso por paso)
     const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
     setInterval(async () => {
       if (!enVista() || auto || ahora() - uso < 7000) return;
       auto = true;
       try {
-        inst[Math.floor(Math.random() * inst.length)].click(); await esperar(700);
-        tipos[Math.floor(Math.random() * tipos.length)].click(); await esperar(800);
+        await esperar(600);
+        inst[Math.floor(Math.random() * inst.length)].click(); await esperar(1500);
+        tipos[Math.floor(Math.random() * tipos.length)].click(); await esperar(1400);
+        foto.click(); await esperar(1300);
         if (ahora() - uso > 7000) bReg.click();
-      } finally { auto = false; uso = ahora() - 1500; }
+      } finally { auto = false; uso = ahora() + 3000; }   // deja ver cómo avanza el caso antes de repetir
     }, 1000);
   })();
 

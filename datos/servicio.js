@@ -228,11 +228,18 @@ window.SERVICIO = {
     calidad: {
       titulo: "",
       tituloGrande: "NO CALIDAD",
-      texto: "Registro de **no calidad** en todas las instancias del proceso.",
+      texto: "Si algo falla en el proceso, se **registra en el momento**, con foto, y se **sigue hasta resolverlo**.",
+      // los tres pasos del aplicativo (el que toca hacer se marca en rojo)
+      pasoDonde: "1 · ¿Dónde pasó?",
+      pasoQue: "2 · ¿Qué pasó?",
+      pasoRegistro: "3 · Foto y registro",
       instancias: ["Recepción", "Depósito", "Transporte", "Entrega"],
       tipos: ["Faltante", "Daño", "Demora", "Documentación"],
+      foto: "Sumar foto",
       boton: "Registrar",
-      sistema: "Sistema de siniestros"
+      sistema: "Sistema de siniestros",
+      // aviso al registrar ({numero} = el número del caso)
+      registrado: "{numero} registrado · el equipo de calidad lo analiza"
     },
     asistente: {
       titulo: "",

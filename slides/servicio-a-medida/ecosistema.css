@@ -109,12 +109,12 @@
 .td-viaje.en-ruta .td-vest { background: var(--c); color: #fff; }
 .td-ruta { position: relative; height: 34px; margin: 14px 46px 0; }
 .td-linea { position: absolute; left: 0; right: 0; top: 6px; height: 3px; border-radius: 2px; background: rgba(58, 58, 58, .14); }
-.td-avance { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--c); transition: width 2.6s linear; }
+.td-avance { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--c); transition: width 4.5s cubic-bezier(.45, 0, .4, 1); }
 .td-viaje.en-ruta .td-avance { width: 100%; }
 .td-parada { position: absolute; top: 0; translate: -50% 0; text-align: center; }
 .td-parada i { display: block; width: 15px; height: 15px; margin: 0 auto; border: 3px solid var(--c); border-radius: 50%; background: #fff; }
 .td-parada small { display: block; margin-top: 4px; font-size: 10.5px; color: rgba(58, 58, 58, .65); white-space: nowrap; }
-.td-mini { position: absolute; left: 0; top: -12px; translate: -50% 0; opacity: 0; transition: left 2.6s linear, opacity .3s ease; }
+.td-mini { position: absolute; left: 0; top: -12px; translate: -50% 0; opacity: 0; transition: left 4.5s cubic-bezier(.45, 0, .4, 1), opacity .3s ease; }
 .td-mini svg { width: 22px; height: 22px; fill: var(--c); filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .2)); }
 .td-viaje.en-ruta .td-mini { left: 100%; opacity: 1; }
 .td-ocup { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
@@ -158,7 +158,7 @@
 .tz-pasos span.hecho svg { fill: #fff; }
 @keyframes tz-pop { from { scale: .7; } }
 .tz-lista { margin-top: 12px; border: 1px solid rgba(58, 58, 58, .1); border-radius: 18px; background: #fff; overflow: hidden; min-height: 60px; }
-.tz-fila { display: grid; grid-template-columns: 78px 1fr 30px; align-items: center; gap: 12px; height: 50px; padding: 0 14px; border-top: 1px solid rgba(58, 58, 58, .07); animation: pd-entra .45s cubic-bezier(.2, .8, .2, 1) both; }
+.tz-fila { display: grid; grid-template-columns: 78px 1fr 30px; align-items: center; gap: 12px; height: 50px; padding: 0 14px; border-top: 1px solid rgba(58, 58, 58, .07); animation: pd-entra .7s cubic-bezier(.2, .8, .2, 1) both; }
 .tz-fila:first-child { border-top: 0; }
 .tz-hora { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; color: rgba(58, 58, 58, .8); }
 .tz-ev { min-width: 0; }

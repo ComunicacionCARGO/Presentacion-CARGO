@@ -246,7 +246,7 @@
       { transform: `translate(${sx}px, ${sy}px)` },
       { transform: `translate(${mx}px, ${my}px) scale(1.08)`, offset: .45 },
       { transform: `translate(${ex}px, ${ey}px) scale(.6)`, opacity: .2 }
-    ], { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+    ], { duration: 850, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
     return an.finished.then(() => clon.remove());
   }
   async function armar(id) {
@@ -263,13 +263,13 @@
         el.querySelector('.td-ocup b').textContent = `${cuenta[i]} / ${total} bultos`;
         el.classList.remove('llega'); void el.offsetWidth; el.classList.add('llega');
       });
-      await cv.dormir(190, id);
+      await cv.dormir(480, id);   // un bulto cada medio segundo: que se vea a qué viaje va cada uno
     }
-    await cv.dormir(700, id);
+    await cv.dormir(1300, id);
     chipsEl.parentNode.classList.add('vacio');
-    for (const el of viajesEl) { el.classList.add('listo'); el.querySelector('.td-vest').textContent = 'Listo para salir'; await cv.dormir(220, id); }
-    await cv.dormir(800, id);
-    for (const el of viajesEl) { el.classList.add('en-ruta'); el.querySelector('.td-vest').textContent = 'En ruta · salida 07:50'; await cv.dormir(260, id); }
+    for (const el of viajesEl) { el.classList.add('listo'); el.querySelector('.td-vest').textContent = 'Listo para salir'; await cv.dormir(650, id); }
+    await cv.dormir(1800, id);
+    for (const el of viajesEl) { el.classList.add('en-ruta'); el.querySelector('.td-vest').textContent = 'En ruta · salida 07:50'; await cv.dormir(900, id); }
     armando = false; armado = true;
     bArmar.innerHTML = 'Volver a armar';
     bArmar.disabled = false;
@@ -330,8 +330,9 @@
   async function empezarTracking() {
     reiniciarTracking();
     const id = ct.nueva();
-    await ct.dormir(500, id);
-    while (mostrados < corte) { agregarEvento(EV[mostrados++]); await ct.dormir(620, id); }
+    await ct.dormir(1200, id);
+    // un evento cada 1,6 s: que se pueda leer cada uno y ver cómo avanza el estado
+    while (mostrados < corte) { agregarEvento(EV[mostrados++]); await ct.dormir(1600, id); }
     if (!firmado) { esperandoFirma = true; mostrarEtapa(); usoDoc = ahora(); }
   }
   // con la firma (o si ya estaba firmada) llegan los eventos de la entrega y el tracking se cierra
@@ -340,9 +341,9 @@
     const id = ct.nueva();
     esperandoFirma = false;
     while (mostrados < corte) agregarEvento(EV[mostrados++]);
-    while (mostrados < EV.length) { await ct.dormir(520, id); agregarEvento(EV[mostrados++]); }
+    while (mostrados < EV.length) { await ct.dormir(1300, id); agregarEvento(EV[mostrados++]); }
     maxEtapa = 3; mostrarEtapa();
-    await ct.dormir(400, id);
+    await ct.dormir(1000, id);
     fin.classList.add('visible');
   }
 
@@ -351,7 +352,7 @@
   // =========================================================
   alElegir.despachos = (modo) => {
     limpiarFirma();
-    if (modo === 'viajes') { reiniciarTracking(); if (armado || armando) prepararViajes(); usoViajes = ahora() - 2500; }
+    if (modo === 'viajes') { reiniciarTracking(); if (armado || armando) prepararViajes(); usoViajes = ahora() - 1500; }
     else empezarTracking().catch(cancelado);
   };
   setInterval(() => {
@@ -361,6 +362,6 @@
       const id = cv.nueva();
       armar(id).catch(cancelado);
     }
-    if (activa('entrega') && esperandoFirma && !firmado && !trazando && !papel.classList.contains('firmando') && t - usoDoc > 5000) firmarSola();
+    if (activa('entrega') && esperandoFirma && !firmado && !trazando && !papel.classList.contains('firmando') && t - usoDoc > 7000) firmarSola();
   }, 700);
 })();

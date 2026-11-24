@@ -403,8 +403,13 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     slides\servicio-a-medida\mapa-pacheco.js: ese archivo no se edita a mano;
     si cambia un centro de lugar, hay que volver a generarlo.
   • experiencia: la última parada del recorrido, "Experiencia de usuario".
-      calidad:    tarjeta NO CALIDAD: instancias del proceso y tipos de
-                  evento que se pueden elegir.
+      calidad:    tarjeta NO CALIDAD: texto que explica para qué sirve, los
+                  rótulos de los tres pasos (pasoDonde, pasoQue, pasoRegistro:
+                  el que toca hacer se marca en rojo), instancias del proceso y
+                  tipos de evento que se pueden elegir, el botón de la foto
+                  (foto) y el aviso al registrar (registrado; {numero} = el
+                  número del caso). El caso nuevo pasa solo de Abierto a
+                  En análisis y a Resuelto.
       asistente:  tarjeta CUSTOMER SERVICE: nombre del asistente (TICO),
                   saludo y las 3 preguntas que se pueden tocar con su respuesta.
       En cada tarjeta, titulo es una palabra chica opcional antes del título
