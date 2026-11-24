@@ -155,10 +155,12 @@
     '<stop offset=".2" stop-color="#fff" stop-opacity="0"/><stop offset=".34" stop-color="#fff" stop-opacity=".75"/>' +
     '<stop offset=".48" stop-color="#fff" stop-opacity="0"/></linearGradient>';
 
-  // 1. Base: halo rojo, sombra, espesor y cara de vidrio de cada provincia (blancos apenas distintos).
+  // 1. Base: halo rojo, sombra, espesor y cara de vidrio de cada provincia, todas del mismo
+  //    blanco (pedido de la persona: con blancos distintos no se entendía por qué unas eran más
+  //    oscuras); solo las separan las líneas.
   //    Las Malvinas (compartido/malvinas.js) van en esta capa fija, con el mismo vidrio, pero no
   //    son una provincia: no tienen zona ni se pueden elegir.
-  const BLANCOS = ['#FFFFFF', '#FFF8F0', '#FCF1E7', '#FFFCF7', '#FDF5EC'];
+  const BLANCO_PROV = '#FFFCF7';
   const MALV = (window.MALVINAS || {}).detalle || [];
   const FIJAS = MALV.length ? [...PROVS, 'malvinas'] : PROVS;
   const dibujoFijo = (k) => (k === 'malvinas' ? trazo(MALV) : DIBUJO[k]);
@@ -172,9 +174,10 @@
     `<g filter="url(#b-halo)" opacity=".34" transform="translate(0 8)">${todos('fill="#EF4529"')}</g>` +
     `<g filter="url(#b-sombra)" opacity=".15" transform="translate(6 24)">${todos('fill="#8C2A14"')}</g>` +
     FIJAS.map((k) => extrusion('b-' + k, LADOS.base)).join('') +
-    FIJAS.map((k, i) => { const c = BLANCOS[i % BLANCOS.length]; return `<use href="#b-${k}" fill="${c}" stroke="${c}" ${SIN_COSTURA}/>`; }).join('') +
-    `<g fill="none" stroke="#E7D3C4" stroke-width=".75" stroke-linejoin="round">${todos('')}</g>` +
-    `<rect width="${W}" height="${H}" fill="url(#b-brillo)" clip-path="url(#b-recorte)" opacity=".5"/>`
+    `<g fill="${BLANCO_PROV}" stroke="${BLANCO_PROV}">${todos(SIN_COSTURA)}</g>` +
+    `<rect width="${W}" height="${H}" fill="url(#b-brillo)" clip-path="url(#b-recorte)" opacity=".5"/>` +
+    // las líneas van encima del brillo: son lo único que separa las provincias
+    `<g fill="none" stroke="#DDC5B4" stroke-width=".9" stroke-linejoin="round">${todos('')}</g>`
   );
 
   // 2. Zonas: cada provincia pintada con el color de su región (se prende con el filtro)
