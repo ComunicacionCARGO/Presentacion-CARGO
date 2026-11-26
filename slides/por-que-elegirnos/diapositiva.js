@@ -221,9 +221,24 @@
   }, { passive: true });
   document.addEventListener('desplazamiento', (e) => {
     scrollY = Math.max(0, e.detail.y);
-    if (scrollY > 260 && seccionEl.classList.contains('con-tarjeta')) cerrar();   // al bajar, la tarjeta abierta se cierra
+    revisarClaves();
+    if (scrollY > 560 && seccionEl.classList.contains('con-tarjeta')) cerrar();   // al bajar, la tarjeta abierta se cierra
     despertar();
   });
+  // Las tres claves no aparecen al entrar (pedido de la persona): recién al bajar un poco
+  // (CLAVES_DESDE px), así están más arriba en la pantalla y se ven mejor; al volver arriba del
+  // todo se esconden (y la próxima vez entran de nuevo, con su animación).
+  const CLAVES_DESDE = 110, CLAVES_HASTA = 40;
+  let entro = false;
+  function revisarClaves() {
+    if (!entro) return;
+    const con = seccionEl.classList.contains('lineas');
+    if (!con && scrollY > CLAVES_DESDE) seccionEl.classList.add('lineas');
+    else if (con && scrollY < CLAVES_HASTA) {
+      if (seccionEl.classList.contains('con-tarjeta')) cerrar();
+      seccionEl.classList.remove('lineas');
+    }
+  }
   document.addEventListener('visibilitychange', despertar);
   const visible = () => scrollY < 900 && !document.hidden;
   const suave = (p) => p * p * (3 - 2 * p);
@@ -255,13 +270,13 @@
   }
   despertar();
 
-  // ---------- Entrada: al abrirse la cortina aparecen las capas; después, el zócalo con las claves ----------
+  // ---------- Entrada: al abrirse la cortina aparecen las capas; el zócalo con las claves, al bajar un poco ----------
   const entrar = () => {
     setTimeout(() => seccionEl.classList.add('arriba'), 350);
-    setTimeout(() => seccionEl.classList.add('lineas'), 1900);
+    setTimeout(() => { entro = true; revisarClaves(); }, 1900);
   };
   // Guía (compartido/guia.js): la mano invita a pasar por el primer ícono (Flexibilidad), hasta que se usa uno
-  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="flexibilidad"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 3.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 60 });
+  if (window.GUIA) GUIA.pista({ id: 'elegirnos-tarjetas', texto: 'tarjetasIr', objetivo: () => $('.df-punto[data-icono="flexibilidad"] .el-icono') || $('.df-punto .el-icono'), punto: [.5, .55], zona: '.df-punto', tipo: 'pasar', lado: 'abajo', espera: 2.4, activa: () => seccionEl.classList.contains('lineas') && !seccionEl.classList.contains('con-tarjeta') && scrollY < 520 });
   if (document.body.classList.contains('lista')) entrar(); else document.addEventListener('pagina-lista', entrar, { once: true });
 
   // =========================================================

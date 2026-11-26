@@ -237,7 +237,7 @@
    ícono con un fundido. Animaciones con relleno "backwards": al terminar mandan los estilos
    normales (así siguen funcionando el apagado y el giro de la tarjeta abierta). */
 .df-cabeza > * { transition: opacity .4s ease, transform .45s cubic-bezier(.2, .9, .25, 1); }
-.seccion-mejora:not(.lineas) .df-cabeza > * { opacity: 0; }
+.seccion-mejora:not(.lineas) .df-cabeza > * { opacity: 0; pointer-events: none; }   /* escondidas hasta bajar un poco: no se abren sin verse */
 .seccion-mejora.lineas .df-cabeza .el-icono { animation: df-icono-entra 1.05s cubic-bezier(.3, .7, .3, 1) calc(.55s + var(--i) * .22s) backwards; }
 .seccion-mejora.lineas .df-etiqueta { animation: df-titulo-entra .9s cubic-bezier(.16, .84, .24, 1) calc(.85s + var(--i) * .22s) backwards; }
 .df-cabeza .el-icono::after {
