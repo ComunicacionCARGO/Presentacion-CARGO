@@ -601,10 +601,11 @@
   // REINICIO Y ARRANQUE
   // =========================================================
   const analisisEl = $('.iv-analisis');
-  function reiniciar() {
+  function reiniciar(conMano) {
     vivas.forEach((a) => a.cancel());
     vivas.clear();
-    sinMano();
+    // al empezar la simulación la mano no se va: queda tenue y viaja al primer botón del celular
+    if (conMano) manoEspera(); else sinMano();
     tipo = null;
     svg.classList.remove('con-alerta', 'rastreo');
     actor();
@@ -630,7 +631,7 @@
   }
   async function correr() {
     corrida++;
-    reiniciar();
+    reiniciar(true);
     seccion.classList.add('corriendo');
     try {
       const pasos = [solicitud, registro, programacion, retiro, traslado, disposicion, analisis].slice(0, PASOS.length);
