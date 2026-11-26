@@ -396,6 +396,13 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   fuentes de información y los eventos (fecha y hora, qué
                   pasó, dónde y de qué fuente viene, del 1 al 4). Los eventos
                   desde el que dice "Entrega" llegan recién al firmar.
+  • cierre: la última pantalla, "Todo esto, PENSADO PARA FORD": antetitulo,
+    titulo, bajada, verDeNuevo y volver (los textos de los botones) y partes:
+    una tarjeta por parte de la diapositiva (seccion, titulo y texto). La
+    seccion dice adónde vuelve al tocarla y NO SE CAMBIA (como, devoluciones,
+    tableros, mapa o centros). El botón "Siguiente" se arma solo con la carta
+    que sigue en la portada (datos/cartas.js): si se cambia el orden o el
+    título de las cartas, el botón cambia solo, en todas las diapositivas.
   • centros: pantalla "Centros logísticos / CROSSDOCKING" (después del mapa de
     distribución; comparte la pantalla con el mapa de la zona de Pacheco).
     A la izquierda van el título, la frase, el total de m² (se suma solo) y la

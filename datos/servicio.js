@@ -521,5 +521,25 @@ window.SERVICIO = {
       { k: "rosario", nombre: "Centro Logístico Rosario", lat: -32.90, lon: -60.69 },
       { k: "cordoba", nombre: "Centro Logístico Córdoba", lat: -31.39, lon: -64.20 }
     ]
+  },
+
+  // ---------- Cierre: resumen de todo lo que se vio ----------
+  // Una tarjeta por parte de la diapositiva; al tocarla se vuelve a esa parte.
+  //   seccion: a qué parte lleva (NO cambiar): como, devoluciones, tableros, mapa o centros.
+  // Abajo van los botones "Volver al inicio" y "Siguiente" (la diapositiva que sigue, sola).
+  cierre: {
+    indice: "Resumen",                  // el nombre en el índice de la derecha
+    antetitulo: "Todo esto,",
+    titulo: "PENSADO PARA {cliente}",
+    bajada: "Un servicio **a medida, de punta a punta**: desde que {cliente} nos envía el pedido hasta que el concesionario lo recibe… y, si hace falta, de vuelta.",
+    verDeNuevo: "Ver de nuevo",
+    volver: "Volver al inicio",
+    partes: [
+      { seccion: "como", titulo: "¿Cómo lo hacemos?", texto: "El recorrido de cada pedido, del sistema de {cliente} al concesionario, con **tracking en tiempo real** y carta de porte **100 % digital**." },
+      { seccion: "devoluciones", titulo: "Devoluciones", texto: "El concesionario **autogestiona** la devolución y seguimos cada pieza hasta su **disposición final**." },
+      { seccion: "tableros", titulo: "Tableros y ventajas", texto: "**Indicadores** de entregas y de logística inversa para decidir con datos y **mejorar cada mes**." },
+      { seccion: "mapa", titulo: "¿Dónde lo hacemos?", texto: "Red propia y redespachantes para **llegar a todo el país** con tiempos de entrega definidos." },
+      { seccion: "centros", titulo: "Centros logísticos", texto: "**28.480 m²** de crossdocking, con dos centros **a minutos** del depósito de {cliente}." }
+    ]
   }
 };

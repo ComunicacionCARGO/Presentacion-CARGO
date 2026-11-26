@@ -108,9 +108,13 @@
         <h2 class="logros-titulo"><span></span><b></b></h2>
         <p class="logros-nota"></p>
         <div class="logros-tarjetas"></div>
-        <a class="logros-volver" href="../../index.html" data-transicion>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Volver
-        </a>
+        <!-- al final: Volver y Siguiente (compartido/siguiente.js pone el de la diapositiva que sigue) -->
+        <div class="logros-fin fin-botones">
+          <a class="boton-fin-volver" href="../../index.html" data-transicion>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Volver al inicio
+          </a>
+          <span data-siguiente></span>
+        </div>
       </section>
       <!-- Scroll extra: al seguir bajando, el título de Logros sube y entran las tarjetas -->
       <section class="seccion-cierre" aria-hidden="true"></section>
@@ -137,6 +141,8 @@
   <script src="../../datos/guias.js"></script>
   <script src="../../compartido/guia.js"></script>
   <script src="../../compartido/indice.js"></script>
+  <script src="../../datos/cartas.js"></script>
+  <script src="../../compartido/siguiente.js"></script>
   <script src="mapa-sudamerica.js"></script>
   <script src="../../compartido/malvinas.js"></script>
   <script src="grabados.js"></script>

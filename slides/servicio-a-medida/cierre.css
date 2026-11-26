@@ -1,0 +1,59 @@
+/* =========================================================
+   CIERRE DE SERVICIO A MEDIDA (cierre.js): pantalla gris con las franjas de la marca arriba,
+   el título, una tarjeta por parte de la diapositiva y los botones Volver y Siguiente
+   (estilos de los botones en compartido/base.css). Misma grilla: márgenes en x 64 y 1536.
+   ========================================================= */
+.sv-cierre { height: 900px; color: var(--blanco); }
+/* a todo el ancho de la ventana: franja roja, hueco, franja roja, hueco y el gris (34,6 / 10,8) */
+.ci-fondo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(800px - 50vw / var(--escala, 1) - 2px);
+  width: calc(100vw / var(--escala, 1) + 4px);
+  background:
+    radial-gradient(70% 60% at 50% 100%, rgba(239, 69, 41, .16), transparent 70%),
+    linear-gradient(var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--gris) 90.8px);
+}
+
+.ci-cab { position: absolute; left: 64px; top: 150px; margin: 0; line-height: 1; }
+.ci-cab span { display: block; font: 300 36px/1 var(--fuente-texto); color: rgba(255, 251, 243, .85); }
+.ci-cab b { display: block; margin-top: 4px; font: 700 84px/1 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
+.ci-bajada { position: absolute; left: 960px; top: 200px; width: 576px; margin: 0; font: 300 19px/1.55 var(--fuente-texto); color: rgba(255, 251, 243, .8); text-wrap: pretty; }
+.ci-bajada strong { font-weight: 600; color: var(--blanco); }
+.ci-cab, .ci-bajada { opacity: 0; translate: 0 20px; transition: opacity .8s ease, translate 1s cubic-bezier(.2, .8, .2, 1); }
+.sv-cierre.visible .ci-cab, .sv-cierre.visible .ci-bajada { opacity: 1; translate: 0 0; }
+.sv-cierre.visible .ci-bajada { transition-delay: .15s; }
+
+/* una tarjeta por parte: al tocarla se vuelve a esa parte */
+.ci-partes { position: absolute; left: 64px; right: 64px; top: 350px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.ci-parte {
+  display: flex;
+  flex-direction: column;
+  height: 330px;
+  padding: 26px 24px 22px;
+  border: 1px solid rgba(255, 251, 243, .12);
+  border-radius: 18px;
+  background: rgba(255, 251, 243, .05);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0;
+  translate: 0 26px;
+  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), transform .35s cubic-bezier(.2, .8, .2, 1), background-color .35s ease, border-color .35s ease;
+}
+.sv-cierre.visible .ci-parte { opacity: 1; translate: 0 0; transition-delay: calc(.25s + var(--i) * .08s), calc(.25s + var(--i) * .08s), 0s, 0s, 0s; }
+.ci-parte:hover { transform: translateY(-4px); background-color: rgba(255, 251, 243, .1); border-color: rgba(239, 69, 41, .75); }
+.ci-num { font: 700 56px/1 var(--fuente-titulo); color: var(--rojo); }
+.ci-parte h3 { margin: 18px 0 0; font: 700 25px/1.1 var(--fuente-titulo); letter-spacing: .02em; text-transform: uppercase; color: var(--blanco); }
+.ci-parte p { margin: 12px 0 0; font: 300 15px/1.5 var(--fuente-texto); color: rgba(255, 251, 243, .75); text-wrap: pretty; }
+.ci-parte p strong { font-weight: 600; color: var(--blanco); }
+.ci-ver { display: flex; align-items: center; gap: 6px; margin-top: auto; font: 600 12px var(--fuente-texto); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 251, 243, .6); transition: color .3s ease; }
+.ci-ver svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s ease; }
+.ci-parte:hover .ci-ver { color: var(--rojo); }
+.ci-parte:hover .ci-ver svg { transform: translateX(4px); }
+
+/* abajo: Volver al inicio y Siguiente */
+.ci-fin { position: absolute; left: 50%; top: 744px; opacity: 0; translate: -50% 20px; transition: opacity .8s ease .7s, translate 1s cubic-bezier(.2, .8, .2, 1) .7s; }
+.sv-cierre.visible .ci-fin { opacity: 1; translate: -50% 0; }
