@@ -42,9 +42,10 @@
   left: calc(800px - var(--w) * .5);
   top: calc(394.6px - var(--w) * .2852);
   width: var(--w);
-  /* la foto termina justo en el borde de la portada (y 900): lo de más abajo (el piso) quedaba
-     bajo el gris, y así no asoma cuando la portada pasa adelante con una tarjeta abierta */
-  height: calc(505.4px + var(--w) * .2852);
+  /* la foto termina antes del borde de la portada (y 890; lo de más abajo, el piso, quedaba bajo el
+     gris): así no asoma cuando la portada pasa adelante con una tarjeta abierta, ni con el
+     paralaje del mouse (± 2 px) */
+  height: calc(495.4px + var(--w) * .2852);
   background: url(../../img/slides/diferente/deposito.webp) center top / 100% auto no-repeat;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
   -webkit-mask-composite: source-in;

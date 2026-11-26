@@ -95,7 +95,9 @@
   const PAD = 26, ALTO_RENGLON = 34, ALTO_NUM = 22;
   // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
   // (mínimo, pedido de la persona: así todo sube junto y las claves quedan en la parte gris)
-  const PROF = { deposito: [3, .05], polvo: [4, .05], titulo: [5, .03], operario: [7, .02], contorno: [5, .03], puntos: [3, 0] };
+  // la foto y el polvo no se corren con el scroll: así nunca asoman debajo del borde de la portada
+  // (se ve cuando pasa adelante, con una tarjeta abierta)
+  const PROF = { deposito: [3, 0], polvo: [4, 0], titulo: [5, .03], operario: [7, .02], contorno: [5, .03], puntos: [3, 0] };
   const capas = {};
   document.querySelectorAll('.df-capa').forEach((c) => { capas[c.dataset.capa] = c; });
   // la línea punteada del zócalo, con un punto sobre cada clave
@@ -168,12 +170,19 @@
     delete zocalo.dataset.activa;
     seccionEl.classList.remove('con-tarjeta');
   }
+  // ¿el evento lo causó el scroll (el cursor no se movió) y no el mouse?
+  let ultMouse = { x: -1, y: -1 }, ultScroll = -1e9;
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') ultMouse = { x: e.clientX, y: e.clientY }; });
+  document.addEventListener('desplazamiento', () => { ultScroll = performance.now(); });
+  const porScroll = (e) => performance.now() - ultScroll < 500 && Math.abs(e.clientX - ultMouse.x) < 2 && Math.abs(e.clientY - ultMouse.y) < 2;
   puntos.forEach((o) => {
     const { el } = o;
     const vidrio = $('.df-vidrio', el);
     let abiertaAlTocar = false, tipo = 'mouse';
     if (o.conDestino) { el.tabIndex = 0; el.setAttribute('role', 'link'); }
-    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') abrir(o); });
+    // al scrollear, las claves pasan por debajo del cursor quieto: eso no abre la tarjeta (se abría
+    // sola y la portada pasaba adelante); se abre recién cuando el mouse se mueve de verdad
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch' && !porScroll(e)) abrir(o); });
     el.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') { clearTimeout(cierre); cierre = setTimeout(cerrar, 220); } });
     el.addEventListener('pointerdown', (e) => { tipo = e.pointerType; abiertaAlTocar = el.classList.contains('abierta'); });
     el.addEventListener('click', () => {
@@ -186,6 +195,7 @@
     el.addEventListener('blur', () => { if (!el.matches(':hover')) cerrar(); });
     // reflejo del vidrio que sigue al cursor
     el.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'touch' && !el.classList.contains('abierta') && !porScroll(e)) abrir(o);
       const r = vidrio.getBoundingClientRect();
       vidrio.style.setProperty('--mx', `${(e.clientX - r.left) / r.width * 100}%`);
       vidrio.style.setProperty('--my', `${(e.clientY - r.top) / r.height * 100}%`);
