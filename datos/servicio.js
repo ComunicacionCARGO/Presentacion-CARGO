@@ -138,6 +138,9 @@ window.SERVICIO = {
       llegada: "Llegada de la mercadería",
       deposito: "Depósito CARGO",
       recibidos: "✓ **{bultos} bultos** recibidos: pasan a ubicarse en el depósito",
+      // La primera vez la demo espera que la persona la empiece (después arranca sola)
+      botonInicio: "Recibir el pedido",
+      invitacion: "**Hacé clic** para recibir el pedido de {cliente}",
       boton: "Recibir otro pedido"
     },
     // 2. Geoposicionamiento indoor: la planchada, con un stage por ruta (las rutas y sus
@@ -158,7 +161,7 @@ window.SERVICIO = {
       ayuda: "Hacé clic en un bulto que llega para escanearlo",
       ayudaFaltan: "Seguí escaneando: {faltan} más y el lector sigue solo",
       ayudaAuto: "Lector automático · hacé clic en un bulto para escanearlo vos",
-      escanear: "Escaneá",               // el cartelito sobre el bulto que invita a escanearlo
+      escanear: "**Escaneá** este bulto", // el texto al lado de la manito que señala el bulto
       manualesParaAuto: "4",            // cuántos bultos se escanean a mano antes del lector automático
       // La ventana que aparece una sola vez, al escanear el primer bulto.
       // {codigo}, {tipo}, {ruta}, {viaje} y {zona} se completan solos.
@@ -181,6 +184,9 @@ window.SERVICIO = {
       docQuien: "Chofer CARGO",              // quién usa la app
       docDigital: "100% digital · sin papel",
       firmaAca: "Firmá acá",
+      // La primera vez cada demo espera que la persona la haga (después se hace sola): textos de la manito
+      invitaViajes: "**Hacé clic** para armar los viajes",
+      invitaFirma: "**Firmá** la entrega con el mouse",
       docPendiente: "Pendiente de conformar",
       firmaPendiente: "Se firma en la entrega",
       docBoton: "Firmar la entrega",
@@ -213,6 +219,8 @@ window.SERVICIO = {
       numero: "ADD 0031-2411873",
       esperando: "esperando la firma",
       fin: "Tracking cerrado · eventos devueltos al sistema de {cliente}",
+      boton: "Seguir el envío",                              // la primera vez el seguimiento espera este clic
+      invitacion: "**Hacé clic** para seguir el envío",      // el texto de la manito
       // Las 4 fuentes (el orden importa: cada evento dice de cuál viene, 1 a 4)
       fuentes: ["Nuestros eventos", "Socios estratégicos de transporte", "Confirmación del concesionario", "App de choferes (última milla)"],
       // Eventos del envío: fecha y hora, qué pasó, dónde y de qué fuente viene (1 a 4).
@@ -246,7 +254,11 @@ window.SERVICIO = {
       boton: "Registrar",
       sistema: "Sistema de siniestros",
       // aviso al registrar ({numero} = el número del caso)
-      registrado: "{numero} registrado · el equipo de calidad lo analiza"
+      registrado: "{numero} registrado · el equipo de calidad lo analiza",
+      // la primera vez, una manito guía cada paso (después se usa sola)
+      invitaDonde: "**Elegí** dónde pasó",
+      invitaQue: "**Elegí** qué pasó",
+      invitaRegistro: "**Registralo**"
     },
     asistente: {
       titulo: "",
@@ -255,6 +267,7 @@ window.SERVICIO = {
       nombre: "TICO",
       estado: "Asistente CARGO · en línea 24 hs",
       saludo: "¡Hola! Soy TICO. ¿En qué te ayudo?",
+      invitacion: "**Tocá** una pregunta para TICO",   // la manito, hasta que se pregunta algo
       // Preguntas que se pueden tocar y lo que responde
       preguntas: [
         { pregunta: "¿Dónde está mi envío ADD 0031-2411873?", respuesta: "Salió a distribución hoy a las 07:51 con la Unidad 14. Te aviso apenas se confirme la entrega." },

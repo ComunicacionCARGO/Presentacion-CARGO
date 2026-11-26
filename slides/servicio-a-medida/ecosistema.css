@@ -125,6 +125,10 @@
 .td-cel .td-estado { justify-content: center; min-height: 16px; font-size: 10.5px; text-align: center; }
 .td-cel .td-estado.listo svg { width: 16px; height: 16px; }
 
+/* la primera vez, el seguimiento espera el clic en "Seguir el envío" (después arranca solo) */
+.tz-seguir { display: none; align-self: flex-start; margin-top: 22px; }
+.td.tz-espera .tz-seguir { display: inline-flex; }
+
 /* armado de viajes */
 .td-pool { position: relative; min-height: 104px; margin-top: 16px; padding: 30px 12px 12px; border-radius: 16px; background: rgba(58, 58, 58, .05); box-shadow: inset 0 0 0 1px rgba(58, 58, 58, .06); }
 .td-pool > span { position: absolute; left: 16px; top: 10px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }

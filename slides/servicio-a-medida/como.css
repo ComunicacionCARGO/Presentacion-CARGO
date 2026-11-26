@@ -232,6 +232,13 @@
 .tm-vista { position: absolute; inset: 0; opacity: 0; translate: 0 14px; pointer-events: none; transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1); }
 .tm-vista.activa { opacity: 1; translate: 0 0; pointer-events: auto; }
 
+/* ---------- Manito que invita al primer intento (tms.js → SV.manito; la mano de la guía común) ---------- */
+.rc-mano { z-index: 9; pointer-events: none; transition: opacity .45s ease, visibility 0s linear .45s, transform .7s cubic-bezier(.45, 0, .2, 1); }
+.rc-mano.visible { transition: opacity .45s ease, visibility 0s, transform .7s cubic-bezier(.45, 0, .2, 1); }
+.rc-mano.quieta { transition: none; }
+.rc-mano .gp-texto { padding: 10px 18px; font-size: 15.5px; }
+.rc-mano.lado-izq-abajo .gp-texto { left: -30px; top: 34px; transform: translate(-100%, -50%); }
+
 /* ---------- Parada 2: geoposicionamiento indoor — la planchada con un stage por ruta ----------
    Arriba la recepción (los bultos que llegan, se escanean con un clic), en el medio un stage
    por ruta con sus z-stages (colores de las rutas, como en Gestión de viajes; el tipo va como
@@ -283,9 +290,7 @@
 .tc-bulto small { display: block; margin-top: 5px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(58, 58, 58, .6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* código de barras */
 .tc-bulto u { position: absolute; right: 10px; top: 10px; width: 26px; height: 18px; background: repeating-linear-gradient(90deg, var(--gris) 0 2px, transparent 2px 3.5px, var(--gris) 3.5px 4.5px, transparent 4.5px 6px); opacity: .7; }
-/* el próximo bulto invita a escanearlo: late un borde rojo y aparece "Escaneá" */
-.tc-invita { position: absolute; right: 8px; bottom: 7px; padding: 2px 7px; border-radius: 999px; background: var(--rojo); color: #fff; font-size: 9.5px; font-style: normal; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: 0; transition: opacity .3s ease; }
-.tc-bulto.invita .tc-invita { opacity: 1; }
+/* el próximo bulto invita a escanearlo: late un borde rojo (y la manito lo señala desde abajo) */
 .tc-bulto.invita { animation: tc-entra .6s cubic-bezier(.2, .8, .2, 1) both, tc-llama 1.5s ease-in-out .6s infinite; }
 @keyframes tc-llama { 0%, 100% { box-shadow: 0 0 0 2px rgba(239, 69, 41, .9), 0 0 0 2px rgba(239, 69, 41, .35), 0 10px 18px -12px rgba(120, 40, 20, .55); } 50% { box-shadow: 0 0 0 2px rgba(239, 69, 41, .9), 0 0 0 9px rgba(239, 69, 41, 0), 0 10px 18px -12px rgba(120, 40, 20, .55); } }
 /* lectura: el láser barre y aparece el visto */
@@ -332,6 +337,14 @@
 .tc-ayuda { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 13.5px; font-weight: 300; font-style: italic; color: rgba(58, 58, 58, .7); }
 .tc-ayuda svg { width: 18px; height: 18px; fill: var(--rojo); }
 .tc-ayuda.auto { font-style: normal; color: var(--rojo); }
+/* mientras se escanea a mano: grande y resaltada, con una bolita por bulto escaneado */
+.tc-ayuda.destacada { display: inline-flex; margin-top: 12px; padding: 10px 20px 10px 14px; border-radius: 999px; background: rgba(239, 69, 41, .1); box-shadow: inset 0 0 0 1.5px rgba(239, 69, 41, .4); font-size: 17px; font-weight: 600; font-style: normal; color: var(--rojo); }
+.tc-ayuda.destacada svg { width: 22px; height: 22px; }
+.tc-ayuda.late { animation: tc-ayuda-late .6s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes tc-ayuda-late { 40% { scale: 1.05; } }
+.tc-prog { display: flex; gap: 6px; margin-left: 6px; }
+.tc-prog i { width: 11px; height: 11px; border: 2px solid var(--rojo); border-radius: 50%; transition: background .3s ease; }
+.tc-prog i.si { background: var(--rojo); }
 
 /* La ventana del primer escaneo (una sola vez) */
 .tc-ventana { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; border-radius: inherit; background: rgba(255, 251, 243, .6); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: opacity .35s ease; }
@@ -409,6 +422,6 @@
 .pd-recibidos { position: absolute; left: 18px; bottom: 14px; font-size: 13.5px; font-weight: 600; color: var(--verde); }
 .pd-recibidos strong { font-weight: 700; }
 .pd-boton { position: absolute; left: 32px; top: 664px; height: 42px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--rojo); color: #fff; font: 500 16px var(--fuente-titulo); letter-spacing: .04em; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .4s ease, transform .3s ease; box-shadow: 0 14px 24px -14px rgba(160, 40, 20, .8); }
-.pd.hecho .pd-boton { opacity: 1; pointer-events: auto; }
+.pd.hecho .pd-boton, .pd.espera .pd-boton { opacity: 1; pointer-events: auto; }
 .pd-boton:hover { transform: translateY(-2px); }
 

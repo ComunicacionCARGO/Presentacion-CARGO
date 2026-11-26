@@ -364,6 +364,12 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     también están en recorrido). final y finalBoton: la frase de la última
     parada, que lleva a los tableros.
   • tms: los datos de las demos de cada parada (todos de ejemplo).
+    Ninguna demo arranca sola al llegar: la primera vez una manito invita a
+    hacerla a mano y, después de ese primer intento, se hace sola. Los textos
+    de la manito: pedido → botonInicio e invitacion; carga → escanear;
+    despachos → invitaViajes e invitaFirma; tracking → boton e invitacion;
+    experiencia → calidad.invitaDonde / invitaQue / invitaRegistro y
+    asistente.invitacion.
       pedido:     ingreso del pedido: nombres de los dos sistemas, el archivo
                   que viaja, los pedidos (número, destino, bultos y tipo: Stock,
                   Urgente o V.I.) y el texto de la llegada al depósito

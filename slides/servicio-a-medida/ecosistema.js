@@ -76,6 +76,8 @@
     `<p class="td-tit">${txt(TK.panel)}</p><p class="td-txt">${txt(TK.texto)}</p>` +
     `<div class="tz-estado"><div><small>N° de envío</small><b>${esc(TK.numero || '')}</b><p class="tz-txt">—</p></div>` +
     `<div class="tz-pasos"><i class="tz-pasos-linea"><i></i></i><span data-p="0">${SVG.deposito}</span><span data-p="1">${SVG.camion}</span><span data-p="2">${SVG.destino}</span></div></div>` +
+    // la primera vez el seguimiento espera que la persona lo empiece
+    `<button type="button" class="td-boton tz-seguir">${txt(TK.boton || 'Seguir el envío')}</button>` +
     '<div class="tz-lista"></div>' +
     `<p class="tz-fin">${SVG.tilde}<span>${txt(TK.fin)}</span></p>` +
     '</div>' +
@@ -119,6 +121,11 @@
   const textoFirmar = bFirmar.innerHTML;
   const cf = corredor();
   let firmado = false, tinta = 0, trazando = false, ult = null, usoDoc = -1e9;
+  // Primer intento a mano (pedido de la persona): cada demo espera que la persona la haga una
+  // vez, con la manito (tms.js → SV.manito); después se hace sola al llegar.
+  const mano = SV.manito(v);
+  const probado = { viajes: false, tracking: false, firma: false };
+  const yaProbo = (k) => { if (!probado[k]) { probado[k] = true; mano.ocultar(); } };
   ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#22386E'; ctx.lineWidth = 3.2;
   const enEntrega = () => SV.tms.modo === 'entrega';
   function punto(e) {
@@ -151,7 +158,7 @@
     if (!trazando) return;
     trazando = false;
     usoDoc = ahora();
-    if (tinta > 140) { const id = cf.nueva(); cf.dormir(650, id).then(() => generar(id)).catch(cancelado); }
+    if (tinta > 140) { yaProbo('firma'); const id = cf.nueva(); cf.dormir(650, id).then(() => generar(id)).catch(cancelado); }
   };
   lienzo.addEventListener('pointerup', soltarTrazo);
   lienzo.addEventListener('pointercancel', soltarTrazo);
@@ -198,10 +205,9 @@
   bFirmar.addEventListener('click', () => {
     usoDoc = ahora();
     if (firmado) { limpiarFirma(); empezarTracking(); return; }
+    yaProbo('firma');
     firmarSola();
   });
-  // Guía (compartido/guia.js): en la entrega, la mano invita a firmar la carta de porte
-  if (window.GUIA) GUIA.pista({ id: 'servicio-firma', texto: 'entregaFirma', objetivo: () => lienzo, punto: [.5, .55], zona: '.td-firma', lado: 'arriba', espera: 1, activa: () => activa('entrega') && !firmado && !papel.classList.contains('firmando') });
 
   // =========================================================
   // ARMADO DE VIAJES
@@ -292,6 +298,7 @@
   }
   bArmar.addEventListener('click', () => {
     usoViajes = ahora();
+    yaProbo('viajes');
     if (armando) return;
     if (armado) prepararViajes();
     const id = cv.nueva();
@@ -349,7 +356,11 @@
     await ct.dormir(1200, id);
     // un evento cada 1,6 s: que se pueda leer cada uno y ver cómo avanza el estado
     while (mostrados < corte) { agregarEvento(EV[mostrados++]); await ct.dormir(1600, id); }
-    if (!firmado) { esperandoFirma = true; mostrarEtapa(); usoDoc = ahora(); }
+    if (!firmado) {
+      esperandoFirma = true; mostrarEtapa(); usoDoc = ahora();
+      // la primera vez, la manito invita a firmar (después se firma sola)
+      if (!probado.firma && activa('entrega')) mano.mostrar(lienzo, txt(TD.invitaFirma || '**Firmá** la entrega con el mouse'), { lado: 'izq', punto: [.5, .5] });
+    }
   }
   // con la firma (o si ya estaba firmada) llegan los eventos de la entrega y el tracking se cierra
   async function cerrarTracking() {
@@ -366,18 +377,36 @@
   // =========================================================
   // AL LLEGAR A CADA PARADA, Y SOLOS SI NADIE TOCA NADA
   // =========================================================
+  // el seguimiento: la primera vez espera el clic en "Seguir el envío"
+  const bSeguir = v.querySelector('.tz-seguir');
+  bSeguir.addEventListener('click', () => {
+    yaProbo('tracking');
+    v.classList.remove('tz-espera');
+    empezarTracking().catch(cancelado);
+  });
   alElegir.despachos = (modo) => {
     limpiarFirma();
-    if (modo === 'viajes') { reiniciarTracking(); if (armado || armando) prepararViajes(); usoViajes = ahora() - 1500; }
-    else empezarTracking().catch(cancelado);
+    mano.ocultar();
+    v.classList.remove('tz-espera');
+    if (modo === 'viajes') {
+      reiniciarTracking();
+      if (armado || armando) prepararViajes();
+      usoViajes = ahora() - 1500;
+      if (!probado.viajes) mano.mostrar(bArmar, txt(TD.invitaViajes || '**Hacé clic** para armar los viajes'), { lado: 'der' });
+    } else if (!probado.tracking) {
+      reiniciarTracking();
+      v.classList.add('tz-espera');
+      mano.mostrar(bSeguir, txt(TK.invitacion || '**Hacé clic** para seguir el envío'), { lado: 'der' });
+    } else empezarTracking().catch(cancelado);
   };
+  // después del primer intento, se hacen solas si nadie toca nada
   setInterval(() => {
     const t = ahora();
-    if (activa('viajes') && !armado && !armando && t - usoViajes > 3500) {
+    if (probado.viajes && activa('viajes') && !armado && !armando && t - usoViajes > 3500) {
       usoViajes = t;
       const id = cv.nueva();
       armar(id).catch(cancelado);
     }
-    if (activa('entrega') && esperandoFirma && !firmado && !trazando && !papel.classList.contains('firmando') && t - usoDoc > 7000) firmarSola();
+    if (probado.firma && activa('entrega') && esperandoFirma && !firmado && !trazando && !papel.classList.contains('firmando') && t - usoDoc > 7000) firmarSola();
   }, 700);
 })();

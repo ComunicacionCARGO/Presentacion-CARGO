@@ -65,6 +65,43 @@
   const cancelado = (e) => { if (e !== 'cancelado') throw e; };
 
   // =========================================================
+  // MANITO QUE INVITA AL PRIMER INTENTO (pedido de la persona: las demos de cada parada no
+  // arrancan solas al llegar, así no distraen antes de leer; invitan a hacerlo a mano y, después
+  // del primer intento, siguen solas). Es la mano de la guía común (clases de base.css), pero va
+  // dentro de la demo y queda hasta que se usa; al cambiar de objetivo se desliza hasta él.
+  // lado: dónde va el texto (abajo, arriba, der, izq, izq-abajo: a la izquierda de la mano).
+  // =========================================================
+  const MANO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V4.6a1.6 1.6 0 0 1 3.2 0v5.6h.4V8.7a1.6 1.6 0 0 1 3.2 0v1.6h.4V9.5a1.6 1.6 0 0 1 3.2 0v5.4c0 3.8-2.6 6.8-6.4 6.8h-1.1c-1.9 0-3.6-.9-4.6-2.5l-3-4.6a1.5 1.5 0 0 1 2.4-1.8L9 14.4z"/></svg>';
+  function manito(padre) {
+    const el = crear('div', 'rc-mano guia-pista lado-abajo', padre, `<span class="gp-toque"><i></i><i></i>${MANO}</span><span class="gp-texto"></span>`);
+    const texto = el.querySelector('.gp-texto');
+    let obj = null, punto = [.5, .5], reloj = 0;
+    function ubicar() {
+      const o = typeof obj === 'function' ? obj() : obj;
+      if (!o || !o.isConnected) return;
+      const k = escala(), a = padre.getBoundingClientRect(), r = o.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      el.style.transform = `translate(${((r.left + r.width * punto[0] - a.left) / k).toFixed(1)}px, ${((r.top + r.height * punto[1] - a.top) / k).toFixed(1)}px)`;
+    }
+    return {
+      mostrar(o, html, op) {
+        op = op || {};
+        const antes = el.classList.contains('visible');
+        obj = o; punto = op.punto || [.5, .5];
+        el.className = 'rc-mano guia-pista lado-' + (op.lado || 'abajo') + (antes ? ' visible' : ' quieta');
+        texto.innerHTML = html;
+        ubicar();
+        setTimeout(() => { el.classList.remove('quieta'); el.classList.add('visible'); ubicar(); }, 30);
+        clearInterval(reloj);
+        reloj = setInterval(ubicar, 300);     // sigue al objetivo si se mueve
+      },
+      ocultar() { obj = null; clearInterval(reloj); el.classList.remove('visible'); },
+      get visible() { return !!obj; }
+    };
+  }
+  SV.manito = manito;
+
+  // =========================================================
   // LAS PARADAS (datos/servicio.js → recorrido.paradas; "clave" dice qué demo va en el panel)
   // =========================================================
   const VISTA_DE = { pedido: 'pedido', ubicacion: 'carga', viajes: 'despachos', entrega: 'despachos', experiencia: 'experiencia' };
@@ -331,8 +368,23 @@
       recibidos.innerHTML = txt(TP.recibidos, { bultos: totalBultos });
       v.classList.add('hecho');
     }
-    boton.addEventListener('click', () => correr().catch(cancelado));
-    alElegir.pedido = () => correr().catch(cancelado);
+    // la primera vez espera el clic (con la manito); después de probarlo, arranca solo al llegar
+    const mano = manito(v);
+    let probado = false;
+    function invitar() {
+      reiniciar();
+      v.classList.add('espera');
+      boton.innerHTML = txt(TP.botonInicio || 'Recibir el pedido');
+      mano.mostrar(boton, txt(TP.invitacion || '**Hacé clic** para recibir el pedido'), { lado: 'der' });
+    }
+    boton.addEventListener('click', () => {
+      probado = true;
+      mano.ocultar();
+      v.classList.remove('espera');
+      boton.innerHTML = txt(TP.boton);
+      correr().catch(cancelado);
+    });
+    alElegir.pedido = () => { if (probado) correr().catch(cancelado); else invitar(); };
   })();
 
   // =========================================================
@@ -369,7 +421,7 @@
     '<div class="tc-pie"><div class="tc-inds">' + TIPOS.map((t, i) =>
       `<span class="tc-ind">${chipTipo(i)}${txt(t.nombre)}<b>${t.valor}</b></span>`).join('') +
     `<span class="tc-ind total">${txt(TC.total)}<b>0</b></span></div>` +
-    `<p class="tc-ayuda">${icono('lector')}<span></span></p></div>` +
+    `<p class="tc-ayuda">${icono('lector')}<span></span><b class="tc-prog"></b></p></div>` +
     // la ventana del primer escaneo
     '<div class="tc-ventana" aria-hidden="true"><div class="tc-vcard" role="dialog" aria-modal="true">' +
     '<button type="button" class="tc-vcerrar" aria-label="Cerrar">×</button>' +
@@ -428,8 +480,7 @@
     b.el.type = 'button';
     b.el._b = b;
     b.el.style.setProperty('--c', RUTAS[ruta].color);
-    b.el.innerHTML = `<b>${esc(b.cod)}</b><small>${txt(TIPOS[tipo].nombre)} · ${esc(RUTAS[ruta].nombre)}</small><u></u>` +
-      `<em class="tc-invita">${txt(TC.escanear || 'Escaneá')}</em>`;
+    b.el.innerHTML = `<b>${esc(b.cod)}</b><small>${txt(TIPOS[tipo].nombre)} · ${esc(RUTAS[ruta].nombre)}</small><u></u>`;
     b.el.addEventListener('click', () => leer(b, true));
     return b;
   }
@@ -438,20 +489,28 @@
   // el primero que se escanea es un V.I. a Rosario (el ejemplo de la ventana)
   cola.appendChild(nuevoBulto({ ruta: 0, tipo: Math.min(2, TIPOS.length - 1) }).el);
   const siguiente = () => { const el = [...cola.children].reverse().find((e) => !e._b.estado); return el ? el._b : null; };
-  // el próximo bulto lleva el cartelito "Escaneá" mientras se escanea a mano
+  // mientras se escanea a mano, el próximo bulto late con un borde rojo y la manito lo señala
+  // desde abajo, con el texto al lado (afuera de la etiqueta: adentro parecía un dato del bulto)
+  const manoCarga = manito(vCarga);
   function marcarInvita() {
     const s = siguiente();
-    [...cola.children].forEach((el) => el.classList.toggle('invita', !auto && !abierta && !!s && el === s.el));
+    const invitar = !auto && !abierta && !!s;
+    [...cola.children].forEach((el) => el.classList.toggle('invita', invitar && el === s.el));
+    if (invitar) manoCarga.mostrar(s.el, txt(TC.escanear || '**Escaneá** este bulto'), { lado: 'izq-abajo', punto: [.5, .82] });
+    else manoCarga.ocultar();
   }
+  // la ayuda de abajo: grande y resaltada (con una bolita por bulto) mientras se escanea a mano
   function actualizarAyuda() {
     ayuda.classList.toggle('auto', auto);
+    ayuda.classList.toggle('destacada', !auto);
     ayudaEl.innerHTML = auto ? txt(TC.ayudaAuto)
       : manuales ? txt(TC.ayudaFaltan, { faltan: MANUALES - manuales }) : txt(TC.ayuda);
+    ayuda.querySelector('.tc-prog').innerHTML = auto ? ''
+      : Array.from({ length: MANUALES }, (_, i) => `<i${i < manuales ? ' class="si"' : ''}></i>`).join('');
+    ayuda.classList.remove('late'); void ayuda.offsetWidth; ayuda.classList.add('late');
   }
   actualizarAyuda();
   marcarInvita();
-  // Guía (compartido/guia.js): la mano señala el próximo bulto hasta que se escanea uno
-  if (window.GUIA) GUIA.pista({ id: 'servicio-lector', texto: 'tmsLector', objetivo: () => { const s = siguiente(); return s && s.el; }, zona: '.tc-bulto', lado: 'izq', espera: 1.2, activa: () => enVista && pestana === 'carga' && !auto && !abierta });
 
   // Mueve los bultos que quedan a su lugar nuevo con una animación (en vez de saltar)
   function flip(cambio) {

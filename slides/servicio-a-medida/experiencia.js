@@ -53,6 +53,22 @@
     '</div></article>');
 
   // =========================================================
+  // PRIMER INTENTO A MANO (pedido de la persona): las dos tarjetas esperan que la persona las
+  // use una vez (una manito la guía paso a paso: primero No calidad, después TICO); después de
+  // probarlas, se usan solas si nadie toca nada.
+  // =========================================================
+  const mano = SV.manito ? SV.manito(seccion) : { mostrar() {}, ocultar() {} };
+  const probado = { nc: false, tico: false };
+  const guias = { nc: () => null, tico: () => null };
+  function guiar() {
+    for (const k of ['nc', 'tico']) {
+      const o = !probado[k] && guias[k]();
+      if (o) { mano.mostrar(o.el, o.texto, o.op); return; }
+    }
+    mano.ocultar();
+  }
+
+  // =========================================================
   // NO CALIDAD
   // =========================================================
   (function noCalidad() {
@@ -85,7 +101,13 @@
       const toca = iSel < 0 ? 0 : tSel < 0 ? 1 : 2;
       rotulos.forEach((r) => r.classList.toggle('toca', +r.dataset.paso === toca));
       bReg.classList.toggle('toca', toca === 2);
+      tocaAhora = toca;
+      guiar();
     }
+    let tocaAhora = 0;
+    guias.nc = () => (tocaAhora === 0 ? { el: inst[0], texto: txt(C.invitaDonde || '**Elegí** dónde pasó'), op: { lado: 'abajo' } }
+      : tocaAhora === 1 ? { el: tipos[0], texto: txt(C.invitaQue || '**Elegí** qué pasó'), op: { lado: 'abajo' } }
+        : { el: bReg, texto: txt(C.invitaRegistro || '**Registralo**'), op: { lado: 'abajo' } });
     inst.forEach((b, k) => b.addEventListener('click', () => { if (!auto) uso = ahora(); iSel = k; marcar(); }));
     tipos.forEach((b, k) => b.addEventListener('click', () => { if (!auto) uso = ahora(); tSel = k; marcar(); }));
     foto.addEventListener('click', () => { if (!auto) uso = ahora(); conFoto = !conFoto; marcar(); });
@@ -106,12 +128,12 @@
       iSel = tSel = -1; conFoto = false;
       marcar();
     }
-    bReg.addEventListener('click', () => { if (!auto) uso = ahora(); registrar(); });
+    bReg.addEventListener('click', () => { if (!auto) { uso = ahora(); if (iSel >= 0 && tSel >= 0) probado.nc = true; } registrar(); });
     marcar();
     // solo, si nadie lo usa: elige dónde y qué pasó, suma la foto y registra (despacio, paso por paso)
     const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
     setInterval(async () => {
-      if (!enVista() || auto || ahora() - uso < 7000) return;
+      if (!probado.nc || !enVista() || auto || ahora() - uso < 7000) return;
       auto = true;
       try {
         await esperar(600);
@@ -141,7 +163,7 @@
     async function preguntar(i, auto) {
       if (ocupado || !P[i]) return;
       ocupado = true;
-      if (!auto) uso = ahora();
+      if (!auto) { uso = ahora(); if (!probado.tico) { probado.tico = true; guiar(); } }
       botones.forEach((b, k) => b.classList.toggle('activo', k === i));
       mensaje('yo', txt(P[i].pregunta));
       await esperar(450);
@@ -157,8 +179,10 @@
       ocupado = false;
     }
     botones.forEach((b, i) => b.addEventListener('click', () => preguntar(i)));
+    guias.tico = () => (botones[0] ? { el: botones[0], texto: txt(A.invitacion || '**Tocá** una pregunta'), op: { lado: 'arriba' } } : null);
+    guiar();
     setInterval(() => {
-      if (!enVista() || ocupado || ahora() - uso < 6500) return;
+      if (!probado.tico || !enVista() || ocupado || ahora() - uso < 6500) return;
       uso = ahora() - 1500;
       preguntar(proxima, true);
     }, 1000);

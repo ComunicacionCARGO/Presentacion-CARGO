@@ -425,7 +425,7 @@
     // el flujograma de la provincia (flujograma.js, hoja Flujos del Excel)
     if (window.FLUJOGRAMA && FLUJOGRAMA.hay(k)) {
       html += '<button type="button" class="vp-flujo"><span class="vf-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h5v6H2zM17 3h5v5h-5zM17 16h5v5h-5zM7 11h3.2V5.5H17v1.6h-5.2v4.1H17v1.6h-5.2v4.1H17v1.6h-6.8V12.6H7z"/></svg></span>' +
-        `<span><b>Ver el flujograma</b><small>Cómo llegan los repuestos y accesorios a ${esc(nombre)}</small></span><span class="vf-ir" aria-hidden="true">→</span></button>`;
+        `<span><b>Conocé las rutas</b><small>Cómo llegan los repuestos y accesorios a ${esc(nombre)}</small></span><span class="vf-ir" aria-hidden="true">→</span></button>`;
     }
     if (basesAqui.length) {
       html += `<p class="vp-sub">Bases en ${esc(nombre)}</p><ul class="vp-bases">` +

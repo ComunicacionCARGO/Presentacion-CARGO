@@ -170,7 +170,7 @@
     if (!sinIndicar) mano(els[0]);
     return new Promise((ok, mal) => {
       let listo = false, resta = ms, ult = ahora();
-      const salir = () => { listo = true; clearInterval(reloj); els.forEach((el, i) => el.removeEventListener('click', clics[i])); sinMano(); };
+      const salir = () => { listo = true; clearInterval(reloj); els.forEach((el, i) => el.removeEventListener('click', clics[i])); manoEspera(); };
       const clics = els.map((el, i) => () => { if (listo) return; salir(); ok(i); });
       els.forEach((el, i) => el.addEventListener('click', clics[i]));
       const reloj = setInterval(async () => {
@@ -188,15 +188,22 @@
     });
   }
 
-  // Mano que señala dónde tocar
+  // Mano que señala dónde tocar (pedido de la persona: no desaparece entre un botón y otro, porque
+  // al reaparecer a veces no se encontraba; se queda quieta y tenue mientras pasa la animación y
+  // después viaja hasta el botón siguiente, así guía de un punto al otro)
   function mano(el) {
     if (!el) return;
     const s = seccion.getBoundingClientRect(), r = el.getBoundingClientRect(), k = escala();
+    const nueva = !manoEl.classList.contains('visible');
+    if (nueva) manoEl.classList.add('salta');          // la primera vez aparece en su lugar
     manoEl.style.left = ((r.left + r.width * .6 - s.left) / k).toFixed(0) + 'px';
     manoEl.style.top = ((r.top + r.height * .55 - s.top) / k).toFixed(0) + 'px';
+    if (nueva) { void manoEl.offsetWidth; manoEl.classList.remove('salta'); }
+    manoEl.classList.remove('espera');
     manoEl.classList.add('visible');
   }
-  function sinMano() { manoEl.classList.remove('visible'); }
+  function manoEspera() { manoEl.classList.add('espera'); }
+  function sinMano() { manoEl.classList.remove('visible', 'espera'); }
 
   // =========================================================
   // ESCENA: camión y bultos (animaciones con WAAPI)
@@ -568,6 +575,7 @@
     await eventos((PASOS[6] || {}).eventos);
   }
   async function cierre() {
+    sinMano();                                // terminó el recorrido: ya no hay nada que señalar
     marcarPaso(PASOS.length);
     actor();
     if (tipo.reposicion) { evento({ hora: C.evento && C.evento.hora, texto: C.reposicion }); await esperar(500); }
@@ -586,7 +594,7 @@
   async function siguiente(i) {
     const sig = PASOS[i + 1];
     const b = boton(sig ? 'Siguiente: ' + t(sig.titulo) : 'Ver el cierre', 'siguiente');
-    await esperarClic(b, 6000, null, true);
+    await esperarClic(b, 6000);          // la mano también lo señala
   }
 
   // =========================================================

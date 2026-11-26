@@ -39,7 +39,7 @@ window.GUIAS = {
   tablerosVentajas:    { texto: "**Hacé clic** para ver las ventajas",              tactil: "**Tocá** para ver las ventajas" },
   ventajas:            { texto: "**Pasá el mouse** por cada ventaja",               tactil: "**Tocá** cada ventaja" },
   mapaProvincias:      { texto: "**Hacé clic** en una provincia para ver sus rutas", tactil: "**Tocá** una provincia para ver sus rutas" },
-  mapaFlujograma:      { texto: "**Hacé clic** para ver el flujograma de la provincia", tactil: "**Tocá** para ver el flujograma de la provincia" },
+  mapaFlujograma:      { texto: "**Hacé clic** para conocer las rutas de la provincia", tactil: "**Tocá** para conocer las rutas de la provincia" },
 
   // ---------- ¿Qué hacemos diferente? ----------
   tarjetasIr:          { texto: "**Pasá el cursor** por un ícono para ver más",     tactil: "**Tocá** un ícono para ver más" },
