@@ -18,8 +18,10 @@
 
   function html(clase) {
     if (!sig) return '';
-    return `<a class="boton-siguiente${clase ? ' ' + clase : ''}" href="../../${esc(sig.destino)}" data-transicion>` +
-      `<span><small>Siguiente · ${String(i + 2).padStart(2, '0')}</small><b>${esc(sig.antetitulo)} <strong>${esc(sig.titulo)}</strong></b></span>${FLECHA}</a>`;
+    // un círculo con la foto de la carta, "Siguiente" chico y el título entero con la misma letra
+    const foto = sig.portada ? `<i class="bs-foto" style="background-image:url('../../${esc(sig.portada)}')"></i>` : '';
+    return `<a class="boton-siguiente${foto ? ' con-foto' : ''}${clase ? ' ' + clase : ''}" href="../../${esc(sig.destino)}" data-transicion>` +
+      `${foto}<span><small>Siguiente</small><b>${esc(sig.antetitulo)} ${esc(sig.titulo)}</b></span>${FLECHA}</a>`;
   }
   function llenar(raiz) {
     (raiz || document).querySelectorAll('[data-siguiente]').forEach((el) => {

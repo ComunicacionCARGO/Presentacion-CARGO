@@ -1,59 +1,127 @@
 /* =========================================================
-   CIERRE DE SERVICIO A MEDIDA (cierre.js): pantalla gris con las franjas de la marca arriba,
-   el título, una tarjeta por parte de la diapositiva y los botones Volver y Siguiente
-   (estilos de los botones en compartido/base.css). Misma grilla: márgenes en x 64 y 1536.
+   CIERRE DE SERVICIO A MEDIDA (cierre.js): las franjas de la marca arriba, el paisaje de la
+   portada atenuado de fondo, el título centrado y la ruta con una parada por cada parte de la
+   diapositiva; abajo, Volver y Siguiente (estilos de los botones en compartido/base.css).
    ========================================================= */
 .sv-cierre { height: 900px; color: var(--blanco); }
-/* a todo el ancho de la ventana: franja roja, hueco, franja roja, hueco y el gris (34,6 / 10,8) */
+
+/* ---------- Fondo a todo el ancho de la ventana ---------- */
 .ci-fondo {
   position: absolute;
   top: 0;
   bottom: 0;
   left: calc(800px - 50vw / var(--escala, 1) - 2px);
   width: calc(100vw / var(--escala, 1) + 4px);
+  overflow: hidden;
+  background: var(--gris);
+  z-index: 0;            /* arma su propio grupo: el velo y las franjas no tapan el contenido */
+}
+/* arriba, las franjas: roja, hueco, roja, hueco (34,6 / 10,8), por encima del paisaje */
+.ci-fondo::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 90.8px;
+  z-index: 3;
+  background: linear-gradient(var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px);
+}
+/* el paisaje de la portada (mismas proporciones), apoyado abajo */
+.ci-escena { position: absolute; left: -30px; right: -30px; bottom: -30px; aspect-ratio: 1672 / 941; min-height: 960px; }
+.ci-escena img { position: absolute; display: block; -webkit-user-drag: none; user-select: none; }
+.ci-cielo { inset: 0; width: 100%; height: 100%; object-fit: cover; translate: 0 calc(var(--m, 0) * 3px); }
+.ci-arboles { left: 50%; top: 12.6%; height: 93%; width: auto; translate: -50% calc(var(--m, 0) * 7px); }
+.ci-alambrado { left: 50%; top: 9.4%; height: 80.9%; width: auto; translate: -50% calc(var(--m, 0) * 10px); }
+/* velo oscuro y cálido para que se lea, con un resplandor rojo abajo */
+.ci-velo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   background:
-    radial-gradient(70% 60% at 50% 100%, rgba(239, 69, 41, .16), transparent 70%),
-    linear-gradient(var(--rojo) 0 34.6px, var(--blanco) 34.6px 45.4px, var(--rojo) 45.4px 80px, var(--blanco) 80px 90.8px, var(--gris) 90.8px);
+    radial-gradient(60% 46% at 50% 100%, rgba(239, 69, 41, .26), transparent 72%),
+    linear-gradient(180deg, rgba(34, 30, 28, .72) 0%, rgba(34, 30, 28, .55) 36%, rgba(34, 30, 28, .8) 62%, rgba(34, 30, 28, .93) 100%);
 }
 
-.ci-cab { position: absolute; left: 64px; top: 150px; margin: 0; line-height: 1; }
-.ci-cab span { display: block; font: 300 36px/1 var(--fuente-texto); color: rgba(255, 251, 243, .85); }
-.ci-cab b { display: block; margin-top: 4px; font: 700 84px/1 var(--fuente-titulo); letter-spacing: .01em; color: var(--rojo); }
-.ci-bajada { position: absolute; left: 960px; top: 200px; width: 576px; margin: 0; font: 300 19px/1.55 var(--fuente-texto); color: rgba(255, 251, 243, .8); text-wrap: pretty; }
+/* ---------- Título ---------- */
+.ci-cab { position: absolute; left: 0; right: 0; top: 136px; margin: 0; text-align: center; line-height: 1; text-shadow: 0 6px 30px rgba(0, 0, 0, .35); }
+.ci-cab span { display: block; font: 300 38px/1 var(--fuente-texto); color: rgba(255, 251, 243, .88); }
+.ci-cab b { display: block; margin-top: 6px; font: 700 104px/1 var(--fuente-titulo); letter-spacing: .02em; color: var(--blanco); }
+.ci-bajada { position: absolute; left: 330px; top: 290px; width: 940px; margin: 0; text-align: center; font: 300 19px/1.55 var(--fuente-texto); color: rgba(255, 251, 243, .82); text-wrap: balance; }
 .ci-bajada strong { font-weight: 600; color: var(--blanco); }
-.ci-cab, .ci-bajada { opacity: 0; translate: 0 20px; transition: opacity .8s ease, translate 1s cubic-bezier(.2, .8, .2, 1); }
+.ci-cab, .ci-bajada { opacity: 0; translate: 0 22px; transition: opacity .9s ease, translate 1.1s cubic-bezier(.2, .8, .2, 1); }
 .sv-cierre.visible .ci-cab, .sv-cierre.visible .ci-bajada { opacity: 1; translate: 0 0; }
 .sv-cierre.visible .ci-bajada { transition-delay: .15s; }
 
-/* una tarjeta por parte: al tocarla se vuelve a esa parte */
-.ci-partes { position: absolute; left: 64px; right: 64px; top: 350px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-.ci-parte {
+/* ---------- La ruta: tres franjas, las paradas y el camioncito ---------- */
+.ci-ruta { position: absolute; left: 64px; right: 64px; top: 420px; height: 290px; }
+.ci-franjas {
+  position: absolute;
+  top: 38px;
+  left: calc(736px - 50vw / var(--escala, 1));
+  width: calc(100vw / var(--escala, 1));
+  height: 29px;
+  background: linear-gradient(var(--rojo) 0 7px, transparent 7px 11px, var(--rojo) 11px 18px, transparent 18px 22px, rgba(255, 251, 243, .55) 22px 29px);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.6s cubic-bezier(.6, 0, .2, 1) .3s;
+}
+.sv-cierre.visible .ci-franjas { clip-path: inset(0 0 0 0); }
+/* el camioncito anda por la ruta y pasa por detrás de las paradas */
+.ci-camion { position: absolute; top: 6px; left: -4%; z-index: 1; width: 36px; height: 36px; opacity: 0; transition: opacity .6s ease 1.6s; }
+.ci-camion svg { width: 36px; height: 36px; fill: var(--blanco); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45)); }
+.sv-cierre.visible .ci-camion { opacity: 1; animation: ci-anda 14s linear 1.6s infinite; }
+.sv-cierre:not(.visible) .ci-camion { animation: none; }
+@keyframes ci-anda { from { left: -4%; } to { left: 102%; } }
+
+.ci-parada {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 262px;
+  translate: -50% 0;
   display: flex;
   flex-direction: column;
-  height: 330px;
-  padding: 26px 24px 22px;
-  border: 1px solid rgba(255, 251, 243, .12);
-  border-radius: 18px;
-  background: rgba(255, 251, 243, .05);
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
   color: inherit;
   font: inherit;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
-  opacity: 0;
-  translate: 0 26px;
-  transition: opacity .7s ease, translate .9s cubic-bezier(.2, .8, .2, 1), transform .35s cubic-bezier(.2, .8, .2, 1), background-color .35s ease, border-color .35s ease;
 }
-.sv-cierre.visible .ci-parte { opacity: 1; translate: 0 0; transition-delay: calc(.25s + var(--i) * .08s), calc(.25s + var(--i) * .08s), 0s, 0s, 0s; }
-.ci-parte:hover { transform: translateY(-4px); background-color: rgba(255, 251, 243, .1); border-color: rgba(239, 69, 41, .75); }
-.ci-num { font: 700 56px/1 var(--fuente-titulo); color: var(--rojo); }
-.ci-parte h3 { margin: 18px 0 0; font: 700 25px/1.1 var(--fuente-titulo); letter-spacing: .02em; text-transform: uppercase; color: var(--blanco); }
-.ci-parte p { margin: 12px 0 0; font: 300 15px/1.5 var(--fuente-texto); color: rgba(255, 251, 243, .75); text-wrap: pretty; }
-.ci-parte p strong { font-weight: 600; color: var(--blanco); }
-.ci-ver { display: flex; align-items: center; gap: 6px; margin-top: auto; font: 600 12px var(--fuente-texto); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 251, 243, .6); transition: color .3s ease; }
-.ci-ver svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s ease; }
-.ci-parte:hover .ci-ver { color: var(--rojo); }
-.ci-parte:hover .ci-ver svg { transform: translateX(4px); }
+.ci-circulo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: rgba(255, 251, 243, .94);
+  box-shadow: 0 0 0 7px rgba(255, 251, 243, .16), 0 18px 34px -14px rgba(0, 0, 0, .7);
+  opacity: 0;
+  scale: .6;
+  transition: opacity .5s ease, scale .7s cubic-bezier(.3, 1.6, .5, 1), transform .4s cubic-bezier(.2, .8, .2, 1), background-color .35s ease;
+}
+.ci-circulo svg { width: 46px; height: 46px; fill: var(--rojo); transition: scale .4s cubic-bezier(.2, .8, .2, 1); }
+/* una onda que se abre al aparecer */
+.ci-circulo::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255, 251, 243, .7); opacity: 0; }
+.sv-cierre.visible .ci-circulo { opacity: 1; scale: 1; transition-delay: calc(.9s + var(--i) * .16s), calc(.9s + var(--i) * .16s), 0s, 0s; }
+.sv-cierre.visible .ci-circulo::after { animation: ci-onda 1.2s ease-out both; animation-delay: calc(1s + var(--i) * .16s); }
+@keyframes ci-onda { 0% { opacity: .9; scale: 1; } 100% { opacity: 0; scale: 1.6; } }
+.ci-parada:hover .ci-circulo, .ci-parada:focus-visible .ci-circulo { transform: translateY(-6px); background-color: var(--rojo); }
+.ci-parada:hover .ci-circulo svg, .ci-parada:focus-visible .ci-circulo svg { scale: 1.08; fill: var(--blanco); }
+.ci-circulo svg { transition: scale .4s cubic-bezier(.2, .8, .2, 1), fill .3s ease; }
 
-/* abajo: Volver al inicio y Siguiente */
-.ci-fin { position: absolute; left: 50%; top: 744px; opacity: 0; translate: -50% 20px; transition: opacity .8s ease .7s, translate 1s cubic-bezier(.2, .8, .2, 1) .7s; }
+.ci-txt { display: flex; flex-direction: column; align-items: center; opacity: 0; translate: 0 14px; transition: opacity .6s ease, translate .8s cubic-bezier(.2, .8, .2, 1); }
+.sv-cierre.visible .ci-txt { opacity: 1; translate: 0 0; transition-delay: calc(1.1s + var(--i) * .16s); }
+.ci-txt b { display: flex; align-items: baseline; gap: 8px; margin-top: 20px; font: 700 21px/1.1 var(--fuente-titulo); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+.ci-txt b em { font-style: normal; color: var(--rojo); }
+.ci-txt small { display: block; max-width: 238px; margin-top: 9px; font: 300 14.5px/1.45 var(--fuente-texto); color: rgba(255, 251, 243, .8); text-wrap: pretty; }
+.ci-txt small strong { font-weight: 600; color: var(--blanco); }
+.ci-txt u { display: block; margin-top: 12px; text-decoration: none; font: 600 11px var(--fuente-texto); letter-spacing: .16em; text-transform: uppercase; color: var(--rojo); opacity: 0; translate: 0 -4px; transition: opacity .3s ease, translate .3s ease; }
+.ci-parada:hover .ci-txt u, .ci-parada:focus-visible .ci-txt u { opacity: 1; translate: 0 0; }
+
+/* ---------- Abajo: Volver al inicio y Siguiente ---------- */
+.ci-fin { position: absolute; left: 50%; top: 772px; z-index: 2; opacity: 0; translate: -50% 20px; transition: opacity .8s ease 1.7s, translate 1s cubic-bezier(.2, .8, .2, 1) 1.7s; }
 .sv-cierre.visible .ci-fin { opacity: 1; translate: -50% 0; }

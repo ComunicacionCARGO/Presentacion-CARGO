@@ -76,9 +76,9 @@ window.CARTAS = [
     destino: "slides/quienes-somos/index.html"
   },
   {
-    antetitulo: "Un servicio",
-    titulo: "PARA FORD",
-    subtitulo: "El servicio que ofrecemos a Ford, en detalle",
+    antetitulo: "¿Cómo trabajamos",
+    titulo: "CON FORD?",
+    subtitulo: "Del pedido al concesionario, paso a paso",
     portada: "img/cartas/quienes-somos.webp",
     foco: 50,
     destino: "slides/servicio-a-medida/index.html"
