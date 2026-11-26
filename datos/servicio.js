@@ -428,13 +428,13 @@ window.SERVICIO = {
       // Ejemplo: la expectativa sube de a poco (siempre arriba del 98 %); el resultado casi
       // siempre la cumple o la supera, una vez queda un poco abajo y después repunta.
       meses: [
-        { mes: "Enero", kg: 183862, otd: 98.10, objetivo: 98.02 },
-        { mes: "Febrero", kg: 234050, otd: 98.06, objetivo: 98.05 },
-        { mes: "Marzo", kg: 204188, otd: 98.15, objetivo: 98.08 },
-        { mes: "Abril", kg: 199154, otd: 97.74, objetivo: 98.11 },
-        { mes: "Mayo", kg: 282470, otd: 98.15, objetivo: 98.14 },
-        { mes: "Junio", kg: 220178, otd: 98.28, objetivo: 98.17 },
-        { mes: "Julio", kg: 98830, otd: 98.36, objetivo: 98.20 }
+        { mes: "Enero", kg: 183862, otd: 98.05, objetivo: 98.02 },
+        { mes: "Febrero", kg: 234050, otd: 98.05, objetivo: 98.05 },
+        { mes: "Marzo", kg: 204188, otd: 98.10, objetivo: 98.08 },
+        { mes: "Abril", kg: 199154, otd: 98.03, objetivo: 98.11 },
+        { mes: "Mayo", kg: 282470, otd: 98.14, objetivo: 98.14 },
+        { mes: "Junio", kg: 220178, otd: 98.21, objetivo: 98.17 },
+        { mes: "Julio", kg: 98830, otd: 98.26, objetivo: 98.20 }
       ]
     },
     inversa: {
