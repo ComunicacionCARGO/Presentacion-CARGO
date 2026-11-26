@@ -36,7 +36,8 @@
    Se funde arriba y a los costados con el gris. */
 .df-deposito {
   /* si la ventana es más alta que 16:9, crece hasta cubrir también arriba */
-  --w: max(1664px, calc(100vw / var(--escala, 1) + 64px), calc((50vh / var(--escala, 1) - 55.4px) / .2852));
+  /* más chico (pedido de la persona): con el paralaje mínimo alcanza con apenas más que la ventana */
+  --w: max(1600px, calc(100vw / var(--escala, 1) + 12px), calc((50vh / var(--escala, 1) - 55.4px) / .2852));
   position: absolute;
   left: calc(800px - var(--w) * .5);
   top: calc(394.6px - var(--w) * .2852);
@@ -47,7 +48,7 @@
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
   mask-composite: intersect;
-  transform: scale(1.1);
+  transform: scale(1.05);
   transform-origin: 50% 45%;
   transition: transform 3.2s cubic-bezier(.16, .84, .24, 1);
 }
@@ -100,10 +101,10 @@
    1352 × 698, a 0,888. Entra desde la derecha (va de frente hacia la izquierda). */
 .df-camion {
   position: absolute;
-  left: 200px;
-  top: 248px;           /* más arriba (pedido de la persona): tapa la mitad de "DIFERENTE?", que encima lleva su contorno */
-  width: 1200px;
-  height: 619.5px;
+  left: 250px;
+  top: 206px;           /* arriba (pedido de la persona): tapa buena parte de "DIFERENTE?", que encima lleva su contorno */
+  width: 1100px;        /* las ruedas quedan apoyadas sobre la línea de las claves (y ~774) y se ven enteras */
+  height: 567.9px;
   opacity: 0;
   translate: 160px 0;
   filter: drop-shadow(0 26px 26px rgba(10, 6, 4, .5));
@@ -119,9 +120,11 @@
   --w: max(1600px, calc(100vw / var(--escala, 1) + 64px));
   position: absolute;
   left: calc(800px - var(--w) / 2);
-  top: 0;
+  /* más corto y más abajo (pedido de la persona): se ven las ruedas del camión y el gris pleno
+     queda debajo, donde van las tres claves */
+  top: 380px;
   width: var(--w);
-  height: 924px;
+  height: 540px;
   background: url(../../img/slides/diferente/degradado.webp) 0 0 / 100% 100% no-repeat;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 14%);
@@ -144,7 +147,7 @@
 /* El zócalo (opción A elegida por la persona; reemplazó a las líneas que iban de cada ícono a un
    objeto de la foto): una línea punteada crema de lado a lado con un punto sobre cada clave; se
    dibuja de izquierda a derecha al entrar y el punto de la clave abierta se pone rojo */
-.df-zocalo { position: absolute; left: 220px; right: 220px; top: 687px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255, 251, 243, .42) 0 6px, transparent 6px 12px); clip-path: inset(-12px 100% -12px 0); transition: clip-path 1.3s cubic-bezier(.5, 0, .2, 1); }
+.df-zocalo { position: absolute; left: 220px; right: 220px; top: 777px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255, 251, 243, .42) 0 6px, transparent 6px 12px); clip-path: inset(-12px 100% -12px 0); transition: clip-path 1.3s cubic-bezier(.5, 0, .2, 1); }
 .seccion-mejora.lineas .df-zocalo { clip-path: inset(-12px 0 -12px 0); }
 .df-zocalo i { position: absolute; top: -7px; width: 16px; height: 16px; margin-left: -8px; border: 3px solid var(--blanco); border-radius: 50%; background: var(--gris); opacity: 0; scale: .4; transition: opacity .4s ease, scale .5s cubic-bezier(.3, 1.6, .5, 1), background .3s ease; }
 .seccion-mejora.lineas .df-zocalo i { opacity: 1; scale: 1; }

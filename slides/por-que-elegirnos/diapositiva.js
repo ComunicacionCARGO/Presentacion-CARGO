@@ -81,7 +81,10 @@
   // Cada clave: el ícono (su dibujo mide ALTO_ICONO de alto) y a su derecha el número y el título.
   const ORDEN_LUGARES = ['flexibilidad', 'innovacion', 'excelencia'];
   const COL_X = [262, 632, 1002];         // borde izquierdo de cada clave (columnas de 370)
-  const FILA_Y = 716;                     // arriba de las claves; la línea punteada va en 687
+  // arriba de las claves (la línea punteada va 29 px más arriba). Van en la parte gris, debajo de
+  // las ruedas del camión (pedido de la persona), y tienen que terminar antes de y 900: más abajo
+  // sube la sección siguiente y las taparía
+  const FILA_Y = 806;
   const ALTO_ICONO = 64, SEP = 20;        // alto del dibujo del ícono y aire hasta el texto
   // tamaño de cada ícono (lado de la caja del SVG) y dónde está el dibujo dentro de esa caja (0–1)
   const ICONO_TAM = {
@@ -91,7 +94,8 @@
   };
   const PAD = 26, ALTO_RENGLON = 34, ALTO_NUM = 22;
   // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
-  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], contorno: [17, .2], puntos: [14, -.05] };
+  // (mínimo, pedido de la persona: así todo sube junto y las claves quedan en la parte gris)
+  const PROF = { deposito: [3, .05], polvo: [4, .05], titulo: [5, .03], operario: [7, .02], contorno: [5, .03], puntos: [3, 0] };
   const capas = {};
   document.querySelectorAll('.df-capa').forEach((c) => { capas[c.dataset.capa] = c; });
   // la línea punteada del zócalo, con un punto sobre cada clave
@@ -143,7 +147,9 @@
   puntos.slice().sort((a, b) => ORDEN_LUGARES.indexOf(a.el.dataset.icono) - ORDEN_LUGARES.indexOf(b.el.dataset.icono)).forEach((q) => contEl.appendChild(q.el));
 
   // Si la tarjeta abierta no entra abajo, sube (con su título) lo que haga falta
-  const medir = () => puntos.forEach((o) => { const h = o.el.offsetHeight; o.sube = Math.max(92 - o.y, Math.min(0, 868 - (o.y + h))); });
+  // (abajo no puede pasar de y 868: más abajo sube la sección siguiente; arriba, se ven después de
+  // bajar al menos CLAVES_DESDE, así que el borde de arriba de la pantalla está 110 px más abajo)
+  const medir = () => puntos.forEach((o) => { const h = o.el.offsetHeight; o.sube = Math.max(92 + 110 - o.y, Math.min(0, 868 - (o.y + h))); });
   medir();
   if (document.fonts) document.fonts.ready.then(medir);
 
