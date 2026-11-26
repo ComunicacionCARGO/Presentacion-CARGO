@@ -418,19 +418,23 @@ window.SERVICIO = {
       titulo: "Entregas a concesionarios",
       indicadores: [
         { nombre: "Cantidad ADD", valor: 114863 },
-        { nombre: "Cantidad ADD on time", valor: 108889 },
+        { nombre: "Cantidad ADD on time", valor: 112704 },
         { nombre: "OTD", valor: 98.12, porcentaje: true }
       ],
       graficoTitulo: "OTD por mes",
-      // mes, kilos distribuidos y OTD (%) de cada mes
+      serieReal: "Resultado",            // los nombres de las dos líneas del gráfico
+      serieObjetivo: "Expectativa",
+      // mes, kilos distribuidos, OTD real (%) y la expectativa (%) de cada mes.
+      // Ejemplo: la expectativa sube de a poco (siempre arriba del 98 %); el resultado casi
+      // siempre la cumple o la supera, una vez queda un poco abajo y después repunta.
       meses: [
-        { mes: "Enero", kg: 183862, otd: 95.08 },
-        { mes: "Febrero", kg: 234050, otd: 94.70 },
-        { mes: "Marzo", kg: 204188, otd: 95.23 },
-        { mes: "Abril", kg: 199154, otd: 95.28 },
-        { mes: "Mayo", kg: 282470, otd: 95.62 },
-        { mes: "Junio", kg: 220178, otd: 95.20 },
-        { mes: "Julio", kg: 98830, otd: 95.67 }
+        { mes: "Enero", kg: 183862, otd: 98.10, objetivo: 98.02 },
+        { mes: "Febrero", kg: 234050, otd: 98.06, objetivo: 98.05 },
+        { mes: "Marzo", kg: 204188, otd: 98.15, objetivo: 98.08 },
+        { mes: "Abril", kg: 199154, otd: 97.74, objetivo: 98.11 },
+        { mes: "Mayo", kg: 282470, otd: 98.15, objetivo: 98.14 },
+        { mes: "Junio", kg: 220178, otd: 98.28, objetivo: 98.17 },
+        { mes: "Julio", kg: 98830, otd: 98.36, objetivo: 98.20 }
       ]
     },
     inversa: {

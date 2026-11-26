@@ -112,23 +112,38 @@
   // ---------- Pestaña 1: entregas a concesionarios ----------
   function vistaEntregas() {
     vtitulo.innerHTML = txt(E.titulo);
-    const W = 900, H = 420, M = { l: 54, r: 24, t: 30, b: 40 };
-    const vals = MESES.map((m) => +m.otd);
-    const min = Math.floor(Math.min(...vals) - 1), max = Math.ceil(Math.max(...vals) + 1);
+    const W = 900, H = 420, M = { l: 58, r: 24, t: 30, b: 40 };
+    // dos líneas (pedido de la persona): la expectativa (punteada) y el resultado real; el mes
+    // en que el resultado queda abajo de la expectativa se marca en ámbar
+    const conObj = MESES.some((m) => m.objetivo !== undefined && m.objetivo !== '');
+    const vals = MESES.map((m) => +m.otd).concat(conObj ? MESES.map((m) => +m.objetivo) : []);
+    // escala ajustada a los valores (de 0,25 o 0,5 puntos), con un poco de aire arriba y abajo
+    const rango = Math.max(...vals) - Math.min(...vals);
+    const PASO = rango <= 1.2 ? .25 : rango <= 3 ? .5 : 1;
+    const min = Math.floor((Math.min(...vals) - .1) / PASO) * PASO, max = Math.ceil((Math.max(...vals) + .1) / PASO) * PASO;
     const x = (i) => M.l + (MESES.length > 1 ? i * (W - M.l - M.r) / (MESES.length - 1) : (W - M.l - M.r) / 2);
     const y = (v) => M.t + (1 - (v - min) / (max - min)) * (H - M.t - M.b);
-    const linea = MESES.map((m, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(m.otd).toFixed(1)}`).join('');
+    const trazo = (k) => MESES.map((m, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(m[k]).toFixed(1)}`).join('');
+    const linea = trazo('otd');
     const area = `${linea}L${x(MESES.length - 1).toFixed(1)} ${H - M.b}L${x(0).toFixed(1)} ${H - M.b}Z`;
+    const abajo = (m) => conObj && +m.otd < +m.objetivo;
     const guias = [];
-    for (let v = min; v <= max; v += 1) guias.push(`<line x1="${M.l}" x2="${W - M.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text x="${M.l - 10}" y="${(y(v) + 4).toFixed(1)}">${v}%</text>`);
+    for (let v = min; v <= max + 1e-9; v += PASO) {
+      const dec = Math.abs(v * 4 - Math.round(v) * 4) < 1e-6 ? 0 : Math.abs(v * 2 - Math.round(v * 2)) < 1e-6 ? 1 : 2;
+      guias.push(`<line x1="${M.l}" x2="${W - M.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text x="${M.l - 10}" y="${(y(v) + 4).toFixed(1)}">${fmt(v, dec)}%</text>`);
+    }
     cuerpo.innerHTML =
       `<div class="bi-kpis">${(E.indicadores || []).map((k, i) => `<div class="bi-kpi${k.porcentaje ? ' destacado' : ''}" style="--i:${i}"><b data-k="${i}">0</b><span>${txt(k.nombre)}</span></div>`).join('')}</div>` +
-      `<div class="bi-graf"><p class="bi-gtit">${txt(E.graficoTitulo)}</p>` +
+      `<div class="bi-graf"><p class="bi-gtit">${txt(E.graficoTitulo)}` +
+      (conObj ? `<span class="bi-series"><span class="real"><i></i>${txt(E.serieReal || 'Resultado')}</span><span class="obj"><i></i>${txt(E.serieObjetivo || 'Expectativa')}</span></span>` : '') + '</p>' +
       `<svg class="bi-linea" viewBox="0 0 ${W} ${H}"><g class="bi-guias">${guias.join('')}</g>` +
-      `<path class="bi-area" d="${area}"/><path class="bi-trazo" d="${linea}" pathLength="1"/>` +
-      MESES.map((m, i) => `<g class="bi-punto" data-i="${i}" style="--i:${i}"><rect x="${(x(i) - 40).toFixed(1)}" y="${M.t}" width="80" height="${H - M.t - M.b}"/>` +
+      `<path class="bi-area" d="${area}"/>` +
+      (conObj ? `<path class="bi-obj" d="${trazo('objetivo')}"/>` + MESES.map((m, i) => `<circle class="bi-obj-p" cx="${x(i).toFixed(1)}" cy="${y(m.objetivo).toFixed(1)}" r="3.5" style="--i:${i}"/>`).join('') : '') +
+      `<path class="bi-trazo" d="${linea}" pathLength="1"/>` +
+      MESES.map((m, i) => `<g class="bi-punto${abajo(m) ? ' abajo' : ''}" data-i="${i}" style="--i:${i}"><rect x="${(x(i) - 40).toFixed(1)}" y="${M.t}" width="80" height="${H - M.t - M.b}"/>` +
         `<circle cx="${x(i).toFixed(1)}" cy="${y(m.otd).toFixed(1)}" r="6"/><text class="bi-mes" x="${x(i).toFixed(1)}" y="${H - 14}">${esc(m.mes)}</text>` +
-        `<text class="bi-val" x="${x(i).toFixed(1)}" y="${(y(m.otd) - 14).toFixed(1)}">${fmt(m.otd, 2)}%</text></g>`).join('') +
+        // el valor va arriba del punto; si quedó abajo de la expectativa, debajo (así no la pisa)
+        `<text class="bi-val" x="${x(i).toFixed(1)}" y="${(y(m.otd) + (abajo(m) ? 24 : -14)).toFixed(1)}">${fmt(m.otd, 2)}%</text></g>`).join('') +
       '</svg></div>';
     cuerpo.querySelectorAll('.bi-kpi b').forEach((b) => {
       const k = E.indicadores[+b.dataset.k];
@@ -136,7 +151,12 @@
     });
     cuerpo.querySelectorAll('.bi-punto').forEach((g) => {
       const m = MESES[+g.dataset.i];
-      g.addEventListener('pointerenter', () => { g.classList.add('activo'); mostrarTip(`<b>${esc(m.mes)}</b><span>OTD <strong>${fmt(m.otd, 2)} %</strong></span><span>${fmt(m.kg)} kg distribuidos</span>`, g.querySelector('circle')); });
+      const dif = conObj ? +m.otd - +m.objetivo : 0;
+      const detalle = conObj
+        ? `<span>${txt(E.serieReal || 'Resultado')} <strong>${fmt(m.otd, 2)} %</strong></span><span>${txt(E.serieObjetivo || 'Expectativa')} ${fmt(m.objetivo, 2)} %</span>` +
+          `<span class="${dif < 0 ? 'bi-dif-abajo' : 'bi-dif-ok'}">${dif < 0 ? '▼' : '▲'} ${dif >= 0 ? '+' : '−'}${fmt(Math.abs(dif), 2)} pts</span>`
+        : `<span>OTD <strong>${fmt(m.otd, 2)} %</strong></span>`;
+      g.addEventListener('pointerenter', () => { g.classList.add('activo'); mostrarTip(`<b>${esc(m.mes)}</b>${detalle}<span>${fmt(m.kg)} kg distribuidos</span>`, g.querySelector('circle')); });
       g.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; g.classList.remove('activo'); ocultarTip(); });
     });
   }

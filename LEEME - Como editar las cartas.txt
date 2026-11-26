@@ -460,7 +460,11 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     simulación; tiene tres pestañas: entregas, logística inversa y ventajas):
       - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
       - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
-        porcentaje: true si es un %) y los meses (mes, kg y otd);
+        porcentaje: true si es un %) y los meses (mes, kg, otd = el resultado
+        y objetivo = la expectativa: el gráfico dibuja las dos líneas, la
+        expectativa punteada; el mes en que el resultado queda abajo de la
+        expectativa se marca en ámbar). serieReal y serieObjetivo son los
+        nombres de las líneas. La escala del gráfico se ajusta sola;
       - inversa: textos de la pestaña y las provincias (corto, nombre,
         enTiempo y demorado). El cumplimiento y el número del medidor se
         calculan solos con las provincias.
