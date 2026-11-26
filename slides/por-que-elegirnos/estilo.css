@@ -102,7 +102,7 @@
 .df-camion {
   position: absolute;
   left: 250px;
-  top: 206px;           /* arriba (pedido de la persona): tapa buena parte de "DIFERENTE?", que encima lleva su contorno */
+  top: 216px;          /* arriba (pedido de la persona): tapa buena parte de "DIFERENTE?", que encima lleva su contorno */
   width: 1100px;        /* las ruedas quedan apoyadas sobre la línea de las claves (y ~774) y se ven enteras */
   height: 567.9px;
   opacity: 0;
@@ -143,6 +143,23 @@
   transition: opacity .5s ease;
 }
 .seccion-mejora.con-tarjeta .df-velo { opacity: 1; }
+/* las claves se abren con la pantalla ya un poco bajada: abajo asoma el comienzo de la sección
+   siguiente (.mc-tramo, que va por encima de la portada); se oscurece igual, así el velo no queda cortado */
+.mc-tramo::after {
+  content: "";
+  position: absolute;
+  left: calc(800px - 50vw / var(--escala, 1));
+  top: 0;               /* sin pisarse con el velo de arriba (si se pisan, queda una rayita más oscura) */
+  width: calc(100vw / var(--escala, 1));
+  height: 900px;
+  z-index: 50;
+  /* sigue al velo de arriba en su borde de abajo: más claro en el centro, más oscuro a los costados */
+  background: linear-gradient(90deg, rgba(18, 16, 16, .54), rgba(18, 16, 16, .42) 50%, rgba(18, 16, 16, .54));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+.seccion-mejora.con-tarjeta ~ .mc-tramo::after { opacity: 1; }
 
 /* El zócalo (opción A elegida por la persona; reemplazó a las líneas que iban de cada ícono a un
    objeto de la foto): una línea punteada crema de lado a lado con un punto sobre cada clave; se
