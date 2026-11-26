@@ -1,8 +1,8 @@
 /* =========================================================
    VIAJES Y ENTREGA — paradas 4 y 5 del recorrido de ¿Cómo lo hacemos?
    (tms.js deja la vista en SV.tms.vistas.despachos y dice el modo):
-   - Gestión de viajes (modo "viajes"): a la izquierda los bultos del día se
-     asignan a los viajes de su ruta y salen; a la derecha, la carta de porte
+   - Gestión de viajes (modo "viajes"): a la izquierda la planchada simplificada (un
+     stage por ruta, como en la parada anterior) llena los camiones de su ruta, que salen; a la derecha, la carta de porte
      emitida al despachar, todavía sin conformar.
    - Entrega y digitalización (modo "entrega"): a la izquierda el tracking en
      tiempo real llega hasta la distribución; la carta de porte se firma (con
@@ -56,7 +56,10 @@
     // ---- Armado de rutas y viajes (parada "viajes") ----
     '<div class="td-col td-col-viajes">' +
     `<p class="td-tit">${txt(TD.viajesTitulo)}</p><p class="td-txt">${txt(TD.viajesTexto)}</p>` +
-    '<div class="td-pool"><span>Bultos del día</span><div class="td-chips"></div></div>' +
+    // la planchada simplificada: un stage por ruta (como en la parada anterior), con sus bultos
+    `<div class="td-pool"><span>${txt(TD.viajesPlanchada || 'Planchada · staging por ruta')}</span><div class="td-stages">` +
+    VIAJES.map((vj, i) => `<div class="td-st" style="--c:${COLORES[i]}"><p><i></i>${esc((vj.paradas || []).slice(-1)[0] || '')}</p><div class="td-chips" data-i="${i}"></div></div>`).join('') +
+    '</div></div>' +
     '<div class="td-viajes">' + VIAJES.map((vj, i) => {
       const p = vj.paradas || [];
       return `<div class="td-viaje" style="--c:${COLORES[i]}" data-i="${i}">` +
@@ -79,21 +82,29 @@
     // ---- La carta de porte (en las dos paradas, a la derecha) ----
     '<div class="td-col td-col-doc">' +
     `<p class="td-tit">${txt(TD.docTitulo)}</p><p class="td-txt"><span class="td-txt-viajes">${txt(TD.docTexto)}</span><span class="td-txt-entrega">${txt(TD.docTextoEntrega)}</span></p>` +
+    // la carta de porte es 100% digital (pedido de la persona): va en la app, en el celular en la
+    // mano (el mockup de la logística inversa, mano.webp: la app va detrás y el marco la recorta)
+    '<div class="td-cel"><div class="cel-foto"><div class="cel-marco">' +
+    '<div class="cel-barra"><span>11:40</span><span class="cel-bat"><i></i></span></div>' +
+    `<div class="cel-cab"><span class="cel-menu"></span><b>${txt(TD.docApp || 'Carta de porte')}</b><p class="cel-quien chofer">${txt(TD.docQuien || 'Chofer CARGO')}</p></div>` +
+    '<div class="td-app">' +
+    `<p class="td-digital">${SVG.celular}<span>${txt(TD.docDigital || '100% digital · sin papel')}</span></p>` +
     '<div class="td-papel">' +
     '<div class="td-pcab"><img src="../../img/marca/logo-cargo.svg" alt="CARGO">' +
-    `<div class="td-pnum"><b>Carta de porte</b><small>Original · Cliente</small><span>N° ${esc(D.numero || '')}</span><i class="td-barras"></i></div></div>` +
-    `<div class="td-pfila"><span>Fecha</span><b>${esc(D.fecha || '')}</b><span>Tipo de envío</span><b>P&amp;A</b></div>` +
+    `<div class="td-pnum"><b>Carta de porte</b><span>N° ${esc(D.numero || '')}</span></div></div>` +
+    `<div class="td-pfila"><span>Fecha</span><b>${esc(D.fecha || '')}</b><span>Envío</span><b>P&amp;A</b></div>` +
     '<div class="td-pdatos">' +
     `<div><span>Remitente</span><b>${txt(D.remitente)}</b></div>` +
     `<div><span>Destinatario</span><b>${txt(D.destinatario)}</b><small>${txt(D.localidad)}</small></div></div>` +
-    '<table class="td-ptabla"><tr><th>Bultos</th><th>m³</th><th>Kg reales</th><th>Valor decl.</th></tr>' +
-    `<tr><td>${esc(D.bultos || '')}</td><td>${esc(D.m3 || '')}</td><td>${esc(D.kg || '')}</td><td>—</td></tr></table>` +
-    '<p class="td-pobs"><span>Observaciones</span>Sin observaciones</p>' +
-    `<div class="td-firma"><span>Conforme recepción</span><canvas width="420" height="150"></canvas><em class="td-em-entrega">Firmá acá con el mouse</em><em class="td-em-viajes">${txt(TD.firmaPendiente)}</em><small class="td-firma-pie"></small></div>` +
+    '<table class="td-ptabla"><tr><th>Bultos</th><th>m³</th><th>Kg reales</th></tr>' +
+    `<tr><td>${esc(D.bultos || '')}</td><td>${esc(D.m3 || '')}</td><td>${esc(D.kg || '')}</td></tr></table>` +
+    `<div class="td-firma"><span>Conforme recepción</span><canvas width="420" height="150"></canvas><em class="td-em-entrega">${txt(TD.firmaAca || 'Firmá acá')}</em><em class="td-em-viajes">${txt(TD.firmaPendiente)}</em><small class="td-firma-pie"></small></div>` +
     '<div class="td-sello"><b>Conformado</b><small>e-POD</small></div>' +
     `<div class="td-pdf">${SVG.doc}PDF</div>` +
     '</div>' +
     `<div class="td-acciones"><button type="button" class="td-boton td-firmar">${txt(TD.docBoton)}</button><p class="td-estado"></p></div>` +
+    '</div></div>' +
+    '<img class="cel-mano" src="../../img/logistica-inversa/mano.webp" alt="" draggable="false" decoding="async"></div></div>' +
     '</div>';
 
   // =========================================================
@@ -195,7 +206,8 @@
   // =========================================================
   // ARMADO DE VIAJES
   // =========================================================
-  const chipsEl = v.querySelector('.td-chips');
+  const poolEl = v.querySelector('.td-pool');
+  const stagesEl = [...v.querySelectorAll('.td-pool .td-chips')];
   const viajesEl = [...v.querySelectorAll('.td-viaje')];
   const bArmar = v.querySelector('.td-armar');
   const textoArmar = bArmar.innerHTML;
@@ -211,16 +223,17 @@
   function prepararViajes() {
     cv.nueva();
     armado = false; armando = false;
-    chipsEl.innerHTML = '';
-    chipsEl.parentNode.classList.remove('vacio');
-    const lista = [];
-    VIAJES.forEach((vj, i) => { for (let n = 0; n < (+vj.bultos || 0); n++) lista.push(i); });
-    for (let i = lista.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [lista[i], lista[j]] = [lista[j], lista[i]]; }
-    lista.forEach((i, n) => {
-      const fin = (VIAJES[i].paradas || []).slice(-1)[0];
-      const c = crear('span', 'td-chip', chipsEl, `<i></i>${esc(siglas(fin))}-${String(4110 + n * 7).slice(-4)}`);
-      c.style.setProperty('--c', COLORES[i]);
-      c.dataset.i = i;
+    poolEl.classList.remove('vacio');
+    // cada stage con los bultos de su ruta (ya ordenados en la planchada)
+    let n = 0;
+    stagesEl.forEach((el, i) => {
+      el.innerHTML = '';
+      for (let k = 0; k < (+VIAJES[i].bultos || 0); k++, n++) {
+        const c = crear('span', 'td-chip td-cuad', el, String(4110 + n * 7).slice(-4));
+        c.title = `${siglas((VIAJES[i].paradas || []).slice(-1)[0])}-${c.textContent}`;
+        c.style.setProperty('--c', COLORES[i]);
+        c.dataset.i = i;
+      }
     });
     viajesEl.forEach((el, i) => {
       cuenta[i] = 0;
@@ -252,7 +265,10 @@
   async function armar(id) {
     armando = true;
     bArmar.disabled = true;
-    const chips = [...chipsEl.querySelectorAll('.td-chip:not(.ido)')];
+    // de a uno por stage, por turno: los tres camiones se llenan a la par, cada uno desde su stage
+    const porStage = stagesEl.map((el) => [...el.querySelectorAll('.td-chip:not(.ido)')]);
+    const chips = [];
+    for (let k = 0; porStage.some((l) => k < l.length); k++) porStage.forEach((l) => { if (l[k]) chips.push(l[k]); });
     for (const chip of chips) {
       const i = +chip.dataset.i, el = viajesEl[i];
       volar(chip, el.querySelector('.td-ocup')).then(() => {
@@ -266,7 +282,7 @@
       await cv.dormir(480, id);   // un bulto cada medio segundo: que se vea a qué viaje va cada uno
     }
     await cv.dormir(1300, id);
-    chipsEl.parentNode.classList.add('vacio');
+    poolEl.classList.add('vacio');
     for (const el of viajesEl) { el.classList.add('listo'); el.querySelector('.td-vest').textContent = 'Listo para salir'; await cv.dormir(650, id); }
     await cv.dormir(1800, id);
     for (const el of viajesEl) { el.classList.add('en-ruta'); el.querySelector('.td-vest').textContent = 'En ruta · salida 07:50'; await cv.dormir(900, id); }

@@ -7,12 +7,13 @@
    suben con las franjas; en cada parada cambian el título, la explicación (y
    su interfaz, si tiene) y el panel de la derecha:
      1. Ingreso del pedido (interfaz Ingreso de pedidos): demo de este archivo.
-     2. Geoposicionamiento indoor: la planchada con stages y z-stages (este archivo).
-     3. Staging por ruta (interfaz Obtención de eventos; empieza el tracking): este archivo.
-     4. Gestión de viajes (interfaz Precarga) y
-     5. Entrega y digitalización (interfaz Devolución de eventos): ecosistema.js
+     2. Geoposicionamiento indoor (interfaz Obtención de eventos; empieza el tracking): la
+        planchada con un stage por ruta, que se escanea bulto por bulto (este archivo).
+        Antes había una parada aparte de "Staging por ruta": la persona la unió con esta.
+     3. Gestión de viajes (interfaz Precarga) y
+     4. Entrega y digitalización (interfaz Devolución de eventos): ecosistema.js
         (los viajes, el tracking y la carta de porte que se completa al entregar).
-     6. Experiencia de usuario: experiencia.js (No calidad y TICO).
+     5. Experiencia de usuario: experiencia.js (No calidad y TICO).
    Al final las franjas se doblan hacia la derecha y la tercera se vuelve el
    rojo de la logística inversa.
    Textos en datos/servicio.js → como, recorrido, tms y experiencia.
@@ -23,7 +24,15 @@
   if (!SV || !seccion) return;
   const { S, txt, crear, esc, escala } = SV;
   const T = S.tms || {};
-  const TC = T.carga || {}, TP = T.pedido || {}, TS = T.staging || {}, TD = T.despachos || {};
+  const TC = T.carga || {}, TP = T.pedido || {}, TD = T.despachos || {};
+  // colores de las rutas (los mismos en la planchada y en Gestión de viajes)
+  const COLORES_RUTA = ['var(--rojo)', 'var(--ambar)', 'var(--azul)'];
+  // código corto del destino: Rosario → ROS, San Luis → SLU, Sgo. del Estero → SES
+  const siglas = (n) => {
+    const p = String(n || '').replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ ]/g, ' ').split(/\s+/).filter((w) => w.length > 2 || /^[A-Z]/.test(w));
+    const s = p.length > 1 ? p[0][0] + p[p.length - 1].slice(0, 2) : (p[0] || '').slice(0, 3);
+    return s.toUpperCase();
+  };
   const CO = S.como || {}, R = S.recorrido || {};
   const ahora = () => performance.now();
 
@@ -32,7 +41,6 @@
     interfaz: '<path d="M4 7h12.2l-3-3L14.6 2.6 20 8l-5.4 5.4-1.4-1.4 3-3H4zM20 17H7.8l3 3-1.4 1.4L4 16l5.4-5.4 1.4 1.4-3 3H20z"/>',
     pedido: '<path fill-rule="evenodd" d="M5 1h10l5 5v17H5zM14 2.5V7h4.5z"/><path d="M8 11h9v1.6H8zM8 14.5h9v1.6H8zM8 18h6v1.6H8z" fill="#FFFBF3"/>',
     ubicacion: '<path fill-rule="evenodd" d="M12 1.5a6.4 6.4 0 0 0-6.4 6.4c0 4.7 6.4 11.4 6.4 11.4s6.4-6.7 6.4-11.4A6.4 6.4 0 0 0 12 1.5zm0 3.9a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2z"/><path d="M2 19.5h4.2l1.6 2H2zM17.8 19.5H22v2h-5.8z"/>',
-    staging: '<path d="M2 3h6v5H2zM9 3h6v5H9zM16 3h6v5h-6zM2 10.5h6v5H2zM9 10.5h6v5H9zM2 18h6v3H2z"/><path d="M17 12h2v6.2l2.2-2.2 1.4 1.4-4.6 4.6-4.6-4.6 1.4-1.4 2.2 2.2z"/>',
     viajes: '<path d="M1 5h13v11H1zM15 8.5h4.6L23 12.8V16h-8z"/><circle cx="5.5" cy="18" r="2.6"/><circle cx="18.5" cy="18" r="2.6"/>',
     entrega: '<path fill-rule="evenodd" d="M6 1h12v22H6zM8 3.5v15h8v-15z"/><path d="M9.6 11.6 11.3 13.3 14.6 9.9 15.8 11.1 11.3 15.6 8.4 12.8z"/>',
     experiencia: '<circle cx="8.5" cy="7.5" r="4"/><path d="M1 21.5c0-4.4 3.4-7.6 7.5-7.6s7.5 3.2 7.5 7.6z"/><path d="M14 2h8.5v7.2h-3.6L16.4 12V9.2H14z"/>',
@@ -59,7 +67,7 @@
   // =========================================================
   // LAS PARADAS (datos/servicio.js → recorrido.paradas; "clave" dice qué demo va en el panel)
   // =========================================================
-  const VISTA_DE = { pedido: 'pedido', ubicacion: 'carga', staging: 'staging', viajes: 'despachos', entrega: 'despachos', experiencia: 'experiencia' };
+  const VISTA_DE = { pedido: 'pedido', ubicacion: 'carga', viajes: 'despachos', entrega: 'despachos', experiencia: 'experiencia' };
   const PARADAS = (R.paradas || []).filter((p) => VISTA_DE[p.clave]);
   const N = PARADAS.length;
 
@@ -83,7 +91,8 @@
   const ABAJO = 900 + RECORRIDO;          // donde arrancan las franjas de abajo
   const yParada = (i) => ENTRADA + i * PASO;   // scroll (desde el comienzo de la sección) de cada parada
   seccion.style.height = (ABAJO + 91) + 'px';
-  const iTrack = [PARADAS.findIndex((p) => p.clave === 'staging'), PARADAS.findIndex((p) => p.clave === 'entrega')];
+  // el tracking va desde la planchada (ahí se ubica cada bulto en el stage de su ruta) hasta la entrega
+  const iTrack = [PARADAS.findIndex((p) => p.clave === 'ubicacion'), PARADAS.findIndex((p) => p.clave === 'entrega')];
   const conTracking = (i) => iTrack[0] >= 0 && i >= iTrack[0] && i <= iTrack[1];
   // una curva: dos arcos (gris y rojo, con el crema de los huecos) de un cuarto de círculo;
   // la franja de afuera no es un arco: todo lo de afuera de la curva va en rojo (pedido de la
@@ -166,7 +175,7 @@
   const panel = crear('div', 'tm-panel ent', quieto);
   panel.style.setProperty('--i', 3);
   const vistas = {};
-  const CLASE = { pedido: 'pd', carga: 'tc', staging: 'st', despachos: 'td', experiencia: 'ex' };
+  const CLASE = { pedido: 'pd', carga: 'tc', despachos: 'td', experiencia: 'ex' };
   Object.keys(CLASE).forEach((k) => { vistas[k] = crear('div', 'tm-vista ' + CLASE[k], panel); });
   const vCarga = vistas.carga;
   const alElegir = {};   // ecosistema.js y este archivo anotan acá qué hacer al llegar a cada parada
@@ -274,7 +283,8 @@
   (function pedido() {
     const v = vistas.pedido;
     const PED = (TP.pedidos || []).slice(0, 4);
-    const COLOR_TIPO = {}; (TC.indicadores || []).forEach((ind, i) => { COLOR_TIPO[String(ind.nombre).toLowerCase()] = ['var(--azul)', 'var(--rojo)', 'var(--ambar)'][i]; });
+    // el tipo va en gris: en la planchada los colores son los de cada ruta y el tipo es una marca
+    const COLOR_TIPO = {};
     const totalBultos = PED.reduce((a, p) => a + (+p.bultos || 0), 0);
     v.innerHTML =
       `<div class="pd-cab"><b>${txt(TP.panel)}</b><span class="pd-if">${icono('interfaz')}${txt(R.interfaz || 'Interfaz')}</span></div>` +
@@ -326,41 +336,60 @@
   })();
 
   // =========================================================
-  // 2. GEOPOSICIONAMIENTO INDOOR: la planchada (stages y z-stages)
+  // 2. GEOPOSICIONAMIENTO INDOOR: la planchada, con un stage por ruta
+  //    (pedido de la persona: el geoposicionamiento y el staging son el mismo proceso, y los
+  //    stages son las rutas). Los bultos llegan a la recepción de arriba y nada se mueve hasta
+  //    que se escanea uno: el primero abre una ventana que lo explica y, al cerrarla, va a su
+  //    lugar; los demás van directo. Después de unos cuantos a mano sigue el lector automático.
+  //    Colores de las rutas = los de Gestión de viajes (continuidad).
   // =========================================================
-  const TIPOS = (TC.indicadores || []).slice(0, 3).map((ind, i) => ({
-    nombre: ind.nombre, valor: +ind.valor || 0, color: ['var(--azul)', 'var(--rojo)', 'var(--ambar)'][i]
+  const RUTAS = (TD.viajes || []).slice(0, 3).map((vj, i) => ({
+    nombre: (vj.paradas || []).slice(-1)[0] || '', codigo: vj.codigo || '', color: COLORES_RUTA[i]
   }));
-  const PESOS = [.6, .32, .08];                          // qué tan seguido llega cada tipo
-  const ZONAS = [];
-  [[3, 4, 5], [6, 7, 8]].forEach((b) => b.forEach((f) => ZONAS.push(f + '01', f + '02')));
-  const MAX_ZONA = 14;                                   // con tantos bultos, la zona se despacha
+  const TIPOS = (TC.indicadores || []).slice(0, 3).map((ind) => ({ nombre: ind.nombre, marca: ind.marca || '', valor: +ind.valor || 0 }));
+  const PESOS_TIPO = [.6, .3, .1];                       // qué tan seguido llega cada tipo
+  const PESOS_RUTA = [.4, .33, .27];                     // y a qué ruta va
+  const ZS_POR_STAGE = 3;                                // z-stages de cada stage
+  const MAX_ZONA = 18;                                   // con tantos bultos, la zona se despacha
+  const MANUALES = Math.max(1, parseInt(TC.manualesParaAuto, 10) || 4);
+  const VT = TC.ventana || {};
+  const zonasDe = (r) => Array.from({ length: ZS_POR_STAGE }, (_, z) => `${r + 1}0${z + 1}`);
+  const chipTipo = (t, extra) => `<i class="tc-b${extra || ''}" data-t="${t}">${esc(TIPOS[t] ? TIPOS[t].marca : '')}</i>`;
 
   vCarga.innerHTML =
-    `<div class="tc-cabeza"><b>${txt(TC.panel)}</b><span class="tc-vivo"><i></i>EN VIVO</span></div>` +
-    '<div class="tc-indicadores">' + TIPOS.map((t) =>
-      `<div class="tc-ind" style="--c:${t.color}"><span><i></i>${txt(t.nombre)}</span><b>${t.valor}</b></div>`).join('') +
-    `<div class="tc-ind total"><span>${txt(TC.total)}</span><b>0</b></div></div>` +
-    '<div class="tc-plano">' + [[3, 4, 5], [6, 7, 8]].map((filas) =>
-      '<div class="tc-bloque"><div class="tc-bloque-rotulo"><span>STAGE</span></div>' +
-      '<div class="tc-zs"><span>Z STAGE</span><span>Z STAGE</span></div><div class="tc-filas">' +
-      filas.map((f) => `<div class="tc-fila"><small>ST-${f}00</small>` +
-        [1, 2].map((c) => `<div class="tc-celda" data-z="${f}0${c}"><span>ZS ${f}0${c}</span><em class="tc-sale">Despacho</em><div class="tc-bultos"></div></div>`).join('') +
-        '</div>').join('') + '</div></div>').join('') + '</div>' +
+    `<div class="tc-cabeza"><b>${txt(TC.panel)}</b><span class="tc-vivo"><i></i>EN VIVO</span>` +
+    `<span class="tc-track"><i></i>${txt(R.tracking || 'Tracking')}</span></div>` +
     `<div class="tc-recepcion"><span>${txt(TC.recepcion)}</span><div class="tc-cola"></div></div>` +
-    `<p class="tc-ayuda">${icono('lector')}<span>${txt(TC.ayuda)}</span></p>`;
+    '<div class="tc-plano">' + RUTAS.map((r, s) =>
+      `<div class="tc-stage" style="--c:${r.color}"><div class="tc-scab"><small>${txt(TC.stage || 'Stage')}</small>` +
+      `<b>${txt(TC.ruta || 'Ruta')} ${esc(r.nombre)}</b><em>${esc(r.codigo)}</em></div>` +
+      zonasDe(s).map((z) => `<div class="tc-celda" data-z="${z}"><span>ZS ${z}</span><em class="tc-sale">Despacho</em><div class="tc-bultos"></div></div>`).join('') +
+      '</div>').join('') + '</div>' +
+    // lo que antes iba arriba (los contadores por tipo), abajo y con menos importancia
+    '<div class="tc-pie"><div class="tc-inds">' + TIPOS.map((t, i) =>
+      `<span class="tc-ind">${chipTipo(i)}${txt(t.nombre)}<b>${t.valor}</b></span>`).join('') +
+    `<span class="tc-ind total">${txt(TC.total)}<b>0</b></span></div>` +
+    `<p class="tc-ayuda">${icono('lector')}<span></span></p></div>` +
+    // la ventana del primer escaneo
+    '<div class="tc-ventana" aria-hidden="true"><div class="tc-vcard" role="dialog" aria-modal="true">' +
+    '<button type="button" class="tc-vcerrar" aria-label="Cerrar">×</button>' +
+    `<p class="tc-vrot">${icono('lector')}${txt(VT.titulo || 'Bulto escaneado')}</p>` +
+    '<div class="tc-vbulto"><b></b><small></small><u></u></div>' +
+    '<dl class="tc-vdatos"></dl><p class="tc-vtxt"></p>' +
+    `<button type="button" class="tc-vboton">${txt(VT.boton || 'Ubicarlo en la planchada')}${icono('flecha')}</button>` +
+    '</div></div>';
+
   const cola = vCarga.querySelector('.tc-cola');
-  const ayuda = vCarga.querySelector('.tc-ayuda');
-  const ayudaTxt = ayuda.querySelector('span').innerHTML;
-  // Guía (compartido/guia.js): la mano señala un bulto de la cola
-  if (window.GUIA) GUIA.pista({ id: 'servicio-lector', texto: 'tmsLector', objetivo: () => cola.querySelector('.tc-bulto:not(.leido):not(.leyendo)'), zona: '.tc-bulto', tipo: 'pasar', lado: 'arriba', espera: 1.6, activa: () => enVista && pestana === 'carga' });
+  const ayuda = vCarga.querySelector('.tc-ayuda'), ayudaEl = ayuda.querySelector('span');
+  const ventana = vCarga.querySelector('.tc-ventana');
   const celdas = {};
   vCarga.querySelectorAll('.tc-celda').forEach((el) => { celdas[el.dataset.z] = { el, bultos: el.querySelector('.tc-bultos'), n: 0, ocupada: false }; });
   const indEls = [...vCarga.querySelectorAll('.tc-ind b')];
   const valores = TIPOS.map((t) => t.valor);
+  let manuales = 0, auto = false, explicado = false, ocupado = false, abierta = null, usoCarga = -1e9;
 
   // Números que cuentan hasta el valor nuevo
-  function mostrarValores(subio) {
+  function mostrarValores() {
     const total = valores.reduce((a, b) => a + b, 0);
     [...valores, total].forEach((v, i) => {
       const el = indEls[i];
@@ -370,52 +399,60 @@
       const t0 = ahora();
       (function paso() {
         const t = Math.min(1, (ahora() - t0) / 450);
-        el.textContent = Math.round(desde + (v - desde) * t);
+        el.textContent = Math.round(desde + (v - desde) * t).toLocaleString('es-AR');
         if (t < 1) requestAnimationFrame(paso);
       })();
-      if (subio && (i === subio.tipo || i === TIPOS.length)) {
-        const c = el.parentNode;
-        c.classList.add('sube');
-        clearTimeout(c._t);
-        c._t = setTimeout(() => c.classList.remove('sube'), 500);
-      }
     });
   }
   indEls.forEach((el) => { el.dataset.v = 0; });
   mostrarValores();
 
   const azar = (a) => a[Math.floor(Math.random() * a.length)];
-  function tipoAzar() {
-    let r = Math.random();
-    for (let i = 0; i < TIPOS.length; i++) { if ((r -= PESOS[i]) < 0) return i; }
-    return 0;
-  }
-  function agregarEnZona(z, tipo, nuevo) {
+  const conPeso = (p) => { let r = Math.random(); for (let i = 0; i < p.length; i++) { if ((r -= p[i]) < 0) return i; } return 0; };
+  function agregarEnZona(z, tipo) {
     const c = celdas[z];
-    const i = crear('i', nuevo ? 'nuevo' : '', c.bultos);
-    i.style.setProperty('--c', TIPOS[tipo].color);
-    i.dataset.t = tipo;
+    c.bultos.insertAdjacentHTML('beforeend', chipTipo(tipo));
     c.n++;
+    return c.bultos.lastElementChild;
   }
   // Planchada con algo de carga al empezar
-  ZONAS.forEach((z) => { const n = 3 + Math.floor(Math.random() * 7); for (let k = 0; k < n; k++) agregarEnZona(z, tipoAzar()); });
+  Object.keys(celdas).forEach((z) => { const n = 3 + Math.floor(Math.random() * 8); for (let k = 0; k < n; k++) agregarEnZona(z, conPeso(PESOS_TIPO)); });
 
-  // Cola de recepción (los nuevos llegan por la izquierda)
-  const ANCHO_COLA = 6;
-  function nuevoBulto() {
-    const tipo = tipoAzar();
-    const libres = ZONAS.filter((z) => !celdas[z].ocupada);
-    const b = { tipo, z: azar(libres.length ? libres : ZONAS), estado: null };
-    b.el = crear('div', 'tc-bulto');
-    b.el.style.setProperty('--c', TIPOS[tipo].color);
-    b.el.innerHTML = `<b>ZS ${b.z}</b><small>${txt(TIPOS[tipo].nombre)}</small><u></u>`;
-    // Hay que dejar el lector un momento sobre el bulto (se ve cómo carga); con clic, se lee enseguida
-    b.el.addEventListener('pointerenter', () => { usoCarga = ahora(); apuntar(b); });
-    b.el.addEventListener('pointerleave', () => soltar(b));
-    b.el.addEventListener('click', () => { usoCarga = ahora(); soltar(b); leer(b); });
-    b.el.addEventListener('lectura-auto', () => leer(b));   // el lector automático (no cuenta como uso)
+  // ---------- La recepción: llegan por la izquierda; el próximo a escanear es el de la derecha ----------
+  let numero = 4180;
+  function nuevoBulto(fijo) {
+    const ruta = fijo ? fijo.ruta : conPeso(PESOS_RUTA), tipo = fijo ? fijo.tipo : conPeso(PESOS_TIPO);
+    const zonas = zonasDe(ruta), libres = zonas.filter((z) => !celdas[z].ocupada);
+    const b = { ruta, tipo, z: azar(libres.length ? libres : zonas), estado: null, cod: `${siglas(RUTAS[ruta].nombre)}-${numero++}` };
+    b.el = crear('button', 'tc-bulto');
+    b.el.type = 'button';
+    b.el._b = b;
+    b.el.style.setProperty('--c', RUTAS[ruta].color);
+    b.el.innerHTML = `<b>${esc(b.cod)}</b><small>${txt(TIPOS[tipo].nombre)} · ${esc(RUTAS[ruta].nombre)}</small><u></u>` +
+      `<em class="tc-invita">${txt(TC.escanear || 'Escaneá')}</em>`;
+    b.el.addEventListener('click', () => leer(b, true));
     return b;
   }
+  const ANCHO_COLA = 6;
+  for (let i = 0; i < ANCHO_COLA - 1; i++) cola.appendChild(nuevoBulto().el);
+  // el primero que se escanea es un V.I. a Rosario (el ejemplo de la ventana)
+  cola.appendChild(nuevoBulto({ ruta: 0, tipo: Math.min(2, TIPOS.length - 1) }).el);
+  const siguiente = () => { const el = [...cola.children].reverse().find((e) => !e._b.estado); return el ? el._b : null; };
+  // el próximo bulto lleva el cartelito "Escaneá" mientras se escanea a mano
+  function marcarInvita() {
+    const s = siguiente();
+    [...cola.children].forEach((el) => el.classList.toggle('invita', !auto && !abierta && !!s && el === s.el));
+  }
+  function actualizarAyuda() {
+    ayuda.classList.toggle('auto', auto);
+    ayudaEl.innerHTML = auto ? txt(TC.ayudaAuto)
+      : manuales ? txt(TC.ayudaFaltan, { faltan: MANUALES - manuales }) : txt(TC.ayuda);
+  }
+  actualizarAyuda();
+  marcarInvita();
+  // Guía (compartido/guia.js): la mano señala el próximo bulto hasta que se escanea uno
+  if (window.GUIA) GUIA.pista({ id: 'servicio-lector', texto: 'tmsLector', objetivo: () => { const s = siguiente(); return s && s.el; }, zona: '.tc-bulto', lado: 'izq', espera: 1.2, activa: () => enVista && pestana === 'carga' && !auto && !abierta });
+
   // Mueve los bultos que quedan a su lugar nuevo con una animación (en vez de saltar)
   function flip(cambio) {
     const antes = new Map([...cola.children].map((el) => [el, el.getBoundingClientRect().left]));
@@ -427,58 +464,100 @@
       if (Math.abs(dx) > .5) el.animate([{ transform: `translateX(${dx}px)` }, { transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.2,.8,.2,1)' });
     });
   }
-  for (let i = 0; i < ANCHO_COLA; i++) cola.appendChild(nuevoBulto().el);
 
-  const TIEMPO_APUNTAR = 700;            // ms con el lector encima para leer un bulto
-  let ocupado = false;                   // de a un bulto por vez
-  function apuntar(b) {
-    if (b.estado || ocupado) return;
-    b.el.classList.add('apuntando');
-    clearTimeout(b.reloj);
-    b.reloj = setTimeout(() => { b.el.classList.remove('apuntando'); usoCarga = ahora(); leer(b); }, TIEMPO_APUNTAR);
-  }
-  function soltar(b) {
-    clearTimeout(b.reloj);
-    b.el.classList.remove('apuntando');
-  }
-  function leer(b) {
-    if (b.estado || ocupado) return;
+  // ---------- Escanear: el láser barre, aparece el visto y el bulto vuela a su z-stage ----------
+  function leer(b, manual) {
+    if (b.estado || ocupado || abierta) return;
+    if (manual) usoCarga = ahora();
     ocupado = true;
     b.estado = 'leyendo';
     b.el.classList.add('leyendo');
+    marcarInvita();
     setTimeout(() => {
       b.el.classList.add('leido');
-      b.el.querySelector('small').textContent = '✓ ' + TIPOS[b.tipo].nombre;
-      setTimeout(() => volar(b), 280);
+      b.el.querySelector('small').textContent = `✓ ${TIPOS[b.tipo].nombre} · ${RUTAS[b.ruta].nombre}`;
+      if (manual && !explicado) { explicado = true; setTimeout(() => abrirVentana(b), 260); }
+      else setTimeout(() => volar(b, manual), 280);
     }, 380);
   }
-  function volar(b) {
+
+  // La ventana del primer bulto: qué es, adónde va y por qué queda en ese lugar
+  function abrirVentana(b) {
+    abierta = b;
+    const r = RUTAS[b.ruta], t = TIPOS[b.tipo];
+    const vars = { codigo: b.cod, tipo: t.nombre, ruta: r.nombre, viaje: r.codigo, zona: 'ZS ' + b.z };
+    const vb = ventana.querySelector('.tc-vbulto');
+    vb.style.setProperty('--c', r.color);
+    vb.querySelector('b').textContent = b.cod;
+    vb.querySelector('small').textContent = `${t.nombre} · ${r.nombre}`;
+    ventana.querySelector('.tc-vdatos').innerHTML =
+      [[VT.datoRuta || 'Ruta', `<i style="--c:${r.color}"></i>${esc(r.nombre)}`], [VT.datoViaje || 'Viaje', esc(r.codigo)],
+        [VT.datoTipo || 'Tipo', `${chipTipo(b.tipo)}${esc(t.nombre)}`], [VT.datoZona || 'Posición', `${txt(TC.stage || 'Stage')} ${esc(r.nombre)} · ZS ${b.z}`]]
+        .map(([k, v]) => `<div style="--c:${r.color}"><dt>${txt(k)}</dt><dd>${v}</dd></div>`).join('');
+    ventana.querySelector('.tc-vtxt').innerHTML = txt(VT.texto, vars);
+    ventana.classList.add('abierta');
+    ventana.setAttribute('aria-hidden', 'false');
+    marcarInvita();
+    setTimeout(() => { const bt = ventana.querySelector('.tc-vboton'); if (abierta && bt) bt.focus({ preventScroll: true }); }, 350);
+  }
+  function cerrarVentana() {
+    const b = abierta;
+    if (!b) return;
+    abierta = null;
+    usoCarga = ahora();
+    ventana.classList.remove('abierta');
+    ventana.setAttribute('aria-hidden', 'true');
+    setTimeout(() => volar(b, true), 260);
+  }
+  ventana.querySelector('.tc-vboton').addEventListener('click', cerrarVentana);
+  ventana.querySelector('.tc-vcerrar').addEventListener('click', cerrarVentana);
+  ventana.addEventListener('click', (e) => { if (e.target === ventana) cerrarVentana(); });
+  // Esc cierra la ventana antes de volver a la portada
+  document.addEventListener('keydown', (e) => {
+    if (!abierta || e.key !== 'Escape') return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    cerrarVentana();
+  }, true);
+
+  function volar(b, manual) {
     const k = escala();
     const base = vCarga.getBoundingClientRect();
-    const r0 = b.el.getBoundingClientRect(), c = celdas[b.z], r1 = c.bultos.getBoundingClientRect();
-    const sx = (r0.left + r0.width / 2 - base.left) / k - 6, sy = (r0.top + r0.height / 2 - base.top) / k - 6;
-    const ex = (r1.left - base.left) / k + Math.min(8, c.n % 9) * 16, ey = (r1.top - base.top) / k + Math.floor(c.n / 9) * 16;
-    const punto = crear('i', 'tc-vuela', vCarga);
-    punto.style.setProperty('--c', TIPOS[b.tipo].color);
-    const mx = (sx + ex) / 2, my = Math.min(sy, ey) - 70;
+    const c = celdas[b.z];
+    const chip = agregarEnZona(b.z, b.tipo);         // su lugar (invisible hasta que llega)
+    chip.style.visibility = 'hidden';
+    const r0 = b.el.getBoundingClientRect(), r1 = chip.getBoundingClientRect();
+    const sx = (r0.left + r0.width / 2 - base.left) / k - 11, sy = (r0.top + r0.height / 2 - base.top) / k - 8;
+    const ex = (r1.left - base.left) / k, ey = (r1.top - base.top) / k;
+    const punto = crear('i', 'tc-vuela', vCarga, esc(TIPOS[b.tipo].marca));
+    punto.style.setProperty('--c', RUTAS[b.ruta].color);
+    const mx = (sx + ex) / 2, my = Math.min(sy, ey) - 50;
     const anim = punto.animate([
-      { transform: `translate(${sx}px, ${sy}px) scale(2.4)` },
-      { transform: `translate(${mx}px, ${my}px) scale(1.6)`, offset: .45 },
+      { transform: `translate(${sx}px, ${sy}px) scale(1.9)` },
+      { transform: `translate(${mx}px, ${my}px) scale(1.4)`, offset: .45 },
       { transform: `translate(${ex}px, ${ey}px) scale(1)` }
-    ], { duration: 720, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-    // sale de la cola y entra uno nuevo por la izquierda
+    ], { duration: 760, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+    // sale de la recepción y llega uno nuevo por la izquierda
     flip(() => { b.el.remove(); cola.prepend(nuevoBulto().el); });
+    marcarInvita();
     anim.onfinish = () => {
       punto.remove();
+      chip.style.visibility = '';
+      chip.classList.add('nuevo');
       ocupado = false;
-      agregarEnZona(b.z, b.tipo, true);
       c.el.classList.add('llega');
       setTimeout(() => c.el.classList.remove('llega'), 450);
-      valores[b.tipo]++;
-      mostrarValores({ tipo: b.tipo });
+      if (valores[b.tipo] !== undefined) valores[b.tipo]++;
+      mostrarValores();
+      if (manual && !auto) {
+        manuales++;
+        if (manuales >= MANUALES) auto = true;   // ya entendió: sigue el lector automático
+        actualizarAyuda();
+      }
+      marcarInvita();
       if (c.n >= MAX_ZONA && !c.ocupada) despachar(b.z);
     };
   }
+  // una zona llena se despacha (los bultos salen hacia su viaje) y queda vacía
   function despachar(z) {
     const c = celdas[z];
     c.ocupada = true;
@@ -486,7 +565,7 @@
       [...c.bultos.children].forEach((i, k) => i.style.setProperty('--k', k));
       c.el.classList.add('despacha');
       setTimeout(() => {
-        [...c.bultos.children].forEach((i) => { valores[+i.dataset.t] = Math.max(0, valores[+i.dataset.t] - 1); });
+        [...c.bultos.children].forEach((i) => { const t = +i.dataset.t; if (valores[t] !== undefined) valores[t] = Math.max(0, valores[t] - 1); });
         c.bultos.innerHTML = '';
         c.n = 0;
         mostrarValores();
@@ -496,113 +575,12 @@
     }, 500);
   }
 
-  // Lector automático si nadie lo usa
-  let usoCarga = -1e9;
+  // Lector automático: recién después de escanear unos cuantos a mano (antes, nada se mueve solo)
   setInterval(() => {
-    const auto = enVista && pestana === 'carga' && ahora() - usoCarga > 3500;
-    ayuda.classList.toggle('auto', auto);
-    ayuda.querySelector('span').innerHTML = auto ? txt(TC.ayudaAuto || 'Lector automático · pasá el mouse por un bulto para leerlo vos') : ayudaTxt;
-    if (!auto || ocupado) return;
-    const libres = [...cola.children].reverse();
-    for (const el of libres) {
-      if (!el.classList.contains('leyendo')) { el.dispatchEvent(new Event('lectura-auto')); break; }
-    }
+    if (!auto || !enVista || pestana !== 'carga' || ocupado || abierta || ahora() - usoCarga < 2500) return;
+    const s = siguiente();
+    if (s) leer(s, false);
   }, 1500);
-
-  // =========================================================
-  // 3. STAGING POR RUTA (y empieza el tracking)
-  // =========================================================
-  (function staging() {
-    const v = vistas.staging;
-    const VIAJES = (TD.viajes || []).slice(0, 3);
-    const COLORES = ['var(--rojo)', 'var(--ambar)', 'var(--azul)'];
-    // código corto del destino: Rosario → ROS, San Luis → SLU, Sgo. del Estero → SES
-    const siglas = (n) => {
-      const p = String(n || '').replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ ]/g, ' ').split(/\s+/).filter((w) => w.length > 2 || /^[A-Z]/.test(w));
-      const s = p.length > 1 ? p[0][0] + p[p.length - 1].slice(0, 2) : (p[0] || '').slice(0, 3);
-      return s.toUpperCase();
-    };
-    const total = VIAJES.reduce((a, vj) => a + (+vj.bultos || 0), 0);
-    v.innerHTML =
-      `<div class="st-cab"><b>${txt(TS.panel)}</b><span class="tc-vivo"><i></i>EN VIVO</span>` +
-      `<span class="st-track"><i></i>${txt(R.tracking || 'Tracking en tiempo real')}</span></div>` +
-      `<div class="st-cola"><p>${txt(TS.desde)}</p><div class="st-chips"></div></div>` +
-      '<div class="st-carriles">' + VIAJES.map((vj, i) => {
-        const fin = (vj.paradas || []).slice(-1)[0] || '';
-        return `<div class="st-carril" style="--c:${COLORES[i]}" data-i="${i}"><div class="st-ccab"><i></i><b>${txt(TS.ruta || 'Ruta')} ${esc(fin)}</b>` +
-          `<small>${esc(vj.codigo)}</small><em><span>0</span> / ${+vj.bultos || 0}</em></div>` +
-          '<div class="st-piso">' + Array.from({ length: +vj.bultos || 0 }, () => '<span class="st-lugar"></span>').join('') + `<p class="st-listo">${icono('tilde')}${txt(TS.rutaLista)}</p></div></div>`;
-      }).join('') + '</div>' +
-      `<div class="st-eventos"><p><span>${txt(TS.eventos)}</span><b class="st-control"></b></p><div class="st-lista"></div></div>`;
-    const chipsEl = v.querySelector('.st-chips'), lista = v.querySelector('.st-lista'), control = v.querySelector('.st-control');
-    const carriles = [...v.querySelectorAll('.st-carril')];
-    const c = corredor();
-    let chips = [];
-    function reiniciar() {
-      c.nueva();
-      chipsEl.innerHTML = ''; lista.innerHTML = ''; control.innerHTML = ''; nEventos = 0;
-      v.classList.remove('hecho');
-      const orden = [];
-      VIAJES.forEach((vj, i) => { for (let n = 0; n < (+vj.bultos || 0); n++) orden.push(i); });
-      for (let i = orden.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [orden[i], orden[j]] = [orden[j], orden[i]]; }
-      chips = orden.map((i, n) => {
-        const fin = (VIAJES[i].paradas || []).slice(-1)[0];
-        const el = crear('span', 'td-chip', chipsEl, `<i></i>${esc(siglas(fin))}-${String(4110 + n * 7).slice(-4)}`);
-        el.style.setProperty('--c', COLORES[i]);
-        return { el, i, cod: el.textContent };
-      });
-      carriles.forEach((cr) => {
-        cr.classList.remove('listo');
-        cr.querySelector('em span').textContent = '0';
-        cr.querySelectorAll('.st-lugar').forEach((l) => { l.classList.remove('lleno'); l.style.removeProperty('--c'); l.textContent = ''; });
-      });
-    }
-    let nEventos = 0;
-    function evento(texto) {
-      const d = new Date(2024, 6, 15, 8, 2 + 2 * nEventos++);
-      const hh = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-      const fila = crear('div', 'st-ev', null, `<span>${hh}</span><b>${texto}</b><small>${txt(TS.fuente)}</small>`);
-      lista.prepend(fila);
-      while (lista.children.length > 3) lista.lastChild.remove();
-    }
-    async function correr() {
-      reiniciar();
-      const id = c.nueva();
-      await c.dormir(700, id);
-      const cuenta = VIAJES.map(() => 0);
-      // de abajo hacia arriba: los que quedan siguen arriba, sin huecos
-      for (const ch of chips.slice().reverse()) {
-        const cr = carriles[ch.i], lugar = cr.querySelectorAll('.st-lugar')[cuenta[ch.i]];
-        const k = escala(), base = v.getBoundingClientRect(), a = ch.el.getBoundingClientRect(), b = lugar.getBoundingClientRect();
-        const sx = (a.left - base.left) / k, sy = (a.top - base.top) / k, ex = (b.left - base.left) / k, ey = (b.top - base.top) / k;
-        const clon = ch.el.cloneNode(true);
-        clon.classList.add('td-vuela');
-        v.appendChild(clon);
-        ch.el.classList.add('ido');
-        clon.animate([
-          { transform: `translate(${sx}px, ${sy}px)` },
-          { transform: `translate(${(sx + ex) / 2}px, ${Math.min(sy, ey) - 40}px) scale(1.06)`, offset: .45 },
-          { transform: `translate(${ex}px, ${ey}px) scale(.9)` }
-        ], { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).finished.then(() => {
-          clon.remove();
-          if (!c.vigente(id)) return;
-          lugar.classList.add('lleno');
-          lugar.style.setProperty('--c', COLORES[ch.i]);
-          lugar.textContent = ch.cod.split('-')[1];
-        });
-        cuenta[ch.i]++;
-        await c.dormir(600, id);
-        cr.querySelector('em span').textContent = cuenta[ch.i];
-        evento(txt(TS.evento, { codigo: ch.cod, ruta: (VIAJES[ch.i].paradas || []).slice(-1)[0] || '' }));
-        if (cuenta[ch.i] === (+VIAJES[ch.i].bultos || 0)) cr.classList.add('listo');
-        await c.dormir(240, id);
-      }
-      await c.dormir(500, id);
-      control.innerHTML = icono('tilde') + txt(TS.control, { total });
-      v.classList.add('hecho');
-    }
-    alElegir.staging = () => correr().catch(cancelado);
-  })();
 
   elegir(0);
   alDesplazar(window.desplazamiento ? window.desplazamiento.y : 0);

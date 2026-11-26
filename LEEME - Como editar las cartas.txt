@@ -351,14 +351,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     sobre ellas mientras los puntos de las paradas suben; en cada parada cambia
     el título grande, su texto (y su interfaz, si tiene) y la demo de la
     derecha. Cada parada tiene:
-      clave:    qué demo se muestra. NO SE CAMBIA (pedido, ubicacion, staging,
-                viajes, entrega o experiencia). Sí se puede sacar una parada
-                entera o cambiar el orden.
+      clave:    qué demo se muestra. NO SE CAMBIA (pedido, ubicacion, viajes,
+                entrega o experiencia). Sí se puede sacar una parada entera o
+                cambiar el orden. (La parada "Staging por ruta" se unió con
+                "Geoposicionamiento indoor": ahora es una sola.)
       titulo y texto: lo que se lee en la parada.
       interfaz: (opcional) la conexión entre sistemas que actúa ahí: nombre,
                 texto, de (de dónde sale la información) y a (adónde va).
-    Las paradas de staging a entrega llevan la marca "Tracking" (el texto de
-    esa marca, el rótulo "Interfaz", el "de" de "01 de 06" y los rótulos
+    Las paradas de geoposicionamiento a entrega llevan la marca "Tracking" (el
+    texto de esa marca, el rótulo "Interfaz", el "de" de "01 de 05" y los rótulos
     "Siguiente" y "Primera parada" que aparecen al lado del punto que viene
     también están en recorrido). final y finalBoton: la frase de la última
     parada, que lleva a los tableros.
@@ -367,15 +368,24 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   que viaja, los pedidos (número, destino, bultos y tipo: Stock,
                   Urgente o V.I.) y el texto de la llegada al depósito
                   ({bultos} se reemplaza por el total).
-      carga:      geoposicionamiento indoor: textos de la planchada y los
-                  indicadores (nombre y número inicial; después cambian solos).
-      staging:    staging por ruta: los textos de la pantalla. Las rutas salen
-                  de los viajes de "despachos". En evento se pueden usar
-                  {codigo} y {ruta}; en control, {total}.
-      despachos:  gestión de viajes y entrega: la carta de porte (sus datos y
-                  los textos de antes y después de firmarla) y los viajes del
-                  día: código, unidad, paradas (la primera es la salida) y
-                  cuántos bultos lleva cada uno.
+      carga:      geoposicionamiento indoor: la planchada, con un stage por
+                  ruta (las rutas y sus colores salen de los viajes de
+                  "despachos"). Arriba llegan los bultos y nada se mueve hasta
+                  que alguien escanea uno con un clic: el primero abre una
+                  ventana que lo explica (textos en ventana; {tipo}, {ruta},
+                  {viaje}, {zona} y {codigo} se completan solos) y después
+                  cada bulto va directo a su lugar. Con manualesParaAuto
+                  bultos escaneados a mano (4) sigue el lector automático.
+                  En indicadores van los tipos de bulto: nombre, la marca que
+                  lleva en la planchada (U, VI; Stock sin marca) y el número
+                  inicial del contador de abajo. ayuda, ayudaFaltan ({faltan})
+                  y ayudaAuto: el texto de abajo en cada momento.
+      despachos:  gestión de viajes y entrega: la carta de porte digital (sus
+                  datos, los textos de antes y después de firmarla y los de la
+                  app del celular: docApp, docQuien, docDigital, firmaAca), el
+                  rótulo de la planchada simplificada (viajesPlanchada) y los
+                  viajes del día: código, unidad, paradas (la primera es la
+                  salida) y cuántos bultos lleva cada uno.
       tracking:   el seguimiento del envío en la entrega: número, las 4
                   fuentes de información y los eventos (fecha y hora, qué
                   pasó, dónde y de qué fuente viene, del 1 al 4). Los eventos

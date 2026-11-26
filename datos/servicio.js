@@ -70,7 +70,7 @@ window.SERVICIO = {
   // ---------- El recorrido de ¿Cómo lo hacemos?, parada por parada ----------
   // Al bajar, la mercadería avanza por la ruta de la izquierda y cada parada muestra
   // su explicación y su demo a la derecha.
-  //   clave: qué demo se muestra (NO cambiar): pedido, ubicacion, staging, viajes,
+  //   clave: qué demo se muestra (NO cambiar): pedido, ubicacion, viajes,
   //          entrega o experiencia. Se pueden sacar paradas o cambiar el orden.
   //   titulo y texto: lo que se lee en la parada.
   //   interfaz (opcional): la conexión entre sistemas que actúa en esa parada:
@@ -91,12 +91,7 @@ window.SERVICIO = {
       {
         clave: "ubicacion",
         titulo: "Geoposicionamiento indoor",
-        texto: "Cada bulto se lee al ingresar y queda **ubicado en su posición exacta** del depósito: zonas de **stage y z-stage** parametrizadas en el sistema."
-      },
-      {
-        clave: "staging",
-        titulo: "Staging por ruta",
-        texto: "Los bultos se agrupan **por ruta logística**, listos para salir hacia cada destino **sin pérdidas**. Desde acá empieza el **tracking en tiempo real**.",
+        texto: "Cada bulto se lee al ingresar y queda **en el stage de su ruta**, en su posición exacta (z-stage): así cada ruta se prepara **sin pérdidas**. Desde acá empieza el **tracking en tiempo real**.",
         interfaz: { nombre: "Obtención de eventos", texto: "Busca y registra los eventos de cada carga: así arranca su seguimiento.", de: "Depósito y socios", a: "TMS CARGO" }
       },
       {
@@ -145,36 +140,47 @@ window.SERVICIO = {
       recibidos: "✓ **{bultos} bultos** recibidos: pasan a ubicarse en el depósito",
       boton: "Recibir otro pedido"
     },
-    // 2. Geoposicionamiento indoor: la planchada
+    // 2. Geoposicionamiento indoor: la planchada, con un stage por ruta (las rutas y sus
+    //    colores son las de los viajes de abajo, en "despachos")
     carga: {
-      panel: "Situación de la planchada",
-      // Indicadores: nombre y valor inicial (después cambian con la demo)
-      indicadores: [
-        { nombre: "Stock", valor: 508 },
-        { nombre: "Urgente", valor: 264 },
-        { nombre: "V.I.", valor: 9 }
-      ],
-      total: "Total",
-      recepcion: "Recepción",
-      ayuda: "Pasá el lector por los bultos que llegan",
-      ayudaAuto: "Lector automático · pasá el mouse por un bulto para leerlo vos"
-    },
-    // 3. Staging por ruta (las rutas son las de los viajes de abajo)
-    staging: {
-      panel: "Staging por ruta logística",
-      desde: "Desde la planchada",
+      panel: "Planchada por ruta",
+      recepcion: "Recepción · bultos que llegan",
+      stage: "Stage",
       ruta: "Ruta",
-      rutaLista: "Ruta completa",
-      eventos: "Eventos · tracking en tiempo real",
-      evento: "{codigo} ubicado en el staging de la ruta {ruta}",
-      fuente: "Nuestros eventos",
-      control: "{total} de {total} bultos controlados · sin pérdidas"
+      // Tipos de bulto: nombre, la marca que lleva en la planchada y el valor inicial del contador
+      indicadores: [
+        { nombre: "Stock", marca: "", valor: 508 },
+        { nombre: "Urgente", marca: "U", valor: 264 },
+        { nombre: "V.I.", marca: "VI", valor: 9 }
+      ],
+      total: "Total en planchada",
+      // Ayuda de abajo: antes de escanear, mientras se escanea a mano ({faltan}) y con el lector automático
+      ayuda: "Hacé clic en un bulto que llega para escanearlo",
+      ayudaFaltan: "Seguí escaneando: {faltan} más y el lector sigue solo",
+      ayudaAuto: "Lector automático · hacé clic en un bulto para escanearlo vos",
+      escanear: "Escaneá",               // el cartelito sobre el bulto que invita a escanearlo
+      manualesParaAuto: "4",            // cuántos bultos se escanean a mano antes del lector automático
+      // La ventana que aparece una sola vez, al escanear el primer bulto.
+      // {codigo}, {tipo}, {ruta}, {viaje} y {zona} se completan solos.
+      ventana: {
+        titulo: "Bulto escaneado",
+        texto: "Este es un bulto **{tipo}** que se dirige a **{ruta}**: por eso se posiciona en el **stage de la ruta {ruta}** ({zona}) y queda marcado como **{tipo}**",
+        datoRuta: "Ruta",
+        datoViaje: "Viaje",
+        datoTipo: "Tipo",
+        datoZona: "Posición",
+        boton: "Ubicarlo en la planchada"
+      }
     },
-    // 4 y 5. Gestión de viajes y entrega (los datos del documento y de los viajes son de ejemplo)
+    // 3 y 4. Gestión de viajes y entrega (los datos del documento y de los viajes son de ejemplo)
     despachos: {
-      docTitulo: "Carta de porte",
-      docTexto: "Se emite al despachar y queda **pendiente hasta la entrega**.",
-      docTextoEntrega: "Al firmarla se genera **en formato digital** y queda a disposición de {cliente} en nuestra web.",
+      docTitulo: "Carta de porte digital",
+      docTexto: "Se emite **100% digital** al despachar (no se imprime) y queda **pendiente hasta la entrega**.",
+      docTextoEntrega: "Se firma **en el celular**: se genera el documento digital (**e-POD**) y queda a disposición de {cliente} en nuestra web.",
+      docApp: "Carta de porte",              // el título de la app en el celular
+      docQuien: "Chofer CARGO",              // quién usa la app
+      docDigital: "100% digital · sin papel",
+      firmaAca: "Firmá acá",
       docPendiente: "Pendiente de conformar",
       firmaPendiente: "Se firma en la entrega",
       docBoton: "Firmar la entrega",
@@ -190,7 +196,8 @@ window.SERVICIO = {
         kg: "126,5"
       },
       viajesTitulo: "Armado de rutas y viajes",
-      viajesTexto: "Cada bulto se asigna al viaje de su ruta y se controla la salida.",
+      viajesTexto: "Cada stage de la planchada llena el camión de su ruta y se controla la salida.",
+      viajesPlanchada: "Planchada · staging por ruta",   // el rótulo de la planchada simplificada
       viajesBoton: "Armar los viajes",
       // Viajes: código, unidad, paradas (la primera es la salida) y cuántos bultos lleva
       viajes: [
@@ -199,7 +206,7 @@ window.SERVICIO = {
         { codigo: "VJ-2413", unidad: "Unidad 21", paradas: ["CD Córdoba", "Jesús María", "Sgo. del Estero"], bultos: 3 }
       ]
     },
-    // 5. Entrega: el tracking del envío hasta que se firma (el envío y sus eventos son de ejemplo)
+    // 4. Entrega: el tracking del envío hasta que se firma (el envío y sus eventos son de ejemplo)
     tracking: {
       panel: "Tracking en tiempo real",
       texto: "Cada estado con fecha, hora y lugar, de **varias fuentes**: nuestros eventos, los socios de transporte, el concesionario y la App de choferes.",
