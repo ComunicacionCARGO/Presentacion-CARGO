@@ -101,7 +101,7 @@
 .df-camion {
   position: absolute;
   left: 200px;
-  top: 318px;
+  top: 248px;           /* más arriba (pedido de la persona): tapa la mitad de "DIFERENTE?", que encima lleva su contorno */
   width: 1200px;
   height: 619.5px;
   opacity: 0;
@@ -110,6 +110,8 @@
   transition: opacity 1.2s ease .7s, translate 1.9s cubic-bezier(.16, .84, .24, 1) .7s;
 }
 .seccion-mejora.arriba .df-camion { opacity: 1; translate: 0 0; }
+/* el contorno de "DIFERENTE?" por encima del camión: las mismas letras (suben igual), solo el trazo */
+.mc-contorno { color: transparent; -webkit-text-stroke: 2.5px rgba(255, 251, 243, .92); text-shadow: none; pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(20, 14, 10, .55)); }   /* la sombra finita lo separa de la cabina blanca */
 
 /* Degradado gris de la persona: llega al gris pleno antes del borde de abajo (y ~870) y debajo
    sigue el gris, así se une sin costura con la sección siguiente */

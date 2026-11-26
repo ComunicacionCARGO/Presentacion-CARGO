@@ -24,11 +24,16 @@
   const anteEl = $('.mc-ante'), grandeEl = $('.mc-grande');
   anteEl.textContent = E.elegirnosAntetitulo || '¿Qué hacemos';
   grandeEl.innerHTML = Array.from(E.elegirnosTitulo || 'DIFERENTE?').map((c, l) => `<i style="--l:${l}">${c === ' ' ? '&nbsp;' : esc(c)}</i>`).join('');
+  // el contorno de la palabra grande va por encima del camión (pedido de la persona): mismas letras,
+  // en el mismo lugar y con el mismo paralaje que el título, solo el trazo
+  const contornoEl = $('.mc-contorno');
+  if (contornoEl) contornoEl.innerHTML = grandeEl.innerHTML;
   // si se cambia por un texto más largo, la letra se achica para que entre
   const ajustarTitulo = () => {
     anteEl.style.fontSize = grandeEl.style.fontSize = '';
     if (anteEl.scrollWidth > 1180) anteEl.style.fontSize = (110.4 * 1180 / anteEl.scrollWidth) + 'px';
     if (grandeEl.scrollWidth > 1180) grandeEl.style.fontSize = (212 * 1180 / grandeEl.scrollWidth) + 'px';
+    if (contornoEl) contornoEl.style.fontSize = grandeEl.style.fontSize;
   };
   ajustarTitulo();
   if (document.fonts) document.fonts.ready.then(ajustarTitulo);
@@ -86,7 +91,7 @@
   };
   const PAD = 26, ALTO_RENGLON = 34, ALTO_NUM = 22;
   // Paralaje de cada capa: [px que se corre con el mouse, cuánto se queda atrás con el scroll]
-  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], puntos: [14, -.05] };
+  const PROF = { deposito: [9, .34], polvo: [13, .3], titulo: [17, .2], operario: [25, .1], contorno: [17, .2], puntos: [14, -.05] };
   const capas = {};
   document.querySelectorAll('.df-capa').forEach((c) => { capas[c.dataset.capa] = c; });
   // la línea punteada del zócalo, con un punto sobre cada clave
