@@ -138,7 +138,8 @@
   top: calc(450px - 50vh / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
   height: calc(100vh / var(--escala, 1));
-  background: radial-gradient(ellipse at 50% 55%, rgba(18, 16, 16, .34), rgba(18, 16, 16, .58));
+  /* parejo (sin degradé): así se une sin corte con el de la sección siguiente (.mc-tramo::after) */
+  background: rgba(18, 16, 16, .5);
   opacity: 0;
   transition: opacity .5s ease;
 }
@@ -153,8 +154,7 @@
   width: calc(100vw / var(--escala, 1));
   height: 900px;
   z-index: 50;
-  /* sigue al velo de arriba en su borde de abajo: más claro en el centro, más oscuro a los costados */
-  background: linear-gradient(90deg, rgba(18, 16, 16, .54), rgba(18, 16, 16, .42) 50%, rgba(18, 16, 16, .54));
+  background: rgba(18, 16, 16, .5);    /* exactamente el mismo velo parejo que el de arriba */
   opacity: 0;
   pointer-events: none;
   transition: opacity .5s ease;
