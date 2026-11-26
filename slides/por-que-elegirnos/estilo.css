@@ -42,8 +42,10 @@
   left: calc(800px - var(--w) * .5);
   top: calc(394.6px - var(--w) * .2852);
   width: var(--w);
-  height: calc(var(--w) * .6338);
-  background: url(../../img/slides/diferente/deposito.webp) center / 100% 100% no-repeat;
+  /* la foto termina justo en el borde de la portada (y 900): lo de más abajo (el piso) quedaba
+     bajo el gris, y así no asoma cuando la portada pasa adelante con una tarjeta abierta */
+  height: calc(505.4px + var(--w) * .2852);
+  background: url(../../img/slides/diferente/deposito.webp) center top / 100% auto no-repeat;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to bottom, transparent 0, #000 7%), linear-gradient(to right, transparent 0, #000 2.4%, #000 97.6%, transparent 100%);
@@ -131,35 +133,30 @@
 }
 .df-degradado::after { content: ""; position: absolute; left: 0; top: 100%; width: 100%; height: 640px; background: var(--gris); }
 
-/* Velo que oscurece la foto mientras hay una tarjeta abierta */
+/* Velo que oscurece todo mientras hay una tarjeta abierta. Las claves se abren con la pantalla ya
+   un poco bajada, y abajo asoma el comienzo de la sección siguiente (.mc-tramo, que normalmente va
+   por encima de la portada). Para que no haya ningún corte (pedido de la persona: con dos velos,
+   uno en cada sección, la escala de la ventana dejaba una rayita de medio píxel en la unión), hay
+   UN SOLO velo: mientras la tarjeta está abierta la portada pasa por encima de la sección siguiente
+   (z-index 8) y el velo sigue hacia abajo hasta cubrir toda la ventana. Al cerrar, la portada vuelve
+   atrás recién cuando el velo terminó de irse. */
+.seccion-mejora { transition: z-index 0s linear .5s; }
+.seccion-mejora.con-tarjeta { z-index: 8; transition-delay: 0s; }
 .df-velo {
   position: absolute;
   left: calc(800px - 50vw / var(--escala, 1));
   top: calc(450px - 50vh / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
-  height: calc(100vh / var(--escala, 1));
-  /* parejo (sin degradé): así se une sin corte con el de la sección siguiente (.mc-tramo::after) */
+  height: calc(100vh / var(--escala, 1) + 760px);   /* cubre la ventana aunque la portada haya subido (las tarjetas se cierran pasados los 560 px) */
   background: rgba(18, 16, 16, .5);
   opacity: 0;
   transition: opacity .5s ease;
 }
 .seccion-mejora.con-tarjeta .df-velo { opacity: 1; }
-/* las claves se abren con la pantalla ya un poco bajada: abajo asoma el comienzo de la sección
-   siguiente (.mc-tramo, que va por encima de la portada); se oscurece igual, así el velo no queda cortado */
-.mc-tramo::after {
-  content: "";
-  position: absolute;
-  left: calc(800px - 50vw / var(--escala, 1));
-  top: 0;               /* sin pisarse con el velo de arriba (si se pisan, queda una rayita más oscura) */
-  width: calc(100vw / var(--escala, 1));
-  height: 900px;
-  z-index: 50;
-  background: rgba(18, 16, 16, .5);    /* exactamente el mismo velo parejo que el de arriba */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .5s ease;
-}
-.seccion-mejora.con-tarjeta ~ .mc-tramo::after { opacity: 1; }
+/* con la portada adelante, el gris que sigue debajo del degradado taparía el contenido de la
+   sección siguiente: mientras tanto se corta en el borde de la portada (abajo es todo gris igual) */
+.seccion-mejora.con-tarjeta .df-degradado::after { height: 0; }
+.seccion-mejora.con-tarjeta .el-fondo { height: calc(450px + 50vh / var(--escala, 1)); }   /* el gris de fondo, también hasta y 900 */
 
 /* El zócalo (opción A elegida por la persona; reemplazó a las líneas que iban de cada ícono a un
    objeto de la foto): una línea punteada crema de lado a lado con un punto sobre cada clave; se
