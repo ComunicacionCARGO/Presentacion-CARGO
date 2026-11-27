@@ -70,6 +70,16 @@
 .rc-punto.sig .rc-sig { opacity: 1; translate: 0 -50%; }
 .rc-punto:not(.sig) .rc-sig { translate: -8px -50%; }
 .rc-punto:hover { transform: scale(1.1); }
+/* para "bucear" en el proceso (pedido de la persona): con el cursor encima, cualquier punto
+   muestra su nombre y "Ir a esta parada"; los que faltan laten apenas (se pueden tocar) */
+.rc-sig-ir { display: none; color: var(--rojo) !important; }
+.rc-punto:hover .rc-sig, .rc-punto:focus-visible .rc-sig { opacity: 1; translate: 0 -50%; }
+.rc-punto:hover .rc-sig-ir, .rc-punto:focus-visible .rc-sig-ir { display: block; }
+.rc-punto:hover .rc-sig-sig, .rc-punto:focus-visible .rc-sig-sig { display: none; }
+.rc-punto:hover { border-color: var(--rojo); color: var(--rojo); }
+.rc-punto:not(.pasada):not(.activa)::before { content: ""; position: absolute; inset: -3px; border-radius: 50%; box-shadow: 0 0 0 0 rgba(239, 69, 41, .45); animation: rc-latido 2.6s ease-out infinite; animation-delay: calc(var(--k, 0) * .35s); pointer-events: none; }
+@keyframes rc-latido { 0% { box-shadow: 0 0 0 0 rgba(239, 69, 41, .45); } 70%, 100% { box-shadow: 0 0 0 12px rgba(239, 69, 41, 0); } }
+.sv-tms:not(.en-vista) .rc-punto::before { animation-play-state: paused; }
 .rc-punto.pasada { background: var(--gris); color: var(--blanco); border-color: var(--blanco); }
 /* las paradas con interfaz llevan un puntito verde */
 .rc-punto.con-if::after { content: ""; position: absolute; right: -4px; top: -4px; width: 13px; height: 13px; border: 2px solid var(--blanco); border-radius: 50%; background: var(--verde); }
@@ -127,20 +137,43 @@
 .rc-ent-rotulo { position: absolute; left: 236px; top: 140px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .7); }
 .rc-ent-txt { position: absolute; left: 1120px; top: 300px; width: 400px; padding-top: 22px; border-top: 3px solid var(--rojo); font-size: 22px; font-weight: 300; line-height: 1.5; color: rgba(58, 58, 58, .85); text-wrap: pretty; }
 .rc-ent-txt strong { font-weight: 600; color: var(--gris); }
-/* el mapa: las seis paradas en una línea, como un adelanto del recorrido (clic → esa parada) */
-.rc-mapa { position: absolute; left: 236px; right: 64px; top: 590px; }
-.rc-mapa > p { margin-bottom: 18px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
-.rc-mapa ol { position: relative; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.rc-mapa ol::before { content: ""; position: absolute; left: 9px; right: 0; top: 8px; height: 2px; background: repeating-linear-gradient(90deg, rgba(58, 58, 58, .25) 0 6px, transparent 6px 11px); }
-.rc-mapa button { position: relative; display: block; width: 100%; padding: 0 18px 0 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.rc-mapa button > i { display: block; width: 18px; height: 18px; border: 3px solid var(--gris); border-radius: 50%; background: var(--blanco); transition: background .25s ease, border-color .25s ease, scale .25s ease; }
+/* el mapa: las paradas en una línea, como un adelanto del recorrido (clic → esa parada).
+   Para "bucear" en el proceso (pedido de la persona): cada parada es una tarjeta que se levanta con
+   el cursor y muestra "Ver esta parada →", y los puntos laten en ola cada tanto: se pueden tocar */
+.rc-mapa { position: absolute; left: 236px; right: 64px; top: 578px; }
+.rc-mapa > p { margin-bottom: 14px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(58, 58, 58, .5); }
+.rc-mapa > p strong { font-weight: 600; color: var(--rojo); }
+.rc-mapa ol { position: relative; margin: 0 -14px; padding: 0; list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+.rc-mapa ol::before { content: ""; position: absolute; left: 23px; right: 14px; top: 22px; height: 2px; background: repeating-linear-gradient(90deg, rgba(58, 58, 58, .25) 0 6px, transparent 6px 11px); }
+.rc-mapa button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 14px 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, translate .35s cubic-bezier(.2, .8, .2, 1);
+}
+.rc-mapa button > i { position: relative; display: block; width: 18px; height: 18px; border: 3px solid var(--gris); border-radius: 50%; background: var(--blanco); transition: background .25s ease, border-color .25s ease, scale .25s ease; }
+.rc-mapa button > i::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; animation: rc-ola 5s ease-out infinite; animation-delay: calc(1.6s + var(--i) * .22s); }
+@keyframes rc-ola { 0% { box-shadow: 0 0 0 0 rgba(239, 69, 41, .55); } 14%, 100% { box-shadow: 0 0 0 11px rgba(239, 69, 41, 0); } }
 .rc-mapa b { display: block; margin-top: 14px; font: 700 15px/1 var(--fuente-titulo); letter-spacing: .06em; color: var(--rojo); }
-.rc-mapa span { display: block; margin-top: 6px; font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--gris); text-wrap: balance; }
+.rc-mapa span { display: block; margin-top: 6px; font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--gris); text-wrap: balance; transition: color .25s ease; }
 .rc-mapa em { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11.5px; font-style: normal; font-weight: 500; color: var(--verde); }
 .rc-mapa em svg { width: 13px; height: 13px; fill: var(--verde); }
+.rc-mapa u { display: block; margin-top: 10px; text-decoration: none; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rojo); opacity: 0; translate: -6px 0; transition: opacity .25s ease, translate .3s ease; }
+.rc-mapa button:hover, .rc-mapa button:focus-visible { background: #fff; border-color: rgba(239, 69, 41, .35); box-shadow: 0 18px 30px -18px rgba(120, 40, 20, .45); translate: 0 -5px; }
 .rc-mapa button:hover > i, .rc-mapa button:focus-visible > i { border-color: var(--rojo); background: var(--rojo); scale: 1.15; }
 .rc-mapa button:hover span { color: var(--rojo); }
-.rc-mapa button:active { translate: 0 1px; }
+.rc-mapa button:hover u, .rc-mapa button:focus-visible u { opacity: 1; translate: 0 0; }
+.rc-mapa button:active { translate: 0 -3px; }
+.sv-tms:not(.en-vista) .rc-mapa button > i::after { animation-play-state: paused; }
 .sv-tms .rc-mapa li { opacity: 0; translate: 0 14px; }
 .sv-tms.visible .rc-mapa li { animation: rc-mapa-entra .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.35s + var(--i) * .09s); }
 @keyframes rc-mapa-entra { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
@@ -301,14 +334,15 @@
 @keyframes tc-laser { 0% { left: -4%; opacity: 1; } 100% { left: 104%; opacity: 1; } }
 @keyframes tc-entra { from { opacity: 0; translate: -40px 0; } }
 
-/* La planchada: un stage por ruta, cada uno con sus z-stages */
-.tc-plano { position: absolute; left: 32px; right: 32px; top: 212px; height: 404px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.tc-stage { --c: var(--rojo); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.tc-scab { display: flex; align-items: baseline; gap: 9px; height: 30px; padding: 4px 0 0 11px; border-left: 4px solid var(--c); }
-.tc-scab small { font: 700 12px var(--fuente-titulo); letter-spacing: .16em; text-transform: uppercase; color: var(--c); }
-.tc-scab b { font: 700 18px/1 var(--fuente-titulo); letter-spacing: .03em; white-space: nowrap; }
-.tc-scab em { margin-left: auto; font-size: 11.5px; font-style: normal; color: rgba(58, 58, 58, .55); }
-.tc-celda { position: relative; flex: 1; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, transparent); transition: background .35s ease, box-shadow .35s ease; }
+/* La planchada: un stage por ruta, uno debajo del otro (pedido del jefe de logística: las rutas
+   ordenadas en vertical), cada uno con su nombre a la izquierda y sus z-stages a lo ancho */
+.tc-plano { position: absolute; left: 32px; right: 32px; top: 212px; height: 404px; display: grid; grid-template-rows: repeat(3, 1fr); gap: 10px; }
+.tc-stage { --c: var(--rojo); display: grid; grid-template-columns: 150px repeat(3, 1fr); gap: 10px; min-height: 0; }
+.tc-scab { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding-left: 12px; border-left: 4px solid var(--c); }
+.tc-scab small { font: 700 12px/1 var(--fuente-titulo); letter-spacing: .16em; text-transform: uppercase; color: var(--c); }
+.tc-scab b { font: 700 19px/1.05 var(--fuente-titulo); letter-spacing: .03em; }
+.tc-scab em { font-size: 11.5px; font-style: normal; color: rgba(58, 58, 58, .55); }
+.tc-celda { position: relative; min-width: 0; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, transparent); transition: background .35s ease, box-shadow .35s ease; }
 /* esquinas tipo marca de registro (como en el diseño) */
 .tc-celda::before, .tc-celda::after { content: ""; position: absolute; width: 10px; height: 10px; border: 2px solid color-mix(in srgb, var(--c) 75%, transparent); }
 .tc-celda::before { left: 4px; top: 4px; border-right: 0; border-bottom: 0; }

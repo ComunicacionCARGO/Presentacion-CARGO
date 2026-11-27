@@ -341,10 +341,10 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       (diana) o "" (sin ícono).
   • como: el título "¿Cómo lo HACEMOS?" (antetitulo, titulo y sello "Pensado
     para..."). Al llegar se ve la entrada: el título grande, a su derecha la
-    frase "entrada", abajo el mapa de las seis paradas (su rótulo es "mapa";
-    los nombres salen de las paradas) y la invitación a bajar (invitacion con
-    mouse, invitacionTactil con el dedo); al bajar, el título se achica arriba
-    a la izquierda y aparece el recorrido.
+    frase "entrada", abajo el mapa de las paradas (su rótulo es "mapa"; los
+    nombres salen de las paradas; con el cursor cada una muestra "verParada")
+    y la invitación (invitacion con mouse, invitacionTactil con el dedo); al
+    bajar, el título se achica arriba a la izquierda y aparece el recorrido.
   • recorrido: "¿Cómo lo hacemos?" es el recorrido de un pedido de Ford, desde
     que llega hasta el concesionario. Las tres franjas de la marca entran por
     arriba, se doblan y bajan por la izquierda: al bajar, la caja queda quieta
@@ -360,8 +360,9 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                 texto, de (de dónde sale la información) y a (adónde va).
     Las paradas de geoposicionamiento a entrega llevan la marca "Tracking" (el
     texto de esa marca, el rótulo "Interfaz", el "de" de "01 de 05" y los rótulos
-    "Siguiente" y "Primera parada" que aparecen al lado del punto que viene
-    también están en recorrido). final y finalBoton: la frase de la última
+    "Siguiente" y "Primera parada" que aparecen al lado del punto que viene, e
+    "irParada", que aparece al pasar el cursor por cualquier punto, también
+    están en recorrido). final y finalBoton: la frase de la última
     parada, que lleva a los tableros.
   • tms: los datos de las demos de cada parada (todos de ejemplo).
     Ninguna demo arranca sola al llegar: la primera vez una manito invita a
@@ -454,7 +455,9 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       - pasos: título, texto y eventos (hora y texto) de cada uno de los 7
         pasos. En los textos se pueden usar {numero}, {pieza}, {tipo} y {destino};
       - cierre: textos del final, los beneficios y el botón "Simular otro
-        reclamo".
+        reclamo";
+      - anterior: el texto del botón para volver un paso, que va al lado de
+        "Siguiente" (vuelve al comienzo del paso anterior).
     Los horarios, números y cantidades son de ejemplo: es una simulación.
   • ventajas (tercera pestaña de la pantalla de los tableros, "Ventajas y
     oportunidades"):

@@ -157,8 +157,10 @@
     `<i class="rc-f-abajo" style="top:${ABAJO}px"></i>` +
     (iTrack[0] >= 0 ? `<i class="rc-f-track" style="left:${X0 + ANCHO + 9}px;top:${CAJA_Y + yParada(iTrack[0])}px;height:${(iTrack[1] - iTrack[0]) * PASO}px"></i>` : '') +
     // cada punto lleva el nombre de su parada: se ve solo el de la siguiente, cuando asoma abajo
-    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + yParada(i)}px" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b>` +
-      `<span class="rc-sig"><small>${txt(i ? (R.siguiente || 'Siguiente') : (R.primera || 'Primera parada'))}</small>${txt(p.titulo)}</span></button>`).join(''));
+    PARADAS.map((p, i) => `<button type="button" class="rc-punto${p.interfaz && p.interfaz.nombre ? ' con-if' : ''}" style="left:${MEDIO}px;top:${CAJA_Y + yParada(i)}px;--k:${i}" data-i="${i}" aria-label="${esc(p.titulo)}"><b>${String(i + 1).padStart(2, '0')}</b>` +
+      // (con el cursor encima se ve el nombre de cualquier parada, con "Ir a esta parada")
+      `<span class="rc-sig"><small class="rc-sig-sig">${txt(i ? (R.siguiente || 'Siguiente') : (R.primera || 'Primera parada'))}</small>` +
+      `<small class="rc-sig-ir">${txt(R.irParada || 'Ir a esta parada')} →</small>${txt(p.titulo)}</span></button>`).join(''));
   const puntosEl = [...franjas.querySelectorAll('.rc-punto')];
   const quieto = crear('div', 'rc-quieto', seccion);
 
@@ -177,7 +179,8 @@
     `<p class="rc-ent-txt">${txt(CO.entrada)}</p>` +
     `<div class="rc-mapa"><p>${txt(CO.mapa)}</p><ol>` + PARADAS.map((p, i) =>
       `<li style="--i:${i}"><button type="button" data-i="${i}"><i></i><b>${String(i + 1).padStart(2, '0')}</b><span>${txt(p.titulo)}</span>` +
-      (p.interfaz && p.interfaz.nombre ? `<em>${icono('interfaz')}${txt(p.interfaz.nombre)}</em>` : '') + '</button></li>').join('') + '</ol></div>' +
+      (p.interfaz && p.interfaz.nombre ? `<em>${icono('interfaz')}${txt(p.interfaz.nombre)}</em>` : '') +
+      `<u>${txt(CO.verParada || 'Ver esta parada')} →</u></button></li>`).join('') + '</ol></div>' +
     `<p class="rc-invita"><i class="rc-raton"><u></u></i><span class="rc-inv-mouse">${txt(CO.invitacion)}</span><span class="rc-inv-tactil">${txt(CO.invitacionTactil || CO.invitacion)}</span>` +
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l4.6-4.6L19 12.8 12 19.8l-7-7 1.4-1.4L11 16z"/></svg></p>');
   const invita = portada.querySelector('.rc-invita');

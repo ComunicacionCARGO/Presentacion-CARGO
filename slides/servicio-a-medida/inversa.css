@@ -207,6 +207,12 @@
 .iv-btn.empezar { position: relative; }
 @keyframes iv-latir { to { box-shadow: 0 0 0 16px rgba(255, 251, 243, 0); } }
 .iv-btn.otra svg { transform: scaleX(-1); }
+/* "Paso anterior": al lado del siguiente, con borde crema (secundario); la flecha apunta para atrás */
+.iv-acciones { gap: 12px; }
+.iv-btn.atras { padding: 0 24px 0 20px; background: transparent; color: var(--blanco); box-shadow: inset 0 0 0 1.5px rgba(255, 251, 243, .6); }
+.iv-btn.atras svg { transform: scaleX(-1); }
+.iv-btn.atras:hover { box-shadow: inset 0 0 0 1.5px var(--blanco); background: rgba(255, 251, 243, .1); }
+.iv-btn.atras:hover svg { transform: scaleX(-1) translateX(4px); }
 .iv-pista { display: inline-flex; align-items: center; gap: 10px; height: 52px; font-size: 15px; font-weight: 500; color: var(--blanco); animation: iv-pop .45s ease both; }
 .iv-pista svg { width: 22px; height: 22px; fill: var(--blanco); animation: iv-toca 1.6s ease-in-out infinite; }
 @keyframes iv-toca { 50% { translate: 3px 3px; scale: .92; } }

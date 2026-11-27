@@ -60,10 +60,11 @@ window.SERVICIO = {
     sello: "Pensado para {cliente}",
     // la entrada: la frase al lado del título grande, el rótulo del mapa de las paradas y la
     // invitación a bajar (con mouse y con el dedo)
-    entrada: "Seguí un pedido de **{cliente}** desde que nos llega hasta el concesionario: seis paradas, cuatro interfaces con sus sistemas y **tracking en tiempo real**.",
-    mapa: "El recorrido",
-    invitacion: "**Bajá** para descubrir el proceso",
-    invitacionTactil: "**Deslizá** para descubrir el proceso"
+    entrada: "Seguí un pedido de **{cliente}** desde que nos llega hasta el concesionario: cinco paradas, cuatro interfaces con sus sistemas y **tracking en tiempo real**.",
+    mapa: "El recorrido · **elegí una parada** para ir directo",
+    verParada: "Ver esta parada",       // aparece al pasar el cursor por cada parada del recorrido
+    invitacion: "**Elegí** una parada o **bajá** para recorrerlas todas",
+    invitacionTactil: "**Tocá** una parada o **deslizá** para recorrerlas todas"
     // el cartel "Bajá para seguir" está en datos/guias.js
   },
 
@@ -78,8 +79,9 @@ window.SERVICIO = {
   recorrido: {
     interfaz: "Interfaz",               // el rótulo de las interfaces
     tracking: "Tracking",               // marca de las paradas con seguimiento en tiempo real
-    de: "de",                           // "01 de 06"
+    de: "de",                           // "01 de 05"
     siguiente: "Siguiente",             // al lado del punto de la parada que viene
+    irParada: "Ir a esta parada",       // al pasar el cursor por cualquier punto de la ruta
     primera: "Primera parada",
     paradas: [
       {
@@ -295,6 +297,7 @@ window.SERVICIO = {
     introTitulo: "Así funciona una devolución",
     introTexto: "El número de cada pieza ya está en la base de datos de CARGO gracias a la **interfaz** con {cliente}: si coincide, la devolución se aprueba y nos ocupamos del resto (retiro, traslado, trazabilidad y disposición final). **Vos manejás el celular.**",
     empezar: "Simular un reclamo",
+    anterior: "Paso anterior",           // el botón para volver un paso (al lado de "Siguiente")
     ejemplo: "Simulación con datos de ejemplo",
     sinReclamo: "Todavía no hay ningún reclamo. Empezá la simulación y mirá cómo se completa el seguimiento.",
     // Estado del reclamo en la ficha, en orden (uno por paso a partir del registro, y el último al cerrar)

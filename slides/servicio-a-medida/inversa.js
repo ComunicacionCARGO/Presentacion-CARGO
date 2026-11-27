@@ -148,9 +148,14 @@
   // =========================================================
   class Cancelado extends Error {}
   let corrida = 0, enVista = false, usoInv = -1e9;
+  // "Paso anterior" (pedido de la persona): la simulación vuelve a correr desde el principio en un
+  // instante (rapido: sin esperas, sin animaciones y sin clics, con el mismo motivo elegido) hasta el
+  // comienzo del paso al que se vuelve
+  let rapido = false, kTipo = 0;
   seccion.addEventListener('pointermove', () => { usoInv = ahora(); });
   function esperar(ms) {
     const mia = corrida;
+    if (rapido) return mia === corrida ? Promise.resolve() : Promise.reject(new Cancelado());
     return new Promise((ok, mal) => {
       let resta = ms, ult = ahora();
       (function tic() {
@@ -164,9 +169,10 @@
   }
   // Espera un clic en alguno de los elementos; si nadie hace nada (y la sección está
   // en pantalla) durante "ms", lo hace solo: llama a alAuto y elige el primero.
-  function esperarClic(els, ms, alAuto, sinIndicar) {
+  function esperarClic(els, ms, alAuto, sinIndicar, enRapido) {
     els = [].concat(els);
     const mia = corrida;
+    if (rapido) return Promise.resolve(enRapido || 0);      // al volver un paso: sigue sola, sin esperar
     if (!sinIndicar) mano(els[0]);
     return new Promise((ok, mal) => {
       let listo = false, resta = ms, ult = ahora();
@@ -210,6 +216,7 @@
   // =========================================================
   const vivas = new Set();
   function animar(el, cuadros, opciones) {
+    if (rapido) opciones = Object.assign({}, opciones, { duration: 1 });   // al volver un paso: sin animar
     const a = el.animate(cuadros, Object.assign({ fill: 'forwards' }, opciones));
     vivas.add(a);
     const fin = a.finished.then(() => {
@@ -428,7 +435,8 @@
     await esperarClic(pd.querySelector('.cel-nueva'), 9000);
     const pt = vTipos();
     pista('Elegí el motivo de la devolución');
-    const k = await esperarClic([...pt.querySelectorAll('.cel-tipo')], 8000);
+    const k = await esperarClic([...pt.querySelectorAll('.cel-tipo')], 8000, null, false, kTipo);
+    kTipo = k;                                     // (al volver un paso se repite el mismo motivo)
     tipo = TIPOS[k] || TIPOS[0];
     pt.querySelectorAll('.cel-tipo')[k].classList.add('elegido');
     svg.classList.add('con-alerta');
@@ -491,7 +499,7 @@
     actor('con');                                  // firma el concesionario
     pista(t(PASOS[3].accion) + ' (con el mouse)');
     const firma = esperarClic(pf.querySelector('.cel-ok'), 9000, () => pf.firmar());
-    mano(pf.querySelector('canvas'));        // la mano señala dónde firmar
+    if (!rapido) mano(pf.querySelector('canvas'));        // la mano señala dónde firmar
     await firma;
     vListo(I.app, 'Retiro conformado', 'Firmado por el concesionario');
     // la pieza sube al camión
@@ -587,14 +595,26 @@
     vListo(I.app, 'Sin pendientes', 'Ruta del día completa');
     relato('', `<i class="iv-check">${IC.ok}</i><span>${t(C.titulo)}</span>`,
       t(C.texto) + '<span class="iv-beneficios">' + (C.beneficios || []).map((b) => `<span>${IC.ok}${t(b)}</span>`).join('') + '</span>');
-    boton(t(C.boton), 'otra').addEventListener('click', correr);
+    boton(t(C.boton), 'otra').addEventListener('click', () => correr());
+    botonAtras(PASOS.length - 1);
   }
 
-  // Botón "Siguiente" entre pasos (se pasa solo después de unos segundos)
+  // Botón "Siguiente" entre pasos (se pasa solo después de unos segundos) y, al lado, "Anterior"
   async function siguiente(i) {
     const sig = PASOS[i + 1];
     const b = boton(sig ? 'Siguiente: ' + t(sig.titulo) : 'Ver el cierre', 'siguiente');
+    botonAtras(i - 1 >= 0 ? i - 1 : 0);
     await esperarClic(b, 6000);          // la mano también lo señala
+  }
+  // vuelve al comienzo del paso k (en el paso 1, lo repite)
+  function botonAtras(k) {
+    const a = document.createElement('button');
+    a.type = 'button';
+    a.className = 'iv-btn atras';
+    a.title = t(PASOS[k].titulo);
+    a.innerHTML = `<svg viewBox="0 0 24 24"><path d="M5 11h11l-4-4 1.4-1.4L19.8 12l-6.4 6.4L12 17l4-4H5z"/></svg><span>${t(I.anterior || 'Paso anterior')}</span>`;
+    a.addEventListener('click', () => { usoInv = ahora(); correr(k); });
+    acciones.prepend(a);
   }
 
   // =========================================================
@@ -629,19 +649,25 @@
     quien(I.quienConcesionario);
     vConcesionario();
   }
-  async function correr() {
+  // desde: el paso por donde se retoma (los anteriores se rehacen en un instante, sin mostrarse)
+  async function correr(desde) {
+    desde = Math.max(0, +desde || 0);
     corrida++;
+    rapido = desde > 0;
     reiniciar(true);
     seccion.classList.add('corriendo');
     try {
       const pasos = [solicitud, registro, programacion, retiro, traslado, disposicion, analisis].slice(0, PASOS.length);
       for (let i = 0; i < pasos.length; i++) {
+        if (i === desde) rapido = false;
         await pasos[i]();
-        await siguiente(i);
+        if (!rapido) await siguiente(i);
       }
       await cierre();
     } catch (e) {
       if (!(e instanceof Cancelado)) console.error(e);
+    } finally {
+      if (rapido) rapido = false;
     }
   }
   function inicio() {

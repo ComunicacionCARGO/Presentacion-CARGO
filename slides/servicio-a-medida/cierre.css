@@ -55,19 +55,21 @@
 
 /* ---------- La ruta: tres franjas, las paradas y el camioncito ---------- */
 .ci-ruta { position: absolute; left: 64px; right: 64px; top: 420px; height: 290px; }
+/* las tres franjas con el grosor y los colores de la marca, como en el resto de la presentación
+   (pedido de la persona): rojo, rojo y gris oscuro de 34,6 con huecos de 10,8, centradas en las paradas */
 .ci-franjas {
   position: absolute;
-  top: 38px;
+  top: -10.7px;
   left: calc(736px - 50vw / var(--escala, 1));
   width: calc(100vw / var(--escala, 1));
-  height: 29px;
-  background: linear-gradient(var(--rojo) 0 7px, transparent 7px 11px, var(--rojo) 11px 18px, transparent 18px 22px, rgba(255, 251, 243, .55) 22px 29px);
+  height: 125.4px;
+  background: linear-gradient(var(--rojo) 0 34.6px, transparent 34.6px 45.4px, var(--rojo) 45.4px 80px, transparent 80px 90.8px, var(--gris) 90.8px 125.4px);
   clip-path: inset(0 100% 0 0);
   transition: clip-path 1.6s cubic-bezier(.6, 0, .2, 1) .3s;
 }
 .sv-cierre.visible .ci-franjas { clip-path: inset(0 0 0 0); }
 /* el camioncito anda por la ruta y pasa por detrás de las paradas */
-.ci-camion { position: absolute; top: 6px; left: -4%; z-index: 1; width: 36px; height: 36px; opacity: 0; transition: opacity .6s ease 1.6s; }
+.ci-camion { position: absolute; top: -44px; left: -4%; z-index: 1; width: 36px; height: 36px; opacity: 0; transition: opacity .6s ease 1.6s; }
 .ci-camion svg { width: 36px; height: 36px; fill: var(--blanco); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45)); }
 .sv-cierre.visible .ci-camion { opacity: 1; animation: ci-anda 14s linear 1.6s infinite; }
 .sv-cierre:not(.visible) .ci-camion { animation: none; }
