@@ -5,7 +5,9 @@
    por encima, encabezada por las franjas de la marca (.in-franjas, como.css).
    Medidas en px del escenario, tomadas del diseño de la persona.
    ========================================================= */
-.pista section.sv-portada { z-index: 0; height: 1036px; }   /* 900 + las tres franjas de la entrada (136), que así arrancan fuera de la pantalla */
+/* 900 + las tres franjas de la entrada (136), que así arrancan fuera de la pantalla, + 760 del
+   resumen "Todo esto, PENSADO PARA FORD" (cierre.js), que aparece encima de la portada quieta */
+.pista section.sv-portada { z-index: 0; height: 1796px; }
 .pista section.sv-tms { z-index: 1; }   /* ¿Cómo lo hacemos? sube por encima de la portada quieta */
 .sv-portada.lejos { visibility: hidden; }
 

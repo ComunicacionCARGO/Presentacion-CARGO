@@ -1,16 +1,17 @@
 /* =========================================================
-   CIERRE DE SERVICIO A MEDIDA (pedido de la persona: la diapositiva terminaba de golpe en
-   Centros logísticos, y el primer resumen de tarjetas no la convenció: "más gráfico y estético,
-   como el resto de los cierres"). Las franjas de la marca arriba y, de fondo, el paisaje de la
-   portada (cielo, árboles y alambrado, atenuados; se mueven apenas con el mouse). Título
-   centrado y LA RUTA: las tres franjas cruzan la pantalla y cada parte de la diapositiva es una
-   parada (círculo de vidrio con su ícono, número, título y frase); un camioncito la recorre.
-   Al tocar una parada se vuelve a esa parte. Abajo, Volver al inicio y Siguiente.
+   RESUMEN DE SERVICIO A MEDIDA — "Todo esto, PENSADO PARA FORD".
+   Era el cierre de la diapositiva; gustó tanto que la persona lo pasó al principio, como una
+   capa encima de la portada: al bajar, la portada queda quieta, el fondo se oscurece y se
+   desenfoca un poco y aparecen el título y LA RUTA (las tres franjas de la marca cruzan la
+   pantalla y cada parte de la diapositiva es una parada: círculo con su ícono, número, título y
+   frase; un camioncito la recorre). Al tocar una parada se va a esa parte. Si se sigue bajando,
+   "¿Cómo lo hacemos?" sube por encima (como antes sobre la portada).
+   Los botones "Volver al inicio" y "Siguiente" quedaron al final de la diapositiva (.sv-fin).
    Textos en datos/servicio.js → cierre.
    ========================================================= */
 (function () {
-  const SV = window.SV, sec = document.querySelector('.sv-cierre');
-  if (!SV || !sec) return;
+  const SV = window.SV, capa = document.querySelector('.sv-cierre'), portada = document.querySelector('.sv-portada');
+  if (!SV || !capa || !portada) return;
   const { S, txt, esc } = SV;
   const C = S.cierre || {};
   const DESTINO = { como: '.sv-tms', devoluciones: '.sv-inv', tableros: '.sv-bi', mapa: '.seccion-distribucion', centros: '.sv-ubi' };
@@ -23,15 +24,18 @@
   };
   const CAMION = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 5h13v11H1zM15 8.5h4.6L23 12.8V16h-8z"/><circle cx="5.5" cy="18" r="2.6"/><circle cx="18.5" cy="18" r="2.6"/></svg>';
   const partes = (C.partes || []).filter((p) => DESTINO[p.seccion]);
-  const IMG = '../../img/portada-servicio/';
 
-  sec.innerHTML =
-    // fondo: franjas arriba y el paisaje de la portada, atenuado
-    '<div class="ci-fondo" aria-hidden="true"><div class="ci-escena">' +
-    `<img class="ci-cielo" src="${IMG}cielo.webp" alt="" decoding="async" loading="lazy">` +
-    `<img class="ci-arboles" src="${IMG}fondo.webp" alt="" decoding="async" loading="lazy">` +
-    `<img class="ci-alambrado" src="${IMG}medio.webp" alt="" decoding="async" loading="lazy">` +
-    '</div><i class="ci-velo"></i></div>' +
+  // ---------- Cuándo se ve (px de scroll desde arriba de todo) ----------
+  // De DESDE a HASTA el fondo se oscurece y se desenfoca; pasado MOSTRAR entra el contenido
+  // (y se va al volver a subir, así se repite). La portada mide 1036 + EXTRA (portada.css):
+  // con el resumen entero hay unos 360 px de scroll antes de que suba "¿Cómo lo hacemos?".
+  // (el contenido entra cuando el título de la portada ya casi se fue: si no, se encimaban)
+  const DESDE = 60, HASTA = 360, MOSTRAR = 320, OCULTAR = 250;
+  // en el índice de la derecha, "Resumen" lleva a este punto (con todo a la vista)
+  const Y_RESUMEN = +capa.dataset.indiceY || 480;
+
+  capa.innerHTML =
+    '<i class="ci-velo" aria-hidden="true"></i>' +
     `<h2 class="ci-cab"><span>${txt(C.antetitulo)}</span><b>${txt(C.titulo)}</b></h2>` +
     `<p class="ci-bajada">${txt(C.bajada)}</p>` +
     // la ruta: tres franjas, las paradas y el camioncito
@@ -40,34 +44,32 @@
       `<button type="button" class="ci-parada" data-s="${esc(p.seccion)}" style="--i:${i};left:${(100 * (i + .5) / partes.length).toFixed(3)}%">` +
       `<span class="ci-circulo"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONO[p.seccion]}</svg></span>` +
       `<span class="ci-txt"><b><em>${String(i + 1).padStart(2, '0')}</em>${txt(p.titulo)}</b><small>${txt(p.texto)}</small>` +
-      `<u>${txt(C.verDeNuevo || 'Ver de nuevo')} →</u></span></button>`).join('') + '</div>' +
-    '<div class="ci-fin fin-botones">' +
-    `<a class="boton-fin-volver" href="../../index.html" data-transicion><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${txt(C.volver || 'Volver al inicio')}</a>` +
-    (window.SIGUIENTE ? SIGUIENTE.html() : '') + '</div>';
+      `<u>${txt(C.verDeNuevo || 'Ver esta parte')} →</u></span></button>`).join('') + '</div>';
 
-  // cada parada vuelve a su parte de la diapositiva
-  sec.querySelectorAll('.ci-parada').forEach((b) => b.addEventListener('click', () => {
+  // cada parada lleva a su parte de la diapositiva
+  capa.querySelectorAll('.ci-parada').forEach((b) => b.addEventListener('click', () => {
     const el = document.querySelector(DESTINO[b.dataset.s]);
     if (el && window.desplazamiento) window.desplazamiento.ir(el.offsetTop);
   }));
 
-  // entra al llegar (y se va al volver a subir, así se repite)
-  const escena = sec.querySelector('.ci-escena');
   let visible = false;
-  document.addEventListener('desplazamiento', (e) => {
-    visible = e.detail.y > sec.offsetTop - 420;
-    sec.classList.toggle('visible', visible);
-  });
-  // el paisaje se mueve apenas con el mouse (solo vertical y poquito, como en la portada)
-  let objetivo = 0, actual = 0, andando = false;
-  addEventListener('pointermove', (e) => {
-    if (!visible || e.pointerType === 'touch') return;
-    objetivo = (e.clientY / innerHeight - .5) * 2;
-    if (!andando) { andando = true; requestAnimationFrame(paso); }
-  });
-  function paso() {
-    actual += (objetivo - actual) * .08;
-    escena.style.setProperty('--m', actual.toFixed(3));
-    if (Math.abs(objetivo - actual) > .002 && visible) requestAnimationFrame(paso); else andando = false;
+  function alDesplazar(y) {
+    const p = Math.max(0, Math.min(1, (y - DESDE) / (HASTA - DESDE)));
+    capa.style.setProperty('--p', p.toFixed(3));
+    capa.classList.toggle('activa', p > 0);
+    if (!visible && y > MOSTRAR) visible = true;
+    else if (visible && y < OCULTAR) visible = false;
+    capa.classList.toggle('visible', visible);
+  }
+  document.addEventListener('desplazamiento', (e) => alDesplazar(e.detail.y));
+  alDesplazar(window.desplazamiento ? window.desplazamiento.y : 0);
+  window.SV.yResumen = Y_RESUMEN;
+
+  // ---------- Al final de la diapositiva: Volver al inicio y Siguiente ----------
+  const fin = document.querySelector('.sv-fin');
+  if (fin) {
+    fin.innerHTML = '<div class="ci-fin fin-botones">' +
+      `<a class="boton-fin-volver oscuro" href="../../index.html" data-transicion><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${txt(C.volver || 'Volver al inicio')}</a>` +
+      (window.SIGUIENTE ? SIGUIENTE.html() : '') + '</div>';
   }
 })();

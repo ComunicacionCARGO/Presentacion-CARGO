@@ -326,12 +326,14 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       a quien mantiene la presentación (la carpeta original "Secuencia Camion"
       queda en la compu y no se sube a internet).
       Al mover el mouse cada capa se corre distinto, solo arriba y abajo (el
-      cielo casi nada, el camión lo que más), y al bajar la siguiente pantalla
-      sube por encima.
+      cielo casi nada, el camión lo que más). Al bajar, la portada queda
+      quieta, se oscurece y aparece encima el resumen "Todo esto, PENSADO PARA
+      FORD" (ver "cierre" más abajo); bajando más, "¿Cómo lo hacemos?" sube por
+      encima.
       intro: la tarjeta de presentación que aparece sobre la foto. Pasa sola
       por los párrafos (uno por vez; cada uno se queda más o menos según lo
       largo que sea) y termina en la pregunta, la invitación y el botón que baja
-      a "¿Cómo lo hacemos?". Arriba a la derecha tiene una flecha para volver
+      al resumen. Arriba a la derecha tiene una flecha para volver
       y el botón "Siguiente" (su texto es botonSiguiente); si alguien los usa,
       deja de pasar sola. rotulo es la palabra chica de arriba; en parrafos
       se pueden agregar o sacar renglones (cada uno entre comillas, con su
@@ -358,11 +360,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
       titulo y texto: lo que se lee en la parada.
       interfaz: (opcional) la conexión entre sistemas que actúa ahí: nombre,
                 texto, de (de dónde sale la información) y a (adónde va).
-    Las paradas de geoposicionamiento a entrega llevan la marca "Tracking" (el
-    texto de esa marca, el rótulo "Interfaz", el "de" de "01 de 05" y los rótulos
+    Las paradas desde el ingreso del pedido hasta la entrega llevan la marca
+    "Tracking": el tracking empieza cuando se recibe el pedido (el texto de esa
+    marca, el rótulo "Interfaz", el "de" de "01 de 05" y los rótulos
     "Siguiente" y "Primera parada" que aparecen al lado del punto que viene, e
     "irParada", que aparece al pasar el cursor por cualquier punto, también
-    están en recorrido). final y finalBoton: la frase de la última
+    están en recorrido). Los puntos de la ruta se pueden tocar para ir a esa
+    parada. verSiguiente: el botón rojo que aparece al terminar cada demo, al
+    lado del botón para repetirla; verSiguienteFinal: el de la última parada
+    (lleva a las devoluciones). final y finalBoton: la frase de la última
     parada, que lleva a los tableros.
   • tms: los datos de las demos de cada parada (todos de ejemplo).
     Ninguna demo arranca sola al llegar: la primera vez una manito invita a
@@ -385,11 +391,15 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   bultos escaneados a mano (4) sigue el lector automático.
                   En indicadores van los tipos de bulto: nombre, la marca que
                   lleva en la planchada (U, VI; Stock sin marca) y el número
-                  inicial del contador de abajo. ayuda, ayudaFaltan ({faltan})
-                  y ayudaAuto: el texto de abajo en cada momento.
+                  inicial del contador de abajo (indicadoresTitulo es el
+                  título que va a su izquierda). ayuda, ayudaFaltan ({faltan})
+                  y ayudaAuto: el texto de arriba, al lado del título, en cada
+                  momento.
       despachos:  gestión de viajes y entrega: la carta de porte digital (sus
                   datos, los textos de antes y después de firmarla y los de la
-                  app del celular: docApp, docQuien, docDigital, firmaAca), el
+                  app del celular: docApp, docQuien, docDigital, firmaAca = lo
+                  que dice el cuadro de firma). Se firma con el botón docBoton
+                  (ya no con el mouse). También el
                   rótulo de la planchada simplificada (viajesPlanchada) y los
                   viajes del día: código, unidad, paradas (la primera es la
                   salida) y cuántos bultos lleva cada uno.
@@ -397,13 +407,16 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
                   fuentes de información y los eventos (fecha y hora, qué
                   pasó, dónde y de qué fuente viene, del 1 al 4). Los eventos
                   desde el que dice "Entrega" llegan recién al firmar.
-  • cierre: la última pantalla, "Todo esto, PENSADO PARA FORD": antetitulo,
-    titulo, bajada, verDeNuevo y volver (los textos de los botones) y partes:
-    una tarjeta por parte de la diapositiva (seccion, titulo y texto). La
-    seccion dice adónde vuelve al tocarla y NO SE CAMBIA (como, devoluciones,
-    tableros, mapa o centros). El botón "Siguiente" se arma solo con la carta
-    que sigue en la portada (datos/cartas.js): si se cambia el orden o el
-    título de las cartas, el botón cambia solo, en todas las diapositivas.
+  • cierre: el resumen "Todo esto, PENSADO PARA FORD", que aparece al bajar
+    desde la portada, encima de ella: antetitulo, titulo, bajada, verDeNuevo
+    (lo que aparece al pasar el cursor por cada parada) y partes: una parada
+    por parte de la diapositiva (seccion, titulo y texto). La seccion dice
+    adónde lleva al tocarla y NO SE CAMBIA (como, devoluciones, tableros, mapa
+    o centros). volver: el botón del final de la diapositiva (abajo de todo,
+    después de Centros logísticos), al lado de "Siguiente". El botón
+    "Siguiente" se arma solo con la carta que sigue en la portada
+    (datos/cartas.js): si se cambia el orden o el título de las cartas, el
+    botón cambia solo, en todas las diapositivas.
   • centros: pantalla "Centros logísticos / CROSSDOCKING" (después del mapa de
     distribución; comparte la pantalla con el mapa de la zona de Pacheco).
     A la izquierda van el título, la frase, el total de m² (se suma solo) y la
@@ -441,21 +454,22 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
     Las fotos de las dos tarjetas están en img\ecosistema (no-calidad.webp y
     robot.webp). Los registros y respuestas son de ejemplo.
   • inversa: la pantalla "¿Y si hay una DEVOLUCIÓN?" (antetitulo y titulo; si
-    el título es largo, la letra se achica sola) y la simulación del reclamo
-    (el concesionario pide la devolución desde el celular y después lo usa el
+    el título es largo, la letra se achica sola) y la simulación de una
+    devolución (el concesionario la pide desde el celular y después lo usa el
     chofer).
-      - número de reclamo, pieza y dirección de ejemplo; nombres de las apps y
+      - número de la devolución, fichaRotulo (la palabra arriba del número en
+        la ficha), pieza y dirección de ejemplo; nombres de las apps y
         de quién usa el celular (Concesionario / Chofer CARGO);
       - tipos: los motivos que elige el concesionario (Devolución, Garantía,
         Rotación): detalle, a dónde va después de la inspección, si lleva
         reposición (true = sí, false = no) y delMes (cuántas hubo este mes,
         para el gráfico del análisis de causas);
       - destinos: las 3 opciones de la disposición final;
-      - estados: cómo cambia el estado del reclamo en la ficha;
+      - estados: cómo cambia el estado de la devolución en la ficha;
       - pasos: título, texto y eventos (hora y texto) de cada uno de los 7
         pasos. En los textos se pueden usar {numero}, {pieza}, {tipo} y {destino};
-      - cierre: textos del final, los beneficios y el botón "Simular otro
-        reclamo";
+      - cierre: textos del final, los beneficios y el botón "Simular otra
+        devolución";
       - anterior: el texto del botón para volver un paso, que va al lado de
         "Siguiente" (vuelve al comienzo del paso anterior).
     Los horarios, números y cantidades son de ejemplo: es una simulación.
@@ -467,7 +481,8 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
         escudo, barras, arbol, ciclo o cabeza), una "lista" opcional de
         renglones y irATableros: true si lleva el botón que vuelve a los tableros.
   • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE", después de la
-    simulación; tiene tres pestañas: entregas, logística inversa y ventajas):
+    simulación; tiene cinco pestañas: entregas, entregas por provincia,
+    entregas por concesionario, logística inversa y ventajas):
       - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
       - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
         porcentaje: true si es un %) y los meses (mes, kg, otd = el resultado
@@ -475,6 +490,13 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
         expectativa punteada; el mes en que el resultado queda abajo de la
         expectativa se marca en ámbar). serieReal y serieObjetivo son los
         nombres de las líneas. La escala del gráfico se ajusta sola;
+      - provincias: el % de entregas en tiempo de cada provincia (nombre,
+        entregas y otd = el %), la expectativa (la línea punteada de las
+        barras) y los textos de la pestaña. Se puede ordenar por % o por
+        cantidad de entregas; los indicadores de arriba se calculan solos;
+      - concesionarios: la tabla de concesionarios (nombre, provincia,
+        entregas y otd); son inventados ("Concesionario 1, 2…"). columnas son
+        los títulos de la tabla; tocando cada uno se ordena;
       - inversa: textos de la pestaña y las provincias (corto, nombre,
         enTiempo y demorado). El cumplimiento y el número del medidor se
         calculan solos con las provincias.

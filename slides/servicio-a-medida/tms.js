@@ -128,8 +128,9 @@
   const ABAJO = 900 + RECORRIDO;          // donde arrancan las franjas de abajo
   const yParada = (i) => ENTRADA + i * PASO;   // scroll (desde el comienzo de la sección) de cada parada
   seccion.style.height = (ABAJO + 91) + 'px';
-  // el tracking va desde la planchada (ahí se ubica cada bulto en el stage de su ruta) hasta la entrega
-  const iTrack = [PARADAS.findIndex((p) => p.clave === 'ubicacion'), PARADAS.findIndex((p) => p.clave === 'entrega')];
+  // el tracking va desde que se recibe el pedido (pedido de la persona: ahí está el primer evento)
+  // hasta la entrega
+  const iTrack = [PARADAS.findIndex((p) => p.clave === 'pedido'), PARADAS.findIndex((p) => p.clave === 'entrega')];
   const conTracking = (i) => iTrack[0] >= 0 && i >= iTrack[0] && i <= iTrack[1];
   // una curva: dos arcos (gris y rojo, con el crema de los huecos) de un cuarto de círculo;
   // la franja de afuera no es un arco: todo lo de afuera de la curva va en rojo (pedido de la
@@ -203,6 +204,13 @@
         '</div>';
     }).join('') + '</div>');
   const etapasEl = [...izq.querySelectorAll('.rc-etapa')];
+  // en la última parada, "Ver el siguiente paso" va en la columna del texto (lleva a la logística
+  // inversa; aparece cuando se probaron las dos tarjetas de experiencia.js)
+  const pasoFinal = N ? botonPaso(null, 'final') : null;
+  if (pasoFinal) {
+    pasoFinal.querySelector('span').innerHTML = txt(R.verSiguienteFinal || '¿Y si hay una devolución?');
+    etapasEl[N - 1].insertBefore(pasoFinal, etapasEl[N - 1].querySelector('.rc-final'));
+  }
   // el título grande se achica si una palabra no entra en la columna
   const ajustarTitulos = () => izq.querySelectorAll('.rc-titulo').forEach((h) => {
     let t = 58;
@@ -239,12 +247,37 @@
   // cada demo arranca al llegar a su parada (con la sección en pantalla)
   function activarVista() { if (alElegir[pestana]) alElegir[pestana](modo); }
   // para ecosistema.js y experiencia.js
-  SV.tms = { vistas, alElegir, get pestana() { return pestana; }, get modo() { return modo; }, get enVista() { return enVista; } };
+  SV.tms = { vistas, alElegir, pasoFinal, get pestana() { return pestana; }, get modo() { return modo; }, get enVista() { return enVista; } };
 
   // ---------- El scroll sube los puntos; la caja y el panel quedan quietos ----------
   const topeDe = () => seccion.offsetTop;
   const irParada = (i) => { if (window.desplazamiento) window.desplazamiento.ir(topeDe() + yParada(i)); };
   puntosEl.forEach((el, i) => el.addEventListener('click', () => irParada(i)));
+  // Dentro del recorrido, el cartel "Bajá para seguir" (y Av Pág / Re Pág) va de parada en parada,
+  // no a la sección siguiente (compartido/indice.js avisa con el evento indice-paso)
+  document.addEventListener('indice-paso', (e) => {
+    const d = e.detail.y - topeDe();
+    if (d < -5 || d > RECORRIDO + 5) return;
+    const k = e.detail.dir > 0 ? PARADAS.findIndex((_, i) => yParada(i) > d + 5)
+      : PARADAS.map((_, i) => i).reverse().find((i) => yParada(i) < d - 5);
+    if (k == null || k < 0) return;      // después de la última (o antes de la primera): la sección de al lado
+    e.preventDefault();
+    irParada(k);
+  });
+  // "Ver el siguiente paso": aparece al terminar cada demo, al lado del botón para repetirla
+  // (pedido de la persona: este va resaltado y el de repetir, más discreto). En la última
+  // parada lleva a la logística inversa.
+  function botonPaso(padre, clase) {
+    const b = crear('button', 'rc-paso-sig' + (clase ? ' ' + clase : ''), padre, `<span>${txt(R.verSiguiente || 'Ver el siguiente paso')}</span>${icono('flecha')}`);
+    b.type = 'button';
+    b.addEventListener('click', () => {
+      if (parada < N - 1) { irParada(parada + 1); return; }
+      const inv = document.querySelector('.sv-inv');
+      if (inv && window.desplazamiento) window.desplazamiento.ir(inv.offsetTop);
+    });
+    return b;
+  }
+  SV.botonPaso = botonPaso;
   const final = izq.querySelector('.rc-final');
   if (final) final.addEventListener('click', () => { const bi = document.querySelector('.sv-bi'); if (bi && window.desplazamiento) window.desplazamiento.ir(bi.offsetTop); });
 
@@ -335,10 +368,11 @@
       `<div class="pd-llegada"><p>${txt(TP.llegada)}</p><i class="pd-calle"></i>` +
       `<span class="pd-camion">${icono('viajes')}</span><span class="pd-dep">${icono('deposito')}<b>${txt(TP.deposito)}</b></span>` +
       '<div class="pd-cajas"></div><p class="pd-recibidos"></p></div>' +
-      `<button type="button" class="pd-boton">${txt(TP.boton)}</button>`;
+      `<div class="pd-acc"><button type="button" class="pd-boton">${txt(TP.boton)}</button></div>`;
     const filas = v.querySelector('.pd-filas'), archivo = v.querySelector('.pd-archivo');
     const llegada = v.querySelector('.pd-llegada'), cajas = v.querySelector('.pd-cajas'), recibidos = v.querySelector('.pd-recibidos');
     const boton = v.querySelector('.pd-boton');
+    botonPaso(v.querySelector('.pd-acc'));
     const c = corredor();
     function reiniciar() {
       c.nueva();
@@ -412,19 +446,20 @@
   const chipTipo = (t, extra) => `<i class="tc-b${extra || ''}" data-t="${t}">${esc(TIPOS[t] ? TIPOS[t].marca : '')}</i>`;
 
   vCarga.innerHTML =
-    `<div class="tc-cabeza"><b>${txt(TC.panel)}</b><span class="tc-vivo"><i></i>EN VIVO</span>` +
-    `<span class="tc-track"><i></i>${txt(R.tracking || 'Tracking')}</span></div>` +
+    // arriba, al lado del título, la ayuda (pedido de la persona: en el lugar del "En vivo" y el
+    // "Tracking"); con el lector automático, el botón para ver el paso siguiente
+    `<div class="tc-cabeza"><b>${txt(TC.panel)}</b>` +
+    `<p class="tc-ayuda">${icono('lector')}<span></span><b class="tc-prog"></b></p></div>` +
     `<div class="tc-recepcion"><span>${txt(TC.recepcion)}</span><div class="tc-cola"></div></div>` +
     '<div class="tc-plano">' + RUTAS.map((r, s) =>
       `<div class="tc-stage" style="--c:${r.color}"><div class="tc-scab"><small>${txt(TC.stage || 'Stage')}</small>` +
       `<b>${txt(TC.ruta || 'Ruta')} ${esc(r.nombre)}</b><em>${esc(r.codigo)}</em></div>` +
       zonasDe(s).map((z) => `<div class="tc-celda" data-z="${z}"><span>ZS ${z}</span><em class="tc-sale">Despacho</em><div class="tc-bultos"></div></div>`).join('') +
       '</div>').join('') + '</div>' +
-    // lo que antes iba arriba (los contadores por tipo), abajo y con menos importancia
-    '<div class="tc-pie"><div class="tc-inds">' + TIPOS.map((t, i) =>
-      `<span class="tc-ind">${chipTipo(i)}${txt(t.nombre)}<b>${t.valor}</b></span>`).join('') +
-    `<span class="tc-ind total">${txt(TC.total)}<b>0</b></span></div>` +
-    `<p class="tc-ayuda">${icono('lector')}<span></span><b class="tc-prog"></b></p></div>` +
+    // abajo, los indicadores por tipo, grandes y con su título
+    `<div class="tc-pie"><p class="tc-pie-tit"><i></i>${txt(TC.indicadoresTitulo || 'Indicadores de planchada en vivo:')}</p><div class="tc-inds">` + TIPOS.map((t, i) =>
+      `<span class="tc-ind">${chipTipo(i)}<small>${txt(t.nombre)}</small><b>${t.valor}</b></span>`).join('') +
+    `<span class="tc-ind total"><small>${txt(TC.total)}</small><b>0</b></span></div></div>` +
     // la ventana del primer escaneo
     '<div class="tc-ventana" aria-hidden="true"><div class="tc-vcard" role="dialog" aria-modal="true">' +
     '<button type="button" class="tc-vcerrar" aria-label="Cerrar">×</button>' +
@@ -436,6 +471,7 @@
 
   const cola = vCarga.querySelector('.tc-cola');
   const ayuda = vCarga.querySelector('.tc-ayuda'), ayudaEl = ayuda.querySelector('span');
+  const pasoCarga = botonPaso(vCarga.querySelector('.tc-cabeza'), 'chico');
   const ventana = vCarga.querySelector('.tc-ventana');
   const celdas = {};
   vCarga.querySelectorAll('.tc-celda').forEach((el) => { celdas[el.dataset.z] = { el, bultos: el.querySelector('.tc-bultos'), n: 0, ocupada: false }; });
@@ -506,6 +542,7 @@
   function actualizarAyuda() {
     ayuda.classList.toggle('auto', auto);
     ayuda.classList.toggle('destacada', !auto);
+    pasoCarga.classList.toggle('visible', auto);
     ayudaEl.innerHTML = auto ? txt(TC.ayudaAuto)
       : manuales ? txt(TC.ayudaFaltan, { faltan: MANUALES - manuales }) : txt(TC.ayuda);
     ayuda.querySelector('.tc-prog').innerHTML = auto ? ''

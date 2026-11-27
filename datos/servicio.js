@@ -83,18 +83,21 @@ window.SERVICIO = {
     siguiente: "Siguiente",             // al lado del punto de la parada que viene
     irParada: "Ir a esta parada",       // al pasar el cursor por cualquier punto de la ruta
     primera: "Primera parada",
+    // el botón que aparece al terminar cada demo (y el de la última parada, que lleva a las devoluciones)
+    verSiguiente: "Ver el siguiente paso",
+    verSiguienteFinal: "¿Y si hay una devolución?",
     paradas: [
       {
         clave: "pedido",
         titulo: "Ingreso del pedido",
-        texto: "**{cliente}** nos envía el pedido desde su sistema y la mercadería llega al **depósito de CARGO**.",
+        texto: "**{cliente}** nos envía el pedido desde su sistema y la mercadería llega al **depósito de CARGO**. Desde que se recibe el pedido empieza el **tracking en tiempo real**.",
         interfaz: { nombre: "Ingreso de pedidos", texto: "Recibe y procesa los archivos que informa {cliente}: nadie vuelve a cargar los datos.", de: "ERP {cliente}", a: "TMS CARGO" }
       },
       {
         clave: "ubicacion",
         titulo: "Geoposicionamiento indoor",
-        texto: "Cada bulto se lee al ingresar y queda **en el stage de su ruta**, en su posición exacta (z-stage): así cada ruta se prepara **sin pérdidas**. Desde acá empieza el **tracking en tiempo real**.",
-        interfaz: { nombre: "Obtención de eventos", texto: "Busca y registra los eventos de cada carga: así arranca su seguimiento.", de: "Depósito y socios", a: "TMS CARGO" }
+        texto: "Cada bulto se lee al ingresar y queda **en el stage de su ruta**, en su posición exacta (z-stage): así cada ruta se prepara **sin pérdidas**.",
+        interfaz: { nombre: "Obtención de eventos", texto: "Busca y registra los eventos de cada carga: así se sigue cada bulto.", de: "Depósito y socios", a: "TMS CARGO" }
       },
       {
         clave: "viajes",
@@ -139,7 +142,7 @@ window.SERVICIO = {
       ],
       llegada: "Llegada de la mercadería",
       deposito: "Depósito CARGO",
-      recibidos: "✓ **{bultos} bultos** recibidos: pasan a ubicarse en el depósito",
+      recibidos: "✓ **{bultos} bultos** recibidos: empieza su **tracking en tiempo real**",
       // La primera vez la demo espera que la persona la empiece (después arranca sola)
       botonInicio: "Recibir el pedido",
       invitacion: "**Hacé clic** para recibir el pedido de {cliente}",
@@ -159,10 +162,12 @@ window.SERVICIO = {
         { nombre: "V.I.", marca: "VI", valor: 9 }
       ],
       total: "Total en planchada",
-      // Ayuda de abajo: antes de escanear, mientras se escanea a mano ({faltan}) y con el lector automático
+      indicadoresTitulo: "Indicadores de planchada en vivo:",   // abajo, al lado de los contadores
+      // Ayuda de arriba (al lado del título): antes de escanear, mientras se escanea a mano ({faltan})
+      // y con el lector automático
       ayuda: "Hacé clic en un bulto que llega para escanearlo",
       ayudaFaltan: "Seguí escaneando: {faltan} más y el lector sigue solo",
-      ayudaAuto: "Lector automático · hacé clic en un bulto para escanearlo vos",
+      ayudaAuto: "Lector automático · hacé clic en un bulto para escanearlo",
       escanear: "**Escaneá** este bulto", // el texto al lado de la manito que señala el bulto
       manualesParaAuto: "4",            // cuántos bultos se escanean a mano antes del lector automático
       // La ventana que aparece una sola vez, al escanear el primer bulto.
@@ -185,10 +190,10 @@ window.SERVICIO = {
       docApp: "Carta de porte",              // el título de la app en el celular
       docQuien: "Chofer CARGO",              // quién usa la app
       docDigital: "100% digital · sin papel",
-      firmaAca: "Firmá acá",
+      firmaAca: "Firma del concesionario",
       // La primera vez cada demo espera que la persona la haga (después se hace sola): textos de la manito
       invitaViajes: "**Hacé clic** para armar los viajes",
-      invitaFirma: "**Firmá** la entrega con el mouse",
+      invitaFirma: "**Hacé clic** para firmar la entrega",
       docPendiente: "Pendiente de conformar",
       firmaPendiente: "Se firma en la entrega",
       docBoton: "Firmar la entrega",
@@ -228,9 +233,10 @@ window.SERVICIO = {
       // Eventos del envío: fecha y hora, qué pasó, dónde y de qué fuente viene (1 a 4).
       // Los que dicen "Entrega" (y los que siguen) llegan recién cuando se firma la carta de porte.
       eventos: [
+        // (el tracking empieza cuando se recibe el pedido)
+        { hora: "15/07 08:02", texto: "Pedido recibido en el TMS", lugar: "Interfaz con el ERP de {cliente}", fuente: 1 },
         { hora: "15/07 10:41", texto: "Ingreso a depósito", lugar: "Depósito CARGO Córdoba", fuente: 1 },
-        { hora: "15/07 13:37", texto: "En tránsito", lugar: "Hacia depósito CARGO Rosario", fuente: 1 },
-        { hora: "16/07 06:12", texto: "Viaje en ruta", lugar: "Ruta 9 · socio de transporte", fuente: 2 },
+        { hora: "15/07 13:37", texto: "En tránsito", lugar: "Ruta 9 · socio de transporte", fuente: 2 },
         { hora: "16/07 11:11", texto: "Ingreso a depósito", lugar: "Depósito CARGO Rosario", fuente: 1 },
         { hora: "18/07 07:51", texto: "Salida a distribución", lugar: "Chofer CARGO · Unidad 14", fuente: 4 },
         { hora: "18/07 11:40", texto: "Entrega realizada · e-POD", lugar: "Av. Ejemplo 1234", fuente: 4 },
@@ -279,7 +285,7 @@ window.SERVICIO = {
     }
   },
 
-  // ---------- Logística inversa: simulación de un reclamo ----------
+  // ---------- Logística inversa: simulación de una devolución ----------
   // Los horarios, números y cantidades son de ejemplo (es una simulación).
   inversa: {
     antetitulo: "¿Y si hay una",
@@ -293,14 +299,15 @@ window.SERVICIO = {
     direccion: "Av. Ejemplo 1234",
     centro: "Depósito",
     numero: "RC-24117",
+    fichaRotulo: "Devolución",           // el rótulo de la ficha del TMS (arriba del número)
     pieza: "Pieza 7A2B-14K",
     introTitulo: "Así funciona una devolución",
     introTexto: "El número de cada pieza ya está en la base de datos de CARGO gracias a la **interfaz** con {cliente}: si coincide, la devolución se aprueba y nos ocupamos del resto (retiro, traslado, trazabilidad y disposición final). **Vos manejás el celular.**",
-    empezar: "Simular un reclamo",
+    empezar: "Simular una devolución",
     anterior: "Paso anterior",           // el botón para volver un paso (al lado de "Siguiente")
     ejemplo: "Simulación con datos de ejemplo",
-    sinReclamo: "Todavía no hay ningún reclamo. Empezá la simulación y mirá cómo se completa el seguimiento.",
-    // Estado del reclamo en la ficha, en orden (uno por paso a partir del registro, y el último al cerrar)
+    sinReclamo: "Todavía no hay ninguna devolución. Empezá la simulación y mirá cómo se completa el seguimiento.",
+    // Estado de la devolución en la ficha, en orden (uno por paso a partir del registro, y el último al cerrar)
     estados: ["Abierto", "Retiro programado", "Retirado", "En viaje", "En depósito", "En análisis", "Cerrado"],
     // Motivos que elige el concesionario.
     // destino: a dónde va después de la inspección (tiene que estar en la lista "destinos")
@@ -325,10 +332,10 @@ window.SERVICIO = {
         texto: "El número de la pieza se **valida contra la base de CARGO**: coincide, así que la devolución **se aprueba** y se avisa **por mail** a {cliente} y al concesionario.",
         eventos: [
           { hora: "Día 1 · 10:43", texto: "{pieza}: coincide con la base de CARGO · aprobada" },
-          { hora: "Día 1 · 10:43", texto: "Reclamo {numero} creado en el TMS" },
+          { hora: "Día 1 · 10:43", texto: "Devolución {numero} creada en el TMS" },
           { hora: "Día 1 · 10:43", texto: "Aviso por mail a {cliente} y al concesionario" }
         ],
-        mails: ["{cliente}: reclamo {numero} registrado", "Concesionario: recibimos tu devolución"]
+        mails: ["{cliente}: devolución {numero} registrada", "Concesionario: recibimos tu devolución"]
       },
       {
         titulo: "Programación",
@@ -367,14 +374,14 @@ window.SERVICIO = {
       }
     ],
     cierre: {
-      titulo: "Reclamo cerrado",
+      titulo: "Devolución cerrada",
       texto: "Un proceso controlado que aporta valor real: {cliente} lo siguió en línea y **no se usó un solo papel**.",
       reposicion: "Reposición entregada al concesionario",
-      evento: { hora: "Día 3 · 10:15", texto: "Reclamo cerrado" },
-      mail: "{cliente}: reclamo {numero} cerrado",
+      evento: { hora: "Día 3 · 10:15", texto: "Devolución cerrada" },
+      mail: "{cliente}: devolución {numero} cerrada",
       // Beneficios que se muestran al final
       beneficios: ["Trazabilidad total", "Respuesta ágil", "Menos pérdidas", "Autogestión del concesionario"],
-      boton: "Simular otro reclamo"
+      boton: "Simular otra devolución"
     }
   },
 
@@ -438,6 +445,59 @@ window.SERVICIO = {
         { mes: "Mayo", kg: 282470, otd: 98.14, objetivo: 98.14 },
         { mes: "Junio", kg: 220178, otd: 98.21, objetivo: 98.17 },
         { mes: "Julio", kg: 98830, otd: 98.26, objetivo: 98.20 }
+      ]
+    },
+    // % de entregas en tiempo por provincia — EJEMPLO (las entregas suman la "Cantidad ADD" de
+    // arriba y el promedio da su OTD). otd: % de entregas en tiempo. expectativa: la línea punteada
+    provincias: {
+      pestana: "Entregas por provincia",
+      titulo: "Entregas por provincia",
+      graficoTitulo: "% de entregas en tiempo por provincia",
+      expectativa: 98,
+      ordenarPor: "Ordenar por",
+      porPorcentaje: "% en tiempo",
+      porEntregas: "Entregas",
+      lista: [
+        { nombre: "Buenos Aires", entregas: 38440, otd: 98.22 },
+        { nombre: "CABA", entregas: 15880, otd: 98.38 },
+        { nombre: "Córdoba", entregas: 12950, otd: 98.14 },
+        { nombre: "Santa Fe", entregas: 11240, otd: 98.15 },
+        { nombre: "Mendoza", entregas: 6310, otd: 97.94 },
+        { nombre: "Tucumán", entregas: 4720, otd: 97.86 },
+        { nombre: "Entre Ríos", entregas: 4180, otd: 98.05 },
+        { nombre: "Salta", entregas: 3210, otd: 97.71 },
+        { nombre: "Chaco", entregas: 2640, otd: 97.62 },
+        { nombre: "Corrientes", entregas: 2410, otd: 97.80 },
+        { nombre: "San Juan", entregas: 2280, otd: 98.02 },
+        { nombre: "Río Negro", entregas: 2120, otd: 97.88 },
+        { nombre: "Sgo. del Estero", entregas: 1740, otd: 97.65 },
+        { nombre: "La Pampa", entregas: 1580, otd: 98.40 },
+        { nombre: "San Luis", entregas: 1530, otd: 98.71 },
+        { nombre: "Chubut", entregas: 1460, otd: 97.74 },
+        { nombre: "Jujuy", entregas: 1390, otd: 97.52 },
+        { nombre: "Santa Cruz", entregas: 783, otd: 97.45 }
+      ]
+    },
+    // % de entregas en tiempo por concesionario — EJEMPLO (concesionarios inventados)
+    concesionarios: {
+      pestana: "Entregas por concesionario",
+      titulo: "Entregas por concesionario",
+      graficoTitulo: "Concesionarios de la red · ejemplo",
+      columnas: ["Concesionario", "Provincia", "Entregas", "En tiempo", "% en tiempo"],
+      ayuda: "Tocá una columna para ordenar",
+      lista: [
+        { nombre: "Concesionario 1", provincia: "Buenos Aires", entregas: 9840, otd: 98.74 },
+        { nombre: "Concesionario 2", provincia: "CABA", entregas: 8620, otd: 98.51 },
+        { nombre: "Concesionario 3", provincia: "Córdoba", entregas: 7310, otd: 98.20 },
+        { nombre: "Concesionario 4", provincia: "Santa Fe", entregas: 6480, otd: 98.12 },
+        { nombre: "Concesionario 5", provincia: "Buenos Aires", entregas: 6150, otd: 97.96 },
+        { nombre: "Concesionario 6", provincia: "Mendoza", entregas: 4230, otd: 97.88 },
+        { nombre: "Concesionario 7", provincia: "Tucumán", entregas: 3170, otd: 97.73 },
+        { nombre: "Concesionario 8", provincia: "Entre Ríos", entregas: 2860, otd: 98.31 },
+        { nombre: "Concesionario 9", provincia: "Salta", entregas: 2140, otd: 97.58 },
+        { nombre: "Concesionario 10", provincia: "San Luis", entregas: 1530, otd: 98.71 },
+        { nombre: "Concesionario 11", provincia: "Chaco", entregas: 1490, otd: 97.49 },
+        { nombre: "Concesionario 12", provincia: "Santa Cruz", entregas: 783, otd: 97.45 }
       ]
     },
     inversa: {
@@ -526,16 +586,16 @@ window.SERVICIO = {
     ]
   },
 
-  // ---------- Cierre: resumen de todo lo que se vio ----------
-  // Una tarjeta por parte de la diapositiva; al tocarla se vuelve a esa parte.
+  // ---------- Resumen: todo lo que hay en la diapositiva ----------
+  // Aparece al bajar desde la portada, encima de ella (el fondo se oscurece). Una parada por
+  // parte de la diapositiva; al tocarla se va a esa parte.
   //   seccion: a qué parte lleva (NO cambiar): como, devoluciones, tableros, mapa o centros.
-  // Abajo van los botones "Volver al inicio" y "Siguiente" (la diapositiva que sigue, sola).
+  // "volver": el botón del final de la diapositiva (al lado de "Siguiente", que sale solo).
   cierre: {
-    indice: "Resumen",                  // el nombre en el índice de la derecha
     antetitulo: "Todo esto,",
     titulo: "PENSADO PARA {cliente}",
     bajada: "Un servicio **a medida, de punta a punta**: desde que {cliente} nos envía el pedido hasta que el concesionario lo recibe… y, si hace falta, de vuelta.",
-    verDeNuevo: "Ver de nuevo",
+    verDeNuevo: "Ver esta parte",       // aparece al pasar el cursor por cada parada
     volver: "Volver al inicio",
     partes: [
       { seccion: "como", titulo: "¿Cómo lo hacemos?", texto: "El recorrido de cada pedido, del sistema de {cliente} al concesionario, con **tracking en tiempo real** y carta de porte **100 % digital**." },

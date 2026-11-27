@@ -5,6 +5,10 @@
    pestañas; a la derecha, lo que muestra cada una:
    • Entregas a concesionarios: ventana de tablero con indicadores que
      cuentan y OTD por mes.
+   • Entregas por provincia: % de entregas en tiempo de cada provincia, en dos
+     columnas de barras (se ordena por % o por cantidad).
+   • Entregas por concesionario: tabla de concesionarios (inventados) que se
+     ordena tocando las columnas.
    • Logística inversa: cumplimiento, medidor y estados por provincia (al
      tocar una barra, todo pasa a esa provincia).
    • Ventajas y oportunidades: seis columnas como la diapositiva de la
@@ -26,7 +30,9 @@
     arbol: '<path d="M12 1.8a5.1 5.1 0 0 0-4.9 3.7A4.6 4.6 0 0 0 4.4 14a4.6 4.6 0 0 0 4.2 2.6h2.2V22h2.4v-5.4h2.2a4.6 4.6 0 0 0 4.2-2.6 4.6 4.6 0 0 0-2.7-8.5A5.1 5.1 0 0 0 12 1.8z"/>',
     ciclo: '<path d="M12 2.6a9.4 9.4 0 0 1 8.9 6.4h-2.4A7.1 7.1 0 0 0 6.3 7.8l2.1 1.2-5.8 2.5-.5-6.3 2 1.1A9.4 9.4 0 0 1 12 2.6zM3.1 15h2.4a7.1 7.1 0 0 0 12.2 1.2l-2.1-1.2 5.8-2.5.5 6.3-2-1.1A9.4 9.4 0 0 1 3.1 15z"/><path d="M12 8.4l3.6 1.8L12 12 8.4 10.2zM8 11.1l3.4 1.7v3.8L8 14.9zM16 11.1v3.8l-3.4 1.7v-3.8z"/>',
     cabeza: '<path fill-rule="evenodd" d="M10.6 1.8c-4.6 0-8 3.4-8 7.9 0 2.4 1 4.5 2.8 5.9V22h8.6v-3h2.6a1.9 1.9 0 0 0 1.9-1.9v-3l2.3-1-2.3-4.1C17.9 4.8 14.8 1.8 10.6 1.8zm-.1 3.3 1 1.5 1.8-.3.3 1.8 1.5 1-1 1.5.6 1.7-1.7.6-.3 1.8-1.8-.4-1.4 1.1-1.1-1.5-1.8.1.1-1.8-1.5-1 1.2-1.4-.6-1.7 1.7-.5.4-1.8 1.8.5zm0 3.4a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6z"/>',
-    estrella: '<path d="M12 1.8 14.9 8l6.8.8-5 4.6 1.4 6.7L12 16.7 5.9 20.1l1.4-6.7-5-4.6L9.1 8z"/>'
+    estrella: '<path d="M12 1.8 14.9 8l6.8.8-5 4.6 1.4 6.7L12 16.7 5.9 20.1l1.4-6.7-5-4.6L9.1 8z"/>',
+    mapa: '<path fill-rule="evenodd" d="M12 1.5a7 7 0 0 0-7 7c0 5.2 7 14 7 14s7-8.8 7-14a7 7 0 0 0-7-7zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/>',
+    local: '<path d="M2 10 4 3h16l2 7a3 3 0 0 1-5 2.2A3 3 0 0 1 12 12a3 3 0 0 1-5 .2A3 3 0 0 1 2 10z"/><path fill-rule="evenodd" d="M3.5 13.6V22h17v-8.4a4.6 4.6 0 0 1-3.5-.5 4.6 4.6 0 0 1-5 .3 4.6 4.6 0 0 1-5-.3 4.6 4.6 0 0 1-3.5.5zM9.5 15.5h5V22h-5z"/>'
   };
   const icono = (n, clase) => `<svg class="${clase || ''}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ICONOS.barras}</svg>`;
 
@@ -34,6 +40,8 @@
   const T = S.tableros, V = S.ventajas || {};
   if (!seccion || !T) return;
   const E = T.entregas || {}, L = T.inversa || {};
+  const TP = T.provincias || {}, TC = T.concesionarios || {};
+  const PROV_E = TP.lista || [], CONC = TC.lista || [];
   const PROV = L.provincias || [];
   const MESES = E.meses || [];
   const ITEMS = V.items || [];
@@ -44,6 +52,9 @@
     `<div class="bi-izq"><div class="bi-cabs ent" style="--i:0">${cab(T, 'bi-cab-t actual')}${ITEMS.length ? cab(V, 'bi-cab-v') : ''}</div>` +
     `<div class="bi-tabs ent" style="--i:2" role="tablist">` +
     `<button type="button" data-t="entregas" role="tab">${icono('barras')}<span>${txt(E.pestana)}</span></button>` +
+    // (pedido de la persona) el detalle de las entregas por provincia y por concesionario
+    (PROV_E.length ? `<button type="button" data-t="provincias" role="tab">${icono('mapa')}<span>${txt(TP.pestana)}</span></button>` : '') +
+    (CONC.length ? `<button type="button" data-t="concesionarios" role="tab">${icono('local')}<span>${txt(TC.pestana)}</span></button>` : '') +
     `<button type="button" data-t="inversa" role="tab">${SV.ICONOS.inversa.replace('<svg ', '<svg aria-hidden="true" ')}<span>${txt(L.pestana)}</span></button>` +
     (ITEMS.length ? `<button type="button" data-t="ventajas" role="tab">${icono('estrella')}<span>${txt(V.pestana || 'Ventajas y oportunidades')}</span></button>` : '') +
     `</div><p class="bi-nota ent" style="--i:3">${txt(T.nota)}</p></div>` +
@@ -222,6 +233,100 @@
     actualizar();
   }
 
+  // ---------- Entregas por provincia y por concesionario (pedido de la persona) ----------
+  const META = +TP.expectativa || 98;
+  const enTiempoDe = (x) => Math.round(x.entregas * x.otd / 100);
+  const promedio = (l) => { const t = l.reduce((s, x) => s + x.entregas, 0); return t ? l.reduce((s, x) => s + x.entregas * x.otd, 0) / t : 0; };
+  // los números de los indicadores cuentan (data-v, decimales y sufijo)
+  const contarTodos = () => cuerpo.querySelectorAll('.bi-c').forEach((b) => contar(b, +b.dataset.v, +b.dataset.d || 0, b.dataset.s || ''));
+  const kpi = (i, v, d, s, rotulo, destacado) => `<div class="bi-kpi${destacado ? ' destacado' : ''}" style="--i:${i}"><b class="bi-c" data-v="${v}" data-d="${d}" data-s="${s}">0</b><span>${rotulo}</span></div>`;
+  // barra de "% en tiempo": la escala va de un poco menos que el peor valor a 100 %; la línea
+  // punteada es la expectativa
+  function escalaDe(l) {
+    const min = Math.floor(Math.min(META, ...l.map((x) => +x.otd)) - .5);
+    return { min, pos: (v) => Math.max(0, Math.min(100, (v - min) / (100 - min) * 100)).toFixed(2) };
+  }
+  const barra = (x, e) => `<span class="bi-pb" style="--meta:${e.pos(META)}%"><i style="--w:${e.pos(x.otd)}%"></i></span>`;
+  const tipDe = (x, extra) => `<b>${esc(x.nombre)}</b>${extra || ''}<span>Entregas: <strong>${fmt(x.entregas)}</strong></span>` +
+    `<span>En tiempo: <strong>${fmt(enTiempoDe(x))}</strong></span><span class="${x.otd < META ? 'bi-dif-abajo' : 'bi-dif-ok'}">${fmt(x.otd, 2)} % · expectativa ${fmt(META)} %</span>`;
+  function conTip(el, x, extra) {
+    el.addEventListener('pointerenter', () => { el.classList.add('activo'); mostrarTip(tipDe(x, extra), el.querySelector('.bi-pb i') || el); });
+    el.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; el.classList.remove('activo'); ocultarTip(); });
+  }
+
+  let ordenProv = 'otd';
+  function vistaProvincias() {
+    vtitulo.innerHTML = txt(TP.titulo);
+    const prom = promedio(PROV_E);
+    const mejor = PROV_E.reduce((a, x) => (x.otd > a.otd ? x : a), PROV_E[0]);
+    const e = escalaDe(PROV_E);
+    cuerpo.innerHTML =
+      '<div class="bi-kpis">' + kpi(0, PROV_E.length, 0, '', 'Provincias con entregas') +
+      kpi(1, prom, 2, ' %', 'En tiempo · todo el país', true) + kpi(2, mejor.otd, 2, ' %', 'Mejor: ' + esc(mejor.nombre)) + '</div>' +
+      `<div class="bi-graf bi-pv"><p class="bi-gtit">${txt(TP.graficoTitulo)}` +
+      `<span class="bi-series"><span class="obj"><i></i>${txt(E.serieObjetivo || 'Expectativa')} ${fmt(META)} %</span></span>` +
+      `<span class="bi-orden"><small>${txt(TP.ordenarPor || 'Ordenar por')}</small>` +
+      `<button type="button" data-o="otd">${txt(TP.porPorcentaje || '% en tiempo')}</button><button type="button" data-o="entregas">${txt(TP.porEntregas || 'Entregas')}</button></span></p>` +
+      `<div class="bi-pv-lista"></div><p class="bi-escala">Escala de ${fmt(e.min)} % a 100 %</p></div>`;
+    contarTodos();
+    const lista = cuerpo.querySelector('.bi-pv-lista');
+    const botones = [...cuerpo.querySelectorAll('.bi-orden button')];
+    function pintar() {
+      botones.forEach((b) => b.classList.toggle('activo', b.dataset.o === ordenProv));
+      const orden = PROV_E.map((x, i) => i).sort((a, b) => PROV_E[b][ordenProv] - PROV_E[a][ordenProv]);
+      lista.style.gridTemplateRows = `repeat(${Math.ceil(orden.length / 2)}, 1fr)`;
+      lista.innerHTML = orden.map((i, k) => {
+        const x = PROV_E[i];
+        return `<div class="bi-pv-fila${x.otd < META ? ' abajo' : ''}" style="--i:${k}" data-i="${i}"><em>${k + 1}</em><span>${esc(x.nombre)}</span>${barra(x, e)}<b>${fmt(x.otd, 2)} %</b></div>`;
+      }).join('');
+      lista.querySelectorAll('.bi-pv-fila').forEach((f) => conTip(f, PROV_E[+f.dataset.i]));
+    }
+    botones.forEach((b) => b.addEventListener('click', () => { if (ordenProv !== b.dataset.o) { ordenProv = b.dataset.o; ocultarTip(); pintar(); } }));
+    pintar();
+  }
+
+  let ordenConc = { k: 'otd', dir: -1 };
+  function vistaConcesionarios() {
+    vtitulo.innerHTML = txt(TC.titulo);
+    const total = CONC.reduce((s, x) => s + x.entregas, 0);
+    const cumplen = CONC.filter((x) => x.otd >= META).length;
+    const e = escalaDe(CONC);
+    const COLS = ['nombre', 'provincia', 'entregas', 'tiempo', 'otd'];
+    const nombres = TC.columnas || ['Concesionario', 'Provincia', 'Entregas', 'En tiempo', '% en tiempo'];
+    cuerpo.innerHTML =
+      '<div class="bi-kpis">' + kpi(0, CONC.length, 0, '', 'Concesionarios') + kpi(1, total, 0, '', 'Entregas') +
+      kpi(2, cumplen, 0, ` de ${CONC.length}`, `En la expectativa (${fmt(META)} %) o más`, true) + '</div>' +
+      `<div class="bi-graf bi-cc"><p class="bi-gtit">${txt(TC.graficoTitulo)}<span class="bi-cc-ayuda">${txt(TC.ayuda)}</span></p>` +
+      `<div class="bi-cc-tabla"><div class="bi-cc-fila bi-cc-enc">${COLS.map((k, i) => `<button type="button" data-k="${k}">${txt(nombres[i])}<i></i></button>`).join('')}</div>` +
+      '<div class="bi-cc-filas"></div></div></div>';
+    contarTodos();
+    const filas = cuerpo.querySelector('.bi-cc-filas');
+    const enc = [...cuerpo.querySelectorAll('.bi-cc-enc button')];
+    const valor = (x, k) => (k === 'tiempo' ? enTiempoDe(x) : x[k]);
+    function pintar() {
+      enc.forEach((b) => { b.classList.toggle('activo', b.dataset.k === ordenConc.k); b.classList.toggle('sube', ordenConc.dir > 0); });
+      const orden = CONC.map((x, i) => i).sort((a, b) => {
+        const va = valor(CONC[a], ordenConc.k), vb = valor(CONC[b], ordenConc.k);
+        const c = typeof va === 'string' ? va.localeCompare(vb, 'es', { numeric: true }) : va - vb;
+        return c * ordenConc.dir;
+      });
+      filas.innerHTML = orden.map((i, k) => {
+        const x = CONC[i];
+        return `<div class="bi-cc-fila${x.otd < META ? ' abajo' : ''}" style="--i:${k}" data-i="${i}"><span><b>${esc(x.nombre)}</b></span><span>${esc(x.provincia)}</span>` +
+          `<span>${fmt(x.entregas)}</span><span>${fmt(enTiempoDe(x))}</span><span class="bi-cc-otd">${barra(x, e)}<b>${fmt(x.otd, 2)} %</b></span></div>`;
+      }).join('');
+      filas.querySelectorAll('.bi-cc-fila').forEach((f) => conTip(f, CONC[+f.dataset.i], `<span>${esc(CONC[+f.dataset.i].provincia)}</span>`));
+    }
+    // un clic ordena por esa columna; otro clic, al revés (los textos de la A a la Z, los números de mayor a menor)
+    enc.forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.k;
+      ordenConc = ordenConc.k === k ? { k, dir: -ordenConc.dir } : { k, dir: k === 'nombre' || k === 'provincia' ? 1 : -1 };
+      ocultarTip();
+      pintar();
+    }));
+    pintar();
+  }
+
   // ---------- Pestaña 3: ventajas y oportunidades (columnas que se abren) ----------
   const vcols = [...seccion.querySelectorAll('.vn-col')];
   let activa = -1, uso = -1e9;
@@ -257,7 +362,7 @@
     ocultarTip();
     if (t === 'ventajas') { uso = performance.now(); return; }
     cuerpo.classList.remove('entra'); void cuerpo.offsetWidth; cuerpo.classList.add('entra');
-    (t === 'inversa' ? vistaInversa : vistaEntregas)();
+    ({ inversa: vistaInversa, provincias: vistaProvincias, concesionarios: vistaConcesionarios }[t] || vistaEntregas)();
   }
   tabs.forEach((b) => b.addEventListener('click', () => elegir(b.dataset.t)));
 

@@ -66,6 +66,8 @@
       if (o) { mano.mostrar(o.el, o.texto, o.op); return; }
     }
     mano.ocultar();
+    // probadas las dos: aparece "Ver el siguiente paso" en la columna del texto (tms.js)
+    if (probado.nc && probado.tico && SV.tms.pasoFinal) SV.tms.pasoFinal.classList.add('visible');
   }
 
   // =========================================================
@@ -128,7 +130,7 @@
       iSel = tSel = -1; conFoto = false;
       marcar();
     }
-    bReg.addEventListener('click', () => { if (!auto) { uso = ahora(); if (iSel >= 0 && tSel >= 0) probado.nc = true; } registrar(); });
+    bReg.addEventListener('click', () => { if (!auto) { uso = ahora(); if (iSel >= 0 && tSel >= 0) probado.nc = true; } registrar(); guiar(); });
     marcar();
     // solo, si nadie lo usa: elige dónde y qué pasó, suma la foto y registra (despacio, paso por paso)
     const esperar = (ms) => new Promise((r) => setTimeout(r, ms));

@@ -264,9 +264,11 @@
     bSig.addEventListener('click', () => irManual(paso + 1));
     // Guía (compartido/guia.js): la mano señala "Siguiente" hasta que se usa la navegación
     if (window.GUIA) GUIA.pista({ id: 'servicio-intro', texto: 'introSiguiente', objetivo: () => bSig, punto: [.5, .6], zona: '.pt-i-nav button', lado: 'arriba', espera: 2.5, activa: () => introActiva && paso >= 0 && paso < pasos - 1 && y < 80 });
+    // "Empezar el recorrido" baja al resumen (cierre.js); si no está, a ¿Cómo lo hacemos?
     caja.querySelector('.pt-i-boton').addEventListener('click', () => {
       const sig = document.querySelector('.sv-tms');
-      if (window.desplazamiento && sig) window.desplazamiento.ir(sig.offsetTop);
+      const y = window.SV && SV.yResumen ? SV.yResumen : sig && sig.offsetTop;
+      if (window.desplazamiento && y != null) window.desplazamiento.ir(y);
     });
     // reloj: avanza solo con la portada a la vista y la pestaña visible
     function reloj(t) {

@@ -5,9 +5,10 @@
      stage por ruta, como en la parada anterior) llena los camiones de su ruta, que salen; a la derecha, la carta de porte
      emitida al despachar, todavía sin conformar.
    - Entrega y digitalización (modo "entrega"): a la izquierda el tracking en
-     tiempo real llega hasta la distribución; la carta de porte se firma (con
-     el mouse o sola) y se genera el documento digital (e-POD); con eso el
+     tiempo real llega hasta la distribución; la carta de porte se firma con el
+     botón (o sola) y se genera el documento digital (e-POD); con eso el
      tracking registra la entrega y se cierra.
+   Al terminar cada una aparece "Ver el siguiente paso" (tms.js → SV.botonPaso).
    Todo se hace solo si nadie lo toca. Datos de ejemplo en datos/servicio.js → tms.
    ========================================================= */
 (function () {
@@ -69,7 +70,7 @@
         `<span class="td-mini">${SVG.camion}</span></div>` +
         `<div class="td-ocup"><i class="td-barra"><i></i></i><b>0 / ${+vj.bultos || 0} bultos</b></div></div>`;
     }).join('') + '</div>' +
-    `<button type="button" class="td-boton td-armar">${txt(TD.viajesBoton)}</button>` +
+    `<div class="td-acc"><button type="button" class="td-boton td-armar">${txt(TD.viajesBoton)}</button></div>` +
     '</div>' +
     // ---- Tracking en tiempo real (parada "entrega") ----
     '<div class="td-col td-col-track">' +
@@ -80,6 +81,7 @@
     `<button type="button" class="td-boton tz-seguir">${txt(TK.boton || 'Seguir el envío')}</button>` +
     '<div class="tz-lista"></div>' +
     `<p class="tz-fin">${SVG.tilde}<span>${txt(TK.fin)}</span></p>` +
+    '<div class="td-acc tz-acc"></div>' +
     '</div>' +
     // ---- La carta de porte (en las dos paradas, a la derecha) ----
     '<div class="td-col td-col-doc">' +
@@ -128,10 +130,11 @@
   const yaProbo = (k) => { if (!probado[k]) { probado[k] = true; mano.ocultar(); } };
   ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#22386E'; ctx.lineWidth = 3.2;
   const enEntrega = () => SV.tms.modo === 'entrega';
-  function punto(e) {
-    const r = lienzo.getBoundingClientRect();
-    return { x: (e.clientX - r.left) * lienzo.width / r.width, y: (e.clientY - r.top) * lienzo.height / r.height };
-  }
+  // "Ver el siguiente paso" (tms.js): en viajes, al lado de "Volver a armar"; en la entrega, debajo
+  // del tracking cerrado
+  const pasoViajes = SV.botonPaso ? SV.botonPaso(v.querySelector('.td-col-viajes .td-acc')) : null;
+  const pasoEntrega = SV.botonPaso ? SV.botonPaso(v.querySelector('.tz-acc')) : null;
+  const mostrarPaso = (b, si) => { if (b) b.classList.toggle('visible', si); };
   function trazo(a, b) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); tinta += Math.hypot(b.x - a.x, b.y - a.y); }
   function limpiarFirma() {
     cf.nueva();
@@ -143,25 +146,11 @@
     estado.innerHTML = '<i></i>' + txt(TD.docPendiente);
     bFirmar.innerHTML = textoFirmar;
     bFirmar.disabled = false;
+    bFirmar.classList.remove('secundario');
+    mostrarPaso(pasoEntrega, false);
   }
-  lienzo.addEventListener('pointerdown', (e) => {
-    if (firmado || !enEntrega()) return;
-    e.preventDefault();
-    usoDoc = ahora();
-    cf.nueva();
-    trazando = true; ult = punto(e);
-    papel.classList.add('firmando');
-    lienzo.setPointerCapture(e.pointerId);
-  });
-  lienzo.addEventListener('pointermove', (e) => { if (!trazando) return; const p = punto(e); trazo(ult, p); ult = p; });
-  const soltarTrazo = () => {
-    if (!trazando) return;
-    trazando = false;
-    usoDoc = ahora();
-    if (tinta > 140) { yaProbo('firma'); const id = cf.nueva(); cf.dormir(650, id).then(() => generar(id)).catch(cancelado); }
-  };
-  lienzo.addEventListener('pointerup', soltarTrazo);
-  lienzo.addEventListener('pointercancel', soltarTrazo);
+  // (Se firmaba con el mouse en el cuadro; a quienes la probaron no les funcionaba bien y la
+  // persona pidió que alcance con el botón "Firmar la entrega": la firma se dibuja sola.)
 
   // firma automática: un garabato que se dibuja de a poco
   function firmaAuto(id) {
@@ -196,6 +185,7 @@
     estado.innerHTML = SVG.tilde + txt(TD.docListo);
     bFirmar.innerHTML = 'Volver a firmar';
     bFirmar.disabled = false;
+    bFirmar.classList.add('secundario');
     cerrarTracking();
   }
   function firmarSola() {
@@ -250,6 +240,8 @@
     });
     bArmar.innerHTML = textoArmar;
     bArmar.disabled = false;
+    bArmar.classList.remove('secundario');
+    mostrarPaso(pasoViajes, false);
   }
   function volar(chip, destino) {
     const k = escala(), base = v.getBoundingClientRect();
@@ -295,6 +287,8 @@
     armando = false; armado = true;
     bArmar.innerHTML = 'Volver a armar';
     bArmar.disabled = false;
+    bArmar.classList.add('secundario');
+    mostrarPaso(pasoViajes, true);
   }
   bArmar.addEventListener('click', () => {
     usoViajes = ahora();
@@ -349,6 +343,7 @@
     pasos.forEach((p) => p.classList.remove('hecho'));
     lineaPasos.style.width = '0%';
     fin.classList.remove('visible');
+    mostrarPaso(pasoEntrega, false);
   }
   async function empezarTracking() {
     reiniciarTracking();
@@ -359,7 +354,7 @@
     if (!firmado) {
       esperandoFirma = true; mostrarEtapa(); usoDoc = ahora();
       // la primera vez, la manito invita a firmar (después se firma sola)
-      if (!probado.firma && activa('entrega')) mano.mostrar(lienzo, txt(TD.invitaFirma || '**Firmá** la entrega con el mouse'), { lado: 'izq', punto: [.5, .5] });
+      if (!probado.firma && activa('entrega')) mano.mostrar(bFirmar, txt(TD.invitaFirma || '**Hacé clic** para firmar la entrega'), { lado: 'izq', punto: [.1, .6] });   // (en el borde izquierdo del botón: el texto no lo tapa)
     }
   }
   // con la firma (o si ya estaba firmada) llegan los eventos de la entrega y el tracking se cierra
@@ -372,6 +367,7 @@
     maxEtapa = 3; mostrarEtapa();
     await ct.dormir(1000, id);
     fin.classList.add('visible');
+    mostrarPaso(pasoEntrega, true);
   }
 
   // =========================================================

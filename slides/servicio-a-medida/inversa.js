@@ -104,7 +104,7 @@
   seccion.insertAdjacentHTML('beforeend',
     `<div class="iv-izq"><p class="iv-ante ent" style="--i:0">${t(I.antetitulo)}</p><h2 class="iv-titulo ent" style="--i:1">${t(I.titulo)}</h2>` +
     `<p class="iv-bajada ent" style="--i:2">${t(I.bajada)}</p></div>` +
-    '<div class="iv-ticket ent" style="--i:3"><div class="tk-cab"><div><span class="tk-ante">Reclamo</span><b class="tk-num">—</b></div><span class="tk-estado">—</span></div>' +
+    `<div class="iv-ticket ent" style="--i:3"><div class="tk-cab"><div><span class="tk-ante">${t(I.fichaRotulo || 'Devolución')}</span><b class="tk-num">—</b></div><span class="tk-estado">—</span></div>` +
     `<p class="tk-tipo"></p><div class="tk-barra" style="--n:${PASOS.length}">${'<i></i>'.repeat(PASOS.length)}</div>` +
     `<ol class="tk-eventos"></ol><p class="tk-vacio">${t(I.sinReclamo)}</p><p class="tk-pie">${t(I.ejemplo)}</p></div>` +
     `<ol class="iv-pasos ent" style="--i:2;--n:${PASOS.length}">${PASOS.map((p, i) => `<li><b>${pad(i + 1)}</b><span>${t(p.titulo)}</span></li>`).join('')}</ol>` +

@@ -25,13 +25,14 @@
 .bi-cab-t .bi-titulo { white-space: normal; }
 .bi-bajada { margin-top: 20px; font-size: 17px; font-weight: 300; line-height: 1.55; color: rgba(255, 251, 243, .9); }
 .bi-bajada strong { color: var(--blanco); }
-.bi-tabs { display: flex; flex-direction: column; gap: 12px; margin-top: 34px; }
+/* cinco pestañas: más bajas que antes (eran tres de 64) para que entren con la nota */
+.bi-tabs { display: flex; flex-direction: column; gap: 9px; margin-top: 30px; }
 .bi-tabs button {
   display: flex; align-items: center; gap: 14px;
-  height: 64px; padding: 0 22px;
-  border: 0; border-radius: 16px;
+  height: 54px; padding: 0 22px;
+  border: 0; border-radius: 15px;
   background: rgba(255, 251, 243, .12); box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .25);
-  font: 500 19px var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: left; color: var(--blanco);
+  font: 500 18px var(--fuente-titulo); letter-spacing: .06em; text-transform: uppercase; text-align: left; color: var(--blanco);
   cursor: pointer; transition: background .3s ease, color .3s ease, translate .3s ease;
 }
 .bi-tabs button svg { flex: none; width: 24px; height: 24px; fill: currentColor; }
@@ -175,6 +176,48 @@
 .bi-col { transition: opacity .35s ease; }
 .bi-col.apagada { opacity: .22; }
 .bi-barras.sin-tiempo .bi-b-tiempo, .bi-barras.sin-demora .bi-b-demora { opacity: .12; }
+
+/* Barra de "% en tiempo" (provincias y concesionarios): la línea punteada es la expectativa;
+   lo que queda abajo de la expectativa va en ámbar */
+.bi-pb { position: relative; display: block; height: 10px; border-radius: 5px; background: #EDE7DF; }
+.bi-pb i { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); border-radius: inherit; background: var(--rojo); animation: bi-ancho .8s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.1s + var(--i, 0) * .03s); }
+@keyframes bi-ancho { from { width: 0; } }
+.bi-pb::after { content: ""; position: absolute; left: var(--meta); top: -4px; bottom: -4px; border-left: 2px dashed rgba(58, 58, 58, .55); }
+.abajo .bi-pb i { background: var(--ambar, #F4A127); }
+.bi-gtit .bi-series { margin-left: 18px; }
+.bi-escala { margin-top: 6px; font-size: 11px; font-style: italic; font-weight: 300; text-align: right; color: rgba(58, 58, 58, .55); }
+
+/* Entregas por provincia: dos columnas de barras */
+.bi-orden { display: flex; align-items: center; gap: 6px; margin-left: auto; letter-spacing: 0; text-transform: none; }
+.bi-orden small { margin-right: 4px; font-size: 11.5px; font-weight: 500; color: rgba(58, 58, 58, .6); }
+.bi-orden button, .bi-cc-enc button { border: 0; font: inherit; cursor: pointer; }
+.bi-orden button { height: 28px; padding: 0 12px; border-radius: 999px; background: #F1ECE5; font-size: 12px; font-weight: 600; color: rgba(58, 58, 58, .75); transition: background .25s ease, color .25s ease; }
+.bi-orden button:hover { background: #E7DFD5; }
+.bi-orden button.activo { background: var(--gris); color: var(--blanco); }
+.bi-pv-lista { display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; column-gap: 34px; height: 418px; margin-top: 12px; }
+.bi-pv-fila { display: grid; grid-template-columns: 22px 128px 1fr 64px; align-items: center; gap: 10px; padding: 0 8px; border-radius: 8px; border-top: 1px solid rgba(58, 58, 58, .06); animation: bi-entra .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i) * .03s); transition: background .2s ease; }
+.bi-pv-fila.activo { background: rgba(239, 69, 41, .06); }
+.bi-pv-fila em { font: 500 12px var(--fuente-titulo); font-style: normal; color: rgba(58, 58, 58, .45); }
+.bi-pv-fila > span:not(.bi-pb) { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bi-pv-fila > b, .bi-cc-otd b { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.bi-pv-fila.abajo > b, .bi-cc-fila.abajo .bi-cc-otd b { color: #C27A0E; }
+
+/* Entregas por concesionario: tabla que se ordena tocando las columnas */
+.bi-cc-ayuda { margin-left: auto; font-size: 11.5px; font-style: italic; font-weight: 300; letter-spacing: 0; text-transform: none; color: rgba(58, 58, 58, .6); }
+.bi-cc-tabla { margin-top: 10px; }
+.bi-cc-fila { display: grid; grid-template-columns: 1.3fr 1.2fr .8fr .8fr 1.9fr; align-items: center; gap: 14px; height: 34px; padding: 0 12px; border-top: 1px solid rgba(58, 58, 58, .07); font-size: 13.5px; font-variant-numeric: tabular-nums; transition: background .2s ease; }
+.bi-cc-filas .bi-cc-fila { animation: bi-entra .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i) * .03s); }
+.bi-cc-fila b { font-weight: 600; }
+.bi-cc-filas .bi-cc-fila.activo { background: rgba(239, 69, 41, .06); }
+.bi-cc-otd { display: grid; grid-template-columns: 1fr 62px; align-items: center; gap: 10px; }
+.bi-cc-enc { height: 34px; border: 0; border-radius: 10px; background: #F1ECE5; }
+.bi-cc-enc button { display: flex; align-items: center; gap: 5px; height: 100%; padding: 0; background: none; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-align: left; color: rgba(58, 58, 58, .6); }
+.bi-cc-enc button:hover { color: var(--gris); }
+.bi-cc-enc button.activo { color: var(--rojo); }
+/* la flechita de la columna que ordena */
+.bi-cc-enc button i { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid currentColor; opacity: 0; }
+.bi-cc-enc button.activo i { opacity: 1; }
+.bi-cc-enc button.activo.sube i { rotate: 180deg; }
 
 /* globito con el detalle */
 .bi-tip { position: absolute; left: 0; top: 0; z-index: 5; display: flex; flex-direction: column; gap: 3px; padding: 9px 13px; border-radius: 10px; background: var(--gris); color: var(--blanco); font-size: 12.5px; white-space: nowrap; translate: -50% calc(-100% - 14px); opacity: 0; transition: opacity .2s ease; pointer-events: none; box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .5); }

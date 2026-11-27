@@ -26,6 +26,10 @@
   }
   // donde la sección empieza a verse arriba (sin contar data-indice-y)
   function yInicio(el) {
+    // con un número en data-indice-y, la sección empieza ahí (el resumen de Servicio a medida, que
+    // es una capa encima de la portada)
+    const n = el.dataset.indiceY;
+    if (n != null && n !== '' && n !== 'final') return +n;
     if (el.closest('.mc-tramo')) return el.offsetTop + 900;   // ¿Por qué elegirnos?: el tramo empieza en y 900
     if (el.closest('.pista')) return el.offsetTop;
     return 0;
@@ -74,6 +78,10 @@
     e.stopImmediatePropagation();
     e.preventDefault();
     const y = actual(), ys = marcadas.map(yDe);
+    // una sección con pasos propios (el recorrido de Servicio a medida) puede quedarse con el salto
+    const paso = new CustomEvent('indice-paso', { cancelable: true, detail: { y, dir: e.key === 'PageDown' ? 1 : -1 } });
+    document.dispatchEvent(paso);
+    if (paso.defaultPrevented) return;
     const destino = e.key === 'PageDown' ? ys.find((v) => v > y + 5) : [...ys].reverse().find((v) => v < y - 5);
     ir(destino != null ? destino : (e.key === 'PageDown' ? maximo() : 0));
   }, true);
