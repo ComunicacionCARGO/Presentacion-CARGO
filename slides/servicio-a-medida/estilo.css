@@ -439,7 +439,9 @@
   color: rgba(58, 58, 58, .7);
 }
 .vp-region i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
-.vp-region span { margin-left: 4px; font-family: var(--fuente-titulo); font-weight: 500; font-size: 14px; letter-spacing: .04em; text-transform: none; color: var(--gris); }
+/* "Lead time: 24–48 h", en una pastilla para que se lea como dato */
+.vp-region span { margin-left: 6px; padding: 4px 12px; border-radius: 999px; background: rgba(58, 58, 58, .08); font-family: var(--fuente-titulo); font-weight: 500; font-size: 16px; letter-spacing: .04em; text-transform: none; color: rgba(58, 58, 58, .75); }
+.vp-region span b { font-weight: 700; color: var(--gris); }
 .vp-nombre { margin-top: 6px; font-family: var(--fuente-titulo); font-weight: 700; font-size: 44px; line-height: 1; color: var(--gris); }
 .vp-cerrar {
   position: absolute;

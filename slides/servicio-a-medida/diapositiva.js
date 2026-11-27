@@ -415,7 +415,8 @@
     const llegan = destinos.filter((d) => d.cod === k && d.base.cod !== k);
     const conexAqui = conexiones.filter((c) => c.a.cod === k || c.b.cod === k);
     let html = '<div class="vp-cabeza">' +
-      (r ? `<p class="vp-region" style="--c:${r.color}"><i></i>${esc(r.nombre)}<span>${horas(r)}</span></p>` : '') +
+      // el lead time lleva su rótulo (pedido de la persona: solo el número no se entendía)
+      (r ? `<p class="vp-region" style="--c:${r.color}"><i></i>${esc(r.nombre)}<span>Lead time: <b>${horas(r)}</b></span></p>` : '') +
       `<h2 class="vp-nombre">${esc(nombre)}</h2>` +
       '<button class="vp-cerrar" type="button">Ver todo el país <span aria-hidden="true">✕</span></button></div>';
     html += '<div class="vp-numeros">' +
@@ -473,7 +474,7 @@
       const r = regionDe[k];
       const n = destinos.filter((d) => d.cod === k).length + bases.filter((b) => b.cod === k).length;
       mostrarEtiqueta(`<b>${esc(nombreDe(k))}</b>` +
-        (r ? `<span><i style="--c:${r.color}"></i>${esc(r.nombre)} · ${horas(r)}</span>` : '') +
+        (r ? `<span><i style="--c:${r.color}"></i>${esc(r.nombre)} · Lead time: ${horas(r)}</span>` : '') +
         `<em>${n ? n + (n === 1 ? ' punto en la red' : ' puntos en la red') : 'Sin puntos cargados'}</em>`);
     });
     el.addEventListener('pointerleave', () => {
