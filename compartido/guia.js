@@ -257,5 +257,6 @@
     revisarGuia(ahora);
   }, 200);
 
-  window.GUIA = { pista, usar, get tactil() { return tactil; } };
+  // usada(id): si esa pista ya se usó (para encadenar pistas en un recorrido guiado)
+  window.GUIA = { pista, usar, usada: (id) => !!usados[id], get tactil() { return tactil; } };
 })();

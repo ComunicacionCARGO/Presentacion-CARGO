@@ -426,7 +426,8 @@ window.SERVICIO = {
     entregas: {
       pestana: "Entregas a concesionarios",
       titulo: "Entregas a concesionarios",
-      porMes: "Por mes",                 // el primero de los filtros de arriba (los otros: provincias y concesionarios → pestana)
+      verPor: "Ver por",                 // el rótulo de los filtros de arriba
+      porMes: "Por mes",                 // el primero de los filtros (los otros: provincias y concesionarios → pestana)
       indicadores: [
         { nombre: "Cantidad ADD", valor: 114863 },
         { nombre: "Cantidad ADD on time", valor: 112704 },

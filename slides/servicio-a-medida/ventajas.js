@@ -59,7 +59,7 @@
     `<div class="bi-ventana"><div class="bi-barra"><img src="../../img/marca/logo-cargo.svg" alt="CARGO"><b class="bi-vtitulo"></b>` +
     // en Entregas a concesionarios, pestañas para filtrar (pedido de la persona): por mes, por
     // provincia o por concesionario (destino)
-    `<div class="bi-sub" role="tablist"><button type="button" data-v="mes" role="tab">${icono('barras')}${txt(E.porMes || 'Por mes')}</button>` +
+    `<div class="bi-sub" role="tablist"><small>${txt(E.verPor || 'Ver por')}</small><button type="button" data-v="mes" role="tab">${icono('barras')}${txt(E.porMes || 'Por mes')}</button>` +
     (PROV_E.length ? `<button type="button" data-v="provincias" role="tab">${icono('mapa')}${txt(TP.pestana || 'Por provincia')}</button>` : '') +
     (CONC.length ? `<button type="button" data-v="concesionarios" role="tab">${icono('local')}${txt(TC.pestana || 'Por concesionario')}</button>` : '') +
     `</div><span>${txt(T.actualizado)}</span></div>` +
@@ -374,18 +374,33 @@
   }
   tabs.forEach((b) => b.addEventListener('click', () => elegir(b.dataset.t)));
 
-  // Guía (compartido/guia.js): los meses del gráfico, las pestañas, las barras y las columnas
+  // Guía (compartido/guia.js): un recorrido guiado por todas las partes (pedido de la persona: la
+  // manito iba directo a Ventajas). Cada pista aparece recién cuando se usó la anterior:
+  // meses → Por provincia → Por concesionario → Logística inversa → sus barras → Ventajas → columnas.
+  // (Si alguien se adelanta y toca algo, esa pista queda usada y el recorrido sigue desde ahí.)
   if (window.GUIA) {
     const medio = (sel) => { const l = cuerpo.querySelectorAll(sel); return l[Math.floor(l.length / 2)]; };
     const tab = (t) => tabs.find((b) => b.dataset.t === t);
-    GUIA.pista({ id: 'servicio-bi-puntos', texto: 'tablerosPuntos', objetivo: () => medio('.bi-punto circle'), zona: '.bi-punto', tipo: 'pasar', lado: 'arriba', espera: 2.4, activa: () => actual === 'entregas' && verPor === 'mes' });
-    // los filtros de la barra (por provincia, por concesionario)
     const sub = (v) => subs.find((b) => b.dataset.v === v);
-    if (sub('provincias')) GUIA.pista({ id: 'servicio-bi-filtros', texto: 'tablerosFiltros', objetivo: () => sub('provincias'), punto: [.5, .75], zona: '.bi-sub button', lado: 'abajo', espera: 4, activa: () => actual === 'entregas' && verPor === 'mes' });
-    GUIA.pista({ id: 'servicio-bi-pestana', texto: 'tablerosPestana', objetivo: () => tab('inversa'), punto: [.88, .55], zona: '.bi-tabs button[data-t="inversa"]', lado: 'der', espera: 1.5, activa: () => actual !== 'inversa' });
-    if (cabV) GUIA.pista({ id: 'servicio-bi-ventajas', texto: 'tablerosVentajas', objetivo: () => tab('ventajas'), punto: [.88, .55], zona: '.bi-tabs button[data-t="ventajas"]', lado: 'der', espera: 1.5, activa: () => actual !== 'ventajas' });
-    GUIA.pista({ id: 'servicio-bi-barras', texto: 'tablerosBarras', objetivo: () => medio('.bi-col .bi-b-tiempo'), punto: [.5, .3], zona: '.bi-col', lado: 'arriba', espera: 1.5, activa: () => actual === 'inversa' });
-    if (vcols.length > 1) GUIA.pista({ id: 'servicio-ventajas', texto: 'ventajas', objetivo: () => vcols[(activa + 1) % vcols.length], punto: [.5, .45], zona: '.vn-col', tipo: 'pasar', lado: 'abajo', espera: 1.8, activa: () => actual === 'ventajas' });
+    const pasos = [];
+    const paso = (op, cuando) => {
+      const antes = pasos.slice();
+      pasos.push(op.id);
+      GUIA.pista(Object.assign(op, { activa: () => antes.every((id) => GUIA.usada(id)) && cuando() }));
+    };
+    paso({ id: 'servicio-bi-puntos', texto: 'tablerosPuntos', objetivo: () => medio('.bi-punto circle'), zona: '.bi-punto', tipo: 'pasar', lado: 'arriba', espera: 2.4 }, () => actual === 'entregas' && verPor === 'mes');
+    if (sub('provincias')) paso({ id: 'servicio-bi-filtro-prov', texto: 'tablerosFiltros', objetivo: () => sub('provincias'), punto: [.5, .75], zona: '.bi-sub button[data-v="provincias"]', lado: 'abajo', espera: 1.2 }, () => actual === 'entregas' && verPor !== 'provincias');
+    if (sub('concesionarios')) paso({ id: 'servicio-bi-filtro-conc', texto: 'tablerosFiltroConc', objetivo: () => sub('concesionarios'), punto: [.5, .75], zona: '.bi-sub button[data-v="concesionarios"]', lado: 'abajo', espera: 2.5 }, () => actual === 'entregas' && verPor !== 'concesionarios');
+    paso({ id: 'servicio-bi-pestana', texto: 'tablerosPestana', objetivo: () => tab('inversa'), punto: [.88, .55], zona: '.bi-tabs button[data-t="inversa"]', lado: 'der', espera: 2.5 }, () => actual !== 'inversa');
+    paso({ id: 'servicio-bi-barras', texto: 'tablerosBarras', objetivo: () => medio('.bi-col .bi-b-tiempo'), punto: [.5, .3], zona: '.bi-col', lado: 'arriba', espera: 1.5 }, () => actual === 'inversa');
+    if (cabV) paso({ id: 'servicio-bi-ventajas', texto: 'tablerosVentajas', objetivo: () => tab('ventajas'), punto: [.88, .55], zona: '.bi-tabs button[data-t="ventajas"]', lado: 'der', espera: 2.5 }, () => actual !== 'ventajas');
+    if (vcols.length > 1) paso({ id: 'servicio-ventajas', texto: 'ventajas', objetivo: () => vcols[(activa + 1) % vcols.length], punto: [.5, .45], zona: '.vn-col', tipo: 'pasar', lado: 'abajo', espera: 1.8 }, () => actual === 'ventajas');
+  }
+  // los filtros laten hasta que se usa uno (así se nota que se pueden tocar)
+  const barraSub = seccion.querySelector('.bi-sub');
+  if (barraSub) {
+    barraSub.classList.add('sin-usar');
+    subs.forEach((b) => b.addEventListener('click', () => barraSub.classList.remove('sin-usar')));
   }
 
   // Aparición (.visible la primera vez, .en-vista mientras está en pantalla); la primera vez

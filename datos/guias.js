@@ -36,6 +36,7 @@ window.GUIAS = {
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
   tablerosPuntos:      { texto: "**Pasá el mouse** por los meses",                  tactil: "**Tocá** un mes para ver el detalle" },
   tablerosFiltros:     { texto: "**Hacé clic** para ver las entregas por provincia", tactil: "**Tocá** para ver las entregas por provincia" },
+  tablerosFiltroConc:  { texto: "**Hacé clic** para verlas por concesionario",       tactil: "**Tocá** para verlas por concesionario" },
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },
   tablerosVentajas:    { texto: "**Hacé clic** para ver las ventajas",              tactil: "**Tocá** para ver las ventajas" },
   ventajas:            { texto: "**Pasá el mouse** por cada ventaja",               tactil: "**Tocá** cada ventaja" },

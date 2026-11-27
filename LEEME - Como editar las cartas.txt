@@ -490,8 +490,8 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
         y objetivo = la expectativa: el gráfico dibuja las dos líneas, la
         expectativa punteada; el mes en que el resultado queda abajo de la
         expectativa se marca en ámbar). serieReal y serieObjetivo son los
-        nombres de las líneas. La escala del gráfico se ajusta sola. porMes
-        es el nombre del primer filtro;
+        nombres de las líneas. La escala del gráfico se ajusta sola. verPor
+        es el rótulo de los filtros y porMes el nombre del primero;
       - provincias (filtro "Por provincia" de entregas; su nombre es pestana):
         el % de entregas en tiempo de cada provincia (nombre, entregas y
         otd = el %), la expectativa (la línea punteada de las barras) y los
