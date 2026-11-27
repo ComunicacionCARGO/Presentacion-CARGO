@@ -35,6 +35,7 @@ window.GUIAS = {
   entregaFirma:        { texto: "**Firmá** la carta de porte con el mouse",         tactil: "**Firmá** la carta de porte con el dedo" },
   tablerosPestana:     { texto: "**Hacé clic** para ver el tablero de logística inversa", tactil: "**Tocá** para ver el tablero de logística inversa" },
   tablerosPuntos:      { texto: "**Pasá el mouse** por los meses",                  tactil: "**Tocá** un mes para ver el detalle" },
+  tablerosFiltros:     { texto: "**Hacé clic** para ver las entregas por provincia", tactil: "**Tocá** para ver las entregas por provincia" },
   tablerosBarras:      { texto: "**Hacé clic** en una barra para ver esa provincia", tactil: "**Tocá** una barra para ver esa provincia" },
   tablerosVentajas:    { texto: "**Hacé clic** para ver las ventajas",              tactil: "**Tocá** para ver las ventajas" },
   ventajas:            { texto: "**Pasá el mouse** por cada ventaja",               tactil: "**Tocá** cada ventaja" },

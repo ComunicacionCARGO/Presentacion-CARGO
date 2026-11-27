@@ -426,6 +426,7 @@ window.SERVICIO = {
     entregas: {
       pestana: "Entregas a concesionarios",
       titulo: "Entregas a concesionarios",
+      porMes: "Por mes",                 // el primero de los filtros de arriba (los otros: provincias y concesionarios → pestana)
       indicadores: [
         { nombre: "Cantidad ADD", valor: 114863 },
         { nombre: "Cantidad ADD on time", valor: 112704 },
@@ -449,9 +450,9 @@ window.SERVICIO = {
     },
     // % de entregas en tiempo por provincia — EJEMPLO (las entregas suman la "Cantidad ADD" de
     // arriba y el promedio da su OTD). otd: % de entregas en tiempo. expectativa: la línea punteada
+    // (es uno de los filtros de "Entregas a concesionarios": pestana = el nombre del filtro)
     provincias: {
-      pestana: "Entregas por provincia",
-      titulo: "Entregas por provincia",
+      pestana: "Por provincia",
       graficoTitulo: "% de entregas en tiempo por provincia",
       expectativa: 98,
       ordenarPor: "Ordenar por",
@@ -480,8 +481,7 @@ window.SERVICIO = {
     },
     // % de entregas en tiempo por concesionario — EJEMPLO (concesionarios inventados)
     concesionarios: {
-      pestana: "Entregas por concesionario",
-      titulo: "Entregas por concesionario",
+      pestana: "Por concesionario",
       graficoTitulo: "Concesionarios de la red · ejemplo",
       columnas: ["Concesionario", "Provincia", "Entregas", "En tiempo", "% en tiempo"],
       ayuda: "Tocá una columna para ordenar",

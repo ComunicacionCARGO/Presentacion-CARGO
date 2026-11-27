@@ -5,10 +5,10 @@
    pestañas; a la derecha, lo que muestra cada una:
    • Entregas a concesionarios: ventana de tablero con indicadores que
      cuentan y OTD por mes.
-   • Entregas por provincia: % de entregas en tiempo de cada provincia, en dos
-     columnas de barras (se ordena por % o por cantidad).
-   • Entregas por concesionario: tabla de concesionarios (inventados) que se
-     ordena tocando las columnas.
+     Arriba, en la barra de la ventana, tres filtros: por mes (el gráfico de
+     OTD), por provincia (% de entregas en tiempo de cada una, en dos columnas
+     de barras que se ordenan por % o por cantidad) y por concesionario (tabla
+     de concesionarios inventados que se ordena tocando las columnas).
    • Logística inversa: cumplimiento, medidor y estados por provincia (al
      tocar una barra, todo pasa a esa provincia).
    • Ventajas y oportunidades: seis columnas como la diapositiva de la
@@ -52,14 +52,17 @@
     `<div class="bi-izq"><div class="bi-cabs ent" style="--i:0">${cab(T, 'bi-cab-t actual')}${ITEMS.length ? cab(V, 'bi-cab-v') : ''}</div>` +
     `<div class="bi-tabs ent" style="--i:2" role="tablist">` +
     `<button type="button" data-t="entregas" role="tab">${icono('barras')}<span>${txt(E.pestana)}</span></button>` +
-    // (pedido de la persona) el detalle de las entregas por provincia y por concesionario
-    (PROV_E.length ? `<button type="button" data-t="provincias" role="tab">${icono('mapa')}<span>${txt(TP.pestana)}</span></button>` : '') +
-    (CONC.length ? `<button type="button" data-t="concesionarios" role="tab">${icono('local')}<span>${txt(TC.pestana)}</span></button>` : '') +
     `<button type="button" data-t="inversa" role="tab">${SV.ICONOS.inversa.replace('<svg ', '<svg aria-hidden="true" ')}<span>${txt(L.pestana)}</span></button>` +
     (ITEMS.length ? `<button type="button" data-t="ventajas" role="tab">${icono('estrella')}<span>${txt(V.pestana || 'Ventajas y oportunidades')}</span></button>` : '') +
     `</div><p class="bi-nota ent" style="--i:3">${txt(T.nota)}</p></div>` +
     `<div class="bi-area ent" style="--i:2">` +
-    `<div class="bi-ventana"><div class="bi-barra"><img src="../../img/marca/logo-cargo.svg" alt="CARGO"><b class="bi-vtitulo"></b><span>${txt(T.actualizado)}</span></div>` +
+    `<div class="bi-ventana"><div class="bi-barra"><img src="../../img/marca/logo-cargo.svg" alt="CARGO"><b class="bi-vtitulo"></b>` +
+    // en Entregas a concesionarios, pestañas para filtrar (pedido de la persona): por mes, por
+    // provincia o por concesionario (destino)
+    `<div class="bi-sub" role="tablist"><button type="button" data-v="mes" role="tab">${icono('barras')}${txt(E.porMes || 'Por mes')}</button>` +
+    (PROV_E.length ? `<button type="button" data-v="provincias" role="tab">${icono('mapa')}${txt(TP.pestana || 'Por provincia')}</button>` : '') +
+    (CONC.length ? `<button type="button" data-v="concesionarios" role="tab">${icono('local')}${txt(TC.pestana || 'Por concesionario')}</button>` : '') +
+    `</div><span>${txt(T.actualizado)}</span></div>` +
     `<div class="bi-cuerpo"></div><div class="bi-tip"></div></div>` +
     `<ul class="vn-cols">${ITEMS.map((it, i) => `<li class="vn-col" style="--i:${i}" data-i="${i}" tabindex="-1">
         <span class="vn-num">${String(i + 1).padStart(2, '0')}</span>
@@ -121,8 +124,33 @@
   }, true);
 
   // ---------- Pestaña 1: entregas a concesionarios ----------
+  // Arriba los tres indicadores (los mismos en los tres filtros) y abajo el gráfico del filtro
+  // elegido en la barra de la ventana: por mes, por provincia o por concesionario.
+  const subs = [...seccion.querySelectorAll('.bi-sub button')];
+  let verPor = 'mes';
   function vistaEntregas() {
     vtitulo.innerHTML = txt(E.titulo);
+    cuerpo.innerHTML =
+      `<div class="bi-kpis">${(E.indicadores || []).map((k, i) => `<div class="bi-kpi${k.porcentaje ? ' destacado' : ''}" style="--i:${i}"><b data-k="${i}">0</b><span>${txt(k.nombre)}</span></div>`).join('')}</div>` +
+      '<div class="bi-ent"></div>';
+    cuerpo.querySelectorAll('.bi-kpi b').forEach((b) => {
+      const k = E.indicadores[+b.dataset.k];
+      contar(b, +k.valor, k.porcentaje ? 2 : 0, k.porcentaje ? ' %' : '');
+    });
+    pintarEnt();
+  }
+  function pintarEnt() {
+    const cont = cuerpo.querySelector('.bi-ent');
+    if (!cont) return;
+    subs.forEach((b) => { const si = b.dataset.v === verPor; b.classList.toggle('activo', si); b.setAttribute('aria-selected', si); });
+    ocultarTip();
+    cont.classList.remove('entra'); void cont.offsetWidth; cont.classList.add('entra');
+    ({ provincias: grafProvincias, concesionarios: grafConcesionarios }[verPor] || grafMes)(cont);
+  }
+  subs.forEach((b) => b.addEventListener('click', () => { if (verPor !== b.dataset.v) { verPor = b.dataset.v; pintarEnt(); } }));
+
+  // OTD por mes
+  function grafMes(cont) {
     const W = 900, H = 420, M = { l: 58, r: 24, t: 30, b: 40 };
     // dos líneas (pedido de la persona): la expectativa (punteada) y el resultado real; el mes
     // en que el resultado queda abajo de la expectativa se marca en ámbar
@@ -143,8 +171,7 @@
       const dec = Math.abs(v * 4 - Math.round(v) * 4) < 1e-6 ? 0 : Math.abs(v * 2 - Math.round(v * 2)) < 1e-6 ? 1 : 2;
       guias.push(`<line x1="${M.l}" x2="${W - M.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text x="${M.l - 10}" y="${(y(v) + 4).toFixed(1)}">${fmt(v, dec)}%</text>`);
     }
-    cuerpo.innerHTML =
-      `<div class="bi-kpis">${(E.indicadores || []).map((k, i) => `<div class="bi-kpi${k.porcentaje ? ' destacado' : ''}" style="--i:${i}"><b data-k="${i}">0</b><span>${txt(k.nombre)}</span></div>`).join('')}</div>` +
+    cont.innerHTML =
       `<div class="bi-graf"><p class="bi-gtit">${txt(E.graficoTitulo)}` +
       (conObj ? `<span class="bi-series"><span class="real"><i></i>${txt(E.serieReal || 'Resultado')}</span><span class="obj"><i></i>${txt(E.serieObjetivo || 'Expectativa')}</span></span>` : '') + '</p>' +
       `<svg class="bi-linea" viewBox="0 0 ${W} ${H}"><g class="bi-guias">${guias.join('')}</g>` +
@@ -156,11 +183,7 @@
         // el valor va arriba del punto; si quedó abajo de la expectativa, debajo (así no la pisa)
         `<text class="bi-val" x="${x(i).toFixed(1)}" y="${(y(m.otd) + (abajo(m) ? 24 : -14)).toFixed(1)}">${fmt(m.otd, 2)}%</text></g>`).join('') +
       '</svg></div>';
-    cuerpo.querySelectorAll('.bi-kpi b').forEach((b) => {
-      const k = E.indicadores[+b.dataset.k];
-      contar(b, +k.valor, k.porcentaje ? 2 : 0, k.porcentaje ? ' %' : '');
-    });
-    cuerpo.querySelectorAll('.bi-punto').forEach((g) => {
+    cont.querySelectorAll('.bi-punto').forEach((g) => {
       const m = MESES[+g.dataset.i];
       const dif = conObj ? +m.otd - +m.objetivo : 0;
       const detalle = conObj
@@ -233,13 +256,10 @@
     actualizar();
   }
 
-  // ---------- Entregas por provincia y por concesionario (pedido de la persona) ----------
+  // ---------- Entregas por provincia y por concesionario: filtros de "Entregas a concesionarios"
+  // (pedido de la persona) ----------
   const META = +TP.expectativa || 98;
   const enTiempoDe = (x) => Math.round(x.entregas * x.otd / 100);
-  const promedio = (l) => { const t = l.reduce((s, x) => s + x.entregas, 0); return t ? l.reduce((s, x) => s + x.entregas * x.otd, 0) / t : 0; };
-  // los números de los indicadores cuentan (data-v, decimales y sufijo)
-  const contarTodos = () => cuerpo.querySelectorAll('.bi-c').forEach((b) => contar(b, +b.dataset.v, +b.dataset.d || 0, b.dataset.s || ''));
-  const kpi = (i, v, d, s, rotulo, destacado) => `<div class="bi-kpi${destacado ? ' destacado' : ''}" style="--i:${i}"><b class="bi-c" data-v="${v}" data-d="${d}" data-s="${s}">0</b><span>${rotulo}</span></div>`;
   // barra de "% en tiempo": la escala va de un poco menos que el peor valor a 100 %; la línea
   // punteada es la expectativa
   function escalaDe(l) {
@@ -255,22 +275,16 @@
   }
 
   let ordenProv = 'otd';
-  function vistaProvincias() {
-    vtitulo.innerHTML = txt(TP.titulo);
-    const prom = promedio(PROV_E);
-    const mejor = PROV_E.reduce((a, x) => (x.otd > a.otd ? x : a), PROV_E[0]);
+  function grafProvincias(cont) {
     const e = escalaDe(PROV_E);
-    cuerpo.innerHTML =
-      '<div class="bi-kpis">' + kpi(0, PROV_E.length, 0, '', 'Provincias con entregas') +
-      kpi(1, prom, 2, ' %', 'En tiempo · todo el país', true) + kpi(2, mejor.otd, 2, ' %', 'Mejor: ' + esc(mejor.nombre)) + '</div>' +
+    cont.innerHTML =
       `<div class="bi-graf bi-pv"><p class="bi-gtit">${txt(TP.graficoTitulo)}` +
       `<span class="bi-series"><span class="obj"><i></i>${txt(E.serieObjetivo || 'Expectativa')} ${fmt(META)} %</span></span>` +
       `<span class="bi-orden"><small>${txt(TP.ordenarPor || 'Ordenar por')}</small>` +
       `<button type="button" data-o="otd">${txt(TP.porPorcentaje || '% en tiempo')}</button><button type="button" data-o="entregas">${txt(TP.porEntregas || 'Entregas')}</button></span></p>` +
       `<div class="bi-pv-lista"></div><p class="bi-escala">Escala de ${fmt(e.min)} % a 100 %</p></div>`;
-    contarTodos();
-    const lista = cuerpo.querySelector('.bi-pv-lista');
-    const botones = [...cuerpo.querySelectorAll('.bi-orden button')];
+    const lista = cont.querySelector('.bi-pv-lista');
+    const botones = [...cont.querySelectorAll('.bi-orden button')];
     function pintar() {
       botones.forEach((b) => b.classList.toggle('activo', b.dataset.o === ordenProv));
       const orden = PROV_E.map((x, i) => i).sort((a, b) => PROV_E[b][ordenProv] - PROV_E[a][ordenProv]);
@@ -286,22 +300,16 @@
   }
 
   let ordenConc = { k: 'otd', dir: -1 };
-  function vistaConcesionarios() {
-    vtitulo.innerHTML = txt(TC.titulo);
-    const total = CONC.reduce((s, x) => s + x.entregas, 0);
-    const cumplen = CONC.filter((x) => x.otd >= META).length;
+  function grafConcesionarios(cont) {
     const e = escalaDe(CONC);
     const COLS = ['nombre', 'provincia', 'entregas', 'tiempo', 'otd'];
     const nombres = TC.columnas || ['Concesionario', 'Provincia', 'Entregas', 'En tiempo', '% en tiempo'];
-    cuerpo.innerHTML =
-      '<div class="bi-kpis">' + kpi(0, CONC.length, 0, '', 'Concesionarios') + kpi(1, total, 0, '', 'Entregas') +
-      kpi(2, cumplen, 0, ` de ${CONC.length}`, `En la expectativa (${fmt(META)} %) o más`, true) + '</div>' +
+    cont.innerHTML =
       `<div class="bi-graf bi-cc"><p class="bi-gtit">${txt(TC.graficoTitulo)}<span class="bi-cc-ayuda">${txt(TC.ayuda)}</span></p>` +
       `<div class="bi-cc-tabla"><div class="bi-cc-fila bi-cc-enc">${COLS.map((k, i) => `<button type="button" data-k="${k}">${txt(nombres[i])}<i></i></button>`).join('')}</div>` +
       '<div class="bi-cc-filas"></div></div></div>';
-    contarTodos();
-    const filas = cuerpo.querySelector('.bi-cc-filas');
-    const enc = [...cuerpo.querySelectorAll('.bi-cc-enc button')];
+    const filas = cont.querySelector('.bi-cc-filas');
+    const enc = [...cont.querySelectorAll('.bi-cc-enc button')];
     const valor = (x, k) => (k === 'tiempo' ? enTiempoDe(x) : x[k]);
     function pintar() {
       enc.forEach((b) => { b.classList.toggle('activo', b.dataset.k === ordenConc.k); b.classList.toggle('sube', ordenConc.dir > 0); });
@@ -362,7 +370,7 @@
     ocultarTip();
     if (t === 'ventajas') { uso = performance.now(); return; }
     cuerpo.classList.remove('entra'); void cuerpo.offsetWidth; cuerpo.classList.add('entra');
-    ({ inversa: vistaInversa, provincias: vistaProvincias, concesionarios: vistaConcesionarios }[t] || vistaEntregas)();
+    (t === 'inversa' ? vistaInversa : vistaEntregas)();
   }
   tabs.forEach((b) => b.addEventListener('click', () => elegir(b.dataset.t)));
 
@@ -370,7 +378,10 @@
   if (window.GUIA) {
     const medio = (sel) => { const l = cuerpo.querySelectorAll(sel); return l[Math.floor(l.length / 2)]; };
     const tab = (t) => tabs.find((b) => b.dataset.t === t);
-    GUIA.pista({ id: 'servicio-bi-puntos', texto: 'tablerosPuntos', objetivo: () => medio('.bi-punto circle'), zona: '.bi-punto', tipo: 'pasar', lado: 'arriba', espera: 2.4, activa: () => actual === 'entregas' });
+    GUIA.pista({ id: 'servicio-bi-puntos', texto: 'tablerosPuntos', objetivo: () => medio('.bi-punto circle'), zona: '.bi-punto', tipo: 'pasar', lado: 'arriba', espera: 2.4, activa: () => actual === 'entregas' && verPor === 'mes' });
+    // los filtros de la barra (por provincia, por concesionario)
+    const sub = (v) => subs.find((b) => b.dataset.v === v);
+    if (sub('provincias')) GUIA.pista({ id: 'servicio-bi-filtros', texto: 'tablerosFiltros', objetivo: () => sub('provincias'), punto: [.5, .75], zona: '.bi-sub button', lado: 'abajo', espera: 4, activa: () => actual === 'entregas' && verPor === 'mes' });
     GUIA.pista({ id: 'servicio-bi-pestana', texto: 'tablerosPestana', objetivo: () => tab('inversa'), punto: [.88, .55], zona: '.bi-tabs button[data-t="inversa"]', lado: 'der', espera: 1.5, activa: () => actual !== 'inversa' });
     if (cabV) GUIA.pista({ id: 'servicio-bi-ventajas', texto: 'tablerosVentajas', objetivo: () => tab('ventajas'), punto: [.88, .55], zona: '.bi-tabs button[data-t="ventajas"]', lado: 'der', espera: 1.5, activa: () => actual !== 'ventajas' });
     GUIA.pista({ id: 'servicio-bi-barras', texto: 'tablerosBarras', objetivo: () => medio('.bi-col .bi-b-tiempo'), punto: [.5, .3], zona: '.bi-col', lado: 'arriba', espera: 1.5, activa: () => actual === 'inversa' });

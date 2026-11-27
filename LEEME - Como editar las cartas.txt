@@ -481,22 +481,25 @@ Se edita en  datos\servicio.js  (con el Bloc de notas).
         escudo, barras, arbol, ciclo o cabeza), una "lista" opcional de
         renglones y irATableros: true si lleva el botón que vuelve a los tableros.
   • tableros (pantalla "Tableros de BUSINESS INTELLIGENCE", después de la
-    simulación; tiene cinco pestañas: entregas, entregas por provincia,
-    entregas por concesionario, logística inversa y ventajas):
+    simulación; tiene tres pestañas: entregas, logística inversa y ventajas.
+    Dentro de entregas, arriba, tres filtros: por mes, por provincia y por
+    concesionario):
       - antetitulo, titulo, bajada, nota y actualizado (la fecha de arriba);
       - entregas: nombre de la pestaña, los tres indicadores (nombre y valor;
         porcentaje: true si es un %) y los meses (mes, kg, otd = el resultado
         y objetivo = la expectativa: el gráfico dibuja las dos líneas, la
         expectativa punteada; el mes en que el resultado queda abajo de la
         expectativa se marca en ámbar). serieReal y serieObjetivo son los
-        nombres de las líneas. La escala del gráfico se ajusta sola;
-      - provincias: el % de entregas en tiempo de cada provincia (nombre,
-        entregas y otd = el %), la expectativa (la línea punteada de las
-        barras) y los textos de la pestaña. Se puede ordenar por % o por
-        cantidad de entregas; los indicadores de arriba se calculan solos;
-      - concesionarios: la tabla de concesionarios (nombre, provincia,
-        entregas y otd); son inventados ("Concesionario 1, 2…"). columnas son
-        los títulos de la tabla; tocando cada uno se ordena;
+        nombres de las líneas. La escala del gráfico se ajusta sola. porMes
+        es el nombre del primer filtro;
+      - provincias (filtro "Por provincia" de entregas; su nombre es pestana):
+        el % de entregas en tiempo de cada provincia (nombre, entregas y
+        otd = el %), la expectativa (la línea punteada de las barras) y los
+        textos. Se puede ordenar por % o por cantidad de entregas;
+      - concesionarios (filtro "Por concesionario"; su nombre es pestana): la
+        tabla de concesionarios (nombre, provincia, entregas y otd); son
+        inventados ("Concesionario 1, 2…"). columnas son los títulos de la
+        tabla; tocando cada uno se ordena;
       - inversa: textos de la pestaña y las provincias (corto, nombre,
         enTiempo y demorado). El cumplimiento y el número del medidor se
         calculan solos con las provincias.
