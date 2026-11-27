@@ -352,6 +352,29 @@
     }
   }
   window.desplazarA = (y) => irA(y);              // para el índice de secciones (compartido/indice.js)
+
+  // Si nadie baja un rato después de entrar (pedido de la persona), la pantalla baja sola un
+  // poquito, despacio, para que aparezcan las tres claves (Flexibilidad, Innovación, Excelencia).
+  // Una sola vez por visita; cualquier rueda, tecla o toque la corta.
+  const ESPERA_AUTO = 4000, BAJA_AUTO = 130, DURA_AUTO = 1500;   // (lo justo para que aparezcan: el título casi no se corta)
+  let autoHecho = false, ultimoUso = 0, entroEn = 0;
+  ['wheel', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, () => { ultimoUso = performance.now(); }, { capture: true, passive: true }));
+  const relojAuto = setInterval(() => {
+    if (autoHecho) { clearInterval(relojAuto); return; }
+    const ahora = performance.now();
+    if (!entro || document.hidden || animacion || !window.desplazamiento) return;
+    if (!entroEn) entroEn = ahora;
+    if (window.desplazamiento.y >= CLAVES_DESDE) { autoHecho = true; return; }   // ya bajó por su cuenta
+    if (ahora - Math.max(entroEn, ultimoUso) < ESPERA_AUTO || document.body.classList.contains('capitulo-abierto')) return;
+    autoHecho = true;
+    const desde = window.desplazamiento.y, t0 = ahora, usoAntes = ultimoUso;
+    (function paso(t) {
+      if (ultimoUso !== usoAntes || animacion) return;             // la persona tomó el control
+      const p = Math.min(1, (t - t0) / DURA_AUTO);
+      window.desplazamiento.ir(desde + (BAJA_AUTO - desde) * suave(p), true);
+      if (p < 1) requestAnimationFrame(paso);
+    })(ahora);
+  }, 400);
   // el arrastre táctil (compartido/desplazamiento.js) tampoco pasa del final del recorrido
   addEventListener('load', () => { if (window.desplazamiento) window.desplazamiento.limite = MAXIMO; });
   // si el dedo empieza a arrastrar mientras el resorte se mueve, manda el dedo
